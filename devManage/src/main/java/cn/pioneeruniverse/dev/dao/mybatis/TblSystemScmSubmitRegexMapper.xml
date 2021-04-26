@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblSystemScmSubmitRegexMapper">
+<!-- 新增系统源码提交正则表达式 -->
+    <insert id="insertSystemScmSubmitRegex" parameterType="cn.pioneeruniverse.dev.entity.TblSystemScmSubmitRegex"
+            useGeneratedKeys="true"
+            keyProperty="id">
+       INSERT INTO tbl_system_scm_submit_regex(
+         SYSTEM_ID,
+         SYSTEM_SCM_REPOSITORY_ID,
+         SCM_REPOSITORY_NAME,
+         REGEX,
+         SUBMIT_USER_NAMES,
+         STATUS,
+         CREATE_BY,
+         CREATE_DATE,
+         LAST_UPDATE_BY,
+         LAST_UPDATE_DATE
+       ) VALUES (
+         #{systemId},
+         #{systemScmRepositoryId},
+         #{scmRepositoryName},
+         #{regex},
+         #{submitUserNames},
+         #{status},
+         #{createBy},
+         #{createDate},
+         #{lastUpdateBy},
+         #{lastUpdateDate}
+       )
+    </insert>
+<!-- 更新系统源码提交正则表达式 -->
+    <update id="updateSystemScmSubmitRegex" parameterType="cn.pioneeruniverse.dev.entity.TblSystemScmSubmitRegex">
+         UPDATE tbl_system_scm_submit_regex SET
+        <if test="systemId != null">
+            SYSTEM_ID = #{systemId},
+        </if>
+        SYSTEM_SCM_REPOSITORY_ID = #{systemScmRepositoryId},
+        SCM_REPOSITORY_NAME = #{scmRepositoryName},
+        REGEX = #{regex},
+        SUBMIT_USER_NAMES = #{submitUserNames},
+        LAST_UPDATE_BY = #{lastUpdateBy},
+        LAST_UPDATE_DATE = #{lastUpdateDate}
+        WHERE ID = #{id}
+    </update>
+
+<!-- 删除系统源码提交正则表达式 -->
+    <delete id="deleteSystemScmSubmitRegex" parameterType="cn.pioneeruniverse.dev.entity.TblSystemScmSubmitRegex">
+        DELETE FROM tbl_system_scm_submit_regex WHERE ID = #{id}
+    </delete>
+<!-- 获取某个系统的系统源码提交正则表达式 -->
+    <select id="getSystemScmSubmitRegexes" resultMap="extendBaseMap">
+        SELECT
+        tssr.ID,
+        tssr.SYSTEM_ID,
+        tssr.SYSTEM_SCM_REPOSITORY_ID,
+        tssr.SCM_REPOSITORY_NAME,
+        tssr.REGEX,
+        tssr.SUBMIT_USER_NAMES
+<!--         (SELECT GROUP_CONCAT(tui.USER_NAME) FROM tbl_user_info tui WHERE FIND_IN_SET(tui.ID,tssr.SUBMIT_USER_NAMES)) AS "SUBMIT_USER_REAL_NAMES" -->
+        FROM tbl_system_scm_submit_regex tssr
+        WHERE
+        tssr.STATUS = 1
+        AND tssr.SYSTEM_ID = #{systemId}
+    </select>
+
+<!-- 获取某个系统具体的源码仓库的提交正则表达式配置 -->
+    <select id = "getSystemScmSubmitRegexesForCodeCommit" resultMap="extendBaseMap" parameterType="cn.pioneeruniverse.dev.entity.TblSystemScmSubmitRegex">
+      SELECT
+      tssr.ID,
+      tssr.SYSTEM_ID,
+      tssr.SYSTEM_SCM_REPOSITORY_ID,
+      tssr.SCM_REPOSITORY_NAME,
+      tssr.REGEX,
+      (SELECT GROUP_CONCAT(tui.USER_SCM_ACCOUNT) FROM tbl_user_info tui WHERE FIND_IN_SET(tui.ID,tssr.SUBMIT_USER_NAMES)) AS "SUBMIT_USER_NAMES"
+      FROM tbl_system_scm_submit_regex tssr
+      WHERE tssr.STATUS = 1
+      AND tssr.SYSTEM_ID = #{systemId}
+      AND tssr.SYSTEM_SCM_REPOSITORY_ID = #{systemScmRepositoryId}
+      AND tssr.SCM_REPOSITORY_NAME = #{scmRepositoryName}
+    </select>
+
+    <resultMap type="cn.pioneeruniverse.dev.entity.TblSystemScmSubmitRegex" id="baseMap">
+        <id column="ID" property="id"/>
+        <result column="SYSTEM_ID" property="systemId"/>
+        <result column="SYSTEM_SCM_REPOSITORY_ID" property="systemScmRepositoryId"/>
+        <result column="SCM_REPOSITORY_NAME" property="scmRepositoryName"/>
+        <result column="REGEX" property="regex"/>
+        <result column="SUBMIT_USER_NAMES" property="submitUserNames"/>
+        <result column="STATUS" property="status"/>
+        <result column="CREATE_BY" property="createBy"/>
+        <result column="CREATE_DATE" property="createDate"/>
+        <result column="LAST_UPDATE_BY" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate"/>
+    </resultMap>
+
+    <resultMap type="cn.pioneeruniverse.dev.entity.TblSystemScmSubmitRegex" id="extendBaseMap" extends="baseMap">
+        <result column="SUBMIT_USER_REAL_NAMES" jdbcType="VARCHAR" property="submitUserRealNames"/>
+        <result column="SUBMIT_USER_NAMES" jdbcType="VARCHAR" property="submitUserNamesCollection"/>
+    </resultMap>
+
+</mapper>

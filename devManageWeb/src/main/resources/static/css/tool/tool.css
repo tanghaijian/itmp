@@ -1,0 +1,248 @@
+@CHARSET "UTF-8";
+input{
+	height: 28px!important;
+	line-height: 28px!important;
+}
+body{
+  padding: 20px;
+}
+td{
+   padding: 0!important;
+}
+.form-control{
+	font-size: 12px;
+}
+.modal-dialog{
+	padding:0 !important; 
+}
+.modal-content{
+	margin:5% auto;
+}
+.col-xs-1, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .col-xs-11, .col-xs-12, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12 {
+	padding-right: 15px;
+    padding-left: 5px;
+}
+.bootstrap-select .btn{
+	height: 28px;
+	margin: 1px 0;
+}
+.tableDiv{
+   background-color: #F4F4FB;
+   border: 1px solid #D9D9D9;
+   border-radius: 4px;
+   color: #tableTit;
+   margin-bottom: 10px;
+}
+.tableDiv *{
+   border: 0px !important;
+   font-size: 12px;
+   vertical-align: middle !important;
+}
+.tableTit{
+   font-size: 13px;
+   font-weight: bold;
+   padding:10px 20px;
+} 
+.tableContent{
+   padding:10px 10px 10px 40px;
+}
+.tableContent td{
+   height: 32px;
+}
+.table_Td{
+   width: 100%;
+   height: 100%;
+}
+.fontContent{
+   display: inline-block;
+   height: 100%;
+   line-height: 32px;
+   position: relative;
+   padding: 6px 12px;
+   max-width: 170px;
+   white-space:nowrap;
+   overflow-x:hidden; 
+}
+.fontBold{
+   font-weight: bold;
+   display: inline-block;
+}
+.toolName{
+   padding-right:40px;
+}
+.inputContent{
+   width: 100%;
+   position: absolute;
+   padding: 6px 12px;
+   height: 32px;
+   line-height: 32px;
+   left: 0px;
+   top: 6px;
+   display: none;
+}
+.bottom-container{
+    padding-top: 20px;
+    text-align: center;
+}
+.bottom-container button{
+    margin: 0 8px;
+    width: 90px;
+}
+.saveBtn{
+   background-image: linear-gradient(to bottom,#FF6699 0,#FF6699 100%);
+   display: none;
+ }
+table .btn{
+   font-weight: bold;
+   margin-right: 10px;
+}
+.closeBtn{
+   display: none;
+   padding: 4px 10px;
+   box-sizing: content-box;
+   background-image: none;
+   color: #42429B;
+   line-height: 18px;
+   font-weight: bold;
+   border: 2px solid #42429B !important;
+} 
+.modal-sm{
+   width: 380px;
+   font-size: 13px;
+}
+.modal-sm .modal-body{
+    padding: 40px 60px 10px 86px!important;
+}
+.colFont{
+   color: #F04134;
+   font-size: 12px;
+}
+.alertStyle{
+	width:24px;
+	height: 24px;
+	position: absolute;
+    left: 55px;
+    top: 45px;
+    color: white;
+    background-color: #FFBF00;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    font-size: 20px;
+}
+.modal-footer{
+    text-align: center;
+    padding: 0px 10px 15px;
+    border-top: none;
+    margin-top: 0;
+}
+.modal-footer button{
+    padding: 6px 20px;
+}
+.modal-body{
+    padding: 30px 40px 0px 60px;
+}
+.serviceLoge {
+    height:30px;
+    margin-left:5px;
+}
+.Loge {
+    height:30px;
+}
+.token {
+    display: none;
+}
+.jenkinsID {
+    display: none;
+}
+.git {
+    display: none;
+}
+.art {
+    display: none;
+}
+.artifactId {
+    display: none;
+}
+.sonar {
+    display: none;
+}
+.jenkinsPluginName {
+    display: none;
+}
+.jenkinsCredentialsId_cl {
+    display: none;
+}
+.jenkinsPlugin_cl {
+    display: none;
+}
+.sonarApiToken_cl {
+    display: none;
+}
+.control-label span{
+    color:red;
+}
+.btn_clear{
+    display: none;
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    right: 3px;
+    top: 5px;
+    z-index: 5;
+    background: url("//systemui/static/images/btn_clear.png") no-repeat;
+}
+.toolTypeName {
+    text-align: left;
+}
+.modalTitle{
+	font-size: 14px;
+	font-weight: bold;
+}
+#sourceCodeList {
+     display: none;
+}
+
+#codeScanning {
+    display: none;
+}
+#CI_CD {
+    display: none;
+}
+#productManagement {
+    display: none;
+}
+#edit_environmentType {
+    display: none;
+}
+#new_environmentType {
+    display: none;
+}
+#accessProtocol_sel{
+    display: none;
+}
+#accessProtocol_sel_edit{
+    display: none;
+}
+#editForm label,#insertModal label{
+	padding: 0;
+	line-height: 30px;
+}
+#editForm input,#insertModal input{
+	margin: 1px 0;
+	padding-right: 40px;
+} 
+#editForm .form-control-feedback,#insertModal .form-control-feedback{
+	position: absolute; 
+	right: 23px;
+	top: 9px;
+}  
+.btn-primary {
+    background-image: none;
+} 
+.btn-default {
+    background-image: none;
+ }
+ .help-block{
+ 	display: none;
+ }

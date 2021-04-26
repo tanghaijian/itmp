@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <title>项目群管理</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/daterangepicker-bs3.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+    <link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/newProject/newProjectList.css" />
+</head>
+
+<body>
+
+    <!--搜索区-->
+    <div class="color1">
+      <div class="container-fluid search_div" id="search_div">
+        <div class="row control-row">
+          <div class="col-md-4">
+            <div class="search_font"><label class="control-label">项目群编号：</label></div>
+            <div class="search_input">
+              <input type="text" id="programNumber" class="form-control" placeholder="请输入" />
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="search_font"><label class="control-label">项目群名称：</label></div>
+            <div class="search_input">
+              <input type="text" id="programName" class="form-control" placeholder="请输入" />
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="search_font"><label class="control-label">项目群经理：</label></div>
+            <div class="search_input">
+              <input type="hidden" id="manageUserId"/>
+              <input type="text" id="manageUser" readonly class="form-control pointStyle readonly " placeholder="请选择" />
+            </div>
+          </div>
+        </div>
+        <div class="row control-row search_btn">
+          <button type="button" class="btn btn-primary" onclick="searchInfo()">搜&nbsp;&nbsp;&nbsp;索</button>
+          <button type="button" onclick="clearSearch()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+        </div>
+      </div>
+      <div class="downBtn" id="downBtn">
+        <span class="fa fa-caret-up"></span>
+      </div>
+    </div>
+    
+    <!--按钮区-->
+    <div class="main-content">
+      <div class="content-btn">
+        <!-- #if($auth.hasPermission("$token","projectManage:project:add")) -->
+        <button type="button" onclick="addProgram()" class="btn btn-primary">新增项目群</button>
+        <!-- #end -->
+      </div>
+      <div class="content-table">
+        <table id="program_list"></table>
+        <table id="pager2"></table>
+      </div>
+    </div>
+
+    <!-- 新增项目群 -->
+    <div class="modal fade bs-example-modal-lg" id="add_group_modal" tabindex="-1" role="dialog" aria-labelledby="">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="add_group_tit">新增项目群</h4>
+            <input type="hidden" id="group_edit_id" />
+          </div>
+          <div class="modal-body">
+            <form id="add_group_form">
+              <h4 class="label_tit modal-title">项目群基本信息</h4>
+              <div class="add_group_body">
+                <div class="rowdiv">
+                  <div class="form-group def_col_18">
+                    <div class="def_col_8"><label class="control-label"><span class="redStar">*</span>项目群名称：</label></div>
+                    <div class="def_col_28">
+                      <input type="text" name="projectGroupName" id="projectGroupName" class="form-control" placeholder="请输入" />
+                    </div>
+                  </div>
+                </div>
+                <div class="rowdiv">
+                  <div class="form-group def_col_18">
+                    <div class="def_col_8"><label class="control-label"><span class="redStar">*</span>项目群经理：</label></div>
+                    <div class="def_col_28">
+                      <input type="hidden" id="programManagerId"/>
+                      <input type="text" id="programManager" name="programManager" readonly class="form-control pointStyle" placeholder="请选择" />
+                    </div>
+                  </div>
+                </div>
+                <div class="content-btn">
+                  <button type="button" onclick="add_project_group()" class="btn btn-primary">新增项目</button>
+                </div>
+                <div class="content-table">
+                  <table id="project_group_table" class="table table-bordered">
+                    <thead>
+                      <th>项目编号</th>
+                      <th>项目名称</th>
+                      <th>计划起止日期</th>
+                      <th>项目状态</th>
+                      <th>所属处室</th>
+                      <th>操作</th>
+                    </thead>
+                    <tbody id="project_group_tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+              <h4 class="label_tit modal-title">项目群扩展信息</h4>
+              <div class="add_group_body">
+                <div class="rowdiv form-group">
+                  <div class="def_col_4"><label class="control-label">项目群简介：</label></div>
+                  <div class="def_col_32">
+                    <textarea type="text" name="projectGroupInfo" id="projectGroupInfo" class="form-control" placeholder="请输入"></textarea>
+                  </div>
+                </div>
+                <div class="rowdiv form-group">
+                  <div class="def_col_4"><label class="control-label">项目群背景：</label></div>
+                  <div class="def_col_32">
+                    <textarea type="text" name="projectGroupBackground" id="projectGroupBackground" class="form-control" placeholder="请输入"></textarea>
+                  </div>
+                </div>
+                <div class="rowdiv form-group">
+                  <div class="def_col_4"><label class="control-label">备注：</label></div>
+                  <div class="def_col_32">
+                    <textarea type="text" name="projectGroupRemark" id="projectGroupRemark" class="form-control" placeholder="请输入"></textarea>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" onclick="add_group_submit()" class="btn btn-primary">确定</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 编辑项目群 -->
+    <div class="modal fade bs-example-modal-lg" id="edit_group_modal" tabindex="-1" role="dialog" aria-labelledby="">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="add_group_tit">编辑项目群</h4>
+            <input type="hidden" id="edit_id" />
+          </div>
+          <div class="modal-body">
+            <form id="edit_group_form">
+              <h4 class="label_tit modal-title">项目群基本信息</h4>
+              <div class="add_group_body">
+                <div class="rowdiv">
+                  <div class="form-group def_col_18">
+                    <div class="def_col_8"><label class="control-label"><span class="redStar">*</span>项目群名称：</label></div>
+                    <div class="def_col_28">
+                      <input type="text" name="editProgramName" id="editProgramName" class="form-control" placeholder="请输入" />
+                    </div>
+                  </div>
+                </div>
+                <div class="rowdiv">
+                  <div class="form-group def_col_18">
+                    <div class="def_col_8"><label class="control-label"><span class="redStar">*</span>项目群经理：</label></div>
+                    <div class="def_col_28">
+                      <input type="hidden" id="editProgramManageId"/>
+                      <input type="text" id="editProgramManage" name="editProgramManage" readonly class="form-control pointStyle" placeholder="请选择" />
+                    </div>
+                  </div>
+                </div>
+                <div class="content-btn">
+                  <button type="button" onclick="add_project_group()" class="btn btn-primary">新增项目</button>
+                </div>
+                <div class="content-table">
+                  <table id="project_group_table2" class="table table-bordered">
+                    <thead>
+                      <th>项目编号</th>
+                      <th>项目名称</th>
+                      <th>计划起止日期</th>
+                      <th>项目状态</th>
+                      <th>所属处室</th>
+                      <th>操作</th>
+                    </thead>
+                    <tbody id="project_group_tbody2"></tbody>
+                  </table>
+                </div>
+              </div>
+              <h4 class="label_tit modal-title">项目群扩展信息</h4>
+              <div class="add_group_body">
+                <div class="rowdiv form-group">
+                  <div class="def_col_4"><label class="control-label">项目群简介：</label></div>
+                  <div class="def_col_32">
+                    <textarea type="text" name="editProgramIntro" id="editProgramIntro" class="form-control" placeholder="请输入"></textarea>
+                  </div>
+                </div>
+                <div class="rowdiv form-group">
+                  <div class="def_col_4"><label class="control-label">项目群背景：</label></div>
+                  <div class="def_col_32">
+                    <textarea type="text" name="editProgramBackground" id="editProgramBackground" class="form-control" placeholder="请输入"></textarea>
+                  </div>
+                </div>
+                <div class="rowdiv form-group">
+                  <div class="def_col_4"><label class="control-label">备注：</label></div>
+                  <div class="def_col_32">
+                    <textarea type="text" name="editRemark" id="editRemark" class="form-control" placeholder="请输入"></textarea>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" onclick="edit_group_submit()" class="btn btn-primary">确定</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    ## 选择人员
+    <div class="modal fade bs-example-modal-lg in" id="userModal" tabindex="-1" role="dialog" aria-labelledby="">
+        <div class="modal-dialog modal-lg modal-user" role="document">
+            <div class="modal-content modalStyle">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span>选择人员</span>
+                </div>
+                <div class="modal-body">
+                    <div class="color1">
+                        <div class="container-fluid">
+                            <div class="row control-row">
+                                <div class="col-md-4">
+                                    <div class="search_font"><label class="control-label">姓名：</label></div>
+                                    <div class="search_input" style="position: relative;">
+                                        <input type="text" class="form-control " placeholder="请输入" id="userName" name="userName" value="">
+                                    </div>
+                                </div>
+    
+                                <div class="col-md-4">
+                                    <div class="search_font"><label class="control-label">部门：</label></div>
+                                    <div class="search_input" style="position: relative;">
+                                        <input type="text" class="form-control " placeholder="请输入" id="deptName" name="deptName" value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="search_font"><label class="control-label">公司：</label></div>
+                                    <div class="search_input" style="position: relative;">
+                                        <input type="text" class="form-control " placeholder="请输入" id="companyName" name="companyName" value="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row control-row search_btn">
+                                <button type="button" class="btn btn-primary" onclick="userTableShow2(1)">搜&nbsp;&nbsp;&nbsp;索</button>
+                                <button type="button" onclick="clearSearchUser()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                            </div>
+                        </div>
+                        <div id="downBtn" class="downBtn">
+                            <span class="fa fa-caret-up"></span>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="content-table">
+                      <table id="userTable"></table>
+                      <table id="userPage"></table>
+                    </div>
+                </div>
+    
+                <div class="modal-footer">
+                    <div class="bottom-container">
+                        <button type="button" id="userbutton" class="btn btn-primary" data-user="requirementManageUser" onclick="commitUser()">确定
+                        </button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    ## 项目群  新增项目列表
+    <div class="modal fade in" id="group_list_Modal" tabindex="-1" role="dialog" aria-labelledby="">
+        <div class="modal-dialog modal-lg modal-user" role="document">
+            <div class="modal-content modalStyle">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span>选择项目</span>
+                </div>
+                <div class="modal-body">
+                    <div class="color1">
+						<div class="container-fluid">
+							<div class="row control-row">
+								<div class="col-md-4">
+									<div class="search_font"><label class="control-label">项目编号：</label></div>
+									<div class="search_input" style="position: relative;">
+										<input type="text" class="form-control " placeholder="请输入" id="project_Code">
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="search_font"><label class="control-label">项目名称：</label></div>
+									<div class="search_input" style="position: relative;">
+										<input type="text" class="form-control " placeholder="请输入" id="project_Name">
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="search_font"><label class="control-label">所属处室：</label></div>
+									<div class="search_input" style="position: relative;">
+										<input type="text" class="form-control " placeholder="请输入" id="dept_Name">
+									</div>
+								</div>
+							</div>
+							<div class="row control-row search_btn">
+								<button type="button" class="btn btn-primary" onclick="add_project_group()">搜&nbsp;&nbsp;&nbsp;索</button>
+								<button type="button" onclick="clearSearchUser_project()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+							</div>
+						</div>
+						<div id="downBtn" class="downBtn">
+							<span class="fa fa-caret-up"></span>
+						</div>
+                    </div>
+                    <br>
+                    <div class="content-table">
+						<table id="group_list_Table" class="table table-bordered"></table>
+						<table id="group_list_Page"></table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="bottom-container">
+						<button type="button" class="btn btn-primary" id="select_project" onclick="push_group()">确定</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading">
+        <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+    </div>
+
+</body>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/moment.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/daterangepicker.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/projectManageui/static/js/program/programManage.js"></script>
+    <script>
+      $.jgrid.defaults.responsive = true;
+      $.jgrid.defaults.styleUI = 'Bootstrap4';
+      $.jgrid.defaults.iconSet = "fontAwesome";
+    </script>
+</html>

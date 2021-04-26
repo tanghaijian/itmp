@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/echarts.common.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <style>
+        body{
+            padding:15px;
+            font-size: 12px;
+        }
+        .tableStyle tbody>tr>td{
+            padding: 3px 8px !important;
+            white-space: nowrap;
+        }
+        .createTable{
+            padding: 15px 45px;
+            background: #169BD5 !important;
+            height: auto;
+        }
+        .fontCenter{
+            line-height: 30px !important;
+        }
+        .bottonGroup .btn{
+            margin: 18px 0;
+        }
+        .title_font{
+            border-bottom: 1px solid #CCCCCC;
+            font-weight: bold;
+            padding: 15px 0;
+        }
+        .tableArea{
+            width: 100%;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+<div class="tableDiv">
+    <table id="test" class="tableStyle"></table>
+</div>
+<div class="bottonGroup">
+    <botton class="btn btn-primary createTable" onclick="createTable()">生成图表</botton>
+</div>
+<div class="echartsArea">
+    <div class="histogram">
+        <div class="title_font">
+            柱状图/折线图
+        </div>
+        <div class="tableArea" id="chart1">
+
+        </div>
+    </div>
+</div>
+<div class="echartsArea">
+    <div class="histogram">
+        <div class="title_font">
+            饼图
+        </div>
+        <div class="tableArea" id="chart2">
+
+        </div>
+    </div>
+</div>
+<script>
+    var chart1 = echarts.init(document.getElementById('chart1'));
+    var chart2 = echarts.init(document.getElementById('chart2'));
+    /*var chart1 = echarts.init(document.getElementById('chart1'));
+    var chart2 = echarts.init(document.getElementById('chart2'));
+    var chart3 = echarts.init(document.getElementById('chart3'));
+     */
+    var index;
+    $(document).ready(function() {
+        (function (){
+            window.addEventListener("resize", function (){
+                this.chart1.resize();
+                this.chart2.resize();
+            });
+        })()
+
+        $("#test").on("click-row.bs.table",function(e, row, $element){
+            index = $element.data('index');
+        });
+
+        $(this).click(function(){
+            $('#test input[type="number"]').blur(function(){
+                updateConuts(this.id);
+            })
+        })
+    });
+    initTable();
+    function initTable() {
+        $("#test").bootstrapTable('destroy');
+        var _data1 = {
+            name: '项目组1',
+            Jan: 10,
+            Feb: 20,
+            Mar: 5,
+            Apr: 9,
+            May: 14,
+            Jun: 6,
+            Jul: 10,
+            Aug: 14,
+            Sep: 16,
+            Oct: 5,
+            Nov: 36,
+            Dec: 25,
+        };
+        var _data2 = {
+            name: '项目组2',
+            Jan: 15,
+            Feb: 20,
+            Mar: 14,
+            Apr: 36,
+            May: 14,
+            Jun: 6,
+            Jul: 2,
+            Aug: 14,
+            Sep: 19,
+            Oct: 5,
+            Nov: 36,
+            Dec: 25,
+        };
+        var _data3 = {
+            name: '项目组3',
+            Jan: 12,
+            Feb: 10,
+            Mar: 5,
+            Apr: 30,
+            May: 14,
+            Jun: 6,
+            Jul: 5,
+            Aug: 14,
+            Sep: 9,
+            Oct: 5,
+            Nov: 36,
+            Dec: 25,
+        };
+        $("#test").bootstrapTable({
+            pagination: false,
+            columns: [{
+                field: "name",
+                title: "测试项目组",
+                align: 'center',
+                class: 'fontCenter',
+                width: 100,
+                formatter: function (index, rows, value) {
+                    var str = "<span id='name"+value+"'>"+rows.name+"</span>";
+                    return str;
+                }
+            }, {
+                field: "Jan",
+                title: "1月案例数",
+                align: 'center',
+                formatter: function (index, rows, value) {
+                    var str = '<input type="number"  min="0" max="1000000" id="Jan'+value+'" class="form-control caseNum" ' +
+                            'onkeyup="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+""+')}else{this.value=this.value.replace(/D/g,'+""+')}"'+
+                            'onafterpaste="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+0+')}else{this.value=this.value.replace(/\D/g,'+""+')}"'+
+                            'value="' + rows.Jan + '" placeholder="请输入" />';
+                    return str;
+                }
+            }, {
+                field: "Feb",
+                title: "2月案例数",
+                align: 'center',
+                formatter: function (index, rows, value) {
+                    var str = '<input type="number"  min="0" max="1000000" id="Feb'+value+'" class="form-control caseNum"' +
+                            'onkeyup="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+""+')}else{this.value=this.value.replace(/D/g,'+""+')}"'+
+                            'onafterpaste="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+0+')}else{this.value=this.value.replace(/\D/g,'+""+')}"'+
+                            'value="' + rows.Feb + '" placeholder="请选择"/>';
+                    return str;
+                }
+            }, {
+                field: "Mar",
+                title: "3月案例数",
+                align: 'center',
+                formatter: function (index, rows, value) {
+                    var str = '<input type="number"  min="0" max="1000000" id="Mar'+value+'" class="form-control caseNum"' +
+                            'onkeyup="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+""+')}else{this.value=this.value.replace(/D/g,'+""+')}"'+
+                            'onafterpaste="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+0+')}else{this.value=this.value.replace(/\D/g,'+""+')}"'+
+                            ' value="' + rows.Mar + '" placeholder="请选择"/>';
+                    return str;
+                }
+            }, {
+                field: "Apr",
+                title: "4月案例数",
+                align: 'center',
+                formatter: function (index, rows, value) {
+                    var str = '<input type="number"  min="0" max="1000000" id="Apr'+value+'" class="form-control caseNum"' +
+                            'onkeyup="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+""+')}else{this.value=this.value.replace(/D/g,'+""+')}"'+
+                            'onafterpaste="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+0+')}else{this.value=this.value.replace(/\D/g,'+""+')}"'+
+                            ' value="' + rows.Apr + '" placeholder="请选择"/>';
+                    return str;
+                }
+            }, {
+                field: "May",
+                title: "5月案例数",
+                align: 'center',
+                formatter: function (index, rows, value) {
+                    var str = '<input type="number"  min="0" max="1000000" id="May'+value+'" class="form-control caseNum" ' +
+                            'onkeyup="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+""+')}else{this.value=this.value.replace(/D/g,'+""+')}"'+
+                            'onafterpaste="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+0+')}else{this.value=this.value.replace(/\D/g,'+""+')}"'+
+                            'value="' + rows.May + '" placeholder="请选择"/>';
+                    return str;
+                }
+            }, {
+                field: "Jun",
+                title: "6月案例数",
+                align: 'center',
+                formatter: function (index, rows, value) {
+                    var str = '<input type="number"  min="0" max="1000000" id="Jun'+value+'" class="form-control caseNum" ' +
+                            'onkeyup="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+""+')}else{this.value=this.value.replace(/D/g,'+""+')}"'+
+                            'onafterpaste="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+0+')}else{this.value=this.value.replace(/\D/g,'+""+')}"'+
+                            'value="' + rows.Jun + '"  placeholder="请选择"/>';
+                    return str;
+                }
+            }, {
+                field: "Jul",
+                title: "7月案例数",
+                align: 'center',
+                formatter: function (index, rows, value) {
+                    var str = '<input type="number"  min="0" max="1000000" id="Jul'+value+'" class="form-control caseNum" ' +
+                            'onkeyup="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+""+')}else{this.value=this.value.replace(/D/g,'+""+')}"'+
+                            'onafterpaste="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+0+')}else{this.value=this.value.replace(/\D/g,'+""+')}"'+
+                            'value="' + rows.Jul + '"  placeholder="请选择"/>';
+                    return str;
+                }
+            }, {
+                field: "Aug",
+                title: "8月案例数",
+                align: 'center',
+                formatter: function (index, rows, value) {
+                    var str = '<input type="number"  min="0" max="1000000" id="Aug'+value+'" class="form-control caseNum" ' +
+                            'onkeyup="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+""+')}else{this.value=this.value.replace(/D/g,'+""+')}"'+
+                            'onafterpaste="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+0+')}else{this.value=this.value.replace(/\D/g,'+""+')}"'+
+                            'value="' + rows.Aug + '"  placeholder="请选择"/>';
+                    return str;
+                }
+            }, {
+                field: "Sep",
+                title: "9月案例数",
+                align: 'center',
+                formatter: function (index, rows, value) {
+                    var str = '<input type="number"  min="0" max="1000000" id="Sep'+value+'" class="form-control caseNum" ' +
+                            'onkeyup="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+""+')}else{this.value=this.value.replace(/D/g,'+""+')}"'+
+                            'onafterpaste="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+0+')}else{this.value=this.value.replace(/\D/g,'+""+')}"'+
+                            'value="' + rows.Sep + '"  placeholder="请选择"/>';
+                    return str;
+                }
+            }, {
+                field: "Oct",
+                title: "10月案例数",
+                align: 'center',
+                formatter: function (index, rows, value) {
+                    var str = '<input type="number"  min="0" max="1000000" id="Oct'+value+'" class="form-control caseNum" ' +
+                            'onkeyup="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+""+')}else{this.value=this.value.replace(/D/g,'+""+')}"'+
+                            'onafterpaste="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+0+')}else{this.value=this.value.replace(/\D/g,'+""+')}"'+
+                            'value="' + rows.Oct + '"  placeholder="请选择"/>';
+                    return str;
+                }
+            }, {
+                field: "Nov",
+                title: "11月案例数",
+                align: 'center',
+                formatter: function (index, rows, value) {
+                    var str = '<input type="number"  min="0" max="1000000" id="Nov'+value+'" class="form-control caseNum" ' +
+                            'onkeyup="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+""+')}else{this.value=this.value.replace(/D/g,'+""+')}"'+
+                            'onafterpaste="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+0+')}else{this.value=this.value.replace(/\D/g,'+""+')}"'+
+                            'value="' + rows.Nov + '"  placeholder="请选择"/>';
+                    return str;
+                }
+            }, {
+                field: "Dec",
+                title: "12月案例数",
+                align: 'center',
+                formatter: function (index, rows, value) {
+                    var str = '<input type="number"  min="0" max="1000000"  id="Dec'+value+'" class="form-control caseNum" ' +
+                            'onkeyup="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+""+')}else{this.value=this.value.replace(/D/g,'+""+')}"'+
+                            'onafterpaste="if(this.value.length==0){this.value=this.value.replace(/[^0-9]/g,'+0+')}else{this.value=this.value.replace(/\D/g,'+""+')}"'+
+                            'value="' + rows.Dec + '"  placeholder="请选择"/>';
+                    return str;
+                }
+            }, {
+                field: "sum",
+                title: "合计",
+                align: 'center',
+                class: 'fontCenter sum',
+                formatter: function (index, rows, value) {
+                    return rows.Jan + rows.Feb + rows.Mar + rows.Apr + rows.May + rows.Jun + rows.Jul + rows.Aug + rows.Sep + rows.Oct + rows.Nov + rows.Dec;
+                }
+            }],
+            onLoadSuccess: function () {
+
+            }
+        });
+        $("#test").bootstrapTable('append', _data1);
+        $("#test").bootstrapTable('append', _data2);
+        $("#test").bootstrapTable('append', _data3);
+
+        var row = $("#test").bootstrapTable("getData");
+        var data=[];
+        var sumArr=[];
+        for( var i=0;i<row.length;i++ ){
+            var data2=[];
+            data2.push( row[i].Jan );
+            data2.push( row[i].Feb );
+            data2.push( row[i].Mar );
+            data2.push( row[i].Apr );
+            data2.push( row[i].May );
+            data2.push( row[i].Jun );
+            data2.push( row[i].Jul );
+            data2.push( row[i].Aug );
+            data2.push( row[i].Sep );
+            data2.push( row[i].Oct );
+            data2.push( row[i].Nov );
+            data2.push( row[i].Dec );
+            data.push( data2 );
+            sumArr.push( $("#test tbody>tr").eq(i).find('.sum').html() );
+        }
+        initPage( data,sumArr )
+    }
+    function createTable() {
+        var data=[];
+        var sumArr=[];
+        for( var i=0;i<$("#test tbody>tr").length;i++ ){
+            var data2=[];
+            var sum=0;
+            for( var j=0;j<$("#test tbody>tr").eq(i).find('.caseNum').length;j++){
+                if( $("#test tbody>tr").eq(i).find('.caseNum').eq(j).val() ){
+                    data2.push( $("#test tbody>tr").eq(i).find('.caseNum').eq(j).val() );
+                    sum=sum+ parseInt( $("#test tbody>tr").eq(i).find('.caseNum').eq(j).val() );
+                }else {
+                    layer.alert('输入数据不能为空，请检查', {
+                        icon: 2,
+                        title: "提示信息"
+                    });
+                    return ;
+                }
+            }
+            $("#test tbody>tr").eq(i).find('.sum').html( sum );
+            data.push( data2 );
+            sumArr.push( sum );
+        }
+        initPage( data,sumArr )
+    }
+    function initPage( data,sumArr ){
+        createEcharts1( data );
+        createEcharts2( sumArr );
+    }
+    function createEcharts1( data ) {
+        var option = {
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                top:"15px",
+                data:['项目组一','项目组二','项目组三']
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true,
+            },
+            toolbox: {
+                top:"15px",
+                right:"45px",
+                feature: {
+                    magicType : {
+                        show : true,
+                        type : [ 'line', 'bar' ]
+                    }
+                }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: true,
+                data: ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'],
+                axisTick:{
+                    show:false
+                }
+            },
+            yAxis: {
+                type: 'value',
+                splitLine:{
+                    show:false
+                },
+                axisTick:{
+                    "show":false
+                },
+            },
+            series: [
+                {
+                    name:'项目组一',
+                    type:'bar',
+                    barWidth: 8,
+                    barGap : 1,
+                    data:data[0],
+                    itemStyle:{
+                        normal: {
+                            color: "#49A9EE"
+                        }
+                    }
+                },
+                {
+                    name:'项目组二',
+                    type:'bar',
+                    barWidth: 8,
+                    barGap : 1,
+                    data:data[1],
+                    itemStyle:{
+                        normal: {
+                            color: "#98D87D"
+                        }
+                    }
+                },
+                {
+                    name:'项目组三',
+                    type:'bar',
+                    barWidth: 8,
+                    barGap : 1,
+                    data:data[2],
+                    itemStyle:{
+                        normal: {
+                            color: "#FFD86E"
+                        }
+                    }
+                }
+            ]
+        };
+        chart1.clear();
+        chart1.setOption(option);
+    }
+
+    function createEcharts2( data ){
+        option = {
+            tooltip : {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                top:"15px",
+                orient: 'vertical',
+                left: 'left',
+                data: ['项目组一','项目组二','项目组三']
+            },
+            color:['#49A9EE', '#98D87D','#FFD86E'],
+            series : [
+                {
+                    name: '项目名称',
+                    type: 'pie',
+                    radius : '65%',
+                    center: ['35%', '60%'],
+                    data:[
+                        {value:data[0], name:'项目组一',selected:true},
+                        {value:data[1], name:'项目组二'},
+                        {value:data[2], name:'项目组三'},
+                    ],
+                    label: {
+                        normal: {
+                            formatter: '  {b}  {per|{d}%}  ',
+                            rich: {
+                                b: {
+                                    fontSize: 16,
+                                    lineHeight: 33
+                                },
+                                per: {
+                                    padding: [2, 4],
+                                    borderRadius: 2
+                                }
+                            }
+                        }
+                    },
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+        chart2.clear();
+        chart2.setOption(option);
+    }
+
+    $(document).keydown(function(event){
+        if( event.keyCode == 13 ){
+            var id = event.target.id;
+            updateConuts(id);
+        }
+    });
+
+    function updateConuts(id){
+        var number = $("#"+id).val();
+        if(number == ""){
+            $("#"+id).val(0);
+        }
+        var _data = {
+            name: $("#name"+index).text(),
+            Jan: parseInt($("#Jan"+index).val()),
+            Feb: parseInt($("#Feb"+index).val()),
+            Mar: parseInt($("#Mar"+index).val()),
+            Apr: parseInt($("#Apr"+index).val()),
+            May: parseInt($("#May"+index).val()),
+            Jun: parseInt($("#Jun"+index).val()),
+            Jul: parseInt($("#Jul"+index).val()),
+            Aug: parseInt($("#Aug"+index).val()),
+            Sep: parseInt($("#Sep"+index).val()),
+            Oct: parseInt($("#Oct"+index).val()),
+            Nov: parseInt($("#Nov"+index).val()),
+            Dec: parseInt($("#Dec"+index).val())
+        };
+        $('#test').bootstrapTable('updateRow', {index: index, row: _data});
+    }
+
+</script>
+</body>
+</html>

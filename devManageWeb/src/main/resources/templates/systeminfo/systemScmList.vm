@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>用户管理</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />  
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />   
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/systeminfoList/systemScmList.css" />   
+    
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>  
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>     
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/devManageui/static/js/systeminfoList/systemScmList.js"></script>
+</head>
+<body> 
+	<div>
+		<p class="codeTitle">子系统源码配置</p> 
+		<div class="btnArea">	
+			<button class="btn btn-primary" id="addBtn">新增配置</button>
+		</div>
+		<div>
+			<table id="codeConfigTable"></table> 
+		</div>
+	</div>	
+    <div id="loading"> 
+		<img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+    </div>  
+</body> 
+</html>
+ 

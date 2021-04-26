@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>IT综合管理系统-首页</title>
+    <!-- 判断是否是超时跳转回来的 -->
+    <script type="text/javascript">
+        var islogin = document.getElementById("navbar");
+        if (islogin != null)
+            window.location = "/";
+    </script>
+    <script type="text/javascript">
+        var message = "$!message";
+        var errorCode = "$!errorCode";//"0009"属于系统异常用黑色弹框展示 ；"9999"属于验证失败显示在div
+    </script>
+</head>
+<link rel="shortcut icon" type="image/x-icon" href="#springUrl('')/systemui/static/images/icon.png" media="screen">
+<link rel="stylesheet" type="text/css" href="#springUrl('')/systemui/static/assets/css/bootstrap-responsive.min.css"/>
+<link rel="stylesheet" type="text/css" href="#springUrl('')/systemui/static/assets/css/bootstrap.min.css"/>
+<link rel="stylesheet" type="text/css" href="#springUrl('')/systemui/static/css/common.css"/>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/jquery-1.8.0.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/assets/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/login.js"></script>
+<body>
+<div id="myCarousel" class="carousel slide">
+    <div class="carousel-inner">
+        <div class="item active">
+            <img src="#springUrl('')/systemui/static/images/index/1011.2.jpg" alt="">
+        </div>
+        <div class="item">
+            <img src="#springUrl('')/systemui/static/images/index/1011.3.jpg" alt="">
+        </div>
+        <div class="item">
+            <img src="#springUrl('')/systemui/static/images/index/1011.1.jpg" alt="">
+        </div>
+    </div>
+    <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+    <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
+</div>
+<div class="container-login">
+    <form name="form1" class="form-signin" autocomplete="off">
+        <h2 class="form-signin-heading" style="color:#97BEC3">IT综合管理系统</h2>
+        <input type="text" id="userAccount" name="userAccount" value="$!userAccount" class="input-block-level"
+               placeholder="用户名">
+        <input type="password" id="password" autocomplete="new-password" name="password" class="input-block-level"
+               placeholder="密码">
+        <input class="btn btn-primary" type="button" value="登录" onclick="loginExt()">
+        <div class="txtlayer"   #if($!error != 1) style="display:none;"#end>
+            <img src="#springUrl('')/systemui/static/images/!.png" width="14" height="14"/>
+            <span><font color="yellow" id="errspan">#if($!error == 1) $!errMsg #end</font></span>
+        </div>
+        <div></div>
+    </form>
+</div>
+</body>
+</html>

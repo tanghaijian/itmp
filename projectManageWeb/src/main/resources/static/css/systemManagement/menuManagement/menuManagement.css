@@ -1,0 +1,33 @@
+@charset "UTF-8";
+.box-body {
+	width: auto;
+}
+.fontContent {
+	display: inline-block;
+	position: relative;
+	white-space:nowrap;
+	overflow-x:hidden;
+}
+td{
+	position: relative;
+}
+.inputContent {
+	width: 100%;
+	position: absolute;
+	padding: 6px 12px;
+	left: 0px;
+	top: 2px;
+	display: none;
+}
+.form-control {
+	align:center;
+}
+.saveBack_a {
+	display: none;
+}
+.status_2 {
+	display: inline-block;
+}
+.insertBack_a {
+	display: none;
+}

@@ -1,0 +1,313 @@
+<!-- liushan:新建缺陷弹框中表单 -->
+
+<form class="form-horizontal" id="newDefectFrom" accept-charset="utf-8" enctype="multipart/form-data">
+    <div class="rowdiv">
+        <div class="form-group">
+            <div class="def_col_4 font_right ">
+                工作任务：
+            </div>
+            <div class="def_col_32 parent_relative">
+                <input id="testTaskId" type="hidden"/>
+                <input id="new_requirementCode" type="hidden"/>
+                <input id="flag" type="hidden"/>
+                <input type="text" class="form-control pointStyle" onFocus="this.blur();"
+                       placeholder="请选择" id="testTaskName" name="testTaskName"/>
+            </div>
+        </div>
+    </div>
+    <div class="rowdiv">
+        <div class="form-group">
+            <div class="def_col_4 font_right ">
+                <span id="sp">*</span>缺陷摘要：
+            </div>
+            <div class="def_col_32">
+                <input type="text" class="form-control" placeholder="请输入" id="new_defectSummary"
+                       name="defectSummary"/>
+            </div>
+        </div>
+    </div>
+    <div class="rowdiv">
+		<div class="form-group def_col_18">
+			<div class="def_col_8 font_right"><span id="sp">*</span>关联项目：</div>
+			<div class="def_col_28">
+				<input type="hidden" id="newProjectId"/>
+				<input type="text" class="form-control" 
+					placeholder="请输入名称或编号进行匹配" name="newProjectName" id="newProjectName" />
+			</div>
+		</div> 
+        <div class="form-group def_col_18">
+            <div class="def_col_8 font_right">
+                <span id="sp">*</span>子系统：
+            </div>
+            <div class="def_col_28">
+                <input id="systemId" type="hidden"/>
+                <input id="systemCode" type="hidden"/>
+                <input type="text" class="form-control pointStyle" style="background-color: white"
+                       onFocus="this.blur();" placeholder="请选择" id="system_Name" name="system_Name"/>
+            </div>
+        </div>
+    #*<div class="def_col_4 font_right">
+        关联案例：
+    </div>
+    <div class="def_col_14">
+        <input id="new_caseNumber" type="hidden"/>
+        <input id="testCaseId" type="hidden"/>
+        <input class="form-control pointStyle"  type="text"  onFocus="this.blur();" placeholder="请输入案例编号" id="testCaseName" name="testCaseName" />
+    </div>*#
+
+    </div>
+    
+    <div class="rowdiv">
+        <div class="form-group def_col_18">
+            <div class="def_col_8 font_right ">
+                <span id="sp">*</span>缺陷类型：
+            </div>
+            <div class="def_col_28">
+                <select class="selectpicker" id="new_defectType" name="defectType">
+                    <option value="">请选择</option>
+                    #foreach($dictMap in ${dict.getDictMap(
+                        "TBL_DEFECT_INFO_DEFECT_TYPE").entrySet()})
+                        <option value="${dictMap.key}">${dictMap.value}</option>
+                    #end
+                </select>
+            </div>
+        </div>
+        <div class="form-group def_col_18">
+            <div class="def_col_8 font_right ">
+                <span id="sp">*</span>缺陷来源：
+            </div>
+            <div class="def_col_28">
+                <select class="selectpicker" id="new_defectSource" name="defectSource">
+                    <option value="">请选择</option>
+                    #foreach($dictMap in ${dict.getDictMap(
+                        "TBL_DEFECT_INFO_DEFECT_SOURCE").entrySet()})
+                        <option value="${dictMap.key}">${dictMap.value}</option>
+                    #end
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="rowdiv">
+        <div class="form-group def_col_18">
+            <div class="def_col_8 font_right ">
+                <span id="sp">*</span>缺陷等级：
+            </div>
+            <div class="def_col_28">
+                <select class="selectpicker" id="new_severityLevel" name="severityLevel">
+                    <option value="">请选择</option>
+                    #foreach($dictMap in ${dict.getDictMap(
+                        "TBL_DEFECT_INFO_SEVERITY_LEVEL").entrySet()})
+                        <option value="${dictMap.key}">${dictMap.value}</option>
+                    #end
+                </select>
+            </div>
+        </div>
+        <div class="form-group def_col_18">
+            <div class="def_col_8 font_right ">
+                <span id="sp">*</span>紧急程度：
+            </div>
+            <div class="def_col_28">
+                <select class="selectpicker" id="new_emergencyLevel" name="emergencyLevel">
+                    <option value="">请选择</option>
+                    #foreach($dictMap in ${dict.getDictMap(
+                        "TBL_DEFECT_INFO_EMERGENCY_LEVEL").entrySet()})
+                        <option value="${dictMap.key}">${dictMap.value}</option>
+                    #end
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="rowdiv">
+        <div class="form-group def_col_18">
+            <div class="def_col_8 font_right ">
+                <span id="sp">*</span>修复轮次：
+            </div>
+            <div class="def_col_28">
+                <input type="number" min="1" max="1000000" class="form-control" placeholder="请输入"
+                       onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                       onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'0')}else{this.value=this.value.replace(/\D/g,'')}"
+                       id="new_repairRound" name="repairRound"/>
+            </div>
+        </div>
+        <div class='form-group def_col_18'>
+            <div class="def_col_8 font_right ">
+                <span id="sp">*</span>主修复人：
+            </div>
+            <div class="def_col_28">
+                <input type="hidden" id="new_assignUserId"/>
+                <input type="text" class="form-control"
+                       placeholder="请输入关键字搜索" id="new_assignUserName" name="new_assignUserName"/>
+            </div>
+        </div>
+    </div>
+    <div class="rowdiv">
+        <div class='form-group def_col_18'>
+            <div class="def_col_8 font_right ">
+                测试人：
+            </div>
+            <div class="def_col_28">
+                <input type="hidden" id="new_testUserId"/>
+                <input type="text" class="form-control"
+                       placeholder="请输入关键字搜索" id="new_testUserName" name="testUserName"/>
+            </div>
+        </div>
+        <div class='form-group def_col_18  is_new_project'>
+            <div class="def_col_8 font_right ">
+                <span id="sp">*</span>投产窗口：
+            </div>
+            <div class="def_col_28">
+                <input type="hidden" id="new_windowId"/>
+                <input type="text" class="form-control pointStyle readonly" onFocus="this.blur();"
+                       placeholder="请选择" id="new_windowName" name="new_windowName"/>
+            </div>
+        </div>
+    </div>
+    <div class="rowdiv">
+	        <div class='form-group def_col_18'>
+	            <div class="def_col_8 font_right ">
+	                开发人员：
+	            </div>
+	            <div class="def_col_28">
+	                <input type="hidden" id="new_developerId"/>
+	                <input type="text" class="form-control"
+	                       placeholder="请输入关键字搜索" id="new_developer" name="new_developer"/>
+	            </div>
+	        </div>
+	        <div class='form-group def_col_18'>
+		        <div class="def_col_8 font_right">
+		            	模块：
+		        </div>
+		        <div class="def_col_28">
+		            <input type="text" class="form-control pointStyle readonly" onFocus="this.blur();"
+		                   placeholder="请选择" id="assetSystemTreeId" name="assetSystemTreeId"
+		                   onclick="showAssetSystemTrees()"/>
+		            <span onclick='clearSelectedAssetSystemTree(this)' class='btn_clear'
+		                  style='display:none;'></span>
+		        </div>
+		    </div>
+	    #* <div class='form-group def_col_18'>
+	        <div class="def_col_8 font_right">
+	            项目小组：
+	        </div>
+	        <div class="def_col_28">
+	            <input type="text" class="form-control pointStyle readonly" onFocus="this.blur();"
+	                   placeholder="请选择" id="projectGroupId" name="projectGroupId"
+	                   onclick="showProjectGroups()"/>
+	            <span onclick='clearSelectedProjectGroup(this)' class='btn_clear'
+	                  style='display:none;'></span>
+	        </div>
+	    </div> *#
+    </div>
+    <div class="rowdiv">
+        <div class='form-group def_col_18'>
+            <div class="def_col_8 font_right ">发现环境：
+            </div>
+            <div class="def_col_28">
+                <select class="selectpicker" id="new_discovery_Environment">
+                    <option value="">请选择</option>
+                    #foreach($dictMap in ${dict.getDictMap(
+                        "TBL_DEFECT_INFO_DISCOVERY_ENVIRONMENT").entrySet()})
+                        <option value="${dictMap.key}">${dictMap.value}</option>
+                    #end
+                </select>
+            </div>
+        </div>
+    </div>
+ #*<div class="rowdiv">
+    <div class='form-group def_col_18'>
+        <div class="def_col_8 font_right ">
+            关闭时间：
+        </div>
+        <div class="def_col_28">
+            <input type="text" class="form-control pointStyle readonly" onFocus="this.blur();"
+                   id="closeTime" name="closeTime" placeholder="请选择时间"/>
+        </div>
+    </div>
+</div> *#
+#* <div class="rowdiv">
+    <div class='form-group def_col_18'>
+        <div class="def_col_8 font_right">
+            发现版本号：
+        </div>
+        <div class="def_col_28">
+            <select class="selectpicker" id="detectedSystemVersionId" name="detectedSystemVersionId"
+                    data-live-search="true">
+                <option value="">请选择</option>
+            </select>
+        </div>
+    </div>
+    <div class='form-group def_col_18'>
+        <div class="def_col_8 font_right">
+            修复版本号：
+        </div>
+        <div class="def_col_28">
+            <select class="selectpicker" id="repairSystemVersionId" name="repairSystemVersionId"
+                    data-live-search="true">
+                <option value="">请选择</option>
+            </select>
+        </div>
+    </div>
+</div> *#
+#* <div class="rowdiv">
+    <div class='form-group def_col_18'>
+        <div class="def_col_8 font_right">
+            期望修复日期：
+        </div>
+        <div class="def_col_28">
+            <input type="text" class="form-control pointStyle readonly" onFocus="this.blur();"
+                   id="expectRepairDate" name="expectRepairDate" placeholder="请选择日期"/>
+        </div>
+    </div>
+    <div class='form-group def_col_18'>
+        <div class="def_col_8 font_right">
+            估计工作量：
+        </div>
+        <div class="def_col_28">
+            <input type="number" step="0.1" class="form-control" id="estimateWorkload"
+                   name="estimateWorkload" onkeyup="estimateWorkloadReformat(this)"
+                   onafterpaste="estimateWorkloadReformat(this)" placeholder="请输入"/>
+        </div>
+    </div>
+</div> *#
+#* <div class="rowdiv">
+    <div class="def_col_36 form-group">
+        <div class="def_col_4 font_right ">
+            根本原因描述：
+        </div>
+        <div class="def_col_32">
+            <div id="rootCauseAnalysis" name="rootCauseAnalysis" class="">
+            </div>
+        </div>
+    </div>
+</div>*#
+    <div id="canEditField" class="rowdiv">
+    </div>
+    <div class="rowdiv">
+        <div class="def_col_36 form-group">
+            <div class="def_col_4 font_right ">
+                <span id="sp">*</span>缺陷描述：
+            </div>
+            <div class="def_col_32">
+                <div id="defectOverview" name="defectOverview" class="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="rowdiv">
+        <div class="def_col_4 font_right ">
+            相关附件：
+        </div>
+        <div class="def_col_32">
+            <div class="file-upload-select">
+                <input type="file" name="files" class="upload-files" multiple="multiple"
+                       id="uploadFile"/>
+            </div>
+            <div class="file-upload-list">
+                <table class="file-upload-tb" id='newFileTable'>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</form>

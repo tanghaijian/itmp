@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>项目管理</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" /> 
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/daterangepicker-bs3.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" /> 
+    <link rel="stylesheet"  type="text/css"  media="screen" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" /> 
+	
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/jquery.ba-resize.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/moment.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/daterangepicker.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/projectManageui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/projectManageui/static/jqgrid/js/jquery.jqGrid.js"></script> 
+    <script type="text/ecmascript" src="#springUrl('')/projectManageui/static/js/project/editProject/editProject.js"></script>
+    
+    <!-- ZTree树形插件 -->  
+	<link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/zTreeStyle.css" type="text/css">  
+	<!-- <link rel="stylesheet" href="<%=root%>/Web/common/css/zTreeStyle/zTreeIcons.css" type="text/css">  -->  
+	<script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/jquery-ztree-2.5.min.js"></script> 
+    <script>
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap4';
+        $.jgrid.defaults.iconSet = "fontAwesome"; 
+    </script> 
+    <style> 
+        [class*="def_col_"]{
+        	padding: 0;
+        }
+        body{
+            padding: 10px;
+            font-size: 12px;
+        }
+        label{
+            margin-bottom: 0;
+        }
+        .btn{
+            line-height: 16px;
+        }
+        .preject{
+            display: flex;
+            flex-direction: row;
+        }
+        .prejectDiv{
+            width: 50%;
+            background-color: #F4F4FB;
+            padding: 5px 0;
+            border-radius: 4px;
+        }
+        .rowdiv{
+            padding-right: 40px;
+            margin-bottom: 8px;
+        }
+        .def_content{
+            padding: 0 0 8px;
+            width:auto;
+        }
+        #memberGroup{
+        	padding: 0 15px 8px 30px;
+        }
+        .font_right{
+            text-align: right;
+        } 
+        .def_Div{
+            position: relative;
+        }
+        .def_hideInput{
+            width: 100%;
+            display: block;
+            top:0;
+            left: 0;
+            height: 28px;
+            line-height: 28px;
+            position: relative;
+        }
+        .def_hideDiv{
+        	top:0;
+            left: 0;
+            position: relative;
+        }
+        .def_hideInput .btn{
+            height: 28px;
+        }
+        .def_hideTextarea{
+            position: relative;
+            top:0;
+            left: 0;
+            height: 100% !important;
+        }
+        
+        .def_pjDiv{   
+            position: relative;
+            flex-wrap: wrap;
+        }
+        .def_pjDiv_del_hide,.def_pjDiv_del_show{
+            position: absolute;
+            top: 0;
+            left: 5px;
+            width: 14px;
+            height: 14px;
+        }
+        .def_pjDiv_del_hide{
+            margin-top: 9px;
+            background: url("../static/images/close_hide_icon.png");
+            background-size: cover;
+        }
+        .def_pjDiv_del_show{
+            background: url("../static/images/close_show_icon.png");
+            background-size: cover;
+            cursor: pointer;
+        }
+        .def_pjDiv_tit{
+            line-height: 32px;
+            padding-left:24px;
+            padding-right:20px;
+            position: relative;
+            min-width: 51%;
+        }
+        .def_pjDiv_cont{
+            min-width: 51%;
+        }
+        .def_small_btn{
+        	display: none;
+            line-height: 21px;
+            height: 22px;
+            padding: 0 12px;
+            float: right;
+            margin: 5px 0 0 10px;
+        }
+        .def_pjMember{
+            margin-left: 12px;
+            padding-left: 8px;
+            border-left: 1px solid #CCCCCC;
+        }
+        .def_pjMember .rowdiv{
+            display: flex;
+            flex-direction: row;
+            height: 26px;
+            padding-right: 20px;
+            margin: 0;
+        }
+        .def_pjMember_num{
+            position: relative;
+            padding-left: 20px;
+        }
+        .def_pjMember_div{
+            position: relative;
+            min-width: 68px;
+            padding-left: 10px;
+        }
+        .control_i{
+            margin-top: 3px;
+        }
+        
+        .def_selectHide,.def_selectHide .btn{
+            position: relative;
+            top: 0;
+            left: 0;
+        }
+        .def_selectHide,.def_selectHide .bootstrap-select{
+            height: 22px;
+            line-height: 22px;
+        }
+         .def_selectHide .bootstrap-select .btn{
+            height: 21px;
+            line-height: 20px;
+            padding: 0 14px 0 6px;
+        }
+        .def-pj-label{
+            height: 22px;
+            line-height: 22px;
+            font-weight: 500;
+        }
+        .def_hideSelect .dropdown-menu>li>a{
+            padding: 1px 10px;
+        }
+        .btnDiv{
+            width: 100%;
+            padding-top: 15px;
+            text-align: center;
+        }
+        .btnDiv .btn{
+            font-size: 14px !important;
+            padding: 6px 30px;
+        }
+        .def_Btn{
+            display: none;
+        }
+        .def_btngro{
+            margin-left: 30px;
+        }
+        .def_btngro .btn{
+            padding: 5px 11px
+        } 
+    	.addSysNames{ 
+    	 	position: relative;
+    		display: inline-block; 
+    		margin: 3px 0px 3px 10px; 
+    		border-radius: 4px;
+    		padding: 0 7px;
+    		line-height: 18px; 
+    		background-color: #D8D8EF;
+    		z-index: 10;
+    	}
+    	.close_x{
+    		margin-left: 3px;
+    		cursor: pointer;
+    	}
+    	#select_Correlation .rowdiv{
+    		margin:0;
+    	}
+    	#select_Correlation .search_btn{
+    		margin-bottom:10px;
+    	}
+    		background-color: #D8D8EF;
+    		z-index: 10;
+    	}
+    	[class^="def_hide"]{
+         	display: none !important;  
+        }
+        .fakeInput{
+        	min-height: 28px;
+        }
+        .btnSave{
+        	margin-right: 20px;
+        } 
+        .jobSelect{ 
+        }
+        .def_selectHide{
+        	display: none;
+        }
+        .bootstrap-select.btn-group .dropdown-toggle .caret{
+        	right: 6px;
+        	margin-top: -1px;
+        }
+        #projectGroupModal .modal-body{
+        	padding: 18px 34px 0px;
+        }
+        .wode{
+        	margin-top: 15px;
+        }  
+        #projectGroupModal td{
+        	position: relative;
+        }
+        #projectOverview{
+        	border: none;
+        	min-height: 29.6px;  
+        	padding: 6px;
+        	font-size: 12px;
+        	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+        	Letter-spacing: -0.4px;
+        	color: #666666;
+            resize:none;
+        }
+        #overview{
+            resize:none;
+        }
+    </style>
+<body> 
+	<input type="hidden" id="id" name="id" value=$!id />
+	<input type="hidden" id="type" name="type" value=$!type /> 
+	<input type="hidden" id="is_home_page" value="$!home" /> 
+    <div class="preject">
+        <div class="prejectDiv " style="margin-right: 10px;">
+            <div class="def_title">项目基本信息</div>
+            <div class="def_content">
+	            <form id="prejectForm">
+	            	 <div class="rowdiv">
+	                	<div class="form-group def_col_18">
+	                		<label class="def_col_12 font_right control-label fontWeihgt"><span class="redStar" style="color:red;">*</span>项目编号：</label>
+		                    <div class="def_col_24 def_Div">
+		                        <label class="control-label font_left def_show" id="projectCode"></label>
+		                        <input class="form-control def_hideInput" id="code" name="code" value="" />
+		                    </div>
+	                	</div> 
+	                	<div class="form-group def_col_18">
+		                	<label class="def_col_12 font_right control-label fontWeihgt"><span class="redStar" style="color:red;">*</span>项目名称：</label>
+		                    <div class="def_col_24 def_Div">
+		                        <label class="control-label font_left def_show" id="projectName"></label>
+		                        <input class="form-control def_hideInput" id="name" name="name" value="" />
+		                    </div>
+	                	</div> 
+	                </div>
+	                <div class="rowdiv">
+	                    <label class="def_col_6 font_right control-label fontWeihgt">项目状态：</label>
+	                    <div class="def_col_12 def_Div">
+	                        <label class="control-label font_left def_show" id="projectStatus"></label> 
+	                        <select class="selectpicker def_hideInput" id="status" name="status">
+	                        </select>
+	                    </div> 
+	                </div>
+	                <div class="rowdiv">
+	                	<label class="def_col_6 font_right control-label fontWeihgt">关联子系统：</label>
+	                    <div class="def_col_30 def_Div">
+	                        <label class="control-label font_left def_show" id="systemName"></label> 
+	                        <div id = "systems" class="def_hideDiv fakeInput pointStyle" onclick="selectCorrelation2()">
+	                       	
+	                       	</div>
+	                    </div>
+	                </div>
+	                <div class="rowdiv">
+	                    <label class="def_col_6 font_right control-label fontWeihgt">项目简介：</label>
+	                    <div class="def_col_30 def_Div " >
+	                        <pre id="projectOverview" class="def_show" ></pre>
+	                        <textarea class="form-control def_hideTextarea" id="overview"></textarea>
+	                    </div>
+	
+	                </div>
+	    		</form> 
+            </div>
+        </div>
+        <div class="prejectDiv">
+            <div class="def_title">项目成员</div>
+            <div class="def_btngro">
+                <button class="btn btn-primary def_hideBtn" onclick="mainProjectGroup()">维护项目组织</button>
+            </div>
+            <div class="def_content" id="memberGroup">
+                    
+            </div>
+        </div>
+    </div>
+    <div class="btnDiv">
+        <button class="btn btn-primary btnSave" onclick="save()">保&nbsp;&nbsp;存</button> 
+        <button id="back_btn" class="btn btn-default" onClick="javascript :history.go(-1);">返&nbsp;&nbsp;回</button>
+    </div>
+
+<!-- 编辑的子系统弹窗 -->
+<div class="modal fade bs-example-modal-lg" id="select_Correlation" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-lg modal-user" role="document">
+            <div class="modal-content modalStyle">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <span class="modal-title" id="myModalLabel">选择关联系统</span>
+           	 </div>  
+                <div class="modal-body">
+                     <div class="color1">
+	                     <div class="container-fluid" id="search_div2">
+	                         <div class="rowdiv control-row">
+	                             <div class="col-md-2">
+	                                 
+	                             </div>
+	                             <div class="col-md-4">
+	                                 <div class="search_font"><label class="control-label">子系统名称：</label></div>
+	                                 <div class="search_input">
+	                                     <input type="text" class="form-control" placeholder="请选择" id="SCsystemName" name="systemName" value="" />
+	                                 </div>
+	                             </div>
+	                             <div class="col-md-4">
+	                                 <div class="search_font"><label class="control-label">子系统编码：</label></div>
+	                                 <div class="search_input">
+	                                    <input type="text" class="form-control" placeholder="请选择" id="SCsystemCode" name="systemCode" value="" />
+	                                 </div>
+	                             </div>
+	                             <div class="col-md-2">
+	                                  
+	                             </div>
+	                         </div>
+	                         <div class="rowdiv control-row search_btn">
+	                             <button type="button" class="btn btn-primary" onclick="selectCorrelation()">搜&nbsp;&nbsp;&nbsp;索</button>
+	                             <button type="button" onclick="clearSearch2()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+	                         </div>
+	
+	                     </div>
+	                     <div id="downBtn2">
+	                         <span class="fa fa-caret-up"></span>
+	                     </div>
+	                 </div>
+	                 <br>
+	                 <div class="content-table">
+	                     <div class="wode">
+	                         <table id="presonTable"></table> 
+	                     </div>
+	                 </div> 
+                </div> 
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="insertRoleUser()">添加</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div> 
+            </div>
+        </div>
+    </div>
+    
+<!--编辑项目添加人员弹框 -->
+    <div class="modal fade bs-example-modal-lg" id="userModal" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-lg modal-user" role="document">
+            <div class="modal-content modalStyle">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <span class="modal-title">选择关联的人员</span>
+                </div>
+                <div class="modal-body">
+                	<input type="hidden" id="user_groupId" value=""  />
+                    <div class="color1">
+                        <div class="container-fluid" id="search_div">
+                            <div class="row control-row">
+                                <div class="col-md-3">
+                                    <div class="search_font"><label class="control-label">姓名：</label></div>
+                                    <div class="search_input">
+                                        <input type="text" class="form-control " placeholder="请输入" id="userName" name="userName" value="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="search_font"><label class="control-label">工号：</label></div>
+                                    <div class="search_input">
+                                        <input type="text" class="form-control" placeholder="请输入" id="employeeNumber" name="employeeNumber" value="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="search_font"><label class="control-label">部门：</label></div>
+                                    <div class="search_input">
+                                        <!-- <select class="selectpicker" id="deptName" name="deptName">
+                                       		<option value="">请选择</option>
+                                        </select> -->
+                                        <input type="text" class="form-control" placeholder="请输入" id="deptName" name="deptName" value="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="search_font"><label class="control-label">公司：</label></div>
+                                    <div class="search_input">
+                                        <!-- <select class="selectpicker" id="companyName" name="companyName">
+                                        	<option value="">请选择</option>
+                                        </select> -->
+                                        <input type="text" class="form-control" placeholder="请输入" id="companyName" name="companyName" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row control-row search_btn">
+                                <button type="button" class="btn btn-primary" onclick="add2()">搜&nbsp;&nbsp;&nbsp;索</button>
+                                <button type="button" onclick="clearSearch()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                            </div>
+
+                        </div>
+                        <div id="downBtn">
+                            <span class="fa fa-caret-up"></span>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="content-table">
+                         <table id="userTable"></table>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="insertUser()">添&nbsp;&nbsp;&nbsp;加</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取&nbsp;&nbsp;&nbsp;消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 维护项目组织弹窗 -->
+    <div class="modal fade bs-example-modal-lg" id="projectGroupModal" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-lg modal-user" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <span class="modal-title">维护项目组织</span>
+                </div>
+                <div class="modal-body">
+                    <button type="button" class="btn btn-primary" onclick="addProjectGroup()">新增项目小组</button>
+                    <br>
+                    <div class="wode"> 
+                    	<table id="projectGroupTable"></table> 
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                	<button type="button" class="btn btn-default" onclick="sure()">确&nbsp;&nbsp;&nbsp;定</button> 
+                </div>
+            </div>
+        </div>
+    </div> 
+    
+    <div id="loading"> 
+		<img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+   </div> 
+</body>
+</html>
+ 

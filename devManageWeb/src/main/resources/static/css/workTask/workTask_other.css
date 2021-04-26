@@ -1,0 +1,39 @@
+
+.input_tit{
+	display:none;
+}
+.search_list{
+	top: 29px;
+}
+._form-control>._form-control{
+	padding-left: 0;
+}
+._form-control .btn_clear{
+	display:none !important;
+}
+.system_tit{
+	 text-align: center;
+    font-weight: bold;
+    padding-bottom: 5px;
+    color: #2f72d8;
+}
+
+#dropdown_menu a{
+	text-align: center;
+}
+.table-success{
+    background-color: rgba(0, 0, 0, 0.05);
+}
+.collection2 {
+    position: static;
+    display: inline-block;
+    padding-right: 50px;
+    padding-left: 20px;
+}
+
+.search_btn .bootstrap-select{ 
+		width: auto !important;
+		}
+.search_btn .bootstrap-select .btn{
+	width: 100%;
+}

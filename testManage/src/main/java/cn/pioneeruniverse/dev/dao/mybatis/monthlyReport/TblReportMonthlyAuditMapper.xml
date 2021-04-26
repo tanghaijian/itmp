@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.monthlyReport.TblReportMonthlyAuditMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlyAudit">
+        <id column="ID" jdbcType="BIGINT"  property="id" />
+        <result column="YEAR_MONTH" jdbcType="VARCHAR" property="yearMonth"/>
+        <result column="USER_ID" jdbcType="BIGINT" property="userId"/>
+        <result column="USER_NAME" jdbcType="VARCHAR" property="userName"/>
+        <result column="SYSTEM_ID" jdbcType="BIGINT" property="systemId"/>
+        <result column="SYSTEM_NAME" jdbcType="VARCHAR" property="systemName"/>
+        <result column="DATA1_ID" jdbcType="BIGINT" property="data1Id"/>
+        <result column="DATA2_ID" jdbcType="BIGINT" property="data2Id"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+    </resultMap>
+
+
+
+
+
+</mapper>

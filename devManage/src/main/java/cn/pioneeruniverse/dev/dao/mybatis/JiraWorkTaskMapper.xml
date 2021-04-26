@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.JiraWorkTaskMapper">
+
+<!-- 获取某个系统模块的系统目录树ID -->
+  <select id="findAssetSystemTreeID"  resultType="Long">
+    SELECT tast1.ID
+    FROM tbl_asset_system_tree tast1
+    WHERE tast1.PARENT_ID = (
+      SELECT tast.ID
+      FROM tbl_asset_system_tree tast
+      LEFT JOIN tbl_asset_tree_tier tatt ON tast.ASSET_TREE_TIER_ID = tatt.ID
+      WHERE tatt.`STATUS` = 1 AND tatt.ASSET_TREE_TYPE = 2 AND tatt.TIER_NUMBER = 1
+      AND tast.`STATUS` = 1 AND tast.SYSTEM_TREE_STATUS = 1
+      AND tast.SYSTEM_TREE_CODE = #{systemCode}
+    )
+    AND tast1.`STATUS` = 1 AND tast1.SYSTEM_TREE_STATUS = 1
+    AND tast1.SYSTEM_TREE_CODE =#{module}
+  </select>
+
+<!-- 获取某个系统下的模块 -->
+  <select id="findAssetSystemTreeID1"  resultType="Long">
+    SELECT tast.ID
+    FROM tbl_asset_system_tree tast
+    WHERE tast.`STATUS` = 1 AND tast.SYSTEM_TREE_STATUS = 1
+    AND tast.PARENT_ID = #{id} AND tast.SYSTEM_TREE_CODE =#{module}
+  </select>
+
+<!-- 通过项目小组名称获取项目小组ID -->
+  <select id="findProjectGroupID" parameterType="String" resultType="Long">
+    SELECT tpg.ID FROM tbl_project_group tpg
+    WHERE tpg.`STATUS` = 1 AND tpg.PROJECT_GROUP_NAME = #{projectGroupName}
+  </select>
+
+<!-- 获取版本ID -->
+  <select id="getSystemVersionID" resultType="Long">
+    select tsv.ID
+    from tbl_system_version tsv
+    where tsv.SYSTEM_ID = #{systemId}
+    AND tsv.GROUP_FLAG = #{groupFlag}
+    AND tsv.VERSION = #{version}
+  </select>
+
+<!-- 同步jira的工作任务 -->
+  <insert id="insertJiraWorkTask" parameterType="cn.pioneeruniverse.common.entity.JiraDevelopmentVO"
+          useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO tbl_requirement_feature(
+        FEATURE_CODE,FEATURE_NAME,FEATURE_OVERVIEW,REQUIREMENT_FEATURE_STATUS,SYSTEM_ID,CREATE_TYPE,
+        REQUIREMENT_FEATURE_PRIORITY,MANAGE_USER_ID,EXECUTE_USER_ID,asset_system_tree_id,
+        EXECUTE_PROJECT_GROUP_ID,PLAN_START_DATE,PLAN_END_DATE,ESTIMATE_WORKLOAD,ESTIMATE_REMAIN_WORKLOAD,
+        repair_SYSTEM_VERSION_ID,FIELD_TEMPLATE,STATUS,CREATE_BY,CREATE_DATE,LAST_UPDATE_BY,LAST_UPDATE_DATE)
+    VALUES(
+        #{featureCode},#{featureName},#{featureOverview},#{requirementFeatureStatus},#{systemId},#{createType},
+        #{requirementFeaturePriority},#{manageUserId},#{executeUserId},#{assetSystemTreeId},#{executeProjectGroupId},
+        #{planStartDate},#{planEndDate},#{estimateWorkload},#{estimateRemainWorkload},#{repairSystemVersionId},
+        #{fieldTemplate},#{status},#{createBy},#{createDate},#{lastUpdateBy},#{lastUpdateDate})
+  </insert>
+
+<!-- 更新jira的工作任务 -->
+  <insert id="updateJiraWorkTask" parameterType="cn.pioneeruniverse.common.entity.JiraDevelopmentVO">
+    UPDATE tbl_requirement_feature
+    set
+    FEATURE_NAME = #{featureName},
+    FEATURE_OVERVIEW = #{featureOverview},
+    SYSTEM_ID = #{systemId},
+    REQUIREMENT_FEATURE_PRIORITY = #{requirementFeaturePriority},
+    MANAGE_USER_ID = #{manageUserId},
+    EXECUTE_USER_ID = #{executeUserId},
+    asset_system_tree_id = #{assetSystemTreeId},
+    EXECUTE_PROJECT_GROUP_ID = #{executeProjectGroupId},
+    PLAN_START_DATE = #{planStartDate},
+    PLAN_END_DATE = #{planEndDate},
+    ESTIMATE_WORKLOAD = #{estimateWorkload},
+    ESTIMATE_REMAIN_WORKLOAD = #{estimateRemainWorkload},
+    repair_SYSTEM_VERSION_ID = #{repairSystemVersionId},
+    LAST_UPDATE_BY = #{lastUpdateBy},
+    LAST_UPDATE_DATE = #{lastUpdateDate}
+    where ID = #{id}
+  </insert>
+
+</mapper>

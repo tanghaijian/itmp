@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblCaseInfoMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblCaseInfo">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <id column="SYSTEM_ID" jdbcType="INTEGER" property="systemId" />
+    <id column="CASE_CATALOG_ID" jdbcType="INTEGER" property="caseCatalogId" />
+    <id column="CASE_NAME" jdbcType="VARCHAR" property="caseName" />
+    <id column="CASE_NUMBER" jdbcType="VARCHAR" property="caseNumber" />
+    <id column="CASE_PRECONDITION" jdbcType="VARCHAR" property="casePrecondition" />
+    <id column="CASE_TYPE" jdbcType="TINYINT" property="caseType" />
+    <id column="ARCHIVE_STATUS" jdbcType="TINYINT" property="archiveStatus" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+
+	<result column="EXPECT_RESULT" jdbcType="VARCHAR" property="expectResult" />
+  	<result column="INPUT_DATA" jdbcType="VARCHAR" property="inputData" />
+  	<result column="TEST_POINT" jdbcType="VARCHAR" property="testPoint" />
+  	<result column="MODULE_NAME" jdbcType="VARCHAR" property="moduleName" />
+  	<result column="BUSINESS_TYPE" jdbcType="VARCHAR" property="businessType" />
+  	<result column="CASE_DESCRIPTION" jdbcType="VARCHAR" property="caseDescription" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, SYSTEM_ID,CASE_CATALOG_ID, CASE_NAME, CASE_NUMBER, CASE_PRECONDITION, CASE_TYPE, ARCHIVE_STATUS,
+    STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+    ,EXPECT_RESULT,INPUT_DATA,TEST_POINT,MODULE_NAME,BUSINESS_TYPE,CASE_DESCRIPTION
+  </sql>
+  <select id="getCaseInfos" parameterType="map" resultMap="BaseResultMap">
+	  SELECT
+	  c.ID,
+	  c.SYSTEM_ID,
+	  c.CASE_CATALOG_ID,
+	  c.CASE_NAME,
+	  c.CASE_NUMBER,
+	  c.CASE_PRECONDITION,
+	  c.CASE_TYPE,
+	  c.ARCHIVE_STATUS,
+	  c. STATUS,
+	  c.CREATE_BY,
+	  c.CREATE_DATE,
+	  c.LAST_UPDATE_BY,
+	  c.LAST_UPDATE_DATE,
+	  s.SYSTEM_NAME systemName,
+	  u.USER_NAME userName,
+	  c.EXPECT_RESULT,
+	  c.INPUT_DATA,
+	  c.TEST_POINT,
+	  c.MODULE_NAME,
+	  c.BUSINESS_TYPE,
+	  c.CASE_DESCRIPTION
+	  FROM tbl_case_info c
+	  LEFT JOIN tbl_system_info s ON c.SYSTEM_ID = s.ID
+	  LEFT JOIN tbl_user_info u ON c.CREATE_BY = u.ID
+  		<where>
+  			<if test="tblCaseInfo.systemId != null">
+  				and c.SYSTEM_ID = #{tblCaseInfo.systemId}
+  			</if>
+  			<if test="tblCaseInfo.caseCatalogId != null">
+  				and c.CASE_CATALOG_ID = #{tblCaseInfo.caseCatalogId}
+  			</if>
+  			<if test="tblCaseInfo.caseNumber != null">
+  				and c.CASE_NUMBER like concat("%",#{tblCaseInfo.caseNumber,jdbcType=VARCHAR},"%")
+  			</if>
+  			<if test="tblCaseInfo.caseName != null">
+  				and c.CASE_NAME like concat("%",#{tblCaseInfo.caseName,jdbcType=VARCHAR},"%")
+  			</if>
+  			<if test="tblCaseInfo.caseType != null">
+  				and c.CASE_TYPE = #{tblCaseInfo.caseType,jdbcType=TINYINT}
+  			</if>
+  			<!-- <if test="tblCaseInfo.systemIds != null and tblCaseInfo.systemIds.length != 0">
+  				and c.SYSTEM_ID in
+  				<foreach collection="tblCaseInfo.systemIds" item="systemId" open="(" separator="," close=")">
+	    	   		#{systemId,jdbcType=INTEGER}
+	    		</foreach>
+  			</if> -->
+  			<if test="tblCaseInfo.archiveStatus != null">
+  				and c.ARCHIVE_STATUS = #{tblCaseInfo.archiveStatus,jdbcType=TINYINT}
+  			</if>
+  			<if test="tblCaseInfo.uIds != null and tblCaseInfo.uIds.length != 0">
+  				and c.CREATE_BY in
+  				<foreach collection="tblCaseInfo.uIds" item="uId" open="(" separator="," close=")">
+	    	   		#{uId,jdbcType=BIGINT}
+	    		</foreach>
+  			</if>
+			<if test="filter.businessType != null and filter.businessType !=''">
+				and c.BUSINESS_TYPE like concat("%",#{filter.businessType,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="filter.moduleName != null and filter.moduleName !=''">
+				and c.MODULE_NAME like concat("%",#{filter.moduleName,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="filter.testPoint != null and filter.testPoint !=''">
+				and c.TEST_POINT like concat("%",#{filter.testPoint,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="filter.caseDescription != null and filter.caseDescription !=''">
+				and c.CASE_DESCRIPTION like concat("%",#{filter.caseDescription,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="filter.caseNumber != null">
+  				and c.CASE_NUMBER like concat("%",#{filter.caseNumber,jdbcType=VARCHAR},"%")
+  			</if>
+  			<if test="filter.caseName != null">
+  				and c.CASE_NAME like concat("%",#{filter.caseName,jdbcType=VARCHAR},"%")
+  			</if>
+  			<if test="filter.type != null">
+  				and c.CASE_TYPE = #{filter.type,jdbcType=TINYINT}
+  			</if>
+  			<if test="filter.aStatus != null">
+  				and c.ARCHIVE_STATUS = #{filter.aStatus,jdbcType=TINYINT}
+  			</if>
+  			<if test="filter.systemIds != null">
+  				and c.SYSTEM_ID in 
+  				<foreach collection="filter.systemIds" item="systemId" open="(" separator="," close=")">
+	    	   		#{systemId,jdbcType=INTEGER}
+	    		</foreach>
+  			</if>
+  			<if test="filter.userIds != null">
+  				and c.CREATE_BY in
+  				<foreach collection="filter.userIds" item="userIds" open="(" separator="," close=")">
+	    	   		#{userIds,jdbcType=BIGINT}
+	    		</foreach>
+  			</if>
+  			and c.STATUS = 1
+  			order by c.ID desc
+  		</where>
+  		limit #{start},#{rows}
+  </select>
+
+	<!-- 非系统管理员查询列表数据 -->
+	<select id="getCaseInfoCondition" parameterType="map" resultMap="BaseResultMap">
+		SELECT
+        DISTINCT
+		c.ID,
+		c.SYSTEM_ID,
+		c.CASE_CATALOG_ID,
+		c.CASE_NAME,
+		c.CASE_NUMBER,
+		c.CASE_PRECONDITION,
+		c.CASE_TYPE,
+		c.ARCHIVE_STATUS,
+		c. STATUS,
+		c.CREATE_BY,
+		c.CREATE_DATE,
+		c.LAST_UPDATE_BY,
+		c.LAST_UPDATE_DATE,
+		s.SYSTEM_NAME systemName,
+		u.USER_NAME userName,
+		c.EXPECT_RESULT,
+		c.INPUT_DATA,
+		c.TEST_POINT,
+		c.MODULE_NAME,
+		c.BUSINESS_TYPE,
+		c.CASE_DESCRIPTION
+		FROM tbl_case_info c
+		LEFT JOIN tbl_system_info s ON c.SYSTEM_ID = s.ID
+		LEFT JOIN tbl_user_info u ON c.CREATE_BY = u.ID
+
+        LEFT JOIN tbl_project_system ps ON ps.SYSTEM_ID = s.ID AND ps.status = 1 AND ps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = ps.PROJECT_ID AND pgroup.STATUS=1
+        <where>
+            pgroup.id IN(
+            SELECT guser2.PROJECT_GROUP_ID FROM tbl_project_group_user guser2 WHERE guser2.USER_ID= #{uid} AND guser2.STATUS=1
+            )
+            <if test="tblCaseInfo.systemId != null">
+  				and c.SYSTEM_ID = #{tblCaseInfo.systemId}
+  			</if>
+            <if test="tblCaseInfo.caseCatalogId != null">
+  				and c.CASE_CATALOG_ID = #{tblCaseInfo.caseCatalogId}
+  			</if>
+			<if test="tblCaseInfo.caseNumber != null">
+				and CASE_NUMBER like concat("%",#{tblCaseInfo.caseNumber,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="tblCaseInfo.caseName != null">
+				and CASE_NAME like concat("%",#{tblCaseInfo.caseName,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="tblCaseInfo.caseType != null">
+				and CASE_TYPE = #{tblCaseInfo.caseType,jdbcType=TINYINT}
+			</if>
+			<if test="tblCaseInfo.systemIds != null and tblCaseInfo.systemIds.length != 0">
+				and c.SYSTEM_ID in
+				<foreach collection="tblCaseInfo.systemIds" item="systemId" open="(" separator="," close=")">
+					#{systemId,jdbcType=INTEGER}
+				</foreach>
+			</if>
+			<if test="tblCaseInfo.archiveStatus != null">
+				and ARCHIVE_STATUS = #{tblCaseInfo.archiveStatus,jdbcType=TINYINT}
+			</if>
+			<if test="tblCaseInfo.uIds != null and tblCaseInfo.uIds.length != 0">
+				and c.CREATE_BY in
+				<foreach collection="tblCaseInfo.uIds" item="uId" open="(" separator="," close=")">
+					#{uId,jdbcType=BIGINT}
+				</foreach>
+			</if>
+			<if test="filter.businessType != null and filter.businessType !=''">
+				and c.BUSINESS_TYPE like concat("%",#{filter.businessType,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="filter.moduleName != null and filter.moduleName !=''">
+				and c.MODULE_NAME like concat("%",#{filter.moduleName,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="filter.testPoint != null and filter.testPoint !=''">
+				and c.TEST_POINT like concat("%",#{filter.testPoint,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="filter.caseDescription != null and filter.caseDescription !=''">
+				and c.CASE_DESCRIPTION like concat("%",#{filter.caseDescription,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="filter.caseNumber != null">
+				and CASE_NUMBER like concat("%",#{filter.caseNumber,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="filter.caseName != null">
+				and CASE_NAME like concat("%",#{filter.caseName,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="filter.type != null">
+				and CASE_TYPE = #{filter.type,jdbcType=TINYINT}
+			</if>
+			<if test="filter.aStatus != null">
+				and ARCHIVE_STATUS = #{filter.aStatus,jdbcType=TINYINT}
+			</if>
+			<if test="filter.systemIds != null">
+				and c.SYSTEM_ID in
+				<foreach collection="filter.systemIds" item="systemId" open="(" separator="," close=")">
+					#{systemId,jdbcType=INTEGER}
+				</foreach>
+			</if>
+			<if test="filter.userIds != null">
+				and c.CREATE_BY in
+				<foreach collection="filter.userIds" item="userIds" open="(" separator="," close=")">
+					#{userIds,jdbcType=BIGINT}
+				</foreach>
+			</if>
+			and c.STATUS = 1
+			order by c.ID desc
+		</where>
+		limit #{start},#{rows}
+	</select>
+
+
+
+	<insert id="insertCaseInfo" useGeneratedKeys="true" keyProperty="id" parameterType="cn.pioneeruniverse.dev.entity.TblCaseInfo">
+  	insert into tbl_case_info(SYSTEM_ID,CASE_CATALOG_ID,CASE_NAME,CASE_NUMBER,CASE_PRECONDITION,CASE_TYPE,ARCHIVE_STATUS,STATUS,
+  	 CREATE_BY,CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE,EXPECT_RESULT,INPUT_DATA,TEST_POINT,MODULE_NAME,
+  	 BUSINESS_TYPE,FIELD_TEMPLATE,CASE_DESCRIPTION)
+  	values(#{systemId,jdbcType=INTEGER},#{caseCatalogId}, #{caseName,jdbcType=VARCHAR}, #{caseNumber,jdbcType=VARCHAR},
+  	 #{casePrecondition,jdbcType=VARCHAR},#{caseType,jdbcType=TINYINT},#{archiveStatus,jdbcType=TINYINT},
+  	 #{status,jdbcType=TINYINT},#{createBy,jdbcType=BIGINT},#{createDate,jdbcType=TIMESTAMP},
+  	 #{lastUpdateBy,jdbcType=BIGINT},#{lastUpdateDate,jdbcType=TIMESTAMP},#{expectResult,jdbcType=VARCHAR},
+  	 #{inputData,jdbcType=VARCHAR},#{testPoint,jdbcType=VARCHAR},#{moduleName,jdbcType=VARCHAR},
+  	 #{businessType,jdbcType=VARCHAR},#{fieldTemplate,jdbcType=VARCHAR},#{caseDescription,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="deleteCaseInfo" parameterType="map">
+  	update tbl_case_info set STATUS = 2, LAST_UPDATE_BY = #{currentUser,jdbcType=BIGINT}, LAST_UPDATE_DATE = #{time,jdbcType=TIMESTAMP}
+  		where ID in 
+  			<foreach collection="ids" index="index" item="id" separator="," open="(" close=")">
+  	 				#{id,jdbcType=BIGINT}
+  	 		</foreach>
+  </update>
+  
+   <!--查询最大的案例编号-->
+  <select id="selectMaxCaseNumber" resultType="string">
+    SELECT
+	  MAX(CASE_NUMBER)
+    FROM
+	  tbl_case_info
+  </select>
+  
+  <select id="findCaseInfoById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" /> from tbl_case_info where ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="getCaseByIds" parameterType="java.util.List" resultMap="caseStepResult">
+  	select <include refid="Base_Column_List" /> from tbl_case_info where CASE_NUMBER in
+  				<foreach collection="list" index="index" item="id" separator="," open="(" close=")">
+  	 				#{id}
+  	 			</foreach>
+  </select>
+
+  <select id="getCaseInfo" resultType="map">
+  	SELECT distinct  a.ID id, system.ID systemId,system.SYSTEM_NAME systemName, a.CASE_NAME caseName, a.CASE_NUMBER caseNumber,
+	a.CASE_TYPE caseType,a.CASE_PRECONDITION casePrecondition,user.USER_NAME userName,a.EXPECT_RESULT expectResult,
+	a.INPUT_DATA inputData,a.TEST_POINT testPoint,a.MODULE_NAME moduleName,a.BUSINESS_TYPE businessType FROM
+  	(
+	  	SELECT ID, SYSTEM_ID, CASE_NAME, CASE_NUMBER,CASE_TYPE,CASE_PRECONDITION,CREATE_BY,EXPECT_RESULT,INPUT_DATA,
+	  	TEST_POINT,MODULE_NAME,BUSINESS_TYPE FROM tbl_archived_case WHERE STATUS = 1
+		UNION ALL
+		SELECT ID, SYSTEM_ID, CASE_NAME, CASE_NUMBER,CASE_TYPE,CASE_PRECONDITION,CREATE_BY,EXPECT_RESULT,INPUT_DATA,
+	  	TEST_POINT,MODULE_NAME,BUSINESS_TYPE FROM tbl_case_info caseinfo WHERE `STATUS`=1
+		AND NOT EXISTS (SELECT 1 FROM tbl_archived_case archived WHERE archived.CASE_NUMBER = caseinfo.CASE_NUMBER)
+	) a
+	LEFT JOIN tbl_system_info system ON system.ID=a.SYSTEM_ID and system.status = 1
+	LEFT JOIN tbl_user_info user ON user.ID=a.CREATE_BY and user.status = 1
+	WHERE NOT EXISTS (SELECT 1 FROM tbl_test_set_case setcase WHERE setcase.CASE_NUMBER =  a.CASE_NUMBER
+
+		AND setcase.TEST_SET_ID = #{testSetId} AND setcase.STATUS = 1)
+		<if test="caseInfo.caseNumber!=null and caseInfo.caseNumber!=''">
+			AND CASE_NUMBER LIKE CONCAT('%',#{caseInfo.caseNumber},'%')
+		</if>
+		<if test="caseInfo.caseName!=null and caseInfo.caseName!=''">
+			AND CASE_NAME LIKE CONCAT('%',#{caseInfo.caseName},'%')
+		</if>
+		<if test="caseInfo.testPoint!=null and caseInfo.testPoint!=''">
+			AND TEST_POINT LIKE CONCAT('%',#{caseInfo.testPoint},'%')
+		</if>
+		<if test="caseInfo.moduleName!=null and caseInfo.moduleName!=''">
+			AND MODULE_NAME LIKE CONCAT('%',#{caseInfo.moduleName},'%')
+		</if>
+		<if test="caseInfo.businessType!=null and caseInfo.businessType!=''">
+			AND BUSINESS_TYPE LIKE CONCAT('%',#{caseInfo.businessType},'%')
+			
+		</if>
+		<!-- ORDER BY caseNumber DESC -->
+  </select>
+
+  <update id="updateCaseInfo" parameterType="cn.pioneeruniverse.dev.entity.TblCaseInfo">
+  	update tbl_case_info
+  			<set>
+				<if test="systemId != null">
+					SYSTEM_ID = #{systemId,jdbcType=INTEGER},
+				</if>
+				<if test="caseCatalogId != null">
+					CASE_CATALOG_ID = #{caseCatalogId,jdbcType=INTEGER},
+				</if>
+				<if test="caseName != null">
+					CASE_NAME = #{caseName,jdbcType=VARCHAR},
+				</if>
+				<if test="caseNumber != null">
+					CASE_NUMBER = #{caseNumber,jdbcType=VARCHAR},
+				</if>
+				<if test="casePrecondition != null">
+					CASE_PRECONDITION = #{casePrecondition,jdbcType=VARCHAR},
+				</if>
+				<if test="caseType != null">
+					CASE_TYPE = #{caseType,jdbcType=TINYINT},
+				</if>
+				<if test="lastUpdateBy != null">
+					LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+				</if>
+				<if test="lastUpdateDate != null">
+					LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+				</if>
+				<if test="expectResult != null">
+					EXPECT_RESULT = #{expectResult,jdbcType=VARCHAR},
+				</if>
+				<if test="inputData != null">
+					INPUT_DATA = #{inputData,jdbcType=VARCHAR},
+				</if>
+				<if test="testPoint != null">
+					TEST_POINT = #{testPoint,jdbcType=VARCHAR},
+				</if>
+				<if test="moduleName != null">
+					MODULE_NAME = #{moduleName,jdbcType=VARCHAR},
+				</if>
+				<if test="businessType != null">
+					BUSINESS_TYPE = #{businessType,jdbcType=VARCHAR},
+				</if>
+				<if test="caseDescription != null">
+					CASE_DESCRIPTION = #{caseDescription,jdbcType=VARCHAR},
+				</if>
+				<if test="fieldTemplate != null">
+					FIELD_TEMPLATE = #{fieldTemplate,jdbcType=VARCHAR},
+				</if>
+			</set>
+			where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="getIdByCaseNumber" parameterType="java.lang.String" resultType="long">
+  	select ID from tbl_case_info where CASE_NUMBER = #{caseNumber,jdbcType=VARCHAR}
+  </select>
+
+  <update id="updateArchiveStatus" parameterType="map">
+  	update tbl_case_info set ARCHIVE_STATUS = 2, LAST_UPDATE_BY = #{userId}, LAST_UPDATE_DATE = #{time}
+  			where CASE_NUMBER in
+  				<foreach collection="ids" index="index" item="id" separator="," open="(" close=")">
+  	 				#{id}
+  	 			</foreach>
+  </update>
+
+  <update id="updateCaseArchivedStatus" parameterType="map">
+  	update tbl_case_info set ARCHIVE_STATUS = 1, LAST_UPDATE_BY = #{updateUser}, LAST_UPDATE_DATE = #{updateTime}
+  		where CASE_NUMBER in
+  				<foreach collection="ids" index="index" item="id" separator="," open="(" close=")">
+  	 				#{id}
+  	 			</foreach>
+  </update>
+
+  <update id="updateCase" parameterType="map">
+  	update tbl_case_info set SYSTEM_ID = #{systemId}, CASE_NAME = #{caseName},CASE_PRECONDITION = #{casePrecondition},
+  		LAST_UPDATE_BY = #{testUserId}, LAST_UPDATE_DATE = CURRENT_TIMESTAMP where ID = #{cid}
+  </update>
+
+  <select id="getCaseFieldTemplateById"  resultType="String">
+	SELECT JSON_UNQUOTE(JSON_EXTRACT(FIELD_TEMPLATE,REPLACE(
+	JSON_UNQUOTE(JSON_SEARCH(FIELD_TEMPLATE ,'one',#{fieldName})),'fieldName','valueName')))
+	FROM tbl_case_info tci
+	WHERE tci.ID=#{id} and  tci.STATUS=1
+  </select>
+
+	<!--liushan:根据测试集案例id添加测试案例-->
+	<insert id="insertByTestSetCaseId"  parameterType="cn.pioneeruniverse.dev.entity.TblTestSetCase" useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+		INSERT INTO `tbl_case_info` (
+			`CASE_NUMBER`,
+			`SYSTEM_ID`,
+			`CASE_NAME`,
+			`CASE_PRECONDITION`,
+			`CASE_TYPE`,
+			`EXPECT_RESULT`,
+			`INPUT_DATA`,
+			`TEST_POINT`,
+			`MODULE_NAME`,
+			`BUSINESS_TYPE`,
+			`CASE_DESCRIPTION`,
+			`ARCHIVE_STATUS`,
+			`CREATE_BY`,
+			`CREATE_DATE`,
+			`LAST_UPDATE_BY`,
+			`LAST_UPDATE_DATE`,
+			`FIELD_TEMPLATE`
+		) SELECT
+            (
+                SELECT
+                    CONCAT( "TC-", LPAD(SUBSTRING(MAX(CASE_NUMBER), 4) + 1, 8, 0 ))
+                FROM tbl_case_info
+            ) AS CASE_NUMBER,
+			`SYSTEM_ID`,
+			`CASE_NAME`,
+			`CASE_PRECONDITION`,
+			`CASE_TYPE`,
+			`EXPECT_RESULT`,
+			`INPUT_DATA`,
+			`TEST_POINT`,
+			`MODULE_NAME`,
+			`BUSINESS_TYPE`,
+			`CASE_DESCRIPTION`,
+			1 AS `ARCHIVE_STATUS`,
+			#{createBy} AS `CREATE_BY`,
+			#{createDate} AS `CREATE_DATE`,
+			#{lastUpdateBy} AS `LAST_UPDATE_BY`,
+			#{lastUpdateDate} AS `LAST_UPDATE_DATE`,
+			`FIELD_TEMPLATE`
+		FROM
+			tbl_test_set_case
+		WHERE
+			id = #{id}
+	</insert>
+  
+  <resultMap type="cn.pioneeruniverse.dev.entity.TblCaseInfo" id="caseStepResult"
+               extends="BaseResultMap">
+        <collection property="caseSteps" ofType="cn.pioneeruniverse.dev.entity.TblCaseStep" column="ID"
+                    select="cn.pioneeruniverse.dev.dao.mybatis.TblCaseStepMapper.findCaseStepByCaseId"></collection>
+    </resultMap>
+</mapper>

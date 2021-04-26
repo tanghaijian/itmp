@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<_AJAX_> 
+<!-- pagination --> 
+<_PAGE_ id="pagination"><![CDATA[ 
+<div class="row" style="background-color:#D2E7F7;margin:-20px 0px;padding-top:6px;">
+	<div class="col-sm-6" style="width: 70%;">
+		 <label style="float: left;">
+				<select  name="pageSize"  style="height: 33px;">
+					<option value="10">10</option>
+					<option value="20">20</option>
+					<option value="50">50</option>
+					<option value="100">100</option>
+					<option value="200">200</option>
+				</select>
+		 </label>
+		 <ul class="pagination" style="float: left;margin: 0px 6px;">
+			<li>
+				<a name="page_first" href="#">首页</a>
+			</li>
+			<li>
+				<a name="page_prev"  href="#">前一页</a>
+			</li>
+			<li>
+				<a name="page_next"  href="#">后一页</a>
+			</li>
+			<li>
+				<a name="page_last"  href="#">末页</a>	
+			</li>
+		</ul>
+		<div>
+			<span>当前页，第</span>
+			<span name="pageIndex">1</span>
+			<span>页，总共<span name="totalPage">0</span>页。</span>
+			<span>跳转到第</span>
+			<input name="pageJumpNum"   style="width: 30px;height: 30px;"/>
+			<span>页</span>
+			<span><a name="ucStatusFLGo" style="cursor: pointer;">GO</a></span>
+		</div>
+	</div>
+	<div class="col-sm-6" style="width: 30%;">
+		<div class="dataTables_info">
+			<span style="line-height: 2.5;float: right;">当前显示第<span name="startIndex">0</span>~<span name="endIndex">0</span>条记录；总数：<span name="totalRowNum">0</span>条</span>
+		</div>
+	</div>
+</div>
+]]></_PAGE_> 
+</_AJAX_> 

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.NoticeInfoDao">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblNoticeInfo">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="NOTICE_TYPE" jdbcType="TINYINT" property="noticeType" />
+    <result column="PROJECT_IDS" jdbcType="VARCHAR" property="projectIds" />
+    <result column="NOTICE_CONTENT" jdbcType="VARCHAR" property="noticeContent" />
+    <result column="START_TIME" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="END_TIME" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="DATE" property="lastUpdateDate" />
+  </resultMap>
+  
+     <resultMap id="ResultMap2" type="cn.pioneeruniverse.dev.entity.TblNoticeInfo" extends="BaseResultMap">
+       <result column="USER_NAME" property="userName"/>
+       <result column="PROJECT_NAMES" property="projectNames"/>
+    </resultMap>
+  
+  <sql id="Base_Column_List">
+    ID, NOTICE_TYPE, PROJECT_IDS, NOTICE_CONTENT, START_TIME, END_TIME, STATUS, CREATE_BY, 
+    CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  
+<!-- 根据ID查询出公告   -->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_notice_info
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+<!--   删除公告 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_notice_info
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+<!--   插入公告 -->
+  <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblNoticeInfo">
+    insert into tbl_notice_info (NOTICE_TYPE, PROJECT_IDS,
+      NOTICE_CONTENT, START_TIME, END_TIME, 
+      STATUS, CREATE_BY, CREATE_DATE, 
+      LAST_UPDATE_BY, LAST_UPDATE_DATE)
+    values (#{noticeType,jdbcType=TINYINT}, #{projectIds,jdbcType=VARCHAR}, 
+      #{noticeContent,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=DATE})
+  </insert>
+  
+<!--   按选择填入的信息来插入公告 -->
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.dev.entity.TblNoticeInfo">
+    insert into tbl_notice_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="noticeType != null">
+        NOTICE_TYPE,
+      </if>
+      <if test="projectIds != null">
+        PROJECT_IDS,
+      </if>
+      <if test="noticeContent != null">
+        NOTICE_CONTENT,
+      </if>
+      <if test="startTime != null">
+        START_TIME,
+      </if>
+      <if test="endTime != null">
+        END_TIME,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="noticeType != null">
+        #{noticeType,jdbcType=TINYINT},
+      </if>
+      <if test="projectIds != null">
+        #{projectIds,jdbcType=VARCHAR},
+      </if>
+      <if test="noticeContent != null">
+        #{noticeContent,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  
+<!--   按选择填写信息更新公告 -->
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblNoticeInfo">
+    update tbl_notice_info
+    <set>
+      <if test="noticeType != null">
+        NOTICE_TYPE = #{noticeType,jdbcType=TINYINT},
+      </if>
+      <if test="projectIds != null">
+        PROJECT_IDS = #{projectIds,jdbcType=VARCHAR},
+      </if>
+      <if test="noticeContent != null">
+        NOTICE_CONTENT = #{noticeContent,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        START_TIME = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        END_TIME = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=DATE},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+<!--   更新公告 -->
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblNoticeInfo">
+    update tbl_notice_info
+    set NOTICE_TYPE = #{noticeType,jdbcType=TINYINT},
+      PROJECT_IDS = #{projectIds,jdbcType=VARCHAR},
+      NOTICE_CONTENT = #{noticeContent,jdbcType=VARCHAR},
+      START_TIME = #{startTime,jdbcType=TIMESTAMP},
+      END_TIME = #{endTime,jdbcType=TIMESTAMP},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=DATE}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+<!--   获取所有公告 -->
+  <select id="getAllNotice" parameterType="cn.pioneeruniverse.dev.entity.TblNoticeInfo" resultMap="ResultMap2">
+        SELECT DISTINCT tni.*,tui.USER_NAME FROM tbl_notice_info tni
+		LEFT JOIN tbl_user_info tui ON tni.CREATE_BY=tui.ID
+		LEFT JOIN (
+		        SELECT tni.ID,group_concat(tpi.PROJECT_NAME separator ',') as PROJECT_NAMES  FROM tbl_notice_info tni
+		        LEFT JOIN tbl_project_info tpi on locate(concat(',', tpi.ID, ','), concat(',', tni.PROJECT_IDS, ',')) 
+		        WHERE tpi.PROJECT_STATUS != 4 AND tpi.STATUS = 1
+		        <if test="currentUserProjectList != null">
+		        and tpi.ID in <foreach item="item" index="index" collection="currentUserProjectList" open="(" separator="," close=")">#{item}</foreach> 
+		        </if>
+		        group by tni.ID
+		) tmp ON tmp.ID=tni.ID
+    <where>
+            <if test="status == null || status == ''">
+                AND tni.STATUS = 1
+            </if>
+            <if test="status != null and status != ''">
+                AND tni.STATUS=#{status}
+            </if>
+            <if test="noticeType != null and noticeType != ''">
+                AND tni.NOTICE_TYPE=#{noticeType}
+            </if>
+            <if test="noticeContent != null and noticeContent != ''">
+                AND tni.NOTICE_CONTENT LIKE
+                CONCAT('%',#{noticeContent},'%')
+            </if>
+            <if test="createStartDate != null">
+                AND tni.CREATE_DATE &gt;= #{createStartDate}
+            </if>
+            <if test="createEndDate != null">
+                AND tni.CREATE_DATE &lt;= #{createEndDate}
+            </if>
+            <if test="startTime != null">
+                AND tni.END_TIME &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND tni.START_TIME &lt;= #{endTime}
+            </if>
+            <if test="currentUserProjectList != null">
+		        AND tmp.ID is not null
+	        </if>
+        </where>
+    </select>
+
+<!-- 获取有效的项目公告 -->
+	<select id="getAllValidProjectNotice" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT tni.* FROM tbl_notice_info tni
+		LEFT JOIN (
+		        SELECT DISTINCT  project.ID
+		        FROM tbl_project_info project
+		        LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = project.ID AND pgroup. STATUS = 1
+		        LEFT JOIN tbl_project_group_user pguser ON pguser.PROJECT_GROUP_ID = pgroup.ID AND pguser. STATUS = 1
+		        WHERE project.PROJECT_STATUS != 4 AND project.STATUS = 1 AND pguser.USER_ID=#{userId}
+		) tpi ON locate(concat(',', tpi.ID, ','), concat(',', tni.PROJECT_IDS, ',')) 
+		WHERE tpi.ID is not null AND tni.STATUS=1 AND tni.NOTICE_TYPE=2 AND tni.START_TIME &lt;= #{currentTime} AND tni.END_TIME &gt;= #{currentTime}
+	</select>
+
+<!-- 根据项目ID获取项目公告 -->
+  <select id="getProgramNotice" resultMap="ResultMap2">
+    SELECT DISTINCT tni.*,tui.USER_NAME FROM tbl_notice_info tni
+	LEFT JOIN tbl_user_info tui ON tni.CREATE_BY=tui.ID
+	LEFT JOIN tbl_project_notice pn ON tni.ID = pn.NOTICE_ID
+	WHERE pn.PROJECT_ID IN
+    <foreach item="item" index="index" collection="programId" open="(" separator="," close=")">#{item}</foreach>
+    GROUP BY tni.ID DESC
+  </select>
+
+
+
+</mapper>

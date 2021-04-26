@@ -1,0 +1,84 @@
+/*******
+*  niexingquan
+*  @createDate 2019/12/20
+*******/
+body{
+  background: rgba(242, 242, 242, 1);
+}
+.bor_b {
+  border-bottom: 1px solid rgba(215, 215, 215, 1);
+}
+.justify_c_b {
+  justify-content: space-between;
+}
+.flex {
+  display: flex;
+}
+.items_c {
+  align-items: center;
+}
+.p_10 {
+  padding: 10px;
+}
+.p_l_10 {
+  padding-left: 10px;
+}
+.m_t_10{
+  margin-top: 10px;
+}
+h5 {
+  font-weight: bold;
+}
+.btn-primary {
+  border: 1px solid #42429B;
+  color: #fff;
+  background: #42429B;
+}
+.btn {
+  height: 30px;
+  margin-left: 10px;
+  width: 90px;
+  margin: 0 10px 0;
+  padding: 6px 11px;
+  font-size: 12px !important;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+#tree_table {
+  margin: 0 auto;
+  border-radius: 5px;
+  background: #fff;
+}
+#tree_table ._flex_c {
+  display: flex;
+  align-items: center;
+  border-bottom: none;
+}
+#tree_table .center {
+  text-align: center;
+}
+#tree_table ._hide {
+  display: none;
+}
+#tree_table .tree_arrows {
+  width: 0px;
+  height: 0px;
+  border: 5px solid transparent;
+  cursor: pointer;
+}
+#tree_table .tree_arrows_right {
+  border-left: 5px solid #597cd3;
+}
+#tree_table .tree_arrows_bottom {
+  border-top: 5px solid #597cd3;
+}
+#tree_table .tree_menu_order {
+  border-radius: 4px;
+  padding-left: 10px;
+  margin-left: 10px;
+}
+#tree_table > thead {
+  background: #F4F4F4;
+}

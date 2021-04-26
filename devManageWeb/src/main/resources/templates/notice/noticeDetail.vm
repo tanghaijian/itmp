@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>公告明细</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/daterangepicker-bs3.css" /> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css" /> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+    
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/moment.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/daterangepicker.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/devManageui/static/js/notice/noticeDetail.js"></script>
+    <style>
+	.control-label {
+		text-align: left;
+		padding-left: 10px;
+		
+	}
+	</style>
+	<script>
+		$.jgrid.defaults.responsive = true;
+		$.jgrid.defaults.styleUI = 'Bootstrap4';
+		$.jgrid.defaults.iconSet = "fontAwesome";
+		var ctxStatic = "${ctxStatic}";
+		var noticeId = "${noticeId}";
+		$(document).ready(function () {
+			getNoticeDetail(noticeId);
+		});
+	</script>
+	<style>
+		.allInfo{
+			margin: 10px 15px 15px;
+		}
+	</style>
+</head>
+<body>
+	<form id="detailForm" type="post" enctype="multipart/form-data">
+		<div class="allInfo">
+			<div class="def_title">
+				<span>公告详细信息</span>
+			</div>
+			<div class="def_content">
+				
+				<div class="rowdiv">
+					<div class="form-group col-md-12">
+						<label class="control-label fontWeihgt">公告内容：</label> 
+						<label class="control-label font_left" id="noticeContent"> </label>
+					</div>
+				</div>
+				<div class="rowdiv" style="display: none">
+					<div class="form-group col-md-12">
+						<label class="control-label fontWeihgt">项目组：</label> 
+						<label class="control-label font_left" id="projectName"> </label>
+					</div>
+				</div>
+				<div class="rowdiv">
+					<div class="form-group col-md-12">
+						<label class="control-label fontWeihgt">公告有效期：</label> 
+						<label class="control-label font_left" id="validDateStr"> </label>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</form>
+
+	<div id="loading">
+		<img class="loadingImg"
+			src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+	</div>
+</form>
+</body>
+</html>

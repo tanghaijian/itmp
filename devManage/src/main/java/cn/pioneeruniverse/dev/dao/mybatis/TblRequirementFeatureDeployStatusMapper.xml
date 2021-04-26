@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblRequirementFeatureDeployStatusMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblRequirementFeatureDeployStatus">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="REQUIREMENT_FEATURE_ID" jdbcType="BIGINT" property="requirementFeatureId" />
+    <result column="DEPLOY_STATU" jdbcType="INTEGER" property="deployStatu" />
+    <result column="DEPLOY_TIME" jdbcType="TIMESTAMP" property="deployTime" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, REQUIREMENT_FEATURE_ID, DEPLOY_STATU, DEPLOY_TIME,
+    STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  <!-- 获取某个开发任务的部署状态 -->
+  <select id="findByReqFeatureId" parameterType="Long" resultMap="BaseResultMap">
+      select  <include refid="Base_Column_List" />
+      from tbl_requirement_feature_deploy_status
+      where REQUIREMENT_FEATURE_ID = #{featureId} and STATUS=1
+      order by DEPLOY_TIME DESC
+  </select>
+
+<!-- 查询开发任务部署状态 -->
+    <select id="findByReqParam" parameterType="cn.pioneeruniverse.dev.vo.task.DevTaskReq" resultMap="BaseResultMap">
+        SELECT DS.REQUIREMENT_FEATURE_ID,
+        DS.DEPLOY_STATU,
+        DS.DEPLOY_TIME
+        FROM TBL_REQUIREMENT_FEATURE_DEPLOY_STATUS DS, TBL_REQUIREMENT_FEATURE RF
+        WHERE DS.REQUIREMENT_FEATURE_ID = RF.ID
+        <if test="systemId!=null and systemId!=''">
+            AND RF.SYSTEM_ID = #{systemId}
+        </if>
+        <if test=" sprintId!=null and sprintId!=''">
+            AND RF.SPRINT_ID = #{sprintId}
+        </if>
+        <if test="commissioningWindowId!=null and commissioningWindowId!=''">
+            AND RF.COMMISSIONING_WINDOW_ID = #{commissioningWindowId}
+        </if>
+        <if test="systemVersionId!=null and systemVersionId!=''">
+            AND RF.SYSTEM_VERSION_ID = #{systemVersionId}
+        </if>
+        <if test="featureCode != null and featureCode != ''">
+            AND RF.FEATURE_CODE LIKE CONCAT('%',LOWER(#{featureCode}),'%')
+        </if>
+        <if test="executeUserIds!=null and executeUserIds!=''">
+            AND RF.EXECUTE_USER_ID IN
+            <foreach collection="executeUserIds.split(',')" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        AND RF.STATUS = 1
+        AND DS.STATUS = 1
+        ORDER BY DS.ID, DS.DEPLOY_TIME DESC;
+    </select>
+
+<!-- 获取某个开发任务具体的部署状态信息 -->
+  <select id="findByReqFeatureIdDeployStatu" resultMap="BaseResultMap">
+    select  <include refid="Base_Column_List" />
+    from tbl_requirement_feature_deploy_status
+    where REQUIREMENT_FEATURE_ID = #{featureId}
+    and DEPLOY_STATU = #{deployStatu,jdbcType=INTEGER} and STATUS=1
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+      select
+      <include refid="Base_Column_List" />
+      from tbl_requirement_feature_deploy_status
+      where ID = #{id,jdbcType=BIGINT}
+  </select>
+
+
+    <!-- 保存开发任务部署状态 -->
+  <insert id="insertFeatureDeployStatus" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeatureDeployStatus">
+      insert into tbl_requirement_feature_deploy_status(REQUIREMENT_FEATURE_ID,DEPLOY_STATU,
+      DEPLOY_TIME,STATUS,CREATE_BY,CREATE_DATE,LAST_UPDATE_BY,LAST_UPDATE_DATE)
+      values
+      (#{requirementFeatureId,jdbcType=BIGINT},#{deployStatu,jdbcType=INTEGER},#{deployTime,jdbcType=TIMESTAMP},
+      #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT},#{createDate,jdbcType=TIMESTAMP},
+      #{lastUpdateBy,jdbcType=BIGINT},#{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+
+    <!-- 更新开发任务部署状态 -->
+  <update id="updateFeatureDeployStatus" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeatureDeployStatus">
+      update tbl_requirement_feature_deploy_status
+      set
+      REQUIREMENT_FEATURE_ID = #{requirementFeatureId,jdbcType=BIGINT},
+      DEPLOY_STATU = #{deployStatu,jdbcType=INTEGER},
+      DEPLOY_TIME = #{deployTime,jdbcType=TIMESTAMP},
+      STATUS = #{status,jdbcType=TINYINT},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+      where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+    <!-- 逻辑删除开发任务部署状态 -->
+    <delete id="deleteByFeatureId" parameterType="java.lang.Long">
+    UPDATE tbl_requirement_feature_deploy_status
+    set STATUS = 2
+    where REQUIREMENT_FEATURE_ID = #{featureId,jdbcType=BIGINT}
+  </delete>
+</mapper>

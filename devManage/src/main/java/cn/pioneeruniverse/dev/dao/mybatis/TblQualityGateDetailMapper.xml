@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblQualityGateDetailMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblQualityGateDetail">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="QUALITY_GATE_ID" jdbcType="BIGINT" property="qualityGateId" />
+    <result column="QUALITY_METRIC_ID" jdbcType="BIGINT" property="qualityMetricId" />
+    <result column="OPERATOR_TYPE" jdbcType="VARCHAR" property="operatorType" />
+    <result column="WARNING_VALUE" jdbcType="VARCHAR" property="warningValue" />
+    <result column="FORBIDDEN_VALUE" jdbcType="VARCHAR" property="forbiddenValue" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, QUALITY_GATE_ID, QUALITY_METRIC_ID, OPERATOR_TYPE, WARNING_VALUE, FORBIDDEN_VALUE, 
+    STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+
+<!--获取质量门详细信息-->
+  <select id="getQualityGateDetail" parameterType="java.lang.Long" resultType="map">
+    select tqm.`METRIC_NAME` metricName,tpgd.`OPERATOR_TYPE` operatorType,tpgd.`WARNING_VALUE` warningValue,
+    tpgd.`FORBIDDEN_VALUE` forbiddenValue,tpgd.id
+    from `tbl_quality_gate_detail` tqgd
+    left join `tbl_quality_metric` tqm on tqm.id=tqgd.`QUALITY_METRIC_ID`
+    where tpgd.`STATUS`=1 and tpgd.`QUALITY_GATE_ID`=#{id}
+  </select>
+
+
+
+<!--查询-->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_quality_gate_detail
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+<!--  删除-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_quality_gate_detail
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblQualityGateDetail">
+    insert into tbl_quality_gate_detail (ID, QUALITY_GATE_ID, QUALITY_METRIC_ID, 
+      OPERATOR_TYPE, WARNING_VALUE, FORBIDDEN_VALUE, 
+      STATUS, CREATE_BY, CREATE_DATE, 
+      LAST_UPDATE_BY, LAST_UPDATE_DATE)
+    values (#{id,jdbcType=BIGINT}, #{qualityGateId,jdbcType=BIGINT}, #{qualityMetricId,jdbcType=BIGINT}, 
+      #{operatorType,jdbcType=VARCHAR}, #{warningValue,jdbcType=VARCHAR}, #{forbiddenValue,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.dev.entity.TblQualityGateDetail">
+    insert into tbl_quality_gate_detail
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="qualityGateId != null">
+        QUALITY_GATE_ID,
+      </if>
+      <if test="qualityMetricId != null">
+        QUALITY_METRIC_ID,
+      </if>
+      <if test="operatorType != null">
+        OPERATOR_TYPE,
+      </if>
+      <if test="warningValue != null">
+        WARNING_VALUE,
+      </if>
+      <if test="forbiddenValue != null">
+        FORBIDDEN_VALUE,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="qualityGateId != null">
+        #{qualityGateId,jdbcType=BIGINT},
+      </if>
+      <if test="qualityMetricId != null">
+        #{qualityMetricId,jdbcType=BIGINT},
+      </if>
+      <if test="operatorType != null">
+        #{operatorType,jdbcType=VARCHAR},
+      </if>
+      <if test="warningValue != null">
+        #{warningValue,jdbcType=VARCHAR},
+      </if>
+      <if test="forbiddenValue != null">
+        #{forbiddenValue,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+<!--  更新-->
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblQualityGateDetail">
+    update tbl_quality_gate_detail
+    <set>
+      <if test="qualityGateId != null">
+        QUALITY_GATE_ID = #{qualityGateId,jdbcType=BIGINT},
+      </if>
+      <if test="qualityMetricId != null">
+        QUALITY_METRIC_ID = #{qualityMetricId,jdbcType=BIGINT},
+      </if>
+      <if test="operatorType != null">
+        OPERATOR_TYPE = #{operatorType,jdbcType=VARCHAR},
+      </if>
+      <if test="warningValue != null">
+        WARNING_VALUE = #{warningValue,jdbcType=VARCHAR},
+      </if>
+      <if test="forbiddenValue != null">
+        FORBIDDEN_VALUE = #{forbiddenValue,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+<!--  更新-->
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblQualityGateDetail">
+    update tbl_quality_gate_detail
+    set QUALITY_GATE_ID = #{qualityGateId,jdbcType=BIGINT},
+      QUALITY_METRIC_ID = #{qualityMetricId,jdbcType=BIGINT},
+      OPERATOR_TYPE = #{operatorType,jdbcType=VARCHAR},
+      WARNING_VALUE = #{warningValue,jdbcType=VARCHAR},
+      FORBIDDEN_VALUE = #{forbiddenValue,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

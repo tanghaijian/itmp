@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblDevTaskScmGitFileMapper">
+
+    <!-- 添加 开发任务文件  -->
+    <insert id="insertOrUpdateDevTaskScmGitFile" useGeneratedKeys="true">
+        INSERT INTO tbl_dev_task_scm_git_file (
+        DEV_TASK_ID,
+        DEV_TASK_SCM_ID,
+        TOOL_ID,
+        GIT_REPOSITORY_ID,
+        GIT_BRANCH,
+        COMMIT_NUMBER,
+        LAST_COMMIT_NUMBER,
+        OPERATE_TYPE,
+        BEFORE_RENAME_FILE,
+        COMMIT_FILE,
+        STATUS,
+        CREATE_BY,
+        CREATE_DATE,
+        LAST_UPDATE_BY,
+        LAST_UPDATE_DATE
+        ) VALUES
+        <foreach collection="commitFiles" item="commitFile" index="index" separator=",">
+            (
+            #{tblDevTaskScmGitFile.devTaskId,jdbcType=BIGINT},
+            #{tblDevTaskScmGitFile.devTaskScmId,jdbcType=BIGINT},
+            #{tblDevTaskScmGitFile.toolId,jdbcType=BIGINT},
+            #{tblDevTaskScmGitFile.gitRepositoryId,jdbcType=BIGINT},
+            #{tblDevTaskScmGitFile.gitBranch,jdbcType=VARCHAR},
+            #{tblDevTaskScmGitFile.commitNumber,jdbcType=VARCHAR},
+            #{tblDevTaskScmGitFile.lastCommitNumber,jdbcType=VARCHAR},
+            <choose>
+                <when test="commitFile != null and commitFile.indexOf('R') == 0">
+                    <foreach collection="commitFile.split(' ')" separator=" " index="sIndex" item="item">
+                        #{item,jdbcType=VARCHAR},
+                    </foreach>
+                </when>
+                <otherwise>
+                    <foreach collection="commitFile.split(' ')" separator=" " index="sIndex" item="item">
+                        <if test="sIndex == 0">
+                            #{item,jdbcType=VARCHAR},
+                            NULL,
+                        </if>
+                        <if test="sIndex == 1">
+                            #{item,jdbcType=VARCHAR},
+                        </if>
+                    </foreach>
+                </otherwise>
+            </choose>
+            #{tblDevTaskScmGitFile.status,jdbcType=TINYINT},
+            #{tblDevTaskScmGitFile.createBy,jdbcType=BIGINT},
+            #{tblDevTaskScmGitFile.createDate,jdbcType=TIMESTAMP},
+            #{tblDevTaskScmGitFile.lastUpdateBy,jdbcType=BIGINT},
+            #{tblDevTaskScmGitFile.lastUpdateDate,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        DEV_TASK_ID = VALUES(DEV_TASK_ID),
+        COMMIT_NUMBER = VALUES(COMMIT_NUMBER),
+        OPERATE_TYPE = VALUES(OPERATE_TYPE),
+        LAST_UPDATE_BY = VALUES(LAST_UPDATE_BY),
+        LAST_UPDATE_DATE = VALUES(LAST_UPDATE_DATE)
+    </insert>
+
+    <!--根据 工作任务代码id 获取文件-->
+    <select id="getReviewGitFilesByDevTaskScmId" parameterType="java.lang.Long" resultMap="devTaskScmGitFileMap">
+        SELECT
+        tdtsgf.ID,
+        tdtsgf.TOOL_ID,
+        tdtsgf.GIT_REPOSITORY_ID,
+        tdtsgf.GIT_BRANCH,
+        tdtsgf.COMMIT_NUMBER,
+        tdtsgf.LAST_COMMIT_NUMBER,
+        tdtsgf.COMMIT_FILE,
+        tdtsgf.BEFORE_RENAME_FILE,
+        tdtsgf.OPERATE_TYPE
+        FROM tbl_dev_task_scm_git_file tdtsgf
+        WHERE tdtsgf.DEV_TASK_SCM_ID = #{devTaskScmId} AND tdtsgf.STATUS = 1
+        ORDER BY tdtsgf.LAST_UPDATE_DATE DESC
+    </select>
+
+    <!--根据 工作任务id 获取文件-->
+    <select id="getGitFilesByDevTaskId" resultMap="devTaskScmGitFileMap">
+        SELECT
+        tdtsgf.ID,
+        tdtsgf.TOOL_ID,
+        tdtsgf.GIT_REPOSITORY_ID,
+        tdtsgf.GIT_BRANCH,
+        tdtsgf.COMMIT_NUMBER,
+        tdtsgf.COMMIT_FILE,
+        tdtsgf.CREATE_DATE
+        FROM tbl_dev_task_scm_git_file tdtsgf
+        WHERE tdtsgf.DEV_TASK_ID = #{devTaskId} AND tdtsgf.STATUS = 1
+        ORDER BY tdtsgf.LAST_UPDATE_DATE DESC
+    </select>
+
+    <!-- 根据 多个工作任务id 获取文件 -->
+    <select id="getGitFilesByDevTaskIds" parameterType="map" resultType="java.util.HashMap">
+        SELECT
+        DISTINCT
+        tdtsf.`DEV_TASK_ID`,
+        tdt.DEV_TASK_CODE,
+        tdtsf.COMMIT_FILE
+        FROM tbl_dev_task_scm_git_file tdtsgf
+        LEFT  JOIN tbl_dev_task tdt on tdt.id=tdtsgf.DEV_TASK_ID
+        WHERE tdtsgf.STATUS = 1 and tdtsgf.DEV_TASK_ID in
+        <foreach collection="devTaskIds" item="devTaskId" index="index" open="(" separator="," close=")">
+            #{devTaskId}
+        </foreach>
+    </select>
+
+    <resultMap type="cn.pioneeruniverse.dev.entity.TblDevTaskScmGitFile" id="devTaskScmGitFileMap">
+        <id column="ID" property="id"/>
+        <result column="DEV_TASK_ID" property="devTaskId"/>
+        <result column="DEV_TASK_SCM_ID" property="devTaskScmId"/>
+        <result column="TOOL_ID" property="toolId"/>
+        <result column="GIT_REPOSITORY_ID" property="gitRepositoryId"/>
+        <result column="GIT_BRANCH" property="gitBranch"/>
+        <result column="COMMIT_NUMBER" property="commitNumber"/>
+        <result column="LAST_COMMIT_NUMBER" property="lastCommitNumber"/>
+        <result column="COMMIT_FILE" property="commitFile"/>
+        <result column="BEFORE_RENAME_FILE" property="beforeRenameFile"/>
+        <result column="OPERATE_TYPE" property="operateType"/>
+        <result column="STATUS" property="status"/>
+        <result column="CREATE_BY" property="createBy"/>
+        <result column="CREATE_DATE" property="createDate"/>
+        <result column="LAST_UPDATE_BY" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate"/>
+    </resultMap>
+
+</mapper>

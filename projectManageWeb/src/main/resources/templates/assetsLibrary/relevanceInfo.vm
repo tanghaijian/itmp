@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head> 
+	<title>系统层级维护</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <META HTTP-EQUIV="pragma" CONTENT="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="no-cache,IE=edge,Chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jquery-ztree/3.5.36/css/metroStyle/metroStyle.css" /> 
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/jsmind.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" /> 
+	<style>
+		*{
+			font-size: 12px;
+		}
+        body{
+            padding: 0 30px;
+        }
+        .nav-tabs>li>a{
+            color: #000000;
+        }
+        .nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus{
+            color: #1890FF;
+            font-weight: bold;
+            cursor: default;
+            background-color: inherit;
+            border: none;
+            border-bottom: 2px solid #1890FF;
+        }
+        .nav>li>a:hover, .nav>li>a:focus{
+            background: inherit;
+        }
+        .nav-tabs>li>a:hover{
+            border-color: rgba(0,0,0,0);
+        }
+        #jsmind_container{
+            height:500px;
+            margin: 15px 10px;
+            border:solid 1px #ccc;
+            /*background:#f4f4f4;*/
+            background:#f4f4f4;
+        } 
+		.ztree li span.button.root_open{background-position:-105px -63px}
+		.ztree li span.button.root_close{background-position:-126px -63px}
+		.ztree li span.button.roots_open{background-position: -105px 0;}
+		.ztree li span.button.roots_close{background-position: -126px 0;}
+		.ztree li span.button.center_open{background-position: -105px -21px;}
+		.ztree li span.button.center_close{background-position: -126px -21px;}
+		.ztree li span.button.bottom_open{background-position: -105px -42px;}
+		.ztree li span.button.bottom_close{background-position: -126px -42px;}
+		.ztree li span.button.noline_open{background-position: -105px -84px;}
+		.ztree li span.button.noline_close{background-position: -126px -84px;} 
+		.ztree li span.button.roots_docu{background-position: -84px 0;}
+		.ztree li span.button.center_docu{background-position: -84px -21px;}
+		.ztree li span.button.bottom_docu{background-position: -84px -42px;}
+		
+		.ztree li span.icon_doc_ico_open,.ztree li span.icon_doc_ico_close,.ztree li span.icon_doc_ico_docu{
+            background: url("../static/images/assetsLibrary/lishibanben_icon.png") no-repeat 3px 2px;
+            background-size: 16px;
+        }
+        .ztree li span.icon_code_ico_open,.ztree li span.icon_code_ico_close,.ztree li span.icon_code_ico_docu{
+            background: url("../static/images/assetsLibrary/hebingxingzhuang.png") no-repeat 3px 1px;
+            background-size: 16px;
+        }
+        .ztree li span.icon_task_ico_open,.ztree li span.icon_task_ico_close,.ztree li span.icon_task_ico_docu{
+            background: url("../static/images/assetsLibrary/xiangguanlian.png") no-repeat 3px 1px;
+            background-size: 16px;
+        }
+    </style>
+	</head>
+	<body>
+    	<div class="">
+	        <ul class="nav nav-tabs" role="tablist">
+	            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">当前需求变更关联信息</a></li>
+	            <li role="presentation"><a href="#other" id="otherMind_a" flag='1'  aria-controls="other" role="tab" data-toggle="tab">与其他需求变更关联信息</a></li>
+	        </ul>
+	        <!-- Tab panes -->
+	        <div class="tab-content">
+	            <div role="tabpanel" class="tab-pane active" id="home">
+	                <div class="ztree" id="menuTree"></div>
+	            </div>
+	            <div role="tabpanel" class="tab-pane" id="other">
+	                <div id="jsmind_container"></div>
+	            </div>
+	        </div>
+	    </div>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script> 
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>  
+	    
+	    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>   
+	    
+	    <script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.core.js"></script>
+	    <script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.excheck.min.js"></script>
+	    <script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.exhide.js"></script>
+	    <script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/fuzzysearch.js"></script>
+	    
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jsmind.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jsmind.draggable.js"></script>
+	 	<script type="text/javascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+	    <script src="#springUrl('')/projectManageui/static/js/assetsLibrary/relevanceInfo.js"></script>
+    </body> 
+</html>

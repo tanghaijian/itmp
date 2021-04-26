@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.RequirementFeatureHistoryMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblRequirementFeatureHistory">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="REQUIREMENT_FEATURE_ID" jdbcType="BIGINT" property="requirementFeatureId" />
+    <result column="ASSET_SYSTEM_TREE_ID" jdbcType="BIGINT" property="assetSystemTreeId" />
+    <result column="ESTIMATE_REMAIN_WORKLOAD" jdbcType="DOUBLE" property="estimateRemainWorkload" />
+    <result column="COMMISSIONING_WINDOW_ID" jdbcType="BIGINT" property="commissioningWindowId" />
+    <result column="SPRINT_ID" jdbcType="BIGINT" property="sprintId" />
+    <result column="PROJECT_PLAN_ID" jdbcType="BIGINT" property="projectPlanId" />
+    <result column="REQUIREMENT_FEATURE_STATUS" jdbcType="VARCHAR" property="requirementFeatureStatus" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_DATE" jdbcType="DATE" property="createDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, REQUIREMENT_FEATURE_ID, ASSET_SYSTEM_TREE_ID, ESTIMATE_REMAIN_WORKLOAD, COMMISSIONING_WINDOW_ID, 
+    SPRINT_ID, PROJECT_PLAN_ID, REQUIREMENT_FEATURE_STATUS, STATUS, CREATE_DATE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_requirement_feature_history
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+  	<select id="getFeatureHistoryWorkloadList" parameterType="map" resultMap="BaseResultMap">
+  		select SPRINT_ID, sum(ESTIMATE_REMAIN_WORKLOAD) as ESTIMATE_REMAIN_WORKLOAD from tbl_requirement_feature_history 
+  		where SPRINT_ID is not null and CREATE_DATE=#{currentDate,jdbcType=VARCHAR}
+		group by SPRINT_ID
+	</select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_requirement_feature_history
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.pioneeruniverse.project.entity.TblRequirementFeatureHistory">
+    insert into tbl_requirement_feature_history (REQUIREMENT_FEATURE_ID, ASSET_SYSTEM_TREE_ID, 
+      ESTIMATE_REMAIN_WORKLOAD, COMMISSIONING_WINDOW_ID, 
+      SPRINT_ID, PROJECT_PLAN_ID, REQUIREMENT_FEATURE_STATUS, 
+      STATUS, CREATE_DATE)
+    values (#{requirementFeatureId,jdbcType=BIGINT}, #{assetSystemTreeId,jdbcType=BIGINT}, 
+      #{estimateRemainWorkload,jdbcType=DOUBLE}, #{commissioningWindowId,jdbcType=BIGINT}, 
+      #{sprintId,jdbcType=BIGINT}, #{projectPlanId,jdbcType=BIGINT}, #{requirementFeatureStatus,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{createDate,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.project.entity.TblRequirementFeatureHistory">
+    insert into tbl_requirement_feature_history
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="requirementFeatureId != null">
+        REQUIREMENT_FEATURE_ID,
+      </if>
+      <if test="assetSystemTreeId != null">
+        ASSET_SYSTEM_TREE_ID,
+      </if>
+      <if test="estimateRemainWorkload != null">
+        ESTIMATE_REMAIN_WORKLOAD,
+      </if>
+      <if test="commissioningWindowId != null">
+        COMMISSIONING_WINDOW_ID,
+      </if>
+      <if test="sprintId != null">
+        SPRINT_ID,
+      </if>
+      <if test="projectPlanId != null">
+        PROJECT_PLAN_ID,
+      </if>
+      <if test="requirementFeatureStatus != null">
+        REQUIREMENT_FEATURE_STATUS,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="requirementFeatureId != null">
+        #{requirementFeatureId,jdbcType=BIGINT},
+      </if>
+      <if test="assetSystemTreeId != null">
+        #{assetSystemTreeId,jdbcType=BIGINT},
+      </if>
+      <if test="estimateRemainWorkload != null">
+        #{estimateRemainWorkload,jdbcType=DOUBLE},
+      </if>
+      <if test="commissioningWindowId != null">
+        #{commissioningWindowId,jdbcType=BIGINT},
+      </if>
+      <if test="sprintId != null">
+        #{sprintId,jdbcType=BIGINT},
+      </if>
+      <if test="projectPlanId != null">
+        #{projectPlanId,jdbcType=BIGINT},
+      </if>
+      <if test="requirementFeatureStatus != null">
+        #{requirementFeatureStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.project.entity.TblRequirementFeatureHistory">
+    update tbl_requirement_feature_history
+    <set>
+      <if test="requirementFeatureId != null">
+        REQUIREMENT_FEATURE_ID = #{requirementFeatureId,jdbcType=BIGINT},
+      </if>
+      <if test="assetSystemTreeId != null">
+        ASSET_SYSTEM_TREE_ID = #{assetSystemTreeId,jdbcType=BIGINT},
+      </if>
+      <if test="estimateRemainWorkload != null">
+        ESTIMATE_REMAIN_WORKLOAD = #{estimateRemainWorkload,jdbcType=DOUBLE},
+      </if>
+      <if test="commissioningWindowId != null">
+        COMMISSIONING_WINDOW_ID = #{commissioningWindowId,jdbcType=BIGINT},
+      </if>
+      <if test="sprintId != null">
+        SPRINT_ID = #{sprintId,jdbcType=BIGINT},
+      </if>
+      <if test="projectPlanId != null">
+        PROJECT_PLAN_ID = #{projectPlanId,jdbcType=BIGINT},
+      </if>
+      <if test="requirementFeatureStatus != null">
+        REQUIREMENT_FEATURE_STATUS = #{requirementFeatureStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=DATE},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.project.entity.TblRequirementFeatureHistory">
+    update tbl_requirement_feature_history
+    set REQUIREMENT_FEATURE_ID = #{requirementFeatureId,jdbcType=BIGINT},
+      ASSET_SYSTEM_TREE_ID = #{assetSystemTreeId,jdbcType=BIGINT},
+      ESTIMATE_REMAIN_WORKLOAD = #{estimateRemainWorkload,jdbcType=DOUBLE},
+      COMMISSIONING_WINDOW_ID = #{commissioningWindowId,jdbcType=BIGINT},
+      SPRINT_ID = #{sprintId,jdbcType=BIGINT},
+      PROJECT_PLAN_ID = #{projectPlanId,jdbcType=BIGINT},
+      REQUIREMENT_FEATURE_STATUS = #{requirementFeatureStatus,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_DATE = #{createDate,jdbcType=DATE}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

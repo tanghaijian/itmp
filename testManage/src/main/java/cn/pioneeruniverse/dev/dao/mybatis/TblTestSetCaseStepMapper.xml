@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblTestSetCaseStepMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblTestSetCaseStep">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="TEST_SET_CASE_ID" jdbcType="BIGINT" property="testSetCaseId"/>
+        <result column="STEP_ORDER" jdbcType="INTEGER" property="stepOrder"/>
+        <result column="STEP_DESCRIPTION" jdbcType="VARCHAR" property="stepDescription"/>
+        <result column="STEP_EXPECTED_RESULT" jdbcType="VARCHAR" property="stepExpectedResult"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        ID, TEST_SET_CASE_ID, STEP_ORDER, STEP_DESCRIPTION, STEP_EXPECTED_RESULT, STATUS,
+        CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+    </sql>
+    <select id="findByPrimaryKey" parameterType="java.lang.Long"
+            resultType="cn.pioneeruniverse.dev.entity.CaseStepVo">
+        select
+            ID id,
+            STEP_ORDER stepOrder,
+            STEP_DESCRIPTION stepDescription,
+            STEP_EXPECTED_RESULT stepExpectedResult
+        from tbl_test_set_case_step
+        where TEST_SET_CASE_ID= #{id,jdbcType=BIGINT} and STATUS=1
+        ORDER BY STEP_ORDER
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_test_set_case_step
+        where TEST_SET_CASE_ID= #{id,jdbcType=BIGINT} and STATUS=1
+        ORDER BY STEP_ORDER
+    </select>
+
+    <delete id="deleteByCaseId">
+        delete from tbl_test_set_case_step where TEST_SET_CASE_ID=#{caseId}
+    </delete>
+    <!--   删除案例 -->
+    <update id="updateStatus">
+        update tbl_test_set_case_step
+        <set>
+            STATUS=2
+        </set>
+        where id in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="updateStatusByCaseIds">
+        update tbl_test_set_case_step
+        <set>
+            STATUS=2
+        </set>
+        where TEST_SET_CASE_ID in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <!-- 单执行添加 -->
+    <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblTestSetCaseStep">
+        insert into tbl_test_set_case_step(TEST_SET_CASE_ID, STEP_ORDER, STEP_DESCRIPTION, STEP_EXPECTED_RESULT,
+        CREATE_BY, CREATE_DATE)
+        values(#{testSetCaseId},#{stepOrder},#{stepDescription},#{stepExpectedResult},
+        #{createBy},CURRENT_TIMESTAMP)
+    </insert>
+    <!-- 修改案例步骤添加 -->
+    <insert id="insertStep" parameterType="map">
+        insert into tbl_test_set_case_step(TEST_SET_CASE_ID, STEP_ORDER, STEP_DESCRIPTION, STEP_EXPECTED_RESULT,
+        CREATE_BY, CREATE_DATE)values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.testSetCaseId},
+            #{item.stepOrder},
+            #{item.stepDescription},
+            #{item.stepExpectedResult},
+            #{createBy},
+            CURRENT_TIMESTAMP,
+            )
+        </foreach>
+    </insert>
+    <update id="updateCaseStep" parameterType="cn.pioneeruniverse.dev.entity.TblTestSetCaseStep">
+        update tbl_test_set_case_step
+        <set>
+            STEP_ORDER=#{stepOrder},
+            STEP_DESCRIPTION=#{stepDescription},
+            STEP_EXPECTED_RESULT=#{stepExpectedResult},
+            LAST_UPDATE_BY=#{lastUpdateBy},
+            LAST_UPDATE_DATE=CURRENT_TIMESTAMP
+        </set>
+        where ID=#{id}
+    </update>
+
+    <select id="getCaseStepByCaseNumber" resultType="cn.pioneeruniverse.dev.entity.TblTestSetCaseStep">
+        SELECT setcase.ID testSetCaseId,caseinfo.CASE_NUMBER caseNumber,step.STEP_ORDER stepOrder,step.STEP_DESCRIPTION
+        stepDescription,step.STEP_EXPECTED_RESULT stepExpectedResult
+        FROM tbl_case_step step
+        LEFT JOIN tbl_case_info caseinfo ON
+        step.CASE_ID = caseinfo.ID
+        LEFT JOIN tbl_test_set_case setcase ON
+        setcase.CASE_NUMBER = caseinfo.CASE_NUMBER
+        WHERE setcase.`STATUS` = 1 AND
+        step.STATUS = 1 AND
+        setcase.TEST_SET_ID = #{testSetId} AND
+        caseinfo.CASE_NUMBER in
+        <if test="list!=null">
+            <foreach collection="list" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <insert id="batchInsert" parameterType="cn.pioneeruniverse.dev.entity.TblTestSetCaseStep">
+        insert into tbl_test_set_case_step(TEST_SET_CASE_ID, STEP_ORDER, STEP_DESCRIPTION, STEP_EXPECTED_RESULT,
+        CREATE_BY, CREATE_DATE,LAST_UPDATE_BY,LAST_UPDATE_DATE) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.testSetCaseId},
+            #{item.stepOrder},
+            #{item.stepDescription},
+            #{item.stepExpectedResult},
+            #{item.createBy},
+            #{item.createDate},
+            #{item.lastUpdateBy},
+            #{item.lastUpdateDate}
+            )
+        </foreach>
+    </insert>
+
+    <select id="getAllCaseStepByCaseId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_test_set_case_step
+        where TEST_SET_CASE_ID=#{testSetCaseId} and STATUS=1
+    </select>
+
+    <!--liushan:根据测试案例id添加测试集案例步骤数据-->
+    <insert id="insertByTestSetCaseId">
+        INSERT INTO `tbl_test_set_case_step` (
+        `TEST_SET_CASE_ID`,
+        `STEP_ORDER`,
+        `STEP_DESCRIPTION`,
+        `STEP_EXPECTED_RESULT`,
+        `CREATE_BY`,
+        `LAST_UPDATE_BY`,
+        `CREATE_DATE`,
+        `LAST_UPDATE_DATE`
+        ) SELECT
+        #{newTestSetCaseId} AS `TEST_SET_CASE_ID`,
+        `STEP_ORDER`,
+        `STEP_DESCRIPTION`,
+        `STEP_EXPECTED_RESULT`,
+        #{currentUserId} AS CREATE_BY,
+        #{currentUserId} AS LAST_UPDATE_BY,
+        CURRENT_TIMESTAMP AS `CREATE_DATE`,
+        CURRENT_TIMESTAMP AS `LAST_UPDATE_DATE`
+        FROM
+        tbl_test_set_case_step
+        WHERE
+        TEST_SET_CASE_ID = #{oldTestSetCaseId}
+        AND STATUS = 1
+    </insert>
+</mapper>

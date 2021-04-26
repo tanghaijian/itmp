@@ -1,0 +1,60 @@
+.def_tableDiv2 {
+	left: 6px;
+	right: 6px;
+	top: 2px;
+	bottom: 3px;
+}
+
+.main-content {
+    margin-top:10px;
+}
+.content-table {
+    margin: 0 20px;
+    padding-top: 20px;
+}
+
+.tableTitle{
+	font-size:14px;
+	font-weight:bold;
+	text-align:center;
+	line-height:30px;
+	display:none;
+}
+.systemTitle {
+	color: #108EE9;
+	padding: 0 20px 6px 26px;
+	font-weight: bold;
+	font-size: 13px;
+	line-height: 24px;
+	background: url("../../images/testSet/project2.png") no-repeat 2px 0;
+	border-bottom: 1px solid #CCCCCC;
+}
+.assignTableGroup {
+	padding: 10px 35px;
+}
+
+.assignBtnGroup .btn {
+	margin: 10px 10px 10px 0;
+}
+
+.modal-lg {
+    width: 1000px;
+    padding-top: 0!important;
+    padding-bottom: 0!important;
+    position: relative;
+    left: 0;
+    top: 0;
+}
+.headReturn {
+	 position: absolute;
+	 top: 7px;
+	 left: 7px;
+ }
+.headReturn {
+	width: 55px;
+	height: 36px;
+	background: url(../../images/defect/return.png) no-repeat 8px 0;
+	border-right: 2px solid #E8E8E8;
+	cursor: pointer;
+	display: inline-block;
+}

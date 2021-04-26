@@ -1,0 +1,19 @@
+body{
+	padding: 0 20px;
+}
+
+#add_environment_Type{
+	display: block !important;
+	width:100px;
+}
+.layui-layer-prompt{
+	top: 0px !important;
+	border-radius: 5px;
+} 
+.layui-layer-prompt  .layui-layer-content{
+	height: 300px;
+	width: 300px;
+}
+.layui-layer-prompt .layui-layer-input{
+	margin-left: 0 !important;
+}

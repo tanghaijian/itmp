@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="cn.pioneeruniverse.project.dao.mybatis.TblQuestionLogMapper">
+	<resultMap id="BaseResultMap"
+		type="cn.pioneeruniverse.project.entity.TblQuestionLog">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="QUESTION_ID" jdbcType="BIGINT" property="questionId" />
+		<result column="LOG_TYPE" jdbcType="VARCHAR" property="logType" />
+		<result column="LOG_DETAIL" jdbcType="VARCHAR" property="logDetail" />
+		<result column="USER_ID" jdbcType="BIGINT" property="userId" />
+		<result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+		<result column="USER_ACCOUNT" jdbcType="VARCHAR" property="userAccount" />
+		<result column="STATUS" jdbcType="TINYINT" property="status" />
+		<result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+		<result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+		<result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+		<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+
+	</resultMap>
+
+	<!--新增记录问题日志-->
+	<insert id="insertLog" parameterType="cn.pioneeruniverse.project.entity.TblQuestionLog">
+		insert into tbl_question_log (QUESTION_ID, LOG_TYPE, LOG_DETAIL, USER_ID, USER_NAME, USER_ACCOUNT, STATUS, CREATE_BY,
+			CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE)
+			values
+			(#{questionId}, #{logType}, #{logDetail}, #{userId}, #{userName}, #{userAccount}, #{status}, #{createBy},
+			 #{createDate}, #{lastUpdateBy}, #{lastUpdateDate})
+	</insert>
+
+	<!--获取记录问题日志-->
+	<select id="getQuestionLog" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select * from tbl_question_log where QUESTION_ID = #{id} and STATUS = 1
+	</select>
+	
+</mapper>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblTestSetCaseStepExecuteMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblTestSetCaseStepExecute">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="TEST_SET_CASE_EXECUTE_ID" jdbcType="INTEGER" property="testSetCaseExecuteId"/>
+        <result column="STEP_ORDER" jdbcType="INTEGER" property="stepOrder"/>
+        <result column="STEP_DESCRIPTION" jdbcType="VARCHAR" property="stepDescription"/>
+        <result column="STEP_EXPECTED_RESULT" jdbcType="VARCHAR" property="stepExpectedResult"/>
+        <result column="STEP_ACTUAL_RESULT" jdbcType="VARCHAR" property="stepActualResult"/>
+        <result column="STEP_EXECUTE_RESULT" jdbcType="TINYINT" property="stepExecuteResult"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        ID, TEST_SET_CASE_EXECUTE_ID, STEP_ORDER, STEP_DESCRIPTION, STEP_EXPECTED_RESULT, STEP_ACTUAL_RESULT,
+        STEP_EXECUTE_RESULT,
+        STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_test_set_case_step_execute
+        where TEST_SET_CASE_EXECUTE_ID = #{id} and STATUS=1
+        ORDER BY STEP_ORDER
+    </select>
+
+
+    <insert id="insertSelective" parameterType="java.util.List">
+        insert into tbl_test_set_case_step_execute
+        (TEST_SET_CASE_EXECUTE_ID,STEP_ORDER,STEP_DESCRIPTION,STEP_EXPECTED_RESULT,STEP_ACTUAL_RESULT,STEP_EXECUTE_RESULT,CREATE_BY,CREATE_DATE)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.executeCaseId},
+            #{item.stepOrder},
+            #{item.stepDescription},
+            #{item.stepExpectedResult},
+            #{item.stepActualResult},
+            #{item.stepExecuteResult},
+            #{item.createBy},
+            CURRENT_TIMESTAMP
+            )
+        </foreach>
+    </insert>
+
+    <insert id="insertSelectiveMap" parameterType="map">
+        INSERT INTO tbl_test_set_case_step_execute (
+            TEST_SET_CASE_EXECUTE_ID,
+            STEP_ORDER,
+            STEP_DESCRIPTION,
+            STEP_EXPECTED_RESULT,
+            STEP_ACTUAL_RESULT,
+            STEP_EXECUTE_RESULT,
+            CREATE_BY,
+            CREATE_DATE
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+                #{executeCaseId},
+                #{item.stepOrder},
+                #{item.stepDescription},
+                #{item.stepExpectedResult},
+                #{item.stepActualResult},
+                #{item.stepExecuteResult},
+                #{currentUserId},
+                CURRENT_TIMESTAMP
+            )
+        </foreach>
+    </insert>
+
+
+    <insert id="insertPass" parameterType="java.util.List">
+        insert into tbl_test_set_case_step_execute
+        (TEST_SET_CASE_EXECUTE_ID,STEP_ORDER,STEP_DESCRIPTION,STEP_EXPECTED_RESULT,STEP_ACTUAL_RESULT,STEP_EXECUTE_RESULT,CREATE_BY,CREATE_DATE)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id},
+            #{item.stepOrder},
+            #{item.stepDescription},
+            #{item.stepExpectedResult},
+            "批量通过",
+            2,
+            #{item.createBy},
+            CURRENT_TIMESTAMP
+            )
+        </foreach>
+    </insert>
+</mapper>

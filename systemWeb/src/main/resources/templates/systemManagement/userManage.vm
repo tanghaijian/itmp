@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>用户管理</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css" /> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+    <link rel="stylesheet"  type="text/css"  media="screen" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/systemManagement/userManagement/user.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/systemManagement/useManagement/useManagement.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    <script>
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap4';
+        $.jgrid.defaults.iconSet = "fontAwesome";
+        var ctxStatic="${ctxStatic}";
+    </script>
+</head>
+<body>
+<div id="loading"> 
+  <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+ </div>
+<div class="color1">
+##搜索条件区
+    <div class="container-fluid" id="search_div">
+        <div class="row control-row">
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">人员姓名：</label></div>
+                <div class="search_input">
+                    <input type="text" class="form-control" placeholder="请选择" id="personalName" name="personalName" value="" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">所属公司：</label></div>
+                <div class="search_input">
+                    <select class="selectpicker" id="belongCompany" name="belongCompany">
+                  	  <option value="">请选择</option> 
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">所属处室：</label></div>
+                <div class="search_input">
+                    <select class="selectpicker" id="belongOffice" name="tcType">
+                        <option value="">请选择</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">是否第三方：</label></div>
+                <div class="search_input">
+                    <select class="selectpicker" id="thirdParty" name="tcType">
+                        <option value="">请选择</option>
+                        <option value="1">否</option>
+                        <option value="2">是</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row control-row">
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">在职状态：</label></div>
+                <div class="search_input">
+                    <select class="selectpicker" id="status" name="tcType">
+                        <option value="">请选择</option>
+                        <option value="1">在职</option>
+                        <option value="2">离职</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">入职日期：</label></div>
+                <div class="search_input">
+                    <input size="16"  type="text" readonly class="form-control form_datetime" placeholder="请选择入职日期" id="startWork" name="startWork" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">离职日期：</label></div>
+                <div class="search_input">
+                    <input size="16" type="text" readonly  placeholder="请选择离职日期"  class="form-control form_datetime" id="endWork" name="endWork" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">项目组：</label></div>
+                <div class="search_input">
+                    <select class="selectpicker" multiple id="project" name="tcType">
+                        <!-- <option value=""></option> -->
+                        <!-- <option value="1">1</option>
+                        <option value="2">2</option> -->
+                    </select>
+                </div>
+            </div>
+
+        </div>
+        <div class="row control-row search_btn">
+            <button type="button" class="btn btn-primary" onclick="searchInfo()">搜&nbsp;&nbsp;&nbsp;索</button>
+            <button type="button" onclick="clearSearch()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+        </div>
+    </div>
+    <div id="downBtn">
+        <span class="fa fa-caret-up"></span>
+    </div>
+</div>
+
+##列表按钮区
+<div class="main-content">
+    <div class="content-btn">
+        <button type="button" onclick="newPerson_btn()" class="btn btn-primary">新建人员</button>
+        <button type="button" onclick="importPerson_btn()" class="btn btn-primary">导入人员</button>
+        <button type="button" onclick="personQuit_btn()" class="btn btn-primary">人员离职</button>
+        <button type="button" onclick="exportPerson_btn()" class="btn btn-primary">导出人员</button>
+    </div>
+##列表grid
+    <div class="content-table">
+        <div class="wode">
+            <table id="list2"></table>
+            <div id="pager2"></div>
+        </div>
+    </div>
+</div>
+
+##新建人员弹框
+<div class="modal fade bs-example-modal-lg" id="newPerson" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">新建人员</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="newform" >
+                    <div class="row">
+                        <div class="form-group col-md-6 col-lg-6 ">
+                            <label class="col-sm-4 control-label"><span style="color:red">*</span>姓名：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <input type="text" class="form-control" placeholder="请填写姓名" id="newUserName" name="newUserName"/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-lg-6 ">
+                            <label class="col-sm-4 control-label"><span style="color:red">*</span>用户名：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <input type="text" class="form-control" placeholder="请填写用户名" id="newUserAccount" name="newUserAccount"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label"><span style="color:red">*</span>性别：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <select class="selectpicker" id="newGender" name="newGender">
+                                    <option value="">请选择</option>
+                                    <option value="1">男</option>
+                                    <option value="2">女</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label">出生年月：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <input size="16"  type="text" readonly class="form-control form_datetime" placeholder="请选择出生年月" id="newBirthday" name="newBirthday" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label"><span style="color:red">*</span>员工号：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <input type="text" class="form-control" placeholder="请填写员工号" id="newEmployeeNumber" name="newEmployeeNumber"/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label">邮箱：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <input type="text" class="form-control" placeholder="请填写邮箱" id="newEmail" name="newEmail"/>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label">是否第三方人员：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <select class="selectpicker" id="userType" name="userType">
+                                    <option value="">请选择</option>
+                                    <option value="2">是</option>
+                                    <option value="1">否</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label">所属公司：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <select class="selectpicker" id="newCompany" name="newCompany">
+                                    <option value="">请选择</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label">所属处室：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <select class="selectpicker" id="newDept" name="newDept">
+                                    <option value="">请选择</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-lg-6">
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label"><span style="color:red">*</span>在职状态：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <select class="selectpicker" id="newUserStatus" name="newUserStatus">
+                                    <option value="">请选择</option>
+                                    <option value="1">在职</option>
+                                    <option value="2">离职</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label">入职日期：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <input size="16"  type="text" readonly class="form-control form_datetime" placeholder="请选择入职日期" id="new_startWork" name="new_startWork" />
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label">分配角色：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <select class="selectpicker" id="newRole" name="newRole" multiple>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="newCommit()">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+##导入人员弹框
+<div class="modal fade" id="importPerson" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="POST"  enctype="multipart/form-data" id="form1" action="">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">选择导入文件</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="">
+                        <a id='leadingOut'>下载模板</a>&nbsp;提示:导出模板
+                        <input id="upfile" type="file" name="upfile" />
+                        <input id="pidValue" type="hidden" name="pId" value=" " />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary"  id="btn">确定</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+##人员编辑弹框
+<div class="modal fade bs-example-modal-lg" id="editPerson" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">编辑人员</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="editform">
+                	<input id="editUserId" type="hidden" />
+                    <div class="row">
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label"><span style="color:red">*</span>姓名：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <input type="text" class="form-control" placeholder="请填写姓名" id="editUserName" name="editUserName"/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label"><span style="color:red">*</span>用户名：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <input type="text" class="form-control" placeholder="请填写用户名" id="editUserAccount" name="editUserAccount"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label"><span style="color:red">*</span>性别：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <select class="selectpicker" id="editGender" name="editGender">
+                                    <option value="">请选择</option>
+                                    <option value="1">男</option>
+                                    <option value="2">女</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label">出生年月：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <input class="form-control form_datetime" size="16" type="text" placeholder="请选择日期" readonly id="editBirthday" name="editBirthday">
+                                <!-- <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label"><span style="color:red">*</span>员工号：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <input type="text" class="form-control" placeholder="请填写员工号" id="editEmployeeNumber" name="editEmployeeNumber"/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label">邮箱：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <input type="text" class="form-control" placeholder="请填写邮箱" id="editEmail" name="editEmail"/>
+                            </div>
+                        </div>
+                        <!-- <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label"><span>*</span>手机号：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <input type="text" class="form-control" placeholder="请填写手机号" id="" name=""/>
+                            </div>
+                        </div> -->
+                    </div>
+                    <!-- <div class="row">
+                        
+                        <div class="form-group col-md-6 col-lg-6">
+
+                        </div>
+                    </div> -->
+                    <br />
+                    <div class="row">
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label">是否第三方人员：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <select class="selectpicker" id="editUserType" name="editUserType">
+                                    <option value="">请选择</option>
+                                    <option value="2">是</option>
+                                    <option value="1">否</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label">所属公司：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <select class="selectpicker" id="editCompany" name="editCompany">
+                                    <option value="">请选择</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label">所属处室：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <select class="selectpicker" id="editDept" name="editDept">
+                                    <option value="">请选择</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-lg-6" id="scmAccountDev">
+                            <label class="col-sm-4 control-label"><span style="color:red">*</span>代码仓库账号：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <input type="text" class="form-control" placeholder="代码仓库账号" id="scmAccount" name="scmAccount"/>
+                            </div>
+                        </div>
+                        <!-- <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label"><span>*</span>所属项目组：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <select class="selectpicker" id="" name="">
+                                    <option value="-1">请选择</option>
+                                    <option value="1">项目组</option>
+                                </select>
+                            </div>
+                        </div> -->
+                    </div>
+                    <!-- <div class="row">
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label"><span>*</span>岗位：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <select class="selectpicker" id="" name="">
+                                    <option value="-1">请选择</option>
+                                    <option value="1">开发</option>
+                                    <option value="0">测试</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label"><span>*</span>人员单价：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <select class="selectpicker" id="" name="">
+                                    <option value="-1">请选择</option>
+                                    <option value="1">7k</option>
+                                    <option value="1">8k</option>
+                                    <option value="1">9k</option>
+                                    <option value="1">10k</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div> -->
+                    <br />
+                    <div class="row">
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label"><span style="color:red">*</span>在职状态：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <select class="selectpicker" id="editUserStatus" name="editUserStatus">
+                                    <option value="">请选择</option>
+                                    <option value="1">在职</option>
+                                    <option value="2">离职</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 col-lg-6">
+                            <label class="col-sm-4 control-label">入职日期：</label>
+                            <div class="col-sm-8 col-md-8">
+                                <input class="form-control form_datetime" size="16" type="text" readonly placeholder="请选择日期" id="edit_startWork" name="edit_startWork">
+                                <!-- <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span> -->
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label class="col-sm-2 col-md-2 control-label">分配角色：</label>
+                            <div class="col-sm-9 col-md-9">
+                                <select class="selectpicker" id="editRole" name="editRole" multiple>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="editCommit()">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+ 

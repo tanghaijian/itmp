@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <title>新建项目管理</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+  <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+  <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+  <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+  <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+  <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/daterangepicker-bs3.css" />
+  <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+  <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css" />
+  <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css" />
+  <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css" />
+  <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+  <link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/newProject/newProjectList.css" />
+
+  
+</head>
+
+<body>
+  <input type="hidden" id="project_name" name="" value="$!name" />
+  <!-- 搜索条件 -->
+  <div class="color1">
+    <div class="container-fluid search_div" id="search_div">
+      <div class="row control-row">
+        <div class="col-md-3">
+          <div class="search_font"><label class="control-label">项目编号：</label></div>
+          <div class="search_input">
+            <input type="text" id="projectCode" class="form-control" placeholder="请输入" />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="search_font"><label class="control-label">项目名称：</label></div>
+          <div class="search_input">
+            <input type="text" id="projectName" class="form-control" placeholder="请输入" />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="search_font"><label class="control-label">类型：</label></div>
+          <div class="search_input">
+            <select id="projectType" class="selectpicker ">
+              <option value="">请选择</option>
+               #foreach($dictMap in ${dict.getDictMap("TBL_PROJECT_INFO_PROJECT_CLASS").entrySet()})
+				<option value="${dictMap.key}">${dictMap.value}</option>
+			  #end
+            </select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="search_font"><label class="control-label">状态：</label></div>
+          <div class="search_input">
+            <select id="projectStatus" class="selectpicker">
+              <option value="">请选择</option>
+              #foreach($dictMap in ${dict.getDictMap("TBL_PROJECT_INFO_PROJECT_STATUS").entrySet()})
+				<option value="${dictMap.key}">${dictMap.value}</option>
+			  #end
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row control-row">
+        <div class="col-md-3">
+          <div class="search_font"><label class="control-label">起止日期：</label></div>
+          <div class="search_input">
+            <input type="text" id="startEndDate" class="form-control pointStyle " placeholder="请选择" />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="search_font"><label class="control-label">子系统：</label></div>
+          <div class="search_input">
+            <select id="system" class="selectpicker ">
+              <option value="">请选择</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="search_font"><label class="control-label">项目经理：</label></div>
+          <div class="search_input">
+          	<input type="hidden" id="manageUserId"/>
+            <input type="text" id="manageUser" class="form-control pointStyle readonly " placeholder="请选择" />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="search_font"><label class="control-label">开发模型：</label></div>
+          <div class="search_input">
+            <select id="developmentMode" class="selectpicker ">
+              <option value="">请选择</option>
+              <option value="1">敏捷模型</option>
+              <option value="2">传统模型</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row control-row search_btn">
+        <button type="button" class="btn btn-primary" onclick="searchInfo()">搜&nbsp;&nbsp;&nbsp;索</button>
+        <button type="button" onclick="clearSearch()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+      </div>
+    </div>
+    <div class="downBtn" id="downBtn">
+      <span class="fa fa-caret-up"></span>
+    </div>
+  </div>
+
+  <!-- 列表数据 -->
+  <div class="main-content">
+  	<div class="content-btn">
+      <!-- #if($auth.hasPermission("$token","newProjectManage:project:add")) -->
+      <button type="button" onclick="addProject(0)" class="btn btn-primary">新增项目</button>
+      <!-- #end -->
+    </div>
+    <div class="content-table">
+      <table id="project_list"></table>
+      <table id="pager2"></table>
+    </div>
+  </div>
+
+  <!-- 新增项目 -->
+  <div class="modal fade bs-example-modal-lg" id="add_project_modal" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">新增项目</h4>
+        </div>
+        <div class="modal-body">
+          <form id="add_form">
+            <h4 class="label_tit modal-title">项目基本信息</h4>
+            <div class="add_body">
+              <div class="rowdiv">
+                <div class="form-group">
+                  <div class="def_col_4"><label class="control-label"><span class="redStar">*</span>项目名称：</label></div>
+                  <div class="def_col_32">
+                    <input type="text" name="projectName" class="form-control" placeholder="请输入" />
+                  </div>
+                </div>
+              </div>
+              <div class="rowdiv">
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label"><span class="redStar">*</span>项目类型：</label></div>
+                  <div class="def_col_28">
+                    <select name="projectType" class="selectpicker form-control">
+                      <option value="">请选择</option>
+                      #foreach($dictMap in ${dict.getDictMap("TBL_PROJECT_INFO_PROJECT_CLASS").entrySet()})
+                      <option value="${dictMap.key}">${dictMap.value}</option>
+                      #end
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label"><span class="redStar">*</span>所属处室：</label></div>
+                  <div class="def_col_28">
+                    <select id="projectRoom" name="projectRoom" class="selectpicker form-control">
+                      <option value="">请选择</option>
+                      #foreach($dictMap in ${dict.getDictMap("TBL_PROJECT_INFO_DEPT").entrySet()})
+                      <option value="${dictMap.key}">${dictMap.value}</option>
+                      #end 
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="rowdiv">
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label"><span class="redStar">*</span>项目经理：</label></div>
+                  <div class="def_col_28">
+                  <input type="hidden" id="projectManagerId"/>
+                    <input type="text" id="projectManager" readonly name="projectManager" class="form-control pointStyle" placeholder="请选择" />
+                  </div>
+                </div>
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label">开发模型：</label></div>
+                  <div class="def_col_28">
+                    <select name="projectModel" class="selectpicker">
+                      <option value="">请选择</option>
+                      <option value="1">敏捷模型</option>
+                      <option value="2">瀑布模型</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="rowdiv">
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label">预算编号：</label></div>
+                  <div class="def_col_28">
+                    <input type="text" id="budgetNumber" name="budgetNumber" class="form-control" placeholder="请输入数字字母组合,不超过13位" />
+                  </div>
+                </div>
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label">子系统：</label></div>
+                  <div class="def_col_28">
+                    <select name="projectSystem" id="projectSystem" class="selectpicker" multiple>
+                      <!-- <option value="">请选择</option> -->
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="rowdiv">
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label">周边子系统：</label></div>
+                  <div class="def_col_28">
+                    <select name="projectRimSystem" id="projectRimSystem" class="selectpicker" multiple>
+                      <!-- <option value="">请选择</option> -->
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label">业务部门：</label></div>
+                  <div class="def_col_28">
+                    <select name="projectDepartment" class="selectpicker">
+                      <option value="">请选择</option>
+                      #foreach($dictMap in ${dict.getDictMap("TBL_PROJECT_INFO_BUSINESS_DEPT").entrySet()})
+							<option value="${dictMap.key}">${dictMap.value}</option>
+			  		  #end 
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h4 class="label_tit modal-title">项目扩展信息</h4>
+            <div class="add_body">
+              <div class="rowdiv group">
+                <div class="def_col_4"><label class="control-label">项目范围：</label></div>
+                <div class="def_col_32">
+                  <textarea type="text" name="projectScope" class="form-control" placeholder="请输入"></textarea>
+                </div>
+              </div>
+              <div class="rowdiv group">
+                <div class="def_col_4"><label class="control-label">项目背景：</label></div>
+                <div class="def_col_32">
+                  <textarea type="text" name="projectBackground" class="form-control" placeholder="请输入"></textarea>
+                </div>
+              </div>
+              <div class="rowdiv group">
+                <div class="def_col_4"><label class="control-label">项目备注：</label></div>
+                <div class="def_col_32">
+                  <textarea type="text" name="projectRemark" class="form-control" placeholder="请输入"></textarea>
+                </div>
+              </div>
+              <div class="rowdiv">
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label">开始日期：</label></div>
+                  <div class="def_col_28">
+                    <input type="text" id="startDate" name="startDate" class="form-control pointStyle" placeholder="请选择" />
+                  </div>
+                </div>
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label">交付日期：</label></div>
+                  <div class="def_col_28">
+                    <input type="text" id="deliveryDate" name="deliveryDate" class="form-control pointStyle" placeholder="请选择" />
+                  </div>
+                </div>
+              </div>
+              <div class="rowdiv">
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label">结项日期：</label></div>
+                  <div class="def_col_28">
+                    <input type="text" id="endDate" name="endDate" class="form-control pointStyle" placeholder="请选择" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" onclick="add_submit()" class="btn btn-primary">确定</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑项目 -->
+  <div class="modal fade bs-example-modal-lg" id="edit_project_modal" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="">编辑项目</h4>
+          <input type="hidden" id="edit_id" />
+        </div>
+        <div class="modal-body">
+          <form id="edit_form">
+            <h4 class="label_tit modal-title">项目基本信息</h4>
+            <div class="add_body">
+              <div class="rowdiv">
+                <div class="form-group">
+                  <div class="def_col_4"><label class="control-label"><span class="redStar">*</span>项目名称：</label></div>
+                  <div class="def_col_32">
+                    <input type="text" name="edit_projectName" class="form-control" placeholder="请输入" />
+                  </div>
+                </div>
+              </div>
+              <div class="rowdiv">
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label"><span class="redStar">*</span>项目类型：</label></div>
+                  <div class="def_col_28">
+                    <select name="edit_projectType" class="selectpicker form-control">
+                      <option value="">请选择</option>
+                      #foreach($dictMap in ${dict.getDictMap("TBL_PROJECT_INFO_PROJECT_CLASS").entrySet()})
+                      <option value="${dictMap.key}">${dictMap.value}</option>
+                      #end
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label"><span class="redStar">*</span>所属处室：</label></div>
+                  <div class="def_col_28">
+                    <select id="edit_projectRoom" name="edit_projectRoom" class="selectpicker form-control">
+                      <option value="">请选择</option>
+                      #foreach($dictMap in ${dict.getDictMap("TBL_PROJECT_INFO_DEPT").entrySet()})
+                      <option value="${dictMap.key}">${dictMap.value}</option>
+                      #end 
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="rowdiv">
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label"><span class="redStar">*</span>项目经理：</label></div>
+                  <div class="def_col_28">
+                    <input type="hidden" id="edit_projectManagerId"/>
+                    <input type="text" id="edit_projectManager" name="edit_projectManager" readOnly class="form-control pointStyle" placeholder="请选择" />
+                  </div>
+                </div>
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label"><span class="redStar">*</span>开发模型：</label></div>
+                  <div class="def_col_28">
+                    <select name="edit_projectModel" class="selectpicker form-control">
+                      <option value="">请选择</option>
+                      <option value="1">敏捷模型</option>
+                      <option value="2">瀑布模型</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="rowdiv">
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label"><span class="redStar ">*</span>预算编号：</label></div>
+                  <div class="def_col_28">
+                    <input type="text" id="edit_budgetNumber" name="edit_budgetNumber" class="form-control" placeholder="必须是数字字母组合,0~13位" />
+                  </div>
+                </div>
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label"><span class="redStar ">*</span>子系统：</label></div>
+                  <div class="def_col_28">
+                    <select name="edit_projectSystem" id="edit_projectSystem" class="selectpicker form-control" multiple>
+                      <!-- <option value="">请选择</option> -->
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="rowdiv">
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label">周边子系统：</label></div>
+                  <div class="def_col_28">
+                    <select name="edit_projectRimSystem" id="edit_projectRimSystem" class="selectpicker" multiple>
+                      <!-- <option value="">请选择</option> -->
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label">业务部门：</label></div>
+                  <div class="def_col_28">
+                    <select name="edit_projectDepartment" class="selectpicker">
+                      <option value="">请选择</option>
+                      #foreach($dictMap in ${dict.getDictMap("TBL_PROJECT_INFO_BUSINESS_DEPT").entrySet()})
+                      <option value="${dictMap.key}">${dictMap.value}</option>
+                      #end 
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h4 class="label_tit modal-title">项目扩展信息</h4>
+            <div class="add_body">
+              <div class="rowdiv form-group">
+                <div class="def_col_4"><label class="control-label"><span class="redStar">*</span>项目范围：</label></div>
+                <div class="def_col_32">
+                  <textarea type="text" name="edit_projectScope" class="form-control" placeholder="请输入"></textarea>
+                </div>
+              </div>
+              <div class="rowdiv form-group">
+                <div class="def_col_4"><label class="control-label"><span class="redStar">*</span>项目背景：</label></div>
+                <div class="def_col_32">
+                  <textarea type="text" name="edit_projectBackground" class="form-control" placeholder="请输入"></textarea>
+                </div>
+              </div>
+              <div class="rowdiv form-group">
+                <div class="def_col_4"><label class="control-label">项目备注：</label></div>
+                <div class="def_col_32">
+                  <textarea type="text" name="edit_projectRemark" class="form-control" placeholder="请输入"></textarea>
+                </div>
+              </div>
+              <div class="rowdiv">
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label">开始日期：</label></div>
+                  <div class="def_col_28">
+                    <input type="text" id="edit_startDate" name="edit_startDate" class="form-control pointStyle" placeholder="请选择" />
+                  </div>
+                </div>
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label">交付日期：</label></div>
+                  <div class="def_col_28">
+                    <input type="text" id="edit_deliveryDate" name="edit_deliveryDate" class="form-control pointStyle" placeholder="请选择" />
+                  </div>
+                </div>
+              </div>
+              <div class="rowdiv">
+                <div class="form-group def_col_18">
+                  <div class="def_col_8"><label class="control-label">结项日期：</label></div>
+                  <div class="def_col_28">
+                    <input type="text" id="edit_endDate" name="edit_endDate" class="form-control pointStyle" placeholder="请选择" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" onclick="edit_submit()" class="btn btn-primary">确定</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  ## 选择人员
+  <div class="modal fade bs-example-modal-lg in" id="userModal" tabindex="-1" role="dialog" aria-labelledby="">
+      <div class="modal-dialog modal-lg modal-user" role="document">
+          <div class="modal-content modalStyle">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                  <span>选择人员</span>
+              </div>
+              <div class="modal-body">
+                  <div class="color1">
+                      <div class="container-fluid">
+                          <div class="row control-row">
+                              <div class="col-md-4">
+                                  <div class="search_font"><label class="control-label">姓名：</label></div>
+                                  <div class="search_input" style="position: relative;">
+                                      <input type="text" class="form-control " placeholder="请输入" id="userName" name="userName" value="">
+                                  </div>
+                              </div>
+  
+                              <div class="col-md-4">
+                                  <div class="search_font"><label class="control-label">部门：</label></div>
+                                  <div class="search_input" style="position: relative;">
+                                       <input type="text" class="form-control " placeholder="请输入" id="deptName" name="deptName" value="">
+                                  </div>
+                              </div>
+                              <div class="col-md-4">
+                                  <div class="search_font"><label class="control-label">公司：</label></div>
+                                  <div class="search_input" style="position: relative;">
+                                      <input type="text" class="form-control " placeholder="请输入" id="companyName" name="companyName" value="">
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="row control-row search_btn">
+                              <button type="button" class="btn btn-primary" onclick="userTableShow2(1)">搜&nbsp;&nbsp;&nbsp;索</button>
+                              <button type="button" onclick="clearSearchUser()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                          </div>
+                      </div>
+                      <div id="downBtn" class="downBtn">
+                          <span class="fa fa-caret-up"></span>
+                      </div>
+                  </div>
+                  <br>
+                  <div class="content-table">
+                    <table id="userTable"></table>
+                    <table id="userPage"></table>
+                  </div>
+              </div>
+  
+              <div class="modal-footer">
+                  <div class="bottom-container">
+                      <button type="button" id="userbutton" class="btn btn-primary" data-user="requirementManageUser" onclick="commitUser()">确定
+                      </button>
+                      <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+
+  <div id="loading">
+    <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+  </div>
+
+</body>
+  <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+  <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/moment.min.js"></script>
+  <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+  <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+  <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+  <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+  <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+  <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+  <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+  <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+  <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/daterangepicker.js"></script>
+  <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+  <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+  <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+  <script type="text/javascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+  <script type="text/ecmascript" src="#springUrl('')/projectManageui/static/js/newProject/newProject.js"></script>
+  <script>
+     $.jgrid.defaults.responsive = true;
+     $.jgrid.defaults.styleUI = 'Bootstrap4';
+     $.jgrid.defaults.iconSet = "fontAwesome";
+
+     var newProjectEdit = $auth.hasPermission("$token","newProjectManage:project:edit");
+     var newProjectConfig = $auth.hasPermission("$token","newProjectManage:project:config");
+  </script>
+</html>

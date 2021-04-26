@@ -1,0 +1,383 @@
+/* {
+	font-size: 12px;
+} */
+body {
+    padding: 10px;
+    padding-left: 0;
+    background: #F7F7F7;
+}
+
+body:after {
+    clear: both;
+    content: "";
+    display: block;
+}
+
+.leftDiv {
+    float: left;
+}
+
+.codeMenu {
+    margin: 0 5px 10px 5px;
+}
+
+.codeMenu_tit, .contTit {
+    font-size: 13px !important;
+    font-weight: bold;
+}
+
+.codeMenu_tit > .pull-left {
+    width: 15em;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding-right: 1rem
+}
+
+.codeMenu_tit > .left_btnDiv {
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-align: right;
+    padding-right: 8px;
+}
+
+.left_btnDiv > button {
+    height: 28px !important;
+    line-height: 12px;
+    padding: 6px 10px !important;
+}
+
+.configBtn {
+    right: 72px;
+}
+
+.newBase {
+    right: 8px;
+}
+
+.codeMenu_tit {
+    height: 45px;
+    position: relative;
+    line-height: 45px;
+    background: #F2F2F2;
+    border: 1px solid #D9D9D9;
+    border-radius: 4px 4px 0 0;
+    padding-left: 42px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    background: url("../../images/codeBase/system.png") no-repeat 10px 10px;
+    background-color: #FFFFFF;
+
+}
+
+.codeMenu_tit img {
+    margin-bottom: 3px;
+    margin-right: 5px;
+}
+
+.codeMenu_tit span {
+    line-height: 34px;
+}
+
+.codeMenu_cont {
+    height: 100%;
+    border: 1px solid #D9D9D9;
+    border-top: none;
+    overflow-x: auto;
+    background: #FFFFFF;
+}
+
+.contTit {
+    line-height: 35px;
+    height: 35px;
+    border-bottom: 1px solid #D9D9D9;
+}
+
+.content-btngroup {
+    padding: 10px 0;
+}
+
+.saveChange {
+    display: none;
+}
+
+/* ztree */
+.level0 > .node_name {
+    font-weight: bold;
+}
+
+#menuContent {
+    z-index: 2000;
+    padding: 10px 30px;
+    margin-left: 0px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    background-clip: padding-box;
+    width: 200px;
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+#newBaseSelect .modal-body {
+    padding: 30px 50px 15px;
+}
+
+#newBaseSelect .rowdiv {
+    margin-bottom: 8px;
+}
+
+.singcheckBox {
+    width: 5%;
+    height: 100%;
+    line-height: 30px;
+}
+
+.singleData {
+    padding: 5px 10px 8px 10px;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    border: 1px solid #9e9090;
+    border-bottom: none;
+}
+
+.singleData:last-child {
+    border-bottom: 1px solid #9e9090;;
+}
+
+.singleDataDiv {
+    width: 11%;
+    padding-right: 8px;
+    font-size: 12px;
+}
+
+.singleDataCheckbox {
+    width: 5%;
+    padding-right: 8px;
+    font-size: 12px;
+}
+
+.singleTit > .singleDataDiv {
+    padding: 0 8px;
+}
+
+.singleDataDiv .search_input {
+    width: 100%;
+}
+
+.def_btnGroup {
+    padding: 10px 20px 10px 50px;
+}
+
+.delSingData {
+    /*flex: 1;*/
+    width: 7%;
+    height: 45px;
+    line-height: 45px;
+    font-weight: bold;
+    padding-left: 10px;
+}
+
+.delFont, .delFont:hover {
+    color: #FF3300;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.singleData .search_input .btn_clear {
+    display: block !important;
+}
+
+.singleData .search_input input[type="text"] {
+    padding-right: 24px !important;
+}
+
+.databaseTree {
+    display: block;
+    border: 1px solid #D9D9D9;
+    border-top: none;
+    overflow-x: auto;
+    background: #FFFFFF;
+    padding: 8px 10px;
+}
+
+.databaseTree > li {
+    padding: 8px;
+    cursor: pointer;
+    position: relative;
+    padding-left: 35px;
+}
+
+.databaseTree > li:hover {
+    color: #108EE9;
+    background: #EBF1FB;
+}
+
+.databaseTree > .myItem {
+    color: #108EE9;
+    background: #EBF1FB;
+}
+
+.databaseTree > li > .databseImg {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    width: 18px;
+    height: 18px;
+}
+
+#list2 tbody {
+    background: #FFF;
+}
+
+#list2 tb {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden !important;
+}
+
+#list2 .gitLabAccessLevelTd {
+    overflow: visible !important;
+}
+
+.ui-jqgrid-view {
+    overflow: visible !important;
+}
+
+/*
+.ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td{
+	overflow: visible !important;
+}*/
+#projectGroupContent {
+    z-index: 1000000;
+    padding: 10px 30px;
+    margin-left: 0px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    background-clip: padding-box;
+    width: 200px;
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.delFont2 {
+    float: right !important;
+}
+
+.scriptTop {
+    margin-top: 5px;
+}
+
+.delFont2 a {
+    color: #FF3300;
+    cursor: pointer;
+    line-height: 30px;
+}
+
+.wildcardArea {
+    padding: 0 20px;
+}
+
+.wildcardArea > div {
+    border-top: 1px dashed #000;
+    padding: 10px 0;
+}
+
+.wildcardArea > div:first-child {
+    border: none !important;
+    padding-top: 0 !important;
+}
+
+.search_list {
+    padding-left: 0;
+}
+
+.search_list_item {
+    padding: 5px;
+}
+
+.w_10 {
+    width: 7% !important;
+}
+
+.w_13 {
+    width: 13% !important;
+}
+
+.w_15 {
+    width: 10% !important;
+}
+
+.w_21 {
+    width: 21% !important;
+}
+
+.w_30 {
+    width: 28% !important;
+}
+
+.w_38 {
+    width: 38% !important;
+}
+
+.w_35 {
+    width: 35% !important;
+}
+
+.w_70_url {
+    padding: 10px 5px 5px 55px !important;
+    width: 71% !important;
+}
+
+.w_75 {
+    padding: 10px 5px 5px 55px !important;
+    width: 75% !important;
+}
+
+#codeSubmitConfigModel .modal-content {
+    top: 0;
+    bottom: 0;
+    height: auto !important;
+}
+
+.sub_btn {
+    padding: 8px 40px;
+    position: absolute;
+    right: 200px;
+}
+
+.pad_20, .search_list ul {
+    padding-left: 0px;
+}
+
+#codeSubmitConfigModel .modal-dialog {
+    width: 100%;
+    padding: 0;
+}
+
+.git_padding {
+    padding: 10px 5px 5px 55px !important;
+}
+
+.p_t_10 {
+    padding-top: 10px !important;
+}
+
+/*#singDivCont{
+	max-height: 400px;
+    overflow: auto;
+}*/
+
+.leftDiv, .codeContent {
+    overflow: auto;
+}

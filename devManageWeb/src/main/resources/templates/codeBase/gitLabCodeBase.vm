@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>git代码库管理</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jquery-ztree/3.5.36/css/metroStyle/metroStyle.css"/>
+    <link rel="stylesheet" type="text/css" media="screen"
+          href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css"/>
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/codeBase/codeBase.css"/>
+
+
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+    <script type="text/javascript"
+            src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.core.js"></script>
+    <script type="text/javascript"
+            src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.excheck.min.js"></script>
+    <script type="text/javascript"
+            src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.exhide.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript"
+            src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript"
+            src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/devManageui/static/js/codeBase/codeBase.js"></script>
+    <script>
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap4';
+        $.jgrid.defaults.iconSet = "fontAwesome";
+    </script>
+</head>
+<body>
+##左侧代码库列表
+<div class="leftDiv def_col_11" id="leftGitList">
+#* 效率太低，注释掉
+    #foreach($data in ${codeBase.getMyProjectSystems($token)})
+        <div class="codeMenu">
+            <div class="codeMenu_tit">
+                <span>$data.systemName</span>
+                <div class="left_btnDiv">
+                    #if($auth.hasPermission("$token","devManage:version:createGitBase"))
+                        <button type="button" class="btn btn-primary newBase"
+                                onclick="GitLabCodeBase.createNewCodeBase($data.id)">新建库
+                        </button>
+                    #end
+                    #if($auth.hasPermission("$token","devManage:version:codeSubmitGitConfig"))
+                    <button type="button" class="btn btn-primary configBtn"
+                            onclick="GitLabCodeBase.codeSubmitConfig($data.id)">代码提交配置
+                    #end
+                </div>
+            </div>
+            <ul class="databaseTree" id="databaseTree">
+                #foreach($gitLabProject in ${codeBase.getSystemGitLabProjects($data.id.longValue())})
+                    <li onclick="GitLabCodeBase.reloadPage(this)" projectId="$gitLabProject.id"
+                        baseUri="$!gitLabProject.base_uri"
+                        gitApiToken="$!gitLabProject.git_api_token">
+                        <img class="databseImg" src="#springUrl('')/devManageui/static/images/codeBase/shujuku-.png"/>
+                        $gitLabProject.name
+                    </li>
+                #end
+            </ul>
+        </div>
+    #end
+*#
+</div>
+
+##右侧人员权限列表
+<div class="codeContent def_col_25">
+    <div class="contTit">
+        分派人员权限:
+    </div>
+    <div class="content-btngroup">
+        #if($auth.hasPermission("$token","devManage:version:addGitUser"))
+            <button id="addGitLabUserButton" type="button" class="btn btn-primary">增加人员</button>&nbsp;
+        #end
+        #if($auth.hasPermission("$token","devManage:version:removeGitUser"))
+            <button id="delGitLabUserButton" type="button" class="btn btn-default">移除人员</button>&nbsp;
+        #end
+        #if($auth.hasPermission("$token","devManage:version:saveGitModify"))
+            <button id="saveButton" type="button" class="btn btn-default" style="display: none">
+                保存修改
+            </button>
+        #end
+    </div>
+    <div class="wode">
+        <table id="list2"></table>
+    </div>
+</div>
+
+<div id="loading">
+    <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif"/>
+</div>
+
+##人员权限 增加弹窗
+<div class="modal fade bs-example-modal-lg" id="gitLabUserModal" tabindex="-1" role="dialog"
+     aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg modal-user" role="document">
+        <div class="modal-content modalStyle">
+
+        </div>
+    </div>
+</div>
+
+##新建代码库弹窗
+<div class="modal fade" id="createCodeBaseModel" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+##代码提交配置弹窗
+<div class="modal fade bs-example-modal-lg" id="codeSubmitConfigModel" tabindex="-1" role="dialog"
+     aria-labelledby="configModel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+#*人员弹框*#
+<div class="modal fade bs-example-modal-lg" id="codeSubmitConfigUserModal" tabindex="-1" role="dialog"
+     aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg modal-user" role="document">
+        <div class="modal-content modalStyle">
+
+        </div>
+    </div>
+</div>
+
+##版本选择
+<div class="modal fade bs-example-modal-sm" tabindex="-1" id="versionSelModal" role="dialog"
+     aria-labelledby="versionSelModal">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" aria-hidden="true">
+                    &times;
+                </button>
+                <span class="modal-title">请选择版本</span>
+            </div>
+            <div class="modal-body">
+                <select class="selectpicker" id="selVersion">
+                    <option value="">请选择</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <div class="bottom-container">
+                    <button type="button" class="btn btn-primary" onclick="CodeSubmitConfigModal.commitVersion()">确定
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+##批量选择是否提交
+<div class="modal fade bs-example-modal-sm" tabindex="-1" id="isSubmitModal" role="dialog"
+     aria-labelledby="isSubmitModal">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" aria-hidden="true">
+                    &times;
+                </button>
+                <span class="modal-title">请选择是否提交</span>
+            </div>
+            <div class="modal-body">
+                <select class="selectpicker" id="submit_AllStatus">
+                     <option value="">请选择</option>
+                     <option value="1">是</option>
+                     <option value="2">否</option>
+                 </select>
+            </div>
+            <div class="modal-footer">
+                <div class="bottom-container">
+                    <button type="button" class="btn btn-primary" onclick="CodeSubmitConfigModal.commitAllSubmit()">确定
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+##批量选择投产窗口
+<div class="modal fade bs-example-modal-sm" tabindex="-1" id="selectWindowModal" role="dialog"
+     aria-labelledby="selectWindowModal">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" aria-hidden="true">
+                    &times;
+                </button>
+                <span class="modal-title">请选择投产窗口</span>
+            </div>
+            <div class="modal-body">
+                <select class="selectpicker" id="select_AllWindow">
+                    <option value="">请选择</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <div class="bottom-container">
+                    <button type="button" class="btn btn-primary" onclick="CodeSubmitConfigModal.commitselect_AllWindow()">确定
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="menuContent" class="menuContent" style="display:none; position: absolute;">
+    <ul id="projectSelect" class="ztree"></ul>
+</div>
+
+<div id="projectGroupContent" style="display:none; position: absolute;">
+    <ul id="projectGroupSelect" class="ztree"></ul>
+</div>
+
+
+<script>
+
+    var GitLabCodeBase = {
+    		//刷新页面
+        reloadPage: function (obj) {
+            $(obj).siblings("li").removeClass("myItem");
+            $(obj).parents("div.codeMenu").siblings().find("ul>li").removeClass("myItem");
+            $(obj).addClass("myItem");
+            $('#list2').jqGrid("setGridParam", {
+                postData: {
+                    id: $(obj).attr("projectId"),
+                    baseUri: $(obj).attr("baseUri"),
+                    gitApiToken: $(obj).attr("gitApiToken")
+                }
+            }).trigger("reloadGrid");
+        },
+        //添加用户
+        addUser: function () {
+            $('#gitLabUserModal').modal({
+                'show': true,
+                'remote': '/devManageui/versioncontrol/getUserList?existUsers=' + existUsers.join(",") + '&codeBaseType=gitLab'
+            });
+        },
+        createNewCodeBase: function (systemId) {
+            $('#createCodeBaseModel').modal({
+                'show': true,
+                'remote': '/devManageui/versioncontrol/createCodeBase?scmType=1&systemId=' + systemId
+            });
+        },
+        codeSubmitConfig: function (systemId) {
+            $("#codeSubmitConfigModel").modal({
+                'show': true,
+                'remote': '/devManageui/versioncontrol/codeSubmitConfig?scmType=1&systemId=' + systemId
+            });
+        },
+        addUserToJqGrid: function (data) {
+            $("#gitLabUserModal").modal('hide');
+            for (var i in data) {
+                var dataRow = {
+                    id: data[i].id,
+                    userScmAccount: data[i].userScmAccount == null ? "" : data[i].userScmAccount,
+                    userName: data[i].userName,
+                    deptName: data[i].deptName,
+                    email: data[i].email,
+                    gitLabAccessLevel: "10"
+                }
+                //将新添加的行插入到第一列
+                $("#list2").jqGrid("addRowData", data[i].id, dataRow, "first");
+                var dIndex;
+                var deledUser = delUsers.find(function (value, i) {
+                    dIndex = i;
+                    return value["userId"] == dataRow.id;
+                });
+                if (deledUser != undefined) {
+                    if (deledUser["gitLabAccessLevel"] != dataRow.gitLabAccessLevel) {
+                        modifyUsers.push({
+                            userId: dataRow.id,
+                            username: dataRow.userScmAccount,
+                            name: dataRow.userName,
+                            gitLabAccessLevel: dataRow.gitLabAccessLevel
+                        });
+                    }
+                    $("select[name='gitLabAccessLevel']").eq($('#' + dataRow.id)[0].rowIndex - 1).attr("oldValue", deledUser["gitLabAccessLevel"]);
+                    delUsers.splice(dIndex, 1);
+                } else {
+                    addUsers.push({
+                        userId: parseInt(dataRow.id),
+                        username: dataRow.userScmAccount,
+                        name: dataRow.userName,
+                        email: dataRow.email,
+                        gitLabAccessLevel: dataRow.gitLabAccessLevel
+                    });
+                }
+            }
+            GitLabCodeBase.saveButtonStatusControl();
+        },
+        changeGitlabAccessLevel: function (id, userName, name, obj) {
+            var addedUser = addUsers.find(function (value) {
+                return value["userId"] == id;
+            });
+            if (addedUser != undefined) {
+                addedUser["gitLabAccessLevel"] = $(obj).val();
+            } else {
+                var index;
+                var modifiedUser = modifyUsers.find(function (value, i) {
+                    index = i;
+                    return value["userId"] == id;
+                });
+                if (modifiedUser != undefined) {
+                    if ($(obj).val() == $(obj).attr("oldValue")) {
+                        modifyUsers.splice(index, 1);
+                    } else {
+                        modifiedUser["gitLabAccessLevel"] = $(obj).val();
+                    }
+                } else {
+                    modifyUsers.push({
+                        userId: id,
+                        username: userName,
+                        name: name,
+                        gitLabAccessLevel: $(obj).val()
+                    });
+                }
+            }
+            GitLabCodeBase.saveButtonStatusControl();
+        },
+        delOneUser: function (id, userName, name) {
+            var oldGitLabAccessLevel = $("select[name='gitLabAccessLevel']").eq($('#' + id)[0].rowIndex - 1).attr("oldValue");
+            $("#list2").jqGrid('delRowData', id);
+            var aIndex;
+            var addedUser = addUsers.find(function (value, i) {
+                aIndex = i;
+                return value["userId"] == id;
+            });
+            if (addedUser != undefined) {
+                addUsers.splice(aIndex, 1);
+            } else {
+                var mindex;
+                var modifiedUser = modifyUsers.find(function (value, i) {
+                    mindex = i;
+                    return value["userId"] == id;
+                });
+                if (modifiedUser != undefined) {
+                    modifyUsers.splice(mindex, 1);
+                }
+                delUsers.push({
+                    userId: id,
+                    username: userName,
+                    name: name,
+                    gitLabAccessLevel: oldGitLabAccessLevel
+                });
+            }
+            GitLabCodeBase.saveButtonStatusControl();
+        },
+        delUser: function () {
+            var ids = $("#list2").jqGrid("getGridParam", "selarrrow");
+            if (ids != "") {
+                $(ids).each(function (index, id) {
+                    GitLabCodeBase.delOneUser(id, $("#list2").jqGrid('getRowData', id)["userScmAccount"], $("#list2").jqGrid('getRowData', id)["userName"]);
+                });
+            } else {
+                layer.alert("请选中一行", {
+                    icon: 2,
+                    title: "提示信息"
+                });
+            }
+        },
+        saveButtonStatusControl: function () {
+            if (addUsers.length > 0 || delUsers.length > 0 || modifyUsers.length > 0) {
+                #if($auth.hasPermission("$token","devManage:version:saveModify"))
+                    $("#saveButton").show();
+                    document.getElementById("saveButton").addEventListener("click", GitLabCodeBase.saveModify, false);
+                #end
+            } else {
+                #if($auth.hasPermission("$token","devManage:version:saveModify"))
+                    $("#saveButton").hide();
+                    document.getElementById("saveButton").removeEventListener("click", GitLabCodeBase.saveModify, false);
+                #end
+            }
+        },
+        saveModify: function () {
+            var selectedProject = $("div.leftDiv.def_col_11").find("ul.databaseTree>li.myItem");
+            var data = {
+                id: selectedProject.attr("projectId"),
+                baseUri: selectedProject.attr("baseUri"),
+                gitApiToken: selectedProject.attr("gitApiToken"),
+                addUsers: JSON.stringify(addUsers),
+                delUsers: JSON.stringify(delUsers),
+                modifyUsers: JSON.stringify(modifyUsers)
+            }
+            $.ajax({
+                type: "POST",
+                url: "/devManage/version/saveGitLabModify",
+                contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+                dataType: "json", //返回值为对象使用
+                data: data,
+                beforeSend: function () {
+                    $("#loading").css('display', 'block');
+                },
+                success: function (msg) {
+                    if (msg.flag) {
+                        layer.alert(msg.data == "" ? "保存修改成功！" : msg.data, {
+                            icon: 7,
+                            title: "提示信息"
+                        });
+                        selectedProject.click();
+                    } else {
+                        layer.alert("保存修改异常！", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    if (XMLHttpRequest.status != 999) {
+                        layer.alert("服务器异常！请联系系统管理员", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                    }
+                },
+                complete: function (XMLHttpRequest, textStatus) {
+                    $("#loading").css('display', 'none');
+                }
+            });
+        },
+        resetPassword:function (id,userScmAccount){
+        	layer.confirm("确定要重置git代码库密码吗？",{icon:3},function(){
+        		$("#loading").css('display', 'block');
+				$.ajax({
+					url:"/system/user/resetGitPassword",
+					type:"post",
+					dataType:"json",
+					data:{
+						userId:id,
+						userScmAccount:userScmAccount
+					},
+					success:function(msg){
+						$("#loading").css('display', 'none');
+						if (msg.flag) {
+	                        layer.alert(msg.data == null ? "密码重置成功！" : msg.data, {
+	                            icon: 7,
+	                            title: "提示信息"
+	                        });
+	                    } else {
+	                        layer.alert("密码重置失败！", {
+	                            icon: 2,
+	                            title: "提示信息"
+	                        });
+	                    }
+					}
+					
+				})
+        	})
+        }
+    };
+
+    var existUsers = [];
+    var addUsers = [];
+    var delUsers = [];
+    var modifyUsers = [];
+
+    #if($auth.hasPermission("$token","devManage:version:saveGitModify"))
+    document.getElementById("saveButton").addEventListener("click", GitLabCodeBase.saveModify, false);
+    #end
+
+    $(document).ready(function () {
+    	
+    	getMyProjectSystems();//查询左边列表数据
+    	
+        var liObj = $("div.leftDiv.def_col_11").find("ul.databaseTree>li");
+        if (liObj.size() > 0) {
+            $(liObj).eq(0).addClass("myItem");
+            $("#list2").jqGrid({
+                url: '/devManage/version/getGitLabUsers',
+                datatype: "json",
+                height: 'auto',
+                mtype: "POST",
+                cellEdit: true,
+                multiselect: true,
+                postData: {
+                    id: $(liObj).eq(0).attr("projectId"),
+                    baseUri: $(liObj).eq(0).attr("baseUri"),
+                    gitApiToken: $(liObj).eq(0).attr("gitApiToken")
+                },
+                width: $(".wode").width() * 0.999,
+                colNames: ['id', 'GITLAB账号', '姓名', '姓名|GITLAB账号', '所属部门', 'E-mail', '角色权限', '操作'],
+                colModel: [
+                    {name: 'id', index: 'id', hidden: true},
+                    {name: 'userScmAccount', hidden: true},
+                    {name: 'userName', hidden: true},
+                    {
+                        name: 'userNameAndScmAccount',
+                        formatter: function (value, grid, rows, state) {
+                            return rows.userName + "|" + rows.userScmAccount;
+                        },
+                        sortable: false
+                    },
+                    {name: 'deptName', sortable: false},
+                    {name: 'email', sortable: false},
+                    {
+                        name: 'gitLabAccessLevel',
+                        classes: 'gitLabAccessLevelTd',
+                        formatter: function (value, grid, rows, state) {
+                            return '<select class="selectpicker" name="gitLabAccessLevel" oldValue=' + value + ' onchange=GitLabCodeBase.changeGitlabAccessLevel(' + rows.id + ',"' + rows.userScmAccount + '","' + rows.userName + '",this)>' +
+                                    '<option value="10"' + (value == 10 ? "selected" : "") + '>Guest</option>' +
+                                    '<option value="20"' + (value == 20 ? "selected" : "") + '>Reporter</option>' +
+                                    '<option value="30"' + (value == 30 ? "selected" : "") + '>Developer</option>' +
+                                    '<option value="40"' + (value == 40 ? "selected" : "") + '>Maintainer</option>' +
+                                    '</select>';
+                        },
+                        sortable: false
+                    },
+                    {
+                        name: 'operation',
+                        formatter: function (value, grid, rows, state) {
+                           var opt = [];
+                           var str1 = '<a class="a_style" style="cursor: pointer" onclick=GitLabCodeBase.delOneUser(' + rows.id + ',"' + rows.userScmAccount + '","' + rows.userName + '")>刪除</a>';
+                           var str2 = '<a class="a_style" style="cursor: pointer" onclick=GitLabCodeBase.resetPassword(' + rows.id + ',"' + rows.userScmAccount + '")>重置密码</a>';
+                           #if($auth.hasPermission("$token","devManage:version:removeGit"))
+                        	   opt.push(str1);
+                           #end
+                           #if($auth.hasPermission("$token","devManage:version:resetGitPassword"))
+                        	   opt.push(str2);
+                           #end
+                           return opt.join(" | ");
+                        },
+                        sortable: false
+                    }
+                ],
+                rowNum: -1,
+                loadtext: "数据加载中......",
+                beforeRequest: function () {
+                    $("#loading").css('display', 'block');
+                    #if($auth.hasPermission("$token","devManage:version:saveGitModify"))
+                        $("#saveButton").hide();
+                        document.getElementById("saveButton").removeEventListener("click", GitLabCodeBase.saveModify, false);
+                    #end
+                    existUsers = [];
+                    addUsers = [];
+                    delUsers = [];
+                    modifyUsers = [];
+                },
+                gridComplete: function () {
+                    $("select[name='gitLabAccessLevel']").selectpicker('refresh');
+                    #if($auth.hasPermission("$token","devManage:version:addGitUser"))
+                        $("#addGitLabUserButton").prop("disabled", false);
+                        document.getElementById("addGitLabUserButton").addEventListener("click", GitLabCodeBase.addUser, false);
+                    #end
+                    #if($auth.hasPermission("$token","devManage:version:removeGitUser"))
+                        $("delGitLabUserButton").prop("disabled", false);
+                        document.getElementById("delGitLabUserButton").addEventListener("click", GitLabCodeBase.delUser, false);
+                    #end
+                    #if($auth.hasPermission("$token","devManage:version:saveGitModify"))
+                        if ($("#saveButton").is(":visible")) {
+                            $("#saveButton").prop("disabled", false);
+                            document.getElementById("saveButton").addEventListener("click", GitLabCodeBase.saveModify, false);
+                        }
+                    #end
+                    existUsers = [];
+                    var rowIds = $("#list2").getDataIDs();
+                    $.each(rowIds, function (index, rowId) {
+                        existUsers.push(rowId);
+                    });
+                },
+                loadError: function (xhr, status, error) {
+                    #if($auth.hasPermission("$token","devManage:version:addGitUser"))
+                        $("#addGitLabUserButton").prop("disabled", true);
+                        document.getElementById("addGitLabUserButton").removeEventListener("click", GitLabCodeBase.addUser, false);
+                    #end
+                    #if($auth.hasPermission("$token","devManage:version:removeGitUser"))
+                        $("#delGitLabUserButton").prop("disabled", true);
+                        document.getElementById("delGitLabUserButton").removeEventListener("click", GitLabCodeBase.delUser, false);
+                    #end
+                    #if($auth.hasPermission("$token","devManage:version:saveGitModify"))
+                        $("#saveButton").prop("disabled", true);
+                        document.getElementById("saveButton").removeEventListener("click", GitLabCodeBase.saveModify, false);
+                    #end
+                    if (xhr.status != 999) {
+                        layer.alert("获取gitLab下人员权限异常", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                    }
+                },
+                loadComplete: function (xhr) {
+                    $("#loading").css('display', 'none');
+                }
+            });
+        }
+    });
+    
+    function getMyProjectSystems() {
+    	
+    	//查询系统列表 
+    	var systemList = [];
+    	var token = "$token";
+    	$.ajax({
+			type:"POST",
+			url:"/devManage/version/getMyProjectSystems",
+			dataType:"json",
+			async:false,
+			data:{
+				token:token,
+			},
+			success:function(data){
+				systemList = data;
+			}
+		});
+    	
+		var systemIds = "";
+    	if(systemList != null && systemList.length > 0){
+			for(var i=0; i<systemList.length; i++){
+				systemIds += "," + systemList[i].id;
+			}
+			systemIds = systemIds.substring(1);
+		}
+    	
+    	//查询系统下Git项目列表
+    	var gitLabProjectList = [];
+    	$.ajax({
+			type:"POST",
+			url:"/devManage/version/getSystemGitLabProjectsWithSystemIds",
+			dataType:"json",
+			async:false,
+			data:{
+				systemIds:systemIds,
+			},
+			success:function(data){
+				gitLabProjectList = data;
+			}
+		});
+    	
+    	var content = '';
+		var createGitBase = $auth.hasPermission("$token","devManage:version:createGitBase");
+		var codeSubmitGitConfig = $auth.hasPermission("$token","devManage:version:codeSubmitGitConfig");
+		for(var i=0; i<systemList.length; i++){
+			var systemObj = systemList[i];
+			content += '<div class="codeMenu">';
+			content += '  <div class="codeMenu_tit">';
+			content += '    <span>'+systemObj.systemName+'</span>';
+			content += '    <div class="left_btnDiv">';
+			if (createGitBase) {
+				content += '  <button type="button" class="btn btn-primary newBase" onclick="GitLabCodeBase.createNewCodeBase('+systemObj.id+')">新建库</button>';
+			}
+			if (codeSubmitGitConfig) {
+				content += '  <button type="button" class="btn btn-primary configBtn" onclick="GitLabCodeBase.codeSubmitConfig('+systemObj.id+')">代码提交配置</button>';
+			}
+			
+			content += '    </div>';
+			content += '  </div>';
+			content += '  <ul class="databaseTree" id="databaseTree">';
+			for(var j=0; j<gitLabProjectList.length; j++){
+				var gitLabProjectObj = gitLabProjectList[j];
+				if (systemObj.id == gitLabProjectObj.system_id) {
+					content += '  <li onclick="GitLabCodeBase.reloadPage(this)" projectId="'+gitLabProjectObj.id+'" '+
+									'baseUri="'+gitLabProjectObj.base_uri+'" gitApiToken="'+gitLabProjectObj.git_api_token+'">';
+					content += '    <img class="databseImg" src="#springUrl('')/devManageui/static/images/codeBase/shujuku-.png"/>'+gitLabProjectObj.name;
+					content += '  </li>';
+				}
+			}
+			content += '  </ul>';
+			content += '</div>';
+		}
+		$("#leftGitList").empty();
+		$("#leftGitList").append(content);
+    }
+
+    $("#gitLabUserModal").on("show.bs.modal", function () {
+        $("#loading").css('display', 'block');
+    });
+
+    $("#gitLabUserModal").on("shown.bs.modal", function () {
+        $("#loading").css('display', 'none');
+    });
+
+    $("#gitLabUserModal").on("hidden.bs.modal", function () {
+        $(this).removeData("bs.modal");
+    });
+
+    $("#createCodeBaseModel").on("show.bs.modal", function () {
+        $("#loading").css('display', 'block');
+    });
+
+    $("#createCodeBaseModel").on("shown.bs.modal", function () {
+        $("#loading").css('display', 'none');
+    });
+
+    $("#createCodeBaseModel").on("hidden.bs.modal", function () {
+        $(this).removeData("bs.modal");
+    });
+
+    $("#codeSubmitConfigModel").on("show.bs.modal", function () {
+        $("#loading").css('display', 'block');
+    });
+
+    $("#codeSubmitConfigModel").on("shown.bs.modal", function () {
+        $("#loading").css('display', 'none');
+    });
+
+    $("#codeSubmitConfigModel").on("hidden.bs.modal", function () {
+        $(this).removeData("bs.modal");
+    });
+
+    $("#codeSubmitConfigUserModal").on("show.bs.modal", function () {
+        $("#loading").css('display', 'block');
+    });
+
+    $("#codeSubmitConfigUserModal").on("shown.bs.modal", function () {
+        $("#loading").css('display', 'none');
+    });
+
+    $("#codeSubmitConfigUserModal").on("hidden.bs.modal", function () {
+        $(this).removeData("bs.modal");
+        $("input[userModalShow=true]").removeAttr("userModalShow");
+    });
+
+    $('#versionSelModal').on('show.bs.modal', function () {
+        $("#loading").css('display', 'block');
+    });
+
+    $('#versionSelModal').on('shown.bs.modal', function () {
+        $("#loading").css('display', 'none');
+    });
+
+    $('#versionSelModal').on('hidden.bs.modal', function () {
+        $(this).removeData("bs.modal");
+        $("#selVersion").selectpicker("val", "");
+        $("#selVersion").off("shown.bs.select");
+    });
+
+</script>
+</body>
+</html>
+ 

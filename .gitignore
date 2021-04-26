@@ -1,0 +1,13 @@
+# Project exclude paths
+/config/target/
+/devManage/target/
+/devManageWeb/target/
+/eureka/target/
+/jobManage/target/
+/projectManage/target/
+/projectManageWeb/target/
+/system/target/
+/systemWeb/target/
+/testManage/target/
+/testManageWeb/target/
+/zuul/target/

@@ -1,0 +1,72 @@
+#artPrdflag{
+	padding: 10px 0; 
+}
+#artPrdflag>.rowdiv{
+	margin-bottom: 4px;
+} 
+#artifactTable{
+	background: #FFF;
+}
+#plantformDiv .rowdiv{
+	margin-bottom: 4px;
+	padding: 0 20px;
+} 
+.reqFDiv{
+	margin:20px 0; 
+}
+.successInfo2{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+#_testResult_modal{
+	display:none;
+}
+.ui-jqgrid{
+	border-right: none;
+}
+/****权限配置*****/
+.Max_dialog{
+	width: 100%;
+	padding: 0;
+}
+.Max_content{
+	top: 0 !important;
+	bottom: 0 !important;
+	/* border: none;
+  border-radius: unset; */
+}
+.ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td{
+	white-space: unset !important;
+}
+.bor_red{
+	border-color: #b94a48;
+}
+.help-block.red{
+	color: #b94a48;
+}
+#add_env_option{
+	padding: 5px 20px;
+  border-radius: 4px;
+}
+.environmentType_user_body{
+	position: relative;
+}
+#configuration_list_body>.ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td{
+	overflow: inherit;
+}
+.m_0{
+	margin:0!important;
+}
+
+/****权限配置end*****/
+ 
+._select_box_menu#dropdown_menu{
+	min-width: 200px !important;
+}
+._select_box_menu .ztree li a{
+	display: inline-block !important;
+}
+ 
+ 
+ 

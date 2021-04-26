@@ -1,0 +1,172 @@
+#microService .modal-lg{
+	width: 1060px;
+}  
+.delFont{
+	color: #FF3300;
+	cursor: pointer;
+}
+#microService .rowdiv{
+	margin: 0 0 3px;
+} 
+.configInfo{
+	padding: 0 50px 0 20px;
+	margin-bottom: 20px;
+}
+.configTit{
+	margin-bottom: 10px;
+	line-height: 28px;
+	font-weight: bold;
+	border-bottom: 1px solid #CCC;
+}
+.configTit a{
+	margin-left:10px;
+	cursor: pointer;
+}
+.JenkinsJob{
+	line-height: 30px;
+}
+.JobNameDel a{
+	color: #FF3300;
+	cursor: pointer;
+} 
+.micSup {
+    background-color: #CC66FF;
+    line-height: 12px;
+    padding: 2px 6px;
+    color: white;
+    border-radius: 10px;
+}  
+.singcheckBox{
+	width: 2%;
+	height: 100%;
+    line-height: 30px;
+}
+.singleData{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    padding:0 0 4px 20px;
+}
+.singleDataDiv{
+    width: 18%;
+    font-size: 12px; 
+}
+.singleDataDiv2{
+    width: 9.5%;
+    font-size: 12px; 
+}
+.singleDataFont{ 
+    height: 32px;
+    line-height: 32px; 
+    width: 90%;
+	text-align:center;
+} 
+.entrySelect{ 
+    display: block;
+    margin-right:10px;
+    width: auto;
+    float: none; 
+}
+.entrySelect2{ 
+    display: block;
+    margin-right:10px;
+    width: auto;
+    float: none; 
+}
+.delSingData {  
+	flex: 1;
+	height: 30px;
+	line-height: 30px;  
+	font-weight: bold; 
+	padding-left: 10px;
+}
+.dataEntry {
+	padding-bottom: 5px;
+}
+.def_btnGroup {
+	padding: 0 20px 20px 30px;
+}  
+#microService .def_content{
+	padding-left: 30px;
+	padding-right: 30px;
+}
+#addService .def_content,#normalService .def_content{
+	padding: 0 40px 10px;
+}
+#addService .search_input,#normalService .search_input{
+	width: 66.6666%;
+}
+#deploymentConfig .modal-body{
+	padding-top: 30px;
+} 
+.fakeInput { 
+	min-height: 28px;
+	margin-top: 1px;
+	margin-bottom: 1px;
+}  
+.updLabel{
+	color:red;
+}
+#deployInfoForm [class*="def_col_"]{
+	padding: 0;
+}
+.addConfigBtn{
+	text-align: center;
+}
+.addConfigBtn .btn{
+	padding: 6px 32px;
+	height: auto;
+}
+.scriptTop{
+	margin-top: 5px;
+}
+.delFont2{
+	float: right!important;
+}
+.delFont2 a{
+	color: #FF3300;
+    cursor: pointer;
+    line-height: 30px; 
+}
+
+#versionSelModal .modal-body{
+	padding: 10px 25px;
+}
+#versionSelModal .modal-footer{
+	margin-top: 0;
+}
+.singleData .search_input input[type="text"] {
+	padding-right: 24px !important;
+} 
+.singleData .search_input .btn_clear{
+	display: block !important;
+}
+#environmentModal .fixed-table-pagination {
+	display: none !important;
+}
+.optClass{
+	overflow: visible !important;
+}
+.ui-jqgrid-view {
+	overflow: visible !important;
+}
+
+.ui-jqgrid-bdiv{
+	overflow: visible !important;
+}
+
+.redStar{
+	color:red;
+}
+
+#addSyatemForm .control-label{
+	padding-top: 0px;
+}
+
+
+
+
+
+
+
+s

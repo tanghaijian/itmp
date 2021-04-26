@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.pioneeruniverse.system.dao.mybatis.CustomFieldTemplate.CustomFieldTemplateDao">
+    <resultMap type="cn.pioneeruniverse.system.entity.TblCustomFieldTemplate" id="fieldMap">
+        <id column="ID" property="id"/>
+        <result column="custom_form" property="customForm" jdbcType="VARCHAR"/>
+        <result column="custom_field" property="customField" jdbcType="VARCHAR"/>
+        <result column="STATUS" property="status" jdbcType="TINYINT"/>
+        <result column="CREATE_BY" property="createBy" jdbcType="BIGINT"/>
+        <result column="CREATE_DATE" property="createDate" jdbcType="TIMESTAMP"/>
+        <result column="LAST_UPDATE_BY" property="lastUpdateBy" jdbcType="BIGINT"/>
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="baseColumn">
+        ID,custom_form,custom_field,STATUS,CREATE_BY,CREATE_DATE,LAST_UPDATE_BY,LAST_UPDATE_DATE
+    </sql>
+    <!-- 获取测试数据库中的表的基本信息 tableName:表名，tmp_db:对应测试库-->
+    <select id="selectTableStructureByTableName" parameterType="String"
+            resultType="cn.pioneeruniverse.system.entity.TblCustomFieldTemplate">
+        select column_name columnName, column_comment columnComment
+        from information_schema.columns where table_name = #{tableName} AND table_schema='tmp_db'
+    </select>
+
+   <!-- 获取开发数据库中的表的基本信息 tableName：表名，itmp_db：对应开发库-->
+    <select id="selectTableStructureByTableNameItmp" parameterType="String"
+            resultType="cn.pioneeruniverse.system.entity.TblCustomFieldTemplate">
+        select column_name columnName, column_comment columnComment
+        from information_schema.columns where table_name = #{tableName} AND table_schema='itmp_db'
+    </select>
+
+
+   <!-- 通过表明获取自定义的属性  tableName:表名-->
+    <select id="selectFieldByCustomForm" parameterType="String" resultMap="fieldMap">
+        select  ID,custom_form,STATUS,CREATE_BY,CREATE_DATE,LAST_UPDATE_BY,LAST_UPDATE_DATE, JSON_UNQUOTE(custom_field) as custom_field from tbl_custom_field_template
+        where custom_form = #{tableName};
+    </select>
+
+    <!--添加一条扩展字段属性-->
+    <insert id="addCustomFieldTemplate" parameterType="cn.pioneeruniverse.system.entity.TblCustomFieldTemplate"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_custom_field_template(
+             custom_form,
+             custom_field,
+             STATUS,
+             CREATE_BY,
+             CREATE_DATE,
+             LAST_UPDATE_BY,
+             LAST_UPDATE_DATE
+        ) VALUES (
+            #{customForm},
+            #{customField},
+            #{status},
+            #{createBy},
+            #{createDate},
+            #{lastUpdateBy},
+            #{lastUpdateDate}
+        )
+    </insert>
+
+<!-- 更新扩展字段属性记录 -->
+    <update id="updCustomFieldTemplate" parameterType="cn.pioneeruniverse.system.entity.TblCustomFieldTemplate">
+        UPDATE tbl_custom_field_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="customField != null and customField != ''">
+                custom_field = #{customField},
+            </if>
+            <if test="status != null and status != ''">
+                STATUS = #{status},
+            </if>
+            <if test="lastUpdateBy != null and lastUpdateBy != ''">
+                LAST_UPDATE_BY = #{lastUpdateBy},
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE = #{lastUpdateDate}
+            </if>
+            WHERE
+            <!-- 自定义配置的表名 -->
+            custom_form = #{customForm}
+        </trim>
+    </update>
+
+</mapper>

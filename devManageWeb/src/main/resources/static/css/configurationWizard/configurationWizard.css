@@ -1,0 +1,486 @@
+.stepPage {
+	padding:0 6.25%;
+    display: none;
+    height: 100%
+} 
+.stepCont {
+    width: 100%;
+    padding: 20px;
+} 
+.ystep-container {
+    font-family: helvetica neue,Helvetica,hiragino sans gb,wenquanyi micro hei,microsoft yahei,Arial,sans-serif;
+    display: inline-block;
+    position: relative;
+    color: #000;
+    margin: 0;
+    margin-bottom: 20px;
+} 
+.ystep-container ul {
+    list-style: none
+} 
+.ystep-container ul,.ystep-container li,.ystep-container p {
+    margin: 0;
+    padding: 0
+} 
+.ystep-lg {
+    width: 100%;
+    height: 60px;
+    font-size: 13px; 
+} 
+.ystep-lg .ystep-container-steps {
+    position: absolute; 
+    cursor: pointer;
+    z-index: 10
+} 
+.ystep-lg li {
+    float: left;
+    width: 100px; 
+    line-height: 23px;
+    box-sizing: border-box;
+    padding: 0 10px;
+} 
+.ystep-lg .ystep-progress {
+    width: 400px;
+    height: 1px;
+    position: absolute;
+    top: 38px;
+    left: 15px;
+    float: left;
+    margin-right: 10px;
+    overflow: hidden;
+    background: #c0c4cc
+} 
+.ystep-lg .ystep-progress-bar {
+    width: 400px;
+    height: 20px;
+    background: #e4e4e4;
+    display: inline-block;
+    float: left
+} 
+.ystep-lg .ystep-progress-highlight {
+    height: 20px;
+    display: block
+} 
+.ystep-blue .ystep-step-done {
+} 
+.ystep-blue .ystep-step-undone {
+} 
+.ystep-blue .ystep-step-active {
+    color: #3276b1
+} 
+.ystep-blue .ystep-progress-highlight {
+    background: #33CC99;
+} 
+.ystep {
+    padding: 20px
+} 
+.step-button {
+	margin: 0 6.25%;
+	border-top:1px solid #EBEBEB;
+    position: relative;
+    text-align: center;
+} 
+.step-button button {
+    margin: 10px;
+    padding: 10px 34px !important;
+    font-size: 14px !important;
+    height: 35px;
+    line-height: 14px !important;
+} 
+.step-button .prevBtn{
+	color: #42429B;
+	border: 2px solid #42429B;
+}
+.step-button .skipBtn{
+	color: #999999;
+	border: 1px solid #D9D9D9;
+}
+.stepIcon {
+}
+
+.ystep-lg .ystep-step-done-2 .stepIcon { 
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    display: block;
+    text-align: center;
+    color: #FFF;
+    margin: auto;
+    margin-top: 3px;  
+    background:#d81e06; 
+}
+.ystep-lg .ystep-step-done-2 .description{ color:#d81e06;font-weight: bold; }
+
+.ystep-lg .ystep-step-done .stepIcon { 
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    display: block;
+    text-align: center;
+    color: #FFF;
+    margin: auto;
+    margin-top: 3px;  
+    background:#33CC99; 
+}
+.ystep-lg .ystep-step-done .description{ color:#33CC99;font-weight: bold; }
+.ystep-lg .ystep-step-undone .stepIcon {
+	border: 1px solid rgba( 0,0,0,0.25 );
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    display: block;
+    text-align: center;
+    margin: auto;
+    margin-top: 3px;
+    color: rgba( 0,0,0,0.25 );
+    background: #FFF;
+}
+.ystep-lg .ystep-step-undone .description{ color:#999999; }
+.ystep-lg .ystep-step-active .stepIcon {
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    display: block;
+    text-align: center; 
+    margin: auto;
+    margin-top: 3px;
+    color: #FFF;
+    background: #42429B;
+}
+.ystep-lg .ystep-step-active .description{ color:#42429B;font-weight: bold; }
+.stepIcon{
+	line-height: 25px;
+}
+.ystep-container .descriptionHeader { 
+    margin-top: 5px;
+    font-size: 14px
+}
+
+.ystep-container .description { 
+	text-align: center;
+    font-size: 10px
+}
+
+.stepY .ystep-lg {
+    width: 160px;
+    height: 60px;
+    font-size: 18px;
+    line-height: .3;
+    float: left
+}
+
+.stepY .pageCont {
+    width: calc(100% - 210px);
+    float: right
+}
+
+.stepY .ystep-lg li {
+    width: 150px;
+    line-height: 23px;
+    box-sizing: border-box
+}
+
+.stepY .ystep-lg .ystep-progress {
+    height: 400px;
+    width: 3px;
+    position: absolute;
+    top: 34px;
+    left: 17px;
+    float: left;
+    margin-right: 10px;
+    overflow: hidden;
+    background: #c0c4cc
+}
+
+.stepY .ystep-lg .ystep-progress-bar {
+    width: 20px;
+    height: 400px;
+    background: #e4e4e4;
+    display: inline-block;
+    float: left
+}
+
+.stepY .ystep-lg .ystep-progress-highlight {
+    width: 20px;
+    display: block
+}
+
+.stepY .ystep-container .descriptionHeader {
+    width: 157px;
+    margin-top: -22px;
+    font-size: 14px;
+    float: left;
+    margin-left: 35px
+}
+
+.stepY .ystep-container .description {
+    width: 120px;
+    font-size: 10px;
+    float: left;
+    margin-left: 35px
+}
+
+.clearfix:after {
+    content: "";
+    height: 0;
+    line-height: 0;
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+
+.jiantou li {
+    margin-right: 0;
+    background: #f0f2f5
+}
+
+.jiantou .descriptionHeader {
+    float: right;
+    width: 120px;
+    margin-top: -30px;
+    font-size: 14px
+}
+
+.jiantou .tubiao {
+    font-size: 30px;
+    float: right;
+    line-height: 20px
+}
+
+.jiantou .ystep-lg .ystep-step-done .stepIcon {
+    border: 1px solid #2d5fad;
+    border-radius: 20px;
+    width: 20px;
+    height: 20px;
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 8px;
+    color: transparent;
+    background: #fff url(images/duihao.png) no-repeat 1px 4px;
+    background-size: 80%
+}
+
+.jiantou .ystep-lg .ystep-step-done .descriptionHeader {
+    color: #2d5fad
+}
+
+.jiantou .ystep-lg .ystep-step-undone .stepIcon {
+    border: 1px solid #909399;
+    border-radius: 20px;
+    width: 20px;
+    height: 20px;
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 8px;
+    color: #909399;
+    background: #f0f2f5
+}
+
+.jiantou .ystep-lg .ystep-step-active .stepIcon {
+    border: 1px solid #303133;
+    border-radius: 20px;
+    width: 20px;
+    height: 20px;
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 8px;
+    color: #303133;
+    background: #f0f2f5
+}
+.ystep-lg{
+	left: 0 !important;
+	box-sizing: border-box !important; 
+}
+.stepIcon{
+	box-sizing: content-box; 
+}
+.stepIconDiv{
+	width: 45px;
+	margin: 0 auto;
+	background: #FFF;
+}
+.title{
+	text-align: center;
+	padding: 18px;
+	font-size: 32px;
+	font-weight: bold;
+	color: #42429B;
+	border-bottom: 	1px solid #EBEBEB; 
+}
+.newBuild{
+	margin: 0 auto;
+	width: 374px;
+	padding: 0 0 10px; 
+}
+.newBuildSuccess{
+	margin: 0 auto;
+	width: 374px;
+	padding: 35px 0 80px;  
+}
+.textAlignC{
+	text-align: center;
+}
+.buildBtn{
+	width: 374px;
+	height: 40px;
+	text-align: center;
+	font-size: 16px !important;  
+	font-weight: 500;
+	background-image: url( "../../images/configurationWizard/setUp.png" ) !important;
+	background-repeat: no-repeat !important;
+	background-position: 80px  7px !important;
+}
+.buildBtn:hover{
+	background-image: url( "../../images/configurationWizard/setUp.png" ) !important;
+	background-repeat: no-repeat !important;
+	background-position: 80px  7px !important;
+}
+.buildBtn:focus{
+	background-image: url( "../../images/configurationWizard/setUp.png" ) !important;
+	background-repeat: no-repeat !important;
+	background-position: 80px  7px !important;
+}
+#addSystem .modal-body{
+	padding: 30px 50px;
+}
+#addSystem .fontLeft{
+	line-height: 30px;
+}
+.successP{
+	display: inline-block;
+	line-height: 16px; 
+	font-size: 13px; 
+	position: relative;
+	padding: 20px 0 20px 20px; 
+	display: none;
+}
+.successP .picStatus{ 
+	display: block;
+	width: 16px;
+	height: 16px;
+	position: absolute;
+	top: 19px;
+	left: 0;
+	background: url("../../images/dashBoard/vx.png") no-repeat;
+}
+
+.successP .fonts{
+	color: #33CC99;
+	font-weight: bold;
+}
+.newChildBuild{
+	padding: 0 10% 10px;
+	text-align: center;
+}
+.scriptText,.remindInfo{
+	text-align: left;
+	font-size: 12px;
+	margin: 80px auto 0;	
+	position: relative;
+	padding: 10px 0 10px 24px;
+	width: 374px;
+	color: #999999;
+}
+.remindInfo{
+	display: none;
+	margin: 8px auto 0; 
+	padding: 0;
+}
+.exclamationMark{ 
+	width: 16px;
+	height: 16px;
+	position: absolute;
+	left: 0px;
+	top: 50%;
+	margin-top: -8px;
+	background: url("../../images/configurationWizard/exclamationMark.png") no-repeat;
+}
+.childModalDiv{  
+	font-size: 12px;
+	border-top: 1px solid #EBEBEB; 
+	padding: 20px 0 10px;
+	display: none;
+}
+.childModalDiv>div{
+	padding:0 80px 0 22px;
+	line-height: 18px;
+	height: 18px;
+	overflow: hidden;
+	text-overflow:ellipsis;
+	white-space: nowrap;
+	margin-bottom: 10px;
+} 
+.icon_childModal,.icon_database{
+	position: absolute;
+	left: 0px;
+	top: 0;
+	width: 18px;
+	height: 18px;  
+}
+.icon_childModal{
+	background: url("../../images/configurationWizard/childModal.png") no-repeat;
+}
+.icon_database{
+	background: url("../../images/configurationWizard/database.png") no-repeat;
+}
+.reviseChild{
+	position: absolute;
+	right: 0;
+	top: 0; 
+	width: 80px;
+	height: 18px;
+	 
+}
+.reviseChild>a{
+	margin-right: 8px;
+}
+.vbig{
+	display: inline-block;
+	width: 64px;
+	height: 64px;
+	background: url("../../images/configurationWizard/vbig.jpg") no-repeat;
+}
+.vFont{
+	margin-top: 18px;
+	font-weight: bold;
+	color: #666666;
+	font-size: 24px;
+}
+.disableBtn{
+	cursur: not-allowed !important;
+	background: #CCCCCC !important; 
+	background-image: url( "../../images/configurationWizard/setUp.png" ) !important;
+	background-repeat: no-repeat !important;
+	background-position: 80px  7px !important;
+}
+.disableBtn:hover{
+	cursor: not-allowed !important;
+	background: #DDDDDD !important; 
+	background-image: url( "../../images/configurationWizard/setUp.png" ) !important;
+	background-repeat: no-repeat !important;
+	background-position: 80px  7px !important;
+} 
+#createCodeBaseModel .modal-body{
+	padding-top: 20px;
+}
+#codeBaseDiv{
+	margin: 0 -100px !important;
+}
+.remarks{
+	margin-top: 8px;
+	color: #999999;
+}
+.exclMark{
+	position: absolute;
+	left: -12px; 
+	top: -0px; 
+	width: 16px;
+	height: 16px;
+	background: url( "../../images/configurationWizard/exclMark.jpg" ) no-repeat !important;
+}

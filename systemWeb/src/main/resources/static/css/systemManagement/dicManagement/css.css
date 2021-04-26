@@ -1,0 +1,77 @@
+  
+.collection{
+    font-size: 12px;
+    position: absolute;
+    line-height: 34px;
+    height: 34px;
+    top: 12px;
+    right: 40px;
+    cursor:pointer;
+}
+.fa-heart-o,.fa-heart{
+    font-size: 16px;
+    color: #FD70A0;
+}
+ 
+ 
+#myModalLabel{
+    font-size: 13px;
+    font-weight: bold;
+}
+.form_datetime{
+    background-color: #FFF !important;
+}
+.modal-body .col-sm-8{
+    padding-left: 0;
+    padding-right: 0;
+}
+.modal-body .form-group{
+    margin-bottom: 5px;
+}
+.modal {
+    overflow-y: hidden;
+}
+
+body.modal-open, .modal-open .navbar-fixed-top, .modal-open .navbar-fixed-bottom{
+    margin-right: 0;
+}
+.modal-footer{
+    padding: 9px 20px 10px !important;
+    margin-top: 0 !important;
+    text-align: center;
+}
+.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control{
+    cursor: pointer;
+}
+ 
+.a_style{
+    text-decoration: none;
+    color: #0e90d2;
+}
+.a_style:hover{
+    color: #0e90d2;
+    text-decoration: none;
+    background-color: inherit;
+}
+.ui-sortable th{
+    padding: 8px !important; 
+}
+.ui-jqgrid tr.ui-search-toolbar th {
+    padding: 5px !important;
+}
+.invalidClass input[type='text']{
+	text-decoration: line-through;
+	background: none;
+	border: none;	
+}
+.red{
+    color: red;
+}
+.form-horizontal .control-label{
+    padding-top: 0;
+}
+#modifyDataDictModalTableBody input{
+    border-radius: 4px;
+    border-width: 1px;
+    padding-left: 5px;
+}

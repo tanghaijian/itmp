@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/common/common.iml" filepath="$PROJECT_DIR$/common/common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/config/config.iml" filepath="$PROJECT_DIR$/config/config.iml" />
+      <module fileurl="file://$PROJECT_DIR$/devManage/devManage.iml" filepath="$PROJECT_DIR$/devManage/devManage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/devManageWeb/devManageWeb.iml" filepath="$PROJECT_DIR$/devManageWeb/devManageWeb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eureka/eureka.iml" filepath="$PROJECT_DIR$/eureka/eureka.iml" />
+      <module fileurl="file://$PROJECT_DIR$/itmp.iml" filepath="$PROJECT_DIR$/itmp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jobManage/jobManage.iml" filepath="$PROJECT_DIR$/jobManage/jobManage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/projectManage/projectManage.iml" filepath="$PROJECT_DIR$/projectManage/projectManage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/projectManageWeb/projectManageWeb.iml" filepath="$PROJECT_DIR$/projectManageWeb/projectManageWeb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/reportManage/reportManage.iml" filepath="$PROJECT_DIR$/reportManage/reportManage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/system/system.iml" filepath="$PROJECT_DIR$/system/system.iml" />
+      <module fileurl="file://$PROJECT_DIR$/systemWeb/systemWeb.iml" filepath="$PROJECT_DIR$/systemWeb/systemWeb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/testManage/testManage.iml" filepath="$PROJECT_DIR$/testManage/testManage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/testManageWeb/testManageWeb.iml" filepath="$PROJECT_DIR$/testManageWeb/testManageWeb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/zuul/zuul.iml" filepath="$PROJECT_DIR$/zuul/zuul.iml" />
+    </modules>
+  </component>
+</project>

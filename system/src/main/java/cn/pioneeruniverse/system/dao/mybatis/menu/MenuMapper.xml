@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.system.dao.mybatis.menu.MenuDao">
+
+    <sql id="baseColumn">
+      ID,
+      MENU_BUTTON_TYPE,
+      MENU_BUTTON_NAME,
+      MENU_BUTTON_CODE,
+      PARENT_ID,
+      PARENT_IDS,
+      CSS,
+      URL,
+      MENU_ORDER,
+      VALID_STATUS,
+      OPEN_STATUS,
+      STATUS,
+      CREATE_BY,
+      CREATE_DATE,
+      LAST_UPDATE_BY,
+      LAST_UPDATE_DATE
+</sql>
+
+    <!-- 获取用户所属权限菜单-->
+    <select id="getUserMenu" parameterType="Long" resultMap="userMenuResult">
+    SELECT DISTINCT
+	TMI.ID,TMI.MENU_BUTTON_TYPE,TMI.MENU_BUTTON_NAME,
+	TMI.PARENT_ID,TMI.PARENT_IDS,TMI.CSS,TMI.URL,TMI.MENU_ORDER,
+	TUR.USER_ID
+    FROM
+        TBL_MENU_BUTTON_INFO TMI
+    LEFT JOIN tbl_role_menu_button TRB ON TRB.MENU_BUTTON_ID = TMI.ID
+    LEFT JOIN TBL_USER_ROLE TUR ON TUR.ROLE_ID = TRB.ROLE_ID
+    LEFT JOIN tbl_role_info TRI ON TRI.ID = TUR.ROLE_ID
+    WHERE
+        TRB.ROLE_ID IN (
+            SELECT
+                b.ROLE_ID
+            FROM
+                tbl_user_role b
+            WHERE
+                b.USER_ID = #{userId}
+            AND b. STATUS = 1
+        )
+    AND TUR.USER_ID = #{userId}
+    AND TMI.MENU_BUTTON_TYPE = 1
+    AND TMI.PARENT_ID IS NULL
+    AND TMI.VALID_STATUS = 1
+    AND TUR.`STATUS` = 1
+    AND TMI.`STATUS` = 1
+    AND TRI.`STATUS` = 1
+    AND TRB.`STATUS` = 1
+    ORDER BY MENU_ORDER
+</select>
+
+    <!-- 用户的所有菜单按钮-->
+    <select id="getUserAllMenuButton" parameterType="Long" resultMap="userMenuResult">
+        SELECT DISTINCT
+	    TMI.*,
+	    TUR.USER_ID
+        FROM
+        TBL_MENU_BUTTON_INFO TMI
+        LEFT JOIN tbl_role_menu_button TRB ON TRB.MENU_BUTTON_ID = TMI.ID
+        LEFT JOIN TBL_USER_ROLE TUR ON TUR.ROLE_ID = TRB.ROLE_ID
+        WHERE TRB.ROLE_ID IN (
+           SELECT
+                b.ROLE_ID
+            FROM
+                tbl_user_role b
+            WHERE
+                b.USER_ID = #{userId}
+            AND b.STATUS = 1
+        )
+        AND TUR.USER_ID = #{userId}
+        AND TMI.VALID_STATUS = 1
+        AND TMI.`STATUS` = 1
+        ORDER BY MENU_ORDER
+    </select>
+
+
+    <!-- 菜单和权限 -->
+    <select id="getMenusWithRole" resultMap="menuRoleResult">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM TBL_MENU_BUTTON_INFO WHERE STATUS = 1
+        AND VALID_STATUS = 1
+        AND MENU_BUTTON_TYPE = 1
+    </select>
+
+
+    <!-- 所有菜单-->
+    <select id="getAllMenu" resultMap="menuResult">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM TBL_MENU_BUTTON_INFO WHERE STATUS =1 AND PARENT_ID IS NULL AND VALID_STATUS = 1
+    </select>
+
+    <!-- 根据id查询菜单 -->
+    <select id="selectMenuById" parameterType="Long" resultMap="menuResultWithNoChild">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM TBL_MENU_BUTTON_INFO WHERE ID = #{id} AND STATUS =1
+    </select>
+
+    <!-- 根据编号 获取菜单按钮-->
+    <select id="getMenuButtonByCode" parameterType="String" resultMap="menuResultWithNoChild">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM TBL_MENU_BUTTON_INFO WHERE MENU_BUTTON_CODE = #{menuButtonCode} AND STATUS =1
+        LIMIT 1
+    </select>
+
+
+    <!-- 根据父级获取菜单-->
+    <select id="selectMenuByParentId" parameterType="Long" resultMap="menuResult">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM TBL_MENU_BUTTON_INFO WHERE PARENT_ID = #{id}
+        AND MENU_BUTTON_TYPE = 1 AND status = 1 AND VALID_STATUS = 1
+    </select>
+
+    <!--  根据父级获取用户菜单 -->
+    <select id="selectUserMenuByParentId" parameterType="java.util.Map" resultMap="userMenuResult">
+     SELECT DISTINCT
+       TMI.*,TUR.USER_ID
+       FROM TBL_MENU_BUTTON_INFO  TMI
+       LEFT JOIN TBL_ROLE_MENU_BUTTON TRB ON TRB.MENU_BUTTON_ID = TMI.ID
+       LEFT JOIN TBL_USER_ROLE TUR ON TUR.ROLE_ID = TRB.ROLE_ID
+       WHERE TMI.PARENT_ID = #{id}
+       AND TRB.ROLE_ID IN (
+            SELECT
+                b.ROLE_ID
+            FROM
+                tbl_user_role b
+            WHERE
+                b.USER_ID = #{userId}
+            AND b. STATUS = 1
+       )
+       AND TMI.MENU_BUTTON_TYPE = 1
+       AND TMI.VALID_STATUS = 1
+       AND TUR.USER_ID=#{userId}
+       AND TMI.STATUS = 1
+       ORDER BY MENU_ORDER
+    </select>
+
+    <!-- 根据角色id获取菜单 -->
+    <select id="getMenuByRoleId" parameterType="java.lang.Long" resultMap="menuResultWithNoChild">
+        SELECT DISTINCT
+        <include refid="baseColumn"/>
+        FROM TBL_MENU_BUTTON_INFO TBI WHERE EXISTS
+        (SELECT 1 FROM TBL_ROLE_MENU_BUTTON WHERE TBI.ID = MENU_BUTTON_ID AND ROLE_ID=#{ID})
+    </select>
+
+    <!-- 添加菜单 -->
+    <insert id="insertMenu" parameterType="cn.pioneeruniverse.system.entity.TblMenuButtonInfo" useGeneratedKeys="true"
+            keyProperty="id">
+
+         INSERT INTO TBL_MENU_BUTTON_INFO
+         (
+          MENU_BUTTON_TYPE,
+          MENU_BUTTON_NAME,
+          MENU_BUTTON_CODE,
+          PARENT_ID,
+          PARENT_IDS,
+          CSS,
+          URL,
+          MENU_ORDER,
+          STATUS,
+          CREATE_BY,
+          LAST_UPDATE_BY,
+          OPEN_STATUS
+         )
+         VALUES
+         (
+          #{menuButtonType},
+          #{menuButtonName},
+          #{menuButtonCode},
+          #{parentId},
+          #{parentIds},
+          #{css},
+          #{url},
+          #{menuOrder},
+          #{status},
+          #{createBy},
+          #{lastUpdateBy},
+          #{openStatus}
+         )
+
+        </insert>
+
+
+    <!-- 修改菜单 -->
+    <update id="updateMenu" parameterType="hashmap">
+        UPDATE TBL_MENU_BUTTON_INFO
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="menuButtonType != null">
+                MENU_BUTTON_TYPE = #{menuButtonType},
+            </if>
+            <if test="menuButtonName != null">
+                MENU_BUTTON_NAME = #{menuButtonName},
+            </if>
+            <if test="menuButtonCode != null">
+                MENU_BUTTON_CODE = #{menuButtonCode},
+            </if>
+            <if test="url != null">
+                URL = #{url},
+            </if>
+            <if test="css != null">
+                css = #{css},
+            </if>
+            <if test="menuOrder != null and menuOrder != ''">
+                MENU_ORDER = #{menuOrder},
+            </if>
+            <if test="status != null and status != ''">
+                STATUS = #{status},
+            </if>
+             <if test="openStatus != null and openStatus != ''">
+                OPEN_STATUS = #{openStatus},
+            </if>
+            VALID_STATUS = #{validStatus},
+            LAST_UPDATE_BY = #{lastUpdateBy}
+        </trim>
+        WHERE ID = #{id}
+    </update>
+
+    <!-- 获取本身以及子菜单-->
+    <select id="getMenuByParentIds" parameterType="cn.pioneeruniverse.system.entity.TblMenuButtonInfo"
+            resultMap="menuResultWithNoChild">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        TBL_MENU_BUTTON_INFO
+        WHERE ID = #{id}
+        OR LOCATE(
+        CONCAT(',', #{id}),
+        CONCAT(',', PARENT_IDS)
+        )
+        <!--SELECT
+        <include refid="baseColumn"/>
+        FROM
+        TBL_MENU_BUTTON_INFO
+        WHERE ID = #{id}
+        OR parent_ids LIKE CONCAT(CONCAT('%',#{parentIds},'%'))-->
+    </select>
+
+    <!-- 根据类型获取菜单 -->
+    <select id="getMenusWithTYPE" parameterType="hashmap" resultMap="menuResultWithNoChild">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        TBL_MENU_BUTTON_INFO
+        WHERE
+        MENU_BUTTON_TYPE = #{menuType}
+        AND PARENT_ID IS NULL
+        AND STATUS = 1
+        AND VALID_STATUS = 1
+        ORDER BY
+        MENU_ORDER
+    </select>
+
+    <!-- 获取子集菜单 -->
+    <select id="getChildrenMenus" parameterType="hashmap" resultMap="menuResultWithNoChild">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        TBL_MENU_BUTTON_INFO
+        WHERE
+        PARENT_IDS = #{parentId}
+        AND MENU_BUTTON_TYPE = #{menuType}
+        AND STATUS = 1
+        AND VALID_STATUS = 1
+        ORDER BY
+        MENU_ORDER
+    </select>
+
+
+    <!-- 获取按钮-->
+    <select id="getButton" parameterType="hashmap" resultMap="menuResult">
+        select
+        <include refid="baseColumn"/>
+        from TBL_MENU_BUTTON_INFO
+        where MENU_BUTTON_TYPE = #{buttonType}
+        and PARENT_ID = #{parentId}
+        AND STATUS = 1
+        AND VALID_STATUS = 1
+        ORDER BY
+        MENU_ORDER
+    </select>
+
+    <select id="getButtonByRid" parameterType="hashmap" resultMap="menuResultWithNoChild">
+	select
+	a.*
+	FROM
+		tbl_role_info a
+	INNER JOIN tbl_role_menu_button b ON a.id = b.ROLE_ID 
+	where b.ROLE_ID = #{id} and b.MENU_BUTTON_ID = #{buttonId} and b.status = 1 and a.status = 1
+</select>
+    <select id="findRoleMenu" parameterType="java.lang.String" resultMap="menuResultWithNoChild">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        TBL_MENU_BUTTON_INFO
+        where PARENT_IDS LIKE CONCAT(CONCAT(#{parentIds},"%"))
+        AND MENU_BUTTON_TYPE = 1
+        AND VALID_STATUS = 1
+        AND STATUS = 1
+        ORDER BY
+        PARENT_IDS
+    </select>
+    <sql id="menuColumn">
+  ID,
+  MENU_BUTTON_TYPE,
+  MENU_BUTTON_NAME,
+  MENU_BUTTON_CODE,
+  PARENT_ID,
+  PARENT_IDS,
+  CSS,
+  URL,
+  MENU_ORDER,
+  VALID_STATUS,
+  OPEN_STATUS,
+  STATUS,
+  CREATE_BY,
+  CREATE_DATE,
+  LAST_UPDATE_BY,
+  LAST_UPDATE_DATE
+</sql>
+    <select id="getMenus" resultMap="menuResultWithNoChild">
+        SELECT
+        <include refid="menuColumn"/>
+        FROM
+        TBL_MENU_BUTTON_INFO
+        WHERE
+        PARENT_ID IS NULL
+        AND STATUS = 1
+        ORDER BY
+        MENU_ORDER
+    </select>
+    <select id="getChildrenAllMenus" parameterType="hashmap" resultMap="menuResultWithNoChild">
+        SELECT
+        <include refid="menuColumn"/>
+        FROM
+        TBL_MENU_BUTTON_INFO
+        WHERE
+        PARENT_IDS = #{parentId}
+        AND STATUS = 1
+        ORDER BY
+        MENU_ORDER
+    </select>
+    <select id="deleteRoleMenu" parameterType="hashmap">
+    DELETE
+    FROM
+    tbl_role_menu_button
+    WHERE  MENU_BUTTON_ID = #{id}
+</select>
+
+    <select id="getMenuEntity" parameterType="java.lang.Long" resultMap="menuResultWithNoChild">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+          TBL_MENU_BUTTON_INFO
+        WHERE
+          ID = #{menuId}
+        AND STATUS = 1
+        AND VALID_STATUS = 1
+    </select>
+
+    <select id="getChildrenMenu" parameterType="java.lang.String" resultMap="menuResultWithNoChild">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        TBL_MENU_BUTTON_INFO
+        where PARENT_IDS LIKE CONCAT(CONCAT(#{parentIds},"%"))
+        AND STATUS = 1
+        ORDER BY
+        PARENT_IDS
+    </select>
+
+    <!-- 获取所有菜单按钮路径 -->
+    <select id="getAllMenuButtonUrl" resultType="java.lang.String">
+        SELECT
+        URL AS "url"
+        FROM tbl_menu_button_info
+        WHERE VALID_STATUS = 1 AND STATUS = 1 AND URL IS NOT NULL
+        ORDER BY MENU_ORDER
+    </select>
+
+    <resultMap type="cn.pioneeruniverse.system.entity.TblMenuButtonInfo" id="menuResultWithNoChild">
+        <id column="ID" property="id"/>
+        <result column="MENU_BUTTON_TYPE" property="menuButtonType"/>
+        <result column="MENU_BUTTON_NAME" property="menuButtonName"/>
+        <result column="MENU_BUTTON_CODE" property="menuButtonCode"/>
+        <result column="PARENT_ID" property="parentId"/>
+        <result column="PARENT_IDS" property="parentIds"/>
+        <result column="CSS" property="css"/>
+        <result column="URL" property="url"/>
+        <result column="MENU_ORDER" property="menuOrder"/>
+        <result column="STATUS" property="status"/>
+        <result column="VALID_STATUS" property="validStatus"/>
+        <result column="OPEN_STATUS" property="openStatus"/>
+        <result column="CREATE_BY" property="createBy"/>
+        <result column="CREATE_DATE" property="createDate"/>
+        <result column="LAST_UPDATE_BY" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate"/>
+    </resultMap>
+
+
+    <resultMap type="cn.pioneeruniverse.system.entity.TblMenuButtonInfo" id="menuResult"
+               extends="menuResultWithNoChild">
+        <collection property="childMenu" ofType="cn.pioneeruniverse.system.entity.TblMenuButtonInfo" column="ID"
+                    select="selectMenuByParentId"></collection>
+    </resultMap>
+
+    <resultMap type="cn.pioneeruniverse.system.entity.TblMenuButtonInfo" id="userMenuResult"
+               extends="menuResultWithNoChild">
+        <collection property="childMenu" ofType="cn.pioneeruniverse.system.entity.TblMenuButtonInfo"
+                    column="{userId=USER_ID,id=ID}" select="selectUserMenuByParentId"></collection>
+    </resultMap>
+
+    <resultMap type="cn.pioneeruniverse.system.entity.TblMenuButtonInfo" id="menuRoleResult"
+               extends="menuResultWithNoChild">
+        <collection property="ownRoles" ofType="cn.pioneeruniverse.system.entity.TblRoleInfo" column="ID"
+                    select="cn.pioneeruniverse.system.dao.mybatis.role.RoleDao.getRoleByMenuId"></collection>
+    </resultMap>
+    
+    <select id="getUserMenu2" parameterType="java.lang.Long" resultType="cn.pioneeruniverse.system.entity.TblMenuButtonInfo">
+    	SELECT DISTINCT menu.ID id, menu.MENU_BUTTON_TYPE menuButtonType, menu.MENU_BUTTON_NAME menuButtonName, menu.MENU_BUTTON_CODE menuButtonCode,
+    		menu.PARENT_ID parentId, menu.PARENT_IDS parentIds, menu.CSS css, menu.URL url, menu.MENU_ORDER menuOrder, menu.VALID_STATUS validStatus,
+    		menu.OPEN_STATUS openStatus, menu.STATUS status
+    	 FROM tbl_menu_button_info menu 	
+			LEFT JOIN tbl_role_menu_button roleMenu ON roleMenu.MENU_BUTTON_ID = menu.ID AND roleMenu.STATUS = 1
+			LEFT JOIN tbl_user_role role ON role.ROLE_ID = roleMenu.ROLE_ID AND role.STATUS = 1
+			WHERE role.USER_ID = #{userId} AND menu.MENU_BUTTON_TYPE = 1 AND menu.VALID_STATUS = 1 AND menu.STATUS = 1 
+			
+    </select>
+    
+    <select id="selectSonMenu" parameterType="java.lang.Long" resultType="cn.pioneeruniverse.system.entity.TblMenuButtonInfo">
+    	select * from tbl_menu_button_info where PARENT_ID = #{id} and MENU_BUTTON_TYPE = 1 and STATUS = 1 and VALID_STATUS = 1
+    </select>
+    
+    
+</mapper>

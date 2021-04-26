@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>系统配置版本管理</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />  
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />     
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/systeminfoList/systeminfoList.css"/>   
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/systeminfoList/versionManagement.css"/>   
+    
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>  
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>     
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script> 
+    <script type="text/ecmascript" src="#springUrl('')/devManageui/static/js/systeminfoList/versionManagement.js"></script> 
+    <script>
+    	var systemVersionChange = $auth.hasPermission("$token","devManage:systemVersion:change");
+    	var systemVersionEdit = $auth.hasPermission("$token","devManage:systemVersion:edit");
+    </script> 
+</head>
+<body> 
+	<div class="content-btn" style="padding-left:0">
+    	#if($auth.hasPermission("$token","devManage:systemVersion:add"))
+		<button type="button" onclick="insertVersion()" class="btn btn-primary">新增版本</button>
+		#end
+	</div>
+	<div class="wode">
+ 		<table id="list3"></table>
+	</div>
+	<div id="loading"> 
+		<img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+    </div>  
+</body> 
+</html>
+ 

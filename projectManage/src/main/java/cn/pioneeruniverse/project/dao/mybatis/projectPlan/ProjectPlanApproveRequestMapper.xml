@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.projectPlan.ProjectPlanApproveRequestMapper">
+	<resultMap id="BaseResultMap"
+			   type="cn.pioneeruniverse.project.entity.TblProjectPlanApproveRequest">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="PROJECT_ID" jdbcType="BIGINT" property="projectId" />
+		<result column="REQUEST_USER_ID" jdbcType="BIGINT" property="requestUserId" />
+		<result column="REQUEST_REASON" jdbcType="VARCHAR" property="requestReason" />
+		<result column="APPROVE_STATUS" jdbcType="TINYINT" property="approveStatus" />
+		<result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+	</resultMap>
+
+	<resultMap id="BaseResultMap1"
+			   type="cn.pioneeruniverse.project.entity.TblProjectPlanApproveRequestDetail">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="PROJECT_PLAN_APPROVE_REQUEST_ID" jdbcType="BIGINT" property="projectPlanApproveRequestId" />
+		<result column="PROJECT_PLAN_ID" jdbcType="BIGINT" property="projectPlanId" />
+		<result column="RESPONSIBLE_USER_ID" jdbcType="BIGINT" property="responsibleUserId" />
+		<result column="PLAN_CODE" jdbcType="VARCHAR" property="planCode" />
+		<result column="PLAN_NAME" jdbcType="VARCHAR" property="planName" />
+		<result column="DELIVERABLES" jdbcType="VARCHAR" property="deliverables" />
+		<result column="PLAN_START_DATE" jdbcType="DATE" property="planStartDate" />
+		<result column="PLAN_START_MILESTONE" jdbcType="TINYINT" property="planStartMilestone" />
+		<result column="PLAN_END_DATE" jdbcType="DATE" property="planEndDate" />
+		<result column="PLAN_END_MILESTONE" jdbcType="TINYINT" property="planEndMilestone" />
+		<result column="PLAN_DURATION" jdbcType="DOUBLE" property="planDuration" />
+		<result column="PLAN_WORKLOAD" jdbcType="DOUBLE" property="planWorkload" />
+		<result column="PLAN_SCHEDULE" jdbcType="TINYINT" property="planSchedule" />
+		<result column="PARENT_ID" jdbcType="BIGINT" property="parentId" />
+		<result column="PARENT_IDS" jdbcType="VARCHAR" property="parentIds" />
+		<result column="PLAN_LEVEL" jdbcType="TINYINT" property="planLevel" />
+		<result column="PLAN_ORDER" jdbcType="TINYINT" property="planOrder" />
+		<result column="STATUS" jdbcType="TINYINT" property="status" />
+		<result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+		<result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+		<result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+		<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+		<result column="USER_NAME" jdbcType="VARCHAR" property="responsibleUser" />
+	</resultMap>
+
+	<!--获取最近项目计划审批-->
+	<select id="getLastPlanApproveRequest" parameterType="java.lang.Long"
+			resultType="cn.pioneeruniverse.project.entity.TblProjectPlanApproveRequest">
+		select approve.ID id,approve.APPROVE_STATUS approveStatus
+		from tbl_project_plan_approve_request approve
+		where approve.PROJECT_ID = #{projectId}
+		order by approve.ID desc
+		LIMIT 0,1
+	</select>
+	<!--获取项目计划审批-->
+	<select id="getPlanApproveRequestDetail" resultType="cn.pioneeruniverse.project.vo.JqueryGanttVO">
+		select plan.ID id,plan.PLAN_CODE code,plan.PLAN_NAME name,plan.RESPONSIBLE_USER_ID userId,
+		plan.DELIVERABLES description, plan.PLAN_START_DATE start,plan.PLAN_START_MILESTONE startIsMilestone1,
+		plan.PLAN_END_DATE 'end',plan.PLAN_END_MILESTONE endIsMilestone1,plan.PLAN_DURATION duration,
+		plan.PLAN_LEVEL level,tui.ID userId,tui.USER_NAME userName
+		from tbl_project_plan_approve_request_detail plan
+		left join tbl_user_info tui on tui.ID = plan.RESPONSIBLE_USER_ID
+		where plan.PROJECT_PLAN_APPROVE_REQUEST_ID = #{approveRequestId} and plan.STATUS = 1 and tui.STATUS = 1
+		order by plan.PLAN_ORDER asc
+	</select>
+	<!--新增-->
+	<insert id="insertPlanApproveRequest" parameterType = "cn.pioneeruniverse.project.entity.TblProjectPlanApproveRequest"
+			useGeneratedKeys="true" keyProperty="id">
+		insert into tbl_project_plan_approve_request(
+			PROJECT_ID,
+			REQUEST_USER_ID,
+			REQUEST_REASON,
+			APPROVE_STATUS
+		)values(
+			#{projectId},
+			#{requestUserId},
+			#{requestReason},
+			#{approveStatus}
+		)
+	</insert>
+	<!--修改审批人-->
+	<update id="updatePlanApproveRequest" parameterType = "cn.pioneeruniverse.project.entity.TblProjectPlanApproveRequest">
+		update tbl_project_plan_approve_request
+		set
+		REQUEST_USER_ID = #{requestUserId},
+		REQUEST_REASON = #{requestReason}
+		where ID = #{id}
+	</update>
+	<!--删除-->
+	<update id="updatePlanApproveStatus" parameterType = "cn.pioneeruniverse.project.entity.TblProjectPlanApproveRequest">
+		update tbl_project_plan_approve_request
+		set
+		APPROVE_STATUS = #{approveStatus}
+		where ID = #{id}
+	</update>
+
+	<insert parameterType = "cn.pioneeruniverse.project.entity.TblProjectPlanApproveRequestDetail"
+			id="insertPlanApproveRequestDetail"  useGeneratedKeys="true" keyProperty="id">
+		insert into tbl_project_plan_approve_request_detail(
+			PROJECT_PLAN_APPROVE_REQUEST_ID,
+			PLAN_CODE,
+			PLAN_NAME,
+			RESPONSIBLE_USER_ID,
+			DELIVERABLES,
+			PLAN_START_DATE,
+			PLAN_START_MILESTONE,
+			PLAN_END_DATE,
+			PLAN_END_MILESTONE,
+			PLAN_DURATION,
+			PLAN_WORKLOAD,
+			PLAN_SCHEDULE,
+			ACTUAL_START_DATE,
+			ACTUAL_END_DATE,
+			PARENT_ID,
+			PARENT_IDS,
+			PLAN_LEVEL,
+			PLAN_ORDER,
+			STATUS,
+			CREATE_BY,
+			CREATE_DATE,
+			LAST_UPDATE_BY,
+			LAST_UPDATE_DATE
+		)values(
+			#{projectPlanApproveRequestId},
+			#{planCode},
+			#{planName},
+			#{responsibleUserId},
+			#{deliverables},
+			#{planStartDate},
+			#{planStartMilestone},
+			#{planEndDate},
+			#{planEndMilestone},
+			#{planDuration},
+			#{planWorkload},
+			#{planSchedule},
+			#{actualStartDate},
+			#{actualEndDate},
+			#{parentId},
+			#{parentIds},
+			#{planLevel},
+			#{planOrder},
+			#{status},
+			#{createBy},
+			#{createDate},
+			#{lastUpdateBy},
+			#{lastUpdateDate})
+	</insert>
+
+	<select id="getPlanApproveRequestById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select approve.ID,approve.APPROVE_STATUS,approve.REQUEST_REASON,
+		approve.REQUEST_USER_ID,tui.USER_NAME
+		from tbl_project_plan_approve_request approve
+		left join tbl_user_info tui on tui.ID = approve.REQUEST_USER_ID
+		where approve.ID = #{id}
+	</select>
+
+	<select id="getRequestDetailByApproveId" resultMap="BaseResultMap1" parameterType="java.lang.Long">
+		select plan.ID,plan.PROJECT_PLAN_APPROVE_REQUEST_ID,plan.PLAN_CODE,plan.PLAN_NAME,
+		plan.RESPONSIBLE_USER_ID,plan.DELIVERABLES,plan.PLAN_START_DATE,plan.PLAN_START_MILESTONE,
+		plan.PLAN_END_DATE,plan.PLAN_END_MILESTONE,plan.PLAN_DURATION,plan.PLAN_SCHEDULE,
+		plan.PLAN_LEVEL,tui.USER_NAME,plan.CREATE_DATE
+		from tbl_project_plan_approve_request_detail plan
+		left join tbl_user_info tui on tui.ID = plan.RESPONSIBLE_USER_ID
+		where plan.PROJECT_PLAN_APPROVE_REQUEST_ID = #{approveRequestId} and plan.STATUS = 1 and tui.STATUS = 1
+		order by plan.PLAN_ORDER asc
+	</select>
+
+	<delete id="deleteApproveRequestById" parameterType="java.lang.Long">
+		delete from tbl_project_plan_approve_request
+		where ID = #{id}
+	</delete>
+	<delete id="deleteApproveRequestDetailByRequestId" parameterType="java.lang.Long">
+		delete from tbl_project_plan_approve_request_detail
+		where PROJECT_PLAN_APPROVE_REQUEST_ID = #{approveRequestId}
+	</delete>
+</mapper>

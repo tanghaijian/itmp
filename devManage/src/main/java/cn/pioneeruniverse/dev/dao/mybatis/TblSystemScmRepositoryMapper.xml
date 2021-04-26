@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblSystemScmRepositoryMapper">
+    <insert id="insertSystemScmRepository" parameterType="cn.pioneeruniverse.dev.entity.TblSystemScmRepository"
+            useGeneratedKeys="true"
+            keyProperty="id">
+       INSERT INTO tbl_system_scm_repository(
+         SYSTEM_ID,
+         SCM_TYPE,
+         TOOL_ID,
+         REPOSITORY_NAME,
+         GIT_REPOSITORY_ID,
+         STATUS,
+         CREATE_BY,
+         CREATE_DATE,
+         LAST_UPDATE_BY,
+         LAST_UPDATE_DATE
+        ) VALUES (
+         #{systemId},
+         #{scmType},
+         #{toolId},
+         #{repositoryName},
+         #{gitRepositoryId},
+         #{status},
+         #{createBy},
+         #{createDate},
+         #{lastUpdateBy},
+         #{lastUpdateDate}
+        )
+    </insert>
+
+<!-- 获取所有的源码仓库信息 -->
+    <select id="getSystemScmRepositories" resultType="java.util.HashMap">
+        SELECT
+        tssr.ID AS "id",
+        concat(tssr.REPOSITORY_NAME,'(',tti.TOOL_NAME,')') AS "repositoryName",
+        tti.IP AS "ip",
+        tti.PORT AS "port",
+        tti.CONTEXT AS "context",
+        tti.ACCESS_PROTOCOL AS "accessProtocol"
+        FROM
+        tbl_system_scm_repository tssr
+        LEFT JOIN tbl_tool_info tti ON tti.ID = tssr.TOOL_ID
+        WHERE
+        tssr.SYSTEM_ID = #{systemId}
+        AND tssr.SCM_TYPE = #{scmType}
+        AND tssr.STATUS = 1
+        AND tti.FUNCTION_TYPE = 1
+        AND tti.TOOL_TYPE = #{scmType}
+        AND tti.STATUS = 1
+    </select>
+
+<!-- 获取某个系统的源码仓库 -->
+    <select id="findScmRepositoryBySystemId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tbl_system_scm_repository
+        WHERE SYSTEM_ID = #{systemId} AND STATUS = 1
+    </select>
+
+<!-- 获取具体的源码仓库 -->
+    <select id="findScmRepositoryById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM tbl_system_scm_repository
+        WHERE ID = #{id} AND STATUS = 1
+    </select>
+
+    <sql id="Base_Column_List">
+      ID, SYSTEM_ID, SCM_TYPE, TOOL_ID,REPOSITORY_NAME,GIT_REPOSITORY_ID, STATUS, CREATE_BY, CREATE_DATE,
+      LAST_UPDATE_BY, LAST_UPDATE_DATE
+    </sql>
+
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblSystemScmRepository">
+        <id column="ID" jdbcType="BIGINT" property="id" />
+        <result column="SYSTEM_ID" jdbcType="BIGINT" property="systemId" />
+        <result column="SCM_TYPE" jdbcType="TINYINT" property="scmType" />
+        <result column="TOOL_ID" jdbcType="BIGINT" property="toolId" />
+        <result column="REPOSITORY_NAME" jdbcType="VARCHAR" property="repositoryName" />
+        <result column="GIT_REPOSITORY_ID" jdbcType="BIGINT" property="gitRepositoryId" />
+        <result column="STATUS" jdbcType="TINYINT" property="status" />
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+    </resultMap>
+</mapper>

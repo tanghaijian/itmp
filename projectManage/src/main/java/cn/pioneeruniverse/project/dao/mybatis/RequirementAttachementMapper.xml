@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.RequirementAttachementMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblRequirementAttachement">
+    <id column="ID" jdbcType="BIGINT" property="id" />   
+    <result column="REQUIREMENT_ID" jdbcType="BIGINT" property="requirementId"/>
+	<result column="FILE_NAME_NEW" jdbcType="BIGINT" property="fileNameNew"/>
+	<result column="FILE_NAME_OLD" jdbcType="VARCHAR" property="fileNameOld"/>
+	<result column="FILE_TYPE" jdbcType="VARCHAR" property="fileType"/>
+	<result column="FILE_PATH" jdbcType="VARCHAR" property="filePath"/>
+	<result column="FILE_S3_BUCKET" jdbcType="VARCHAR" property="fileS3Bucket"/>
+	<result column="FILE_S3_KEY" jdbcType="VARCHAR" property="fileS3Key"/>    
+	<result column="STATUS" jdbcType="TINYINT" property="status"/>
+	<result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+	<result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+	<result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+	<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+	
+  </resultMap>
+
+  <!-- 根据需求id查询附件 -->
+  <select id="getRequirementAttachement" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select * from tbl_requirement_attachement where REQUIREMENT_ID = #{id,jdbcType=BIGINT} and STATUS=1
+  </select>
+
+  <!--新增-->
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.project.entity.TblRequirementAttachement" useGeneratedKeys="true" keyProperty="id">
+    insert into tbl_requirement_attachement
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="requirementId != null">
+        REQUIREMENT_ID,
+      </if>
+      <if test="fileNameNew != null">
+        FILE_NAME_NEW,
+      </if>
+      <if test="fileNameOld != null">
+        FILE_NAME_OLD,
+      </if>
+      <if test="fileType != null">
+        FILE_TYPE,
+      </if>
+      <if test="filePath != null">
+        FILE_PATH,
+      </if>
+      <if test="fileS3Bucket != null">
+        FILE_S3_BUCKET,
+      </if>
+      <if test="fileS3Key != null">
+        FILE_S3_KEY,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="requirementId != null">
+        #{requirementId,jdbcType=BIGINT},
+      </if>
+      <if test="fileNameNew != null">
+        #{fileNameNew,jdbcType=VARCHAR},
+      </if>
+      <if test="fileNameOld != null">
+        #{fileNameOld,jdbcType=VARCHAR},
+      </if>
+      <if test="fileType != null">
+        #{fileType,jdbcType=VARCHAR},
+      </if>
+      <if test="filePath != null">
+        #{filePath,jdbcType=VARCHAR},
+      </if>
+      <if test="fileS3Bucket != null">
+        #{fileS3Bucket,jdbcType=VARCHAR},
+      </if>
+      <if test="fileS3Key != null">
+        #{fileS3Key,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <!--逻辑删除附件-->
+  <update id="removeAttachement" parameterType="cn.pioneeruniverse.project.entity.TblRequirementAttachement">
+   update tbl_requirement_attachement
+      set
+        STATUS = 2,
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+      where ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

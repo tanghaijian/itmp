@@ -1,0 +1,609 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.assetLibrary.TblSystemDirectoryDocumentChaptersMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="SYSTEM_DIRECTORY_DOCUMENT_ID" jdbcType="BIGINT" property="systemDirectoryDocumentId" />
+    <result column="DOCUMENT_VERSION" jdbcType="TINYINT" property="documentVersion" />
+    <result column="CHAPTERS_NAME" jdbcType="VARCHAR" property="chaptersName" />
+    <result column="CHAPTERS_LEVEL" jdbcType="TINYINT" property="chaptersLevel" />
+    <result column="CHAPTERS_ORDER" jdbcType="TINYINT" property="chaptersOrder" />
+    <result column="CHAPTERS_VERSION" jdbcType="TINYINT" property="chaptersVersion" />
+    <result column="CHECKOUT_STATUS" jdbcType="TINYINT" property="checkoutStatus" />
+    <result column="CHECKOUT_USER_ID" jdbcType="BIGINT" property="checkoutUserId" />
+    <result column="CHAPTERS_S3_BUCKET" jdbcType="VARCHAR" property="chaptersS3Bucket" />
+    <result column="CHAPTERS_S3_KEY" jdbcType="VARCHAR" property="chaptersS3Key" />
+    <result column="CHAPTERS_S3_KEY2" jdbcType="VARCHAR" property="chaptersS3Key2" />
+    <result column="CHAPTERS_MONGO_KEY" jdbcType="VARCHAR" property="chaptersMongoKey" />
+    <result column="CHAPTERS_CONTENT_MD5" jdbcType="VARCHAR" property="chaptersContentMd5" />
+    <result column="CHAPTERS_TEMP_S3_KEY" jdbcType="VARCHAR" property="chaptersTempS3Key" />
+    <result column="CHAPTERS_TEMP_MONGO_KEY" jdbcType="VARCHAR" property="chaptersTempMongoKey" />
+    <result column="CHAPTERS_TEMP_CONTENT_MD5" jdbcType="VARCHAR" property="chaptersTempContentMd5" />
+    <result column="PARENT_ID" jdbcType="BIGINT" property="parentId" />
+    <result column="PARENT_IDS" jdbcType="VARCHAR" property="parentIds" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, SYSTEM_DIRECTORY_DOCUMENT_ID, DOCUMENT_VERSION, CHAPTERS_NAME, CHAPTERS_LEVEL, 
+    CHAPTERS_ORDER, CHAPTERS_VERSION, CHECKOUT_STATUS, CHECKOUT_USER_ID, CHAPTERS_S3_BUCKET, 
+    CHAPTERS_S3_KEY, CHAPTERS_MONGO_KEY, CHAPTERS_CONTENT_MD5, CHAPTERS_TEMP_S3_KEY, 
+    CHAPTERS_TEMP_MONGO_KEY, CHAPTERS_TEMP_CONTENT_MD5, PARENT_ID, PARENT_IDS, STATUS, 
+    CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_system_directory_document_chapters
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <!-- 设置章节的父章节 -->
+  <update id="updateParent" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters">
+  	 update tbl_system_directory_document_chapters
+     set 
+      PARENT_ID = #{parentId},
+      PARENT_IDS = #{parentIds},
+      CHAPTERS_LEVEL = #{chaptersLevel},
+      CHAPTERS_ORDER = #{chaptersOrder}
+     where ID = #{id}
+  </update>
+  <!-- 更新章节的层次 -->
+  <update id="updateChaptersLevel">
+  	update tbl_system_directory_document_chapters
+  	set CHAPTERS_LEVEL = #{chaptersLevel}+1
+  	where id = #{id}
+  </update>
+  <!-- 获取某个子章节最大的顺序 -->
+  <select id="getChildrenMaxOrder" parameterType="Long" resultType="Integer">
+  	SELECT MAX(CHAPTERS_ORDER) maxOrder
+	FROM tbl_system_directory_document_chapters
+	WHERE  PARENT_ID = #{parentId} AND STATUS = 1
+  </select>
+  <!--更新章节的顺序-->
+  <update id="updateChaptersOrder" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters">
+  	update tbl_system_directory_document_chapters
+  	set CHAPTERS_ORDER = CHAPTERS_ORDER+1
+  	where id!=#{id} and SYSTEM_DIRECTORY_DOCUMENT_ID = #{systemDirectoryDocumentId} 
+  	 <choose>
+  	 	<when test="parentId!=null">
+  	 		and PARENT_ID = #{parentId} 
+  	 	</when>
+  	 	<otherwise>
+  	 		and PARENT_ID is null
+  	 	</otherwise>
+  	 </choose>
+  	 AND CHAPTERS_ORDER>=#{chaptersOrder} and status = 1
+  </update>
+  <!-- 逻辑删除章节 -->
+  <update id="updateStatusById" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters">
+  	update tbl_system_directory_document_chapters
+  	set STATUS = 2,
+  	LAST_UPDATE_BY = #{lastUpdateBy},
+  	LAST_UPDATE_DATE = #{lastUpdateDate}
+  	where id = #{id} OR FIND_IN_SET(#{id},PARENT_IDS) 
+  </update>
+  
+  <!-- 更新某个章节的父节点 -->
+  <update id="updateParentIdsById" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters" >
+  	update tbl_system_directory_document_chapters
+  	set PARENT_IDS = #{parentIds}
+  	where id = #{id}
+  </update>
+  <!-- 更新选择的章节关联的父节点 -->
+  <update id="updateChildrenChapters" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters">
+  	UPDATE tbl_system_directory_document_chapters
+	SET PARENT_IDS  = #{parentIds}
+  	WHERE FIND_IN_SET(#{id},PARENT_IDS) AND STATUS = 1
+  </update>
+  <!-- 查询该章节下的子集 -->
+  <select id="getChildChapters" parameterType="Long" resultMap="BaseResultMap">
+ 	SELECT <include refid="Base_Column_List"/>
+	FROM tbl_system_directory_document_chapters
+	WHERE  PARENT_ID = #{id}  AND STATUS = 1
+  </select>
+  <!-- 查询该章节下的所有子集 -->
+  <select id="getChildrenChapters" parameterType="Long" resultMap="BaseResultMap">
+  	SELECT <include refid="Base_Column_List"/>
+	FROM tbl_system_directory_document_chapters
+	WHERE  FIND_IN_SET(#{id},PARENT_IDS) AND STATUS = 1
+  </select>
+  
+  <!-- 获取某个文档下的所有章节 -->
+  <select id="getAllBySystemDirectoryDocumentId" parameterType="Long" resultType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters">
+  	select ID id, SYSTEM_DIRECTORY_DOCUMENT_ID systemDirectoryDocumentId, DOCUMENT_VERSION documentVersion, CHAPTERS_NAME chaptersName,
+  	 CHAPTERS_LEVEL chaptersLevel, CHAPTERS_ORDER chaptersOrder, CHAPTERS_VERSION chaptersVersion, CHECKOUT_STATUS checkoutStatus,
+  	  CHECKOUT_USER_ID checkoutUserId, CHAPTERS_S3_BUCKET chaptersS3Bucket, 
+    CHAPTERS_S3_KEY chaptersS3Key, CHAPTERS_MONGO_KEY chaptersMongoKey, CHAPTERS_CONTENT_MD5 chaptersContentMd5, CHAPTERS_TEMP_S3_KEY chaptersTempS3Key, 
+    CHAPTERS_TEMP_MONGO_KEY chaptersTempMongoKey, CHAPTERS_TEMP_CONTENT_MD5 chaptersTempContentMd5, PARENT_ID pId, PARENT_IDS parentIds
+  	from tbl_system_directory_document_chapters
+  	where SYSTEM_DIRECTORY_DOCUMENT_ID = #{systemDirectoryDocumentId} and status = 1
+  	order by CHAPTERS_ORDER
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_system_directory_document_chapters
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 新增章节 -->
+  <insert id="insert" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters" useGeneratedKeys="true" keyColumn="ID" keyProperty="id">
+    insert into tbl_system_directory_document_chapters ( SYSTEM_DIRECTORY_DOCUMENT_ID, DOCUMENT_VERSION, 
+      CHAPTERS_NAME, CHAPTERS_LEVEL, CHAPTERS_ORDER, 
+      CHAPTERS_VERSION, CHECKOUT_STATUS, CHECKOUT_USER_ID, 
+      CHAPTERS_S3_BUCKET, CHAPTERS_S3_KEY, CHAPTERS_MONGO_KEY, 
+      CHAPTERS_CONTENT_MD5, CHAPTERS_TEMP_S3_KEY, 
+      CHAPTERS_TEMP_MONGO_KEY, CHAPTERS_TEMP_CONTENT_MD5, 
+      PARENT_ID, PARENT_IDS, <!-- STATUS, --> 
+      CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, 
+      LAST_UPDATE_DATE)
+    values ( #{systemDirectoryDocumentId,jdbcType=BIGINT}, #{documentVersion,jdbcType=TINYINT}, 
+      #{chaptersName,jdbcType=VARCHAR}, #{chaptersLevel,jdbcType=TINYINT}, #{chaptersOrder,jdbcType=TINYINT}, 
+      #{chaptersVersion,jdbcType=TINYINT}, #{checkoutStatus,jdbcType=TINYINT}, #{checkoutUserId,jdbcType=BIGINT}, 
+      #{chaptersS3Bucket,jdbcType=VARCHAR}, #{chaptersS3Key,jdbcType=VARCHAR}, #{chaptersMongoKey,jdbcType=VARCHAR}, 
+      #{chaptersContentMd5,jdbcType=VARCHAR}, #{chaptersTempS3Key,jdbcType=VARCHAR}, 
+      #{chaptersTempMongoKey,jdbcType=VARCHAR}, #{chaptersTempContentMd5,jdbcType=VARCHAR}, 
+      #{parentId,jdbcType=BIGINT}, #{parentIds,jdbcType=VARCHAR}, <!-- #{status,jdbcType=TINYINT}, --> 
+      #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, 
+      #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters">
+    insert into tbl_system_directory_document_chapters
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="systemDirectoryDocumentId != null">
+        SYSTEM_DIRECTORY_DOCUMENT_ID,
+      </if>
+      <if test="documentVersion != null">
+        DOCUMENT_VERSION,
+      </if>
+      <if test="chaptersName != null">
+        CHAPTERS_NAME,
+      </if>
+      <if test="chaptersLevel != null">
+        CHAPTERS_LEVEL,
+      </if>
+      <if test="chaptersOrder != null">
+        CHAPTERS_ORDER,
+      </if>
+      <if test="chaptersVersion != null">
+        CHAPTERS_VERSION,
+      </if>
+      <if test="checkoutStatus != null">
+        CHECKOUT_STATUS,
+      </if>
+      <if test="checkoutUserId != null">
+        CHECKOUT_USER_ID,
+      </if>
+      <if test="chaptersS3Bucket != null">
+        CHAPTERS_S3_BUCKET,
+      </if>
+      <if test="chaptersS3Key != null">
+        CHAPTERS_S3_KEY,
+      </if>
+      <if test="chaptersMongoKey != null">
+        CHAPTERS_MONGO_KEY,
+      </if>
+      <if test="chaptersContentMd5 != null">
+        CHAPTERS_CONTENT_MD5,
+      </if>
+      <if test="chaptersTempS3Key != null">
+        CHAPTERS_TEMP_S3_KEY,
+      </if>
+      <if test="chaptersTempMongoKey != null">
+        CHAPTERS_TEMP_MONGO_KEY,
+      </if>
+      <if test="chaptersTempContentMd5 != null">
+        CHAPTERS_TEMP_CONTENT_MD5,
+      </if>
+      <if test="parentId != null">
+        PARENT_ID,
+      </if>
+      <if test="parentIds != null">
+        PARENT_IDS,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="systemDirectoryDocumentId != null">
+        #{systemDirectoryDocumentId,jdbcType=BIGINT},
+      </if>
+      <if test="documentVersion != null">
+        #{documentVersion,jdbcType=TINYINT},
+      </if>
+      <if test="chaptersName != null">
+        #{chaptersName,jdbcType=VARCHAR},
+      </if>
+      <if test="chaptersLevel != null">
+        #{chaptersLevel,jdbcType=TINYINT},
+      </if>
+      <if test="chaptersOrder != null">
+        #{chaptersOrder,jdbcType=TINYINT},
+      </if>
+      <if test="chaptersVersion != null">
+        #{chaptersVersion,jdbcType=TINYINT},
+      </if>
+      <if test="checkoutStatus != null">
+        #{checkoutStatus,jdbcType=TINYINT},
+      </if>
+      <if test="checkoutUserId != null">
+        #{checkoutUserId,jdbcType=BIGINT},
+      </if>
+      <if test="chaptersS3Bucket != null">
+        #{chaptersS3Bucket,jdbcType=VARCHAR},
+      </if>
+      <if test="chaptersS3Key != null">
+        #{chaptersS3Key,jdbcType=VARCHAR},
+      </if>
+      <if test="chaptersMongoKey != null">
+        #{chaptersMongoKey,jdbcType=VARCHAR},
+      </if>
+      <if test="chaptersContentMd5 != null">
+        #{chaptersContentMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="chaptersTempS3Key != null">
+        #{chaptersTempS3Key,jdbcType=VARCHAR},
+      </if>
+      <if test="chaptersTempMongoKey != null">
+        #{chaptersTempMongoKey,jdbcType=VARCHAR},
+      </if>
+      <if test="chaptersTempContentMd5 != null">
+        #{chaptersTempContentMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="parentIds != null">
+        #{parentIds,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters">
+    update tbl_system_directory_document_chapters
+    <set>
+      <if test="systemDirectoryDocumentId != null">
+        SYSTEM_DIRECTORY_DOCUMENT_ID = #{systemDirectoryDocumentId,jdbcType=BIGINT},
+      </if>
+      <if test="documentVersion != null">
+        DOCUMENT_VERSION = #{documentVersion,jdbcType=TINYINT},
+      </if>
+      <if test="chaptersName != null">
+        CHAPTERS_NAME = #{chaptersName,jdbcType=VARCHAR},
+      </if>
+      <if test="chaptersLevel != null">
+        CHAPTERS_LEVEL = #{chaptersLevel,jdbcType=TINYINT},
+      </if>
+      <if test="chaptersOrder != null">
+        CHAPTERS_ORDER = #{chaptersOrder,jdbcType=TINYINT},
+      </if>
+      <if test="chaptersVersion != null">
+        CHAPTERS_VERSION = #{chaptersVersion,jdbcType=TINYINT},
+      </if>
+      <if test="checkoutStatus != null">
+        CHECKOUT_STATUS = #{checkoutStatus,jdbcType=TINYINT},
+      </if>
+      <if test="checkoutUserId != null">
+        CHECKOUT_USER_ID = #{checkoutUserId,jdbcType=BIGINT},
+      </if>
+      <if test="chaptersS3Bucket != null">
+        CHAPTERS_S3_BUCKET = #{chaptersS3Bucket,jdbcType=VARCHAR},
+      </if>
+      <if test="chaptersS3Key != null">
+        CHAPTERS_S3_KEY = #{chaptersS3Key,jdbcType=VARCHAR},
+      </if>
+      <if test="chaptersMongoKey != null">
+        CHAPTERS_MONGO_KEY = #{chaptersMongoKey,jdbcType=VARCHAR},
+      </if>
+      <if test="chaptersContentMd5 != null">
+        CHAPTERS_CONTENT_MD5 = #{chaptersContentMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="chaptersTempS3Key != null">
+        CHAPTERS_TEMP_S3_KEY = #{chaptersTempS3Key,jdbcType=VARCHAR},
+      </if>
+      <if test="chaptersTempMongoKey != null">
+        CHAPTERS_TEMP_MONGO_KEY = #{chaptersTempMongoKey,jdbcType=VARCHAR},
+      </if>
+      <if test="chaptersTempContentMd5 != null">
+        CHAPTERS_TEMP_CONTENT_MD5 = #{chaptersTempContentMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        PARENT_ID = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="parentIds != null">
+        PARENT_IDS = #{parentIds,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters">
+    update tbl_system_directory_document_chapters
+    set SYSTEM_DIRECTORY_DOCUMENT_ID = #{systemDirectoryDocumentId,jdbcType=BIGINT},
+      DOCUMENT_VERSION = #{documentVersion,jdbcType=TINYINT},
+      CHAPTERS_NAME = #{chaptersName,jdbcType=VARCHAR},
+      CHAPTERS_LEVEL = #{chaptersLevel,jdbcType=TINYINT},
+      CHAPTERS_ORDER = #{chaptersOrder,jdbcType=TINYINT},
+      CHAPTERS_VERSION = #{chaptersVersion,jdbcType=TINYINT},
+      CHECKOUT_STATUS = #{checkoutStatus,jdbcType=TINYINT},
+      CHECKOUT_USER_ID = #{checkoutUserId,jdbcType=BIGINT},
+      CHAPTERS_S3_BUCKET = #{chaptersS3Bucket,jdbcType=VARCHAR},
+      CHAPTERS_S3_KEY = #{chaptersS3Key,jdbcType=VARCHAR},
+      CHAPTERS_MONGO_KEY = #{chaptersMongoKey,jdbcType=VARCHAR},
+      CHAPTERS_CONTENT_MD5 = #{chaptersContentMd5,jdbcType=VARCHAR},
+      CHAPTERS_TEMP_S3_KEY = #{chaptersTempS3Key,jdbcType=VARCHAR},
+      CHAPTERS_TEMP_MONGO_KEY = #{chaptersTempMongoKey,jdbcType=VARCHAR},
+      CHAPTERS_TEMP_CONTENT_MD5 = #{chaptersTempContentMd5,jdbcType=VARCHAR},
+      PARENT_ID = #{parentId,jdbcType=BIGINT},
+      PARENT_IDS = #{parentIds,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!--liushan:查询此章节关联所有信息-->
+  <select id="selectChaptersWithRelatedData" parameterType="java.lang.Long" resultMap="ChaptersResultMap">
+      SELECT
+        <include refid="Base_Column_List"/>
+    ,
+    5 AS LIMIT_NUMBER,
+    3 AS LIMIT_REQ_NUMBER,
+    2 AS LIMIT_REQ_Feature_NUMBER
+      FROM tbl_system_directory_document_chapters
+      WHERE ID = #{id}
+  </select>
+  <!--fanwentao 查询章节树 -->
+  <select id="getChaptersTreeByDocumentId" resultType="cn.pioneeruniverse.project.vo.ZtreeVo">
+  		SELECT ID id,CHAPTERS_NAME name,
+			(CASE WHEN PARENT_ID IS NULL THEN 0 ELSE PARENT_ID END) pId,
+			0 checked 
+ 		FROM tbl_system_directory_document_chapters
+ 		WHERE SYSTEM_DIRECTORY_DOCUMENT_ID = #{systemDirectoryDocumentId}
+  </select>
+  <!-- 获取章节关联的章节信息 -->
+  <select id="getRelationedChapters" resultType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters">
+  	SELECT cha2.ID id,CONCAT(doc1.DOCUMENT_NAME,':',cha2.CHAPTERS_NAME) chaptersName
+ 		FROM tbl_system_directory_document_relation relation
+		LEFT JOIN tbl_system_directory_document doc1
+		ON doc1.ID = relation.SYSTEM_DIRECTORY_DOCUMENT_ID2
+		LEFT JOIN tbl_system_directory_document_chapters cha2
+		ON relation.SYSTEM_DIRECTORY_DOCUMENT_CHAPTER_ID2 = cha2.ID
+ 		WHERE relation.SYSTEM_DIRECTORY_DOCUMENT_ID1 = #{systemDirectoryDocumentId1}
+		AND relation.SYSTEM_DIRECTORY_DOCUMENT_CHAPTER_ID1 = #{systemDirectoryDocumentChapterId1}
+  </select>
+  <!-- 获取文档关联的章节信息 -->
+  <select id="getRelationChapters" resultMap="ChaptersRelateMap">
+  	SELECT DISTINCT cha1.ID,cha1.CHAPTERS_NAME,cha1.SYSTEM_DIRECTORY_DOCUMENT_ID,document.DOCUMENT_NAME
+ 		FROM tbl_system_directory_document_relation relation
+		LEFT JOIN tbl_system_directory_document_chapters cha1
+		ON relation.SYSTEM_DIRECTORY_DOCUMENT_CHAPTER_ID1 = cha1.ID
+		LEFT JOIN tbl_system_directory_document document
+		ON document.ID = cha1.SYSTEM_DIRECTORY_DOCUMENT_ID
+ 		WHERE relation.SYSTEM_DIRECTORY_DOCUMENT_ID1 = #{systemDirectoryDocumentId1}
+  </select>
+  
+  <!-- 获取某个文档下的章节树 -->
+  <select id="getChaptersCheckedTreeByDocumentId" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChaptersRelation" resultType="cn.pioneeruniverse.project.vo.ZtreeVo">
+  	SELECT ID id,CHAPTERS_NAME name,
+			(CASE WHEN PARENT_ID IS NULL THEN 0 ELSE PARENT_ID END) pId,
+			(SELECT count(1) FROM tbl_system_directory_document_relation relation
+					WHERE relation.SYSTEM_DIRECTORY_DOCUMENT_CHAPTER_ID2 = cha.ID
+					AND relation.SYSTEM_DIRECTORY_DOCUMENT_CHAPTER_ID1 = #{systemDirectoryDocumentChapterId1}
+					AND relation.SYSTEM_DIRECTORY_DOCUMENT_ID1 = #{systemDirectoryDocumentId1}
+					AND relation.SYSTEM_DIRECTORY_DOCUMENT_ID2 = #{systemDirectoryDocumentId2}
+			) checked 
+ 		FROM tbl_system_directory_document_chapters cha
+ 		WHERE SYSTEM_DIRECTORY_DOCUMENT_ID = #{systemDirectoryDocumentId2}
+  </select>
+  
+  <!-- 删除章节关联关系 -->
+	<delete id="deleteRelation" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChaptersRelation">
+		delete from tbl_system_directory_document_relation
+		where SYSTEM_DIRECTORY_DOCUMENT_CHAPTER_ID1 = #{systemDirectoryDocumentChapterId1}
+					AND SYSTEM_DIRECTORY_DOCUMENT_ID1 = #{systemDirectoryDocumentId1}
+					AND SYSTEM_DIRECTORY_DOCUMENT_ID2 = #{systemDirectoryDocumentId2}
+	</delete>  
+
+<!-- 保存章节关联信息 -->
+	<insert id="insertDocumentRelation">
+		insert into tbl_system_directory_document_relation 
+		( SYSTEM_DIRECTORY_DOCUMENT_CHAPTER_ID1, SYSTEM_DIRECTORY_DOCUMENT_ID1, 
+	      SYSTEM_DIRECTORY_DOCUMENT_ID2, SYSTEM_DIRECTORY_DOCUMENT_CHAPTER_ID2,STATUS,
+	      CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, 
+	      LAST_UPDATE_DATE)
+	    values 
+	    <foreach collection="list" item="item" separator=",">
+	    ( #{item.systemDirectoryDocumentChapterId1}, #{item.systemDirectoryDocumentId1}, 
+	      #{item.systemDirectoryDocumentId2}, #{item.systemDirectoryDocumentChapterId2},#{item.status}, 
+	      #{item.createBy,jdbcType=BIGINT}, #{item.createDate,jdbcType=TIMESTAMP}, #{item.lastUpdateBy,jdbcType=BIGINT}, 
+	      #{item.lastUpdateDate,jdbcType=TIMESTAMP})
+	    </foreach>
+	</insert>
+	
+	<!-- 通过ID获取章节信息 -->
+	<select id="selectChapterByIds" resultMap="BaseResultMap">
+	 	select ID,CHAPTERS_NAME,CHAPTERS_S3_BUCKET,CHAPTERS_S3_KEY2
+	 	from tbl_system_directory_document_chapters
+	 	where ID in
+	 	<foreach collection="list" item="item" open="(" separator="," close=")">
+	 		#{item}
+	 	</foreach>
+	</select>
+
+    <sql id="sddcr_select">
+        sddc.ID,
+        sddc.SYSTEM_DIRECTORY_DOCUMENT_ID,
+        sddc.DOCUMENT_VERSION,
+        sddc.CHAPTERS_NAME,
+        sddc.CHAPTERS_LEVEL,
+        sddc.CHAPTERS_ORDER,
+        sddc.CHAPTERS_VERSION,
+        sddc.CHECKOUT_STATUS,
+        sddc.CHECKOUT_USER_ID,
+        sddc.CHAPTERS_S3_BUCKET,
+        sddc.CHAPTERS_S3_KEY,
+        sddc.CHAPTERS_MONGO_KEY,
+        sddc.CHAPTERS_CONTENT_MD5,
+        sddc.CHAPTERS_TEMP_S3_KEY,
+        sddc.CHAPTERS_TEMP_MONGO_KEY,
+        sddc.CHAPTERS_TEMP_CONTENT_MD5,
+        sddc.PARENT_ID,
+        sddc.PARENT_IDS,
+        sddc.`STATUS`,
+        sddc.CREATE_BY,
+        sddc.CREATE_DATE,
+        sddc.LAST_UPDATE_BY,
+        sddc.LAST_UPDATE_DATE
+    </sql>
+    <!--liushan:查询需求关联的章节ids-->
+    <select id="getChaptersByRequirementId"  resultMap="BaseResultMap">
+        SELECT DISTINCT
+          <include refid="sddcr_select"/>
+        FROM
+            tbl_system_directory_document_chapters_requirement sddcr
+            LEFT JOIN tbl_system_directory_document_chapters sddc ON sddc.ID = sddcr.SYSTEM_DIRECTORY_DOCUMENT_CHAPTERS_ID
+        WHERE
+        sddcr.REQUIREMENT_CODE = #{requirementCode}
+        AND sddc.SYSTEM_DIRECTORY_DOCUMENT_ID = #{systemDirectoryDocumentId}
+        ORDER BY sddc.CHAPTERS_VERSION ASC
+    </select>
+    
+    <!-- 通过某个文档下的章节 -->
+    <select id="getChaptersByDocumentId" resultMap="ChilChaptersMap">
+    	select ID,CHAPTERS_NAME,CHAPTERS_S3_BUCKET,CHAPTERS_S3_KEY2,DOCUMENT_VERSION
+    	from tbl_system_directory_document_chapters
+    	where SYSTEM_DIRECTORY_DOCUMENT_ID = #{systemDirectoryDocumentId}
+    	and PARENT_ID is null
+    	order by CHAPTERS_ORDER
+    </select>
+    
+    <!-- 获取子章节 -->
+    <select id="getChaptersByPrentId" resultMap="ChilChaptersMap">
+    	select ID,CHAPTERS_NAME,CHAPTERS_S3_BUCKET,CHAPTERS_S3_KEY2,DOCUMENT_VERSION
+    	from tbl_system_directory_document_chapters
+    	where PARENT_ID = #{parentId}
+    	order by CHAPTERS_ORDER
+    </select>
+	
+    <!--liushan:章节最大版本状态-->
+    <select id="getMaxVersionStatusById"  resultMap="BaseResultMap">
+        SELECT
+        <include refid="sddcr_select"/>
+        ,
+	    max( sddcr.CHAPTERS_VERSION ) AS MAX_CHAPTERS_VERSION
+        FROM
+        tbl_system_directory_document_chapters sddc,
+        (
+            SELECT
+              REQUIREMENT_CODE,
+              SYSTEM_DIRECTORY_DOCUMENT_CHAPTERS_ID,
+              CHAPTERS_VERSION
+            FROM
+              tbl_system_directory_document_chapters_requirement
+            WHERE
+              REQUIREMENT_CODE = #{requirementCode}
+              AND SYSTEM_DIRECTORY_DOCUMENT_CHAPTERS_ID = #{id}
+            ) sddcr
+        WHERE
+            sddcr.SYSTEM_DIRECTORY_DOCUMENT_CHAPTERS_ID = sddc.ID
+            AND sddcr.CHAPTERS_VERSION = sddc.CHAPTERS_VERSION
+    </select>
+    
+    <!-- 获取运维类项目中的wiki树形菜单 -->
+    <select id="selectWikiTree"  resultType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters">
+  	SELECT chapters.ID id, chapters.SYSTEM_DIRECTORY_DOCUMENT_ID systemDirectoryDocumentId, chapters.DOCUMENT_VERSION documentVersion, chapters.CHAPTERS_NAME chaptersName,
+  	 chapters.CHAPTERS_LEVEL chaptersLevel, chapters.CHAPTERS_ORDER chaptersOrder, chapters.CHAPTERS_VERSION chaptersVersion, chapters.CHECKOUT_STATUS checkoutStatus,
+  	  chapters.CHECKOUT_USER_ID checkoutUserId, chapters.CHAPTERS_S3_BUCKET chaptersS3Bucket, 
+    chapters.CHAPTERS_S3_KEY chaptersS3Key, chapters.CHAPTERS_MONGO_KEY chaptersMongoKey, chapters.CHAPTERS_CONTENT_MD5 chaptersContentMd5, 
+		chapters.CHAPTERS_TEMP_S3_KEY chaptersTempS3Key,  chapters.PARENT_ID pId,
+    chapters.CHAPTERS_TEMP_MONGO_KEY chaptersTempMongoKey, chapters.CHAPTERS_TEMP_CONTENT_MD5 chaptersTempContentMd5, chapters.PARENT_IDS parentIds 
+	FROM tbl_system_directory directorys
+	LEFT JOIN tbl_system_directory_document document
+	ON directorys.ID=document.SYSTEM_DIRECTORY_ID AND document.`STATUS`=1
+	LEFT JOIN tbl_system_directory_document_chapters chapters
+	ON document.ID=chapters.SYSTEM_DIRECTORY_DOCUMENT_ID 
+	WHERE chapters.`STATUS`=1 AND directorys.`STATUS`=1 
+	AND document.SYSTEM_ID=#{systemId} AND  directorys.PROJECT_ID=#{projectId}
+  	order by CHAPTERS_ORDER
+  </select>
+  <!--liushan:章节关联数据-->
+  <resultMap id="ChaptersResultMap"  extends="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters">
+    <association property="createUserName" javaType="java.lang.String" column="CREATE_BY"
+                 select="cn.pioneeruniverse.project.dao.mybatis.UserMapper.getUserNameById"></association>
+
+    <association property="checkoutUserName" javaType="java.lang.String" column="CHECKOUT_USER_ID"
+                 select="cn.pioneeruniverse.project.dao.mybatis.UserMapper.getUserNameById"></association>
+
+    <collection property="relatedRequirementList" ofType="cn.pioneeruniverse.project.entity.TblRequirementInfo" column="{chaptersId=ID,limitNumber=LIMIT_REQ_NUMBER}"
+                select="cn.pioneeruniverse.project.dao.mybatis.assetLibrary.TblSystemDirectoryDocumentChaptersRequirementMapper.selectRequirementByChaptersId"></collection>
+
+    <collection property="relatedRequirementFeatureList" ofType="cn.pioneeruniverse.project.entity.TblRequirementFeature" column="{chaptersId=ID,limitNumber=LIMIT_REQ_Feature_NUMBER}"
+                select="cn.pioneeruniverse.project.dao.mybatis.assetLibrary.TblSystemDirectoryDocumentChaptersRequirementFeatureMapper.selectRequirementFeatureByChaptersId"></collection>
+
+    <collection property="relatedSystemDirectoryDocumentAttachmentList" ofType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentAttachment" column="{chaptersId=ID,limitNumber=LIMIT_NUMBER}"
+                select="cn.pioneeruniverse.project.dao.mybatis.assetLibrary.TblSystemDirectoryDocumentAttachmentMapper.selectAttachmentByChaptersId"></collection>
+  </resultMap>
+  <!-- fanwentao:被关联章节数据 -->
+  <resultMap type="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters" extends="BaseResultMap" id="ChaptersRelateMap">
+  	<collection property="relateChapters" ofType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters" column="{systemDirectoryDocumentId1=SYSTEM_DIRECTORY_DOCUMENT_ID,systemDirectoryDocumentChapterId1=ID}"
+                select="cn.pioneeruniverse.project.dao.mybatis.assetLibrary.TblSystemDirectoryDocumentChaptersMapper.getRelationedChapters"></collection>
+  </resultMap>
+  <!-- fanwentao:章节子集数据 -->
+  <resultMap type="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters" extends="BaseResultMap" id="ChilChaptersMap">
+  	<collection property="childChapters" ofType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters" column="ID"
+                select="cn.pioneeruniverse.project.dao.mybatis.assetLibrary.TblSystemDirectoryDocumentChaptersMapper.getChaptersByPrentId"></collection>
+  </resultMap>
+  
+</mapper>

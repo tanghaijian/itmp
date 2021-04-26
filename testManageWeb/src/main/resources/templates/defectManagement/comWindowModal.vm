@@ -1,0 +1,84 @@
+#*投产窗口*#
+<div class="modal fade bs-example-modal-lg" id="comWindowModal" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <span>选择投产窗口</span>
+            </div>
+            <div class="modal-body">
+                <div class="color1">
+                    <div class="container-fluid" id="comWindowForm">
+                        <div class="row control-row">
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">窗口名称：</label></div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control " placeholder="请输入" id="win_windowName"
+                                           name="windowName" value=""/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">窗口日期：</label></div>
+                                <div class="search_input">
+                                    <input size="16" type="text" onfocus="this.blur()"
+                                           class="form-control form_datetime active" placeholder="请选择" id="timeDate"
+                                           name="windowDate">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">窗口类型：</label></div>
+                                <div class="search_input">
+                                    <select class="selectpicker" id="win_windowType" name="windowType">
+                                        <option value="">请选择</option>
+                                        #foreach($dictMap in ${dict.getDictMap(
+                                            "TBL_COMMISSIONING_WINDOW_WINDOW_TYPE").entrySet()})
+                                            <option value="${dictMap.key}">${dictMap.value}</option>
+                                        #end
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row control-row search_btn">
+                            <button type="button" class="btn btn-primary" onclick="ComWindowShow()">
+                                搜&nbsp;&nbsp;&nbsp;索
+                            </button>
+                            <button type="button" onclick="winReset()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置
+                            </button>
+                        </div>
+
+                    </div>
+                    <div id="downBtn3" class="downBtn">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br>
+                <div class="content-table">
+                    <div class="wode">
+                        <table id="ComWindowTable"></table>
+                        <div id="userPage"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="bottom-container">
+                    <button type="button" id="userbutton1" class="btn btn-primary" data-user="default"
+                            onclick="commitWin()">确定
+                    </button>
+                    <button type="button" id="userbutton2" class="btn btn-primary" data-user="default"
+                            onclick="commitWin2()">确定
+                    </button>
+                    <button type="button" style="display: none" id="userbutton2_1" class="btn btn-primary" data-user="default"
+                            onclick="testExecution.modal.window.commit()">确定
+                    </button>
+                    <button type="button" id="userbutton3" class="btn btn-primary" data-user="default"
+                            onclick="commitWin3()">确定
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

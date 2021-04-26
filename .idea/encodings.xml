@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/config" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/config/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/devManage" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/devManage/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/devManageWeb" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/devManageWeb/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/eureka" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/eureka/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jobManage" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/jobManage/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/projectManage" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/projectManage/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/projectManageWeb" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/projectManageWeb/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/reportManage" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/reportManage/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/system" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/system/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/systemWeb" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/systemWeb/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/testManage" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/testManage/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/testManageWeb" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/testManageWeb/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/zuul" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/zuul/src/main/java" charset="UTF-8" />
+  </component>
+</project>

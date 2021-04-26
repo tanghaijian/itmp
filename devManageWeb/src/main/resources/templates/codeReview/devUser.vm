@@ -1,0 +1,155 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+        &times;
+    </button>
+    <span>请选择人员</span>
+</div>
+<div class="modal-body">
+    <div class="color1">
+        <div class="container-fluid">
+            <div class="row control-row">
+                <div class="col-md-4">
+                    <div class="search_font"><label class="control-label">姓名：</label></div>
+                    <div class="search_input">
+                        <input type="text" class="form-control " placeholder="请输入" id="userName" name="userName"
+                               value=""/>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="search_font"><label class="control-label">部门：</label></div>
+                    <div class="search_input">
+                        <select class="selectpicker" id="deptName" name="deptName">
+                            <option value="">请选择</option>
+                            #foreach($dept in ${system.getDept()})
+                                <option value="$dept.id">$dept.deptName</option>
+                            #end
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="search_font"><label class="control-label">公司：</label></div>
+                    <div class="search_input">
+                        <select class="selectpicker" id="companyName" name="companyName">
+                            <option value="">请选择</option>
+                            #foreach($company in ${system.getCompany()})
+                                <option value="$company.id">$company.companyName</option>
+                            #end
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row control-row search_btn">
+                <button type="button" class="btn btn-primary" onclick="DevUserModal.findDevUser()">搜&nbsp;&nbsp;&nbsp;索
+                </button>
+                <button type="button" onclick="DevUserModal.clearSearch()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置
+                </button>
+            </div>
+        </div>
+        <div id="downBtn">
+            <span class="fa fa-caret-up"></span>
+        </div>
+    </div>
+    <br>
+    <div class="content-table">
+        <div class="wode">
+            <table id="devUserTable"></table>
+            <div id="devUserPage"></div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <div class="bottom-container">
+        <button type="button" id="userbutton" class="btn btn-primary" data-user="default"
+                onclick=" DevUserModal.addDevUser()">确定
+        </button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+    </div>
+</div>
+<script type="text/javascript">
+    $('.selectpicker').selectpicker('refresh');
+
+    var DevUserModal = {};
+
+    //查找用户
+    DevUserModal.findDevUser = function () {
+        var userName = $.trim($("#userName").val());
+        var deptId = $.trim($("#deptName").find("option:selected").val());
+        var companyId = $.trim($("#companyName").find("option:selected").val());
+        $("#devUserTable").bootstrapTable('destroy');
+        $("#devUserTable").bootstrapTable({
+            url: "/system/user/getDevUserPageForCodeReview",
+            method: "post",
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            queryParamsType: "",
+            pagination: true,
+            sidePagination: "server",
+            pageNumber: 1,
+            pageSize: 5,
+            pageList: [5, 10, 20],
+            queryParams: function (params) {
+                var param = {
+                    pageNumber: params.pageNumber,
+                    pageSize: params.pageSize,
+                    userName: userName,
+                    deptId: deptId,
+                    companyId: companyId,
+                    excludeUserId: "$existUsers"
+                };
+                return param;
+            },
+            columns: [{
+                checkbox: true,
+                width: "30px"
+            }, {
+                field: "userName",
+                title: "姓名",
+                align: 'center'
+            }, {
+                field: "deptName",
+                title: "所属部门",
+                align: 'center'
+            }, {
+                field: "companyName",
+                title: "所属公司",
+                align: 'center'
+            }],
+            onLoadSuccess: function () {
+
+            },
+            onLoadError: function () {
+
+            }
+        });
+    };
+    //搜索事件
+    DevUserModal.clearSearch = function () {
+        $("#userName").val('');
+        $("#deptName").selectpicker('val', '');
+        $("#companyName").selectpicker('val', '');
+        DevUserModal.findDevUser();
+    };
+    //选中后添加人员
+    DevUserModal.addDevUser = function () {
+        var rows = $("#devUserTable").bootstrapTable('getSelections');
+        if (rows.length <= 0) {
+            layer.alert("请选中一行", {
+                icon: 2,
+                title: "提示信息"
+            });
+        } else {
+            $('#devUserSelectModal').modal('hide');
+            var nameArray = $("#devUser").val() == "" ? [] : $("#devUser").val().split(",");
+            var idArray = $("#devUser").attr("idValue") == "" ? [] : $("#devUser").attr("idValue").split(",");
+            for (var i in rows) {
+                nameArray.push(rows[i].userName);
+                idArray.push(rows[i].id);
+            }
+            $("#devUser").val(nameArray.join(","));
+            $("#devUser").attr("idValue", idArray.join(","));
+        }
+    };
+
+    $(function () {
+        DevUserModal.findDevUser();
+    });
+</script>

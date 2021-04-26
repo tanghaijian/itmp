@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>部署配置</title>
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css" /> 
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+<link rel="stylesheet" href="#springUrl('')/devManageui/static/css/systeminfoList/systeminfoList.css" />
+
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/devManageui/static/js/systeminfoList/deploymentConfig.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/devManageui/static/js/systeminfoList/systeminfoPopup.js"></script>
+<style> 
+	body{
+		padding: 20px 30px;
+	}
+	.optClass{
+		padding-left: 130px;
+	}
+	.up_opt,.down_opt{
+		position: absolute;
+		top: 6px;
+		width: 20px;
+		height: 20px;
+		cursor:pointer;
+	}
+	.up_opt{
+		left: 35px;
+		background: url("#springUrl('')/devManageui/static/images/upOpt.png") no-repeat;
+	}
+	.up_opt:hover{
+		background-position: -20px 0;
+	}
+	.down_opt{
+		left: 55px;
+		background: url("#springUrl('')/devManageui/static/images/downOpt.png") no-repeat;
+	}
+	.down_opt:hover{
+		background-position: -18px 0;
+	}
+</style>
+</head>
+<body>
+	<input type="hidden" id="deploy_serverId" value='' />
+	<input type="hidden" id="deploy_Id" value='' />
+	<div id="serverDiv">
+		<div class="def_colList">
+			<div class="def_colList_menu">
+				<ul>
+				</ul>
+			</div>
+			<div class="def_colList_cont">
+				<div class="def_rowList">
+					<div class="def_rowList_menu">
+						<ul>
+						</ul>
+					</div>
+					<div class="def_rowList_cont">
+						<form id="deployInfoForm">
+							<div class="rowdiv">
+								<div class="form-group">
+									<label class="def_col_5 control-label font_right fontWeihgt"><span
+										class="checkfont">*</span>目标服务器：</label>
+									<div class="def_col_31">
+										<div id="serverGroup" class="def_hideDiv fakeInput pointStyle"
+											onclick="serverShow3()"></div>
+										<!-- <input type="hidden" id="serverId" />
+		                               <input type="text" class="form-control pointStyle" readonly placeholder="请选择服务器" id="hostName"/> -->
+									</div>
+								</div>
+							</div>
+							<div class="rowdiv">
+								<div class="form-group">
+									<label class="def_col_5 control-label font_right fontWeihgt"><span
+										class="checkfont">*</span>部署路径：</label>
+									<div class="def_col_31">
+										<input type="text" class="form-control" placeholder="请填写部署路径"
+											id="deployPath" name="deployPath" />
+									</div>
+								</div>
+							</div>
+							<div class="rowdiv">
+								<div class="form-group def_col_18">
+									<label class="def_col_10 control-label font_right fontWeihgt"><span
+										class="checkfont">*</span>模版类型：</label>
+									<div class="def_col_26">
+										<select class="selectpicker" id="templateType" name="templateType"> 
+											
+										</select>
+									</div>
+								</div>
+								<div class="form-group def_col_18">
+									<label class="def_col_10 control-label font_right fontWeihgt"><span
+										class="checkfont">*</span>超时时间(秒)：</label>
+									<div class="def_col_26">
+										<input type="text" class="form-control" placeholder="请填写超时时间"
+											id="timeOut" name="timeOut" />
+									</div>
+								</div>
+							</div>
+							<div class="rowdiv"> 
+								<div class="form-group def_col_18">
+									<label class="def_col_10 control-label font_right fontWeihgt"><span
+										class="checkfont">*</span>重试次数：</label>
+									<div class="def_col_26">
+										<input type="text" class="form-control" placeholder="请填写重试次数"
+											id="retryNumber" name="retryNumber" />
+									</div>
+								</div>
+								<div class="form-group def_col_18">
+									<label class="def_col_10 control-label font_right fontWeihgt">部署顺序：</label>
+									<div class="def_col_26">
+										<input type="text" class="form-control" placeholder="请填写部署顺序,顺序相同会执行并发部署"
+											id="deploySequence" name="deploySequence" />
+									</div>
+								</div>
+							</div>
+							<div id="addConfigContent"></div>
+							<div class="rowdiv addConfigBtn">
+								<div class="def_col_5"></div>
+								<div class="def_col_31">
+								 		<div class="btn btn-primary"  onclick="addConfig()">新&nbsp;&nbsp;&nbsp;增</div>&nbsp;&nbsp;
+	                               		<div class="btn btn-primary"  onclick="copyInfo()">复&nbsp;&nbsp;&nbsp;制</div>&nbsp;&nbsp;	
+	                               		<div class="btn btn-primary"  onclick="pasteInfo()">粘&nbsp;&nbsp;&nbsp;贴</div>	
+	                            </div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	##目标服务器弹窗
+	<div  class="modal fade bs-example-modal-lg" tabindex="-1" id="serverModal" role="dialog" aria-labelledby="serverModal" >
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content modalStyle">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"  aria-hidden="true">
+                       &times;
+                   </button>
+					<span class="modal-title">请选择服务器</span>
+				</div>
+				<div class="modal-body">
+					<div class="color1">
+						<div class="container-fluid" id="">
+							<div class="row control-row">
+							<div class="col-md-6">
+									<div class="search_font">
+										<label class="control-label">主机名：</label>
+									</div>
+									<div class="search_input">
+										<input type="text" class="form-control" placeholder="请输入" id="host" name="host" />
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="search_font">
+										<label class="control-label">IP：</label>
+									</div>
+									<div class="search_input">
+										<input type="text" class="form-control" placeholder="请输入" id="IP" name="IP" />
+									</div>
+								</div>
+							</div>
+							<div class="row control-row search_btn">
+								<button type="button" class="btn btn-primary" onclick="serverShow3()">搜&nbsp;&nbsp;&nbsp;索</button>
+								<button type="button" class="btn btn-default" onclick="clearServer()">重&nbsp;&nbsp;&nbsp;置</button>
+							</div>
+						</div>
+							
+						 <div id="downBtn2">
+                               <span class="fa fa-caret-up"></span>
+                           </div>
+					</div>
+					 <br>
+						
+					 <div class="content-table">
+                           <div class="wode">
+                            <table id="serverTable"></table>
+								<div id="serverPage"></div>
+                           </div>
+                       </div>
+					
+				</div>
+				<div class="modal-footer">
+					<div class="bottom-container">
+						<button type="button" class="btn btn-primary" onclick="commitServer()" >确定</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal" >取消</button>
+				</div>
+				</div>
+			</div>
+		</div>
+	</div>	
+	<div id="loading">
+		<img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+	</div>
+</body>
+</html>

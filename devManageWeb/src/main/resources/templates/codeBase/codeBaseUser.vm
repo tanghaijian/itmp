@@ -1,0 +1,331 @@
+##增加人员  弹窗内容
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+        &times;
+    </button>
+    <span>增加人员</span>
+</div>
+<div class="modal-body">
+    <div class="color1">
+        <div class="container-fluid" id="search_div">
+            <div class="row control-row">
+                <div class="col-md-3">
+                    <div class="search_font"><label class="control-label">姓名：</label></div>
+                    <div class="search_input">
+                        <input type="text" class="form-control " placeholder="请输入" id="userName"
+                               name="userName" value=""/>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="search_font"><label class="control-label">工号：</label></div>
+                    <div class="search_input">
+                        <input type="text" class="form-control" placeholder="请输入" id="employeeNumber"
+                               name="employeeNumber" value=""/>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="search_font"><label class="control-label">部门：</label></div>
+                    <div class="search_input">
+                        <select class="selectpicker" data-live-search="true" id="deptName" name="deptName">
+                            <option value="">请选择</option>
+                            #foreach($dept in ${system.getDept()})
+                                <option value="$dept.id">$dept.deptName</option>
+                            #end
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="search_font"><label class="control-label">项目：</label></div>
+                    <div class="search_input">
+                        <select class="selectpicker" id="projectName" name="projectName" data-live-search="true"
+                                onchange="CodeBaseUserModal.projectNameChange()">
+                            <option value="">请选择</option>
+                            #foreach($project in ${system.getProject()})
+                                <option value="$project.id">$project.projectName</option>
+                            #end
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row control-row">
+                <div class="col-md-3">
+                    <div class="search_font"><label class="control-label">项目组：</label></div>
+                    <div class="search_input">
+                        <input type="text" class="form-control pointStyle" readonly placeholder="选择项目组"
+                               onclick="CodeBaseUserModal.showMenu();" id="projectGroup" name="projectGroup"
+                               onmouseover="this.title=this.value"
+                               idValue="$!currentUserProjectGroupId"/>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="search_font"><label class="control-label">项目组岗位：</label></div>
+                    <div class="search_input">
+                        <select class="selectpicker" data-live-search="true" id="userPost" name="userPost">
+                            <option value="">请选择</option>
+                            #foreach($dictMap in ${dict.getDictMap(
+                                "TBL_PROJECT_GROUP_USER_USER_POST").entrySet()})
+                                <option value="${dictMap.key}">${dictMap.value}</option>
+                            #end
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row control-row search_btn">
+                <button type="button" class="btn btn-primary" onclick="CodeBaseUserModal.findUser()">搜&nbsp;&nbsp;&nbsp;索
+                </button>
+                <button type="button" onclick="CodeBaseUserModal.clearSearch()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置
+                </button>
+            </div>
+        </div>
+        <div id="downBtn">
+            <span class="fa fa-caret-up"></span>
+        </div>
+    </div>
+    <br>
+    <div class="content-table">
+        <div class="wode">
+            <table id="userTable"></table>
+            <div id="userPage"></div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" onclick="CodeBaseUserModal.addUserForCodeBase()">
+        添&nbsp;&nbsp;&nbsp;加
+    </button>
+    <button type="button" class="btn btn-default" data-dismiss="modal">取&nbsp;&nbsp;&nbsp;消</button>
+</div>
+<script>
+    $('.selectpicker').selectpicker('refresh');
+
+    var CodeBaseUserModal = {
+    		//【增加人员】弹框中搜索人员信息
+        findUser: function () {
+            var userName = $.trim($("#userName").val());
+            var employeeNumber = $.trim($("#employeeNumber").val());
+            var deptId = $.trim($("#deptName").find("option:selected").val());
+            var projectId = $.trim($("#projectName").find("option:selected").val());
+            var existUsers = "$existUsers";
+            var projectGroupId = $("#projectGroup").attr("idValue");
+            var userPost = $.trim($("#userPost").find("option:selected").val());
+            $("#userTable").bootstrapTable('destroy');
+            $("#userTable").bootstrapTable({
+                url: "/system/user/getUserPageForCodeBase",
+                method: "post",
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                queryParamsType: "",
+                pagination: true,
+                sidePagination: "server",
+                pageNumber: 1,
+                pageSize: 5,
+                pageList: [5, 10, 20],
+                queryParams: function (params) {
+                    var param = {
+                        pageNumber: params.pageNumber,
+                        pageSize: params.pageSize,
+                        userName: userName,
+                        employeeNumber: employeeNumber,
+                        deptId: deptId,
+                        projectId: projectId,
+                        projectGroupId: projectGroupId,
+                        userPost:userPost,
+                        removeExcludeUser: true,
+                        excludeUserId: existUsers
+                    };
+                    return param;
+                },
+                #if($codeBaseType=="svn")
+                    columns: [{
+                        checkbox: true,
+                        width: "30px"
+                    }, {
+                        field: "userName",
+                        title: "姓名",
+                        align: 'center'
+                    }, {
+                        field: "userAccount",
+                        title: "用户名",
+                        align: 'center'
+                    }, {
+                        field: "userScmAccount",
+                        title: "SVN账号",
+                        align: 'center'
+                    }, {
+                        field: "employeeNumber",
+                        title: "工号",
+                        align: 'center'
+                    }, {
+                        field: "deptName",
+                        title: "所属部门",
+                        align: 'center'
+                    }, {
+                        field: "myProjectGroupName",
+                        title: "所属项目组",
+                        align: 'center'
+                    }],
+                #end
+                #if($codeBaseType=="gitLab")
+                    columns: [{
+                        checkbox: true,
+                        width: "30px"
+                    }, {
+                        field: "userName",
+                        title: "姓名",
+                        align: 'center'
+                    }, {
+                        field: "userAccount",
+                        title: "用户名",
+                        align: 'center'
+                    }, {
+                        field: "userScmAccount",
+                        title: "GITLAB账号",
+                        align: 'center'
+                    }, {
+                        field: "employeeNumber",
+                        title: "工号",
+                        align: 'center'
+                    }, {
+                        field: "email",
+                        title: "E-mail",
+                        align: 'center'
+                    }, {
+                        field: "deptName",
+                        title: "所属部门",
+                        align: 'center'
+                    }, {
+                        field: "myProjectGroupName",
+                        title: "所属项目组",
+                        align: 'center'
+                    }],
+                #end
+                onLoadSuccess: function () {
+                    $("#loading").css('display', 'none');
+                },
+                onLoadError: function () {
+
+                }
+            });
+        },
+        
+        //【增加人员】弹框，选择人员后【添加】
+        addUserForCodeBase: function () {
+            var rows = $("#userTable").bootstrapTable('getSelections');
+            if (rows.length <= 0) {
+                layer.alert("请选中一行", {
+                    icon: 2,
+                    title: "提示信息"
+                });
+            } else {
+                #if($codeBaseType=="svn")
+                    CodeBase.addUserToJqGrid(rows);
+                #end
+                #if($codeBaseType=="gitLab")
+                    GitLabCodeBase.addUserToJqGrid(rows);
+                #end
+            }
+        },
+        //【增加人员】弹框，搜索条件重置
+        clearSearch: function () {
+            $("#userName").val('');
+            $("#employeeNumber").val('');
+            $("#deptName").selectpicker('val', '');
+            $("#projectName").selectpicker('val', '');
+            $("#userPost").selectpicker('val', '');
+            CodeBaseUserModal.projectNameChange();
+            CodeBaseUserModal.findUser();
+        },
+        //【增加人员】弹框，选择项目组
+        showMenu: function () {
+            $.fn.zTree.getZTreeObj("projectSelect").reAsyncChildNodes(null, "refresh");
+            var projectOffset = $("#projectGroup").offset();
+            var projectObj = $("#projectGroup");
+            $("#menuContent").css({
+                left: projectOffset.left + "px",
+                top: projectOffset.top + projectObj.outerHeight() + "px"
+            }).slideDown("fast");
+            $("body").bind("mousedown", CodeBaseUserModal.onBodyDown);
+        },
+        onBodyDown: function (event) {
+            if (!(event.target.id == "projectGroup" || event.target.id == "menuContent" || $(event.target).parents("#menuContent").length > 0)) {
+                CodeBaseUserModal.hideMenu();
+            }
+        },
+        hideMenu: function () {
+            $("#menuContent").fadeOut("fast");
+            $("body").unbind("mousedown", CodeBaseUserModal.onBodyDown);
+        },
+        //【增加人员】弹框，项目名变更
+        projectNameChange: function () {
+            $("#projectGroup").val('');
+            $("#projectGroup").attr('idValue', '');
+            setting1.async.otherParam = ["projectId", $("#projectName").val()];
+            $.fn.zTree.init($("#projectSelect"), setting1);
+        },
+        onCheck: function (e, treeId, treeNode) {
+            var selectedProjectGroupName = [];
+            var selectedProjecrGroupId = [];
+            var checkedNodes = $.fn.zTree.getZTreeObj("projectSelect").getCheckedNodes(true);
+            for (var i in checkedNodes) {
+                selectedProjectGroupName.push(checkedNodes[i].name);
+                selectedProjecrGroupId.push(checkedNodes[i].id);
+            }
+            $("#projectGroup").val(selectedProjectGroupName.join(","));
+            $("#projectGroup").attr("idValue", selectedProjecrGroupId.join(","));
+        },
+        onAsyncSuccess: function (event, treeId, treeNode, msg) {
+            var zTree = $.fn.zTree.getZTreeObj("projectSelect");
+            zTree.expandAll(false);
+            var selectedProjectGroupId = $("#projectGroup").attr("idValue").split(",");
+            for (var i in selectedProjectGroupId) {
+                var node = zTree.getNodeByParam("id", selectedProjectGroupId[i], null);
+                if (node != null) {
+                    zTree.checkNode(node, true, null, true);
+                }
+            }
+        }
+    };
+
+    //项目组信息树形结构配置
+    var setting1 = {
+        async: {
+            enable: true,
+            type: "POST",
+            dataType: "json",
+            contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+            url: "/projectManage/project/getProjectGroupTree",
+            otherParam: ["projectId", $("#projectName").val()]
+        },
+        check: {
+            enable: true,
+            chkboxType: {"Y": "", "N": ""}
+        },
+        view: {
+            dblClickExpand: false,
+            showIcon: false,
+        },
+        data: {
+            simpleData: {
+                enable: true
+            },
+            key: {
+                title: "projectName"
+            }
+        },
+        callback: {
+            onCheck: CodeBaseUserModal.onCheck,
+            onAsyncSuccess: CodeBaseUserModal.onAsyncSuccess,
+            onAsyncError: function (event, treeId, treeNode, XMLHttpRequest, textStatus, errorThrown) {
+                layer.alert("获取项目组异常", {
+                    icon: 2,
+                    title: "提示信息"
+                });
+            }
+        }
+    };
+
+    $(document).ready(function () {
+        $.fn.zTree.init($("#projectSelect"), setting1);
+        CodeBaseUserModal.findUser();
+    });
+
+</script>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>自动化测试配置</title>
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css" /> 
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+<link rel="stylesheet" href="#springUrl('')/devManageui/static/css/systeminfoList/systeminfoList.css" />
+
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script> 
+<script type="text/ecmascript" src="#springUrl('')/devManageui/static/js/systeminfoList/automatedTest.js"></script>
+    
+<style> 
+	 body{
+	 	padding: 0 20px;
+	 }
+	 .entrySelect{
+	 	width: 100%; 
+	 	line-height: 28px;
+	 	overflow: hidden;
+	 	text-overflow:ellipsis;
+		white-space: nowrap;
+	 }
+	 .entrySelect .btn{
+	 	 height: 28px;
+	 }
+	 .selectDiv{
+		 height: 32px;
+		 width: 100%;
+		 margin-right: 10px;
+	 }
+</style>
+</head>
+<body>
+	<form class="form-horizontal" id="autoTestForm">
+   		<input type="hidden" id="autoTestSystemId"  value=''/>
+   		<input type="hidden" id="authTestArchitectureType"  value=''/>
+  		<div class="allInfo autoInfo">
+           <div class="def_title">
+               <span>自动化配置</span>
+               <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+           </div>
+           <div class="def_content">
+                <div class="dataEntry autoTestData"> 
+                </div>
+           </div>
+        </div>
+        <div class="allInfo autoInfo">
+           <div class="def_title">
+               <span>UI自动化配置</span>
+               <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+           </div>
+           <div class="def_content">
+                <div class="dataEntry uiAutoTest"> 
+                </div>
+           </div>
+        </div>
+ 	</form>
+	<div id="loading">
+		<img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+	</div>
+</body>
+</html>

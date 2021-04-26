@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblArtifactTagMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblArtifactTag">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="ARTIFACT_ID" jdbcType="BIGINT" property="artifactId" />
+    <result column="ENVIRONMENT_TYPE" jdbcType="TINYINT" property="environmentType" />
+    <result column="TAG_USER_ID" jdbcType="BIGINT" property="tagUserId" />
+    <result column="TAG_TIME" jdbcType="TIMESTAMP" property="tagTime" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, ARTIFACT_ID, ENVIRONMENT_TYPE, TAG_USER_ID, TAG_TIME, STATUS, CREATE_BY, CREATE_DATE, 
+    LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_artifact_tag
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 新增制品标记 -->
+  <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblArtifactTag">
+    insert into tbl_artifact_tag (ARTIFACT_ID, ENVIRONMENT_TYPE, 
+      TAG_USER_ID, TAG_TIME, STATUS, 
+      CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, 
+      LAST_UPDATE_DATE)
+    values ( #{artifactId,jdbcType=BIGINT}, #{environmentType,jdbcType=TINYINT}, 
+      #{tagUserId,jdbcType=BIGINT}, #{tagTime,jdbcType=TIMESTAMP}, #{status,jdbcType=TINYINT}, 
+      #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, 
+      #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!-- 更新制品标记 -->
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblArtifactTag">
+    update tbl_artifact_tag
+    <set>
+      <if test="artifactId != null">
+        ARTIFACT_ID = #{artifactId,jdbcType=BIGINT},
+      </if>
+      <if test="environmentType != null">
+        ENVIRONMENT_TYPE = #{environmentType,jdbcType=TINYINT},
+      </if>
+      <if test="tagUserId != null">
+        TAG_USER_ID = #{tagUserId,jdbcType=BIGINT},
+      </if>
+      <if test="tagTime != null">
+        TAG_TIME = #{tagTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 获取某个制品的标识，所有的标识 -->
+  <select id = "selectByArtifactId" resultMap="BaseResultMap" resultType="list">
+  		select
+  		<include refid="Base_Column_List"/>
+  		from tbl_artifact_tag where ARTIFACT_ID = #{artifactId}
+  </select>
+
+<!--通过某个制品在某个环境下的标记 -->
+  <select id = "selectByArtifactIdAndEnv" parameterType="map" resultMap="BaseResultMap" resultType="list">
+    select
+    <include refid="Base_Column_List"/>
+    from tbl_artifact_tag where ARTIFACT_ID = #{artifactId} and ENVIRONMENT_TYPE= #{env} and status=1
+  </select>
+
+
+<!-- 获取某个制品的标识，有效的标识 -->
+  <select id = "selectTagByArtifactId" resultMap="BaseResultMap" resultType="list">
+    select
+    <include refid="Base_Column_List"/>
+    from tbl_artifact_tag where ARTIFACT_ID = #{artifactId} and status=1
+  </select>
+
+  <!-- 删除制品标记 -->
+  <delete id="deleteByArtifactId">
+  		delete from tbl_artifact_tag where ARTIFACT_ID = #{artifactId}
+  </delete>
+</mapper>

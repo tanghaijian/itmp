@@ -1,0 +1,118 @@
+[class*="def_col_"]{
+    padding: 0;
+}
+.fixed-table-body{
+    overflow: visible;
+}
+.layout{
+    display:flex;
+}
+.left-box{
+    width: 160px;
+    height: auto;
+    text-align: center;
+}
+.left-box li{
+    height: 36px;
+    line-height: 36px;
+    border-right: 1px solid #999999;
+}
+.left-box li>a{
+    color: #999;
+}
+.left-box li.current{
+    color:#108EE9;
+    font-weight: 700;
+    border-right: 2px solid #108EE9;
+}
+.left-box li.current>a{
+    color:#108EE9;
+    font-weight: 700;
+}
+.parent-id, .parent-num{
+	display: none;
+}
+.left-box li.current {
+    color: #108EE9;
+    font-weight: 700;
+    border-right: 2px solid #108EE9;
+}
+.main-container{
+    margin-left: 10px;
+    padding-right: 10px;
+    flex: 1;
+}
+.main-content {
+    padding: 20px 0;
+}
+.allInfo{
+    border: none;
+}
+.def_title{
+    border: 1px solid #EBEBEB;
+    background: #F3F3F3;
+    border-radius: 4px 4px 0 0;
+}
+.def_content{
+    background: #FFF;
+    border: 1px solid #EBEBEB;
+    border-top: none;
+}
+.non-editable{
+    padding: 20px 40px;
+}
+.non-editable>.rowdiv>[class*="def_col_"]{
+    padding: 10px; 
+    word-break: break-all;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+#editFieldTable td {
+    position: relative;
+}
+.paddingC{
+    padding-right: 40px;
+}
+.enumerationBtn{
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 32px;
+    height: 100%;
+}
+.enumerationBtn span{
+    color: #FFF;
+}
+#enuModul .modal-body{
+    padding: 20px 60px;
+}
+.btnPadding{
+    padding: 0 0 10px;
+}
+#enuModul .rowdiv{
+    margin-bottom: 10px;
+}
+.dataLimit .control-label{ 
+    white-space: nowrap;
+}
+.saveDiv{
+	padding: 0 0 20px;
+	text-align: center; 
+}
+.saveDiv .btn{
+	padding: 9px 32px!important;
+	line-height: 12px;
+}
+#newField{
+	display: none;
+	padding: 30px 20px 0;
+}
+.invalidClass td {
+	text-decoration: line-through;
+}
+.invalidClass2{
+	text-decoration: line-through;
+} 
+#editFieldTable tbody .editFieldName,#editFieldTable tbody .editOpt{
+	padding: 15px 8px!important; 
+}

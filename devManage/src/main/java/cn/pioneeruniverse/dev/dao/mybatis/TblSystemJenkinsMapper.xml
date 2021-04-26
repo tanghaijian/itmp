@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblSystemJenkinsMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblSystemJenkins">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="SYSTEM_ID" jdbcType="BIGINT" property="systemId" />
+    <result column="SYSTEM_SCM_ID" jdbcType="BIGINT" property="systemScmId" />
+    <result column="ENVIRONMENT_TYPE" jdbcType="TINYINT" property="environmentType" />
+    <result column="TOOL_ID" jdbcType="BIGINT" property="toolId" />
+    <result column="JOB_TYPE" jdbcType="TINYINT" property="jobType" />
+    <result column="JOB_NAME" jdbcType="VARCHAR" property="jobName" />
+    <result column="JOB_PATH" jdbcType="VARCHAR" property="jobPath" />
+    <result column="CRON_JOB_NAME" jdbcType="VARCHAR" property="cronJobName" />
+    <result column="JOB_CRON" jdbcType="VARCHAR" property="jobCron" />
+    <result column="CREATE_TYPE" jdbcType="TINYINT" property="createType" />
+    <result column="ROOT_POM" jdbcType="VARCHAR" property="rootPom" />
+    <result column="GOALS_OPTIONS" jdbcType="VARCHAR" property="goalsOptions" />
+    <result column="BUILD_STATUS" jdbcType="TINYINT" property="buildStatus" />
+    <result column="DEPLOY_STATUS" jdbcType="TINYINT" property="deployStatus" />   
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  
+  
+  
+  
+  
+  
+  <sql id="Base_Column_List">
+    ID,SYSTEM_ID,SYSTEM_SCM_ID,ENVIRONMENT_TYPE,TOOL_ID,JOB_TYPE,JOB_NAME,JOB_PATH,CRON_JOB_NAME,JOB_CRON,CREATE_TYPE,ROOT_POM,
+    GOALS_OPTIONS,BUILD_STATUS,DEPLOY_STATUS,STATUS,CREATE_BY,CREATE_DATE,LAST_UPDATE_BY,LAST_UPDATE_DATE
+  </sql>
+<!--    查询-->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_system_jenkins
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+<!--  查询系统下的信息-->
+   <select id="selectBySystemId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_system_jenkins
+    where SYSTEM_ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+<!--  查询-->
+   <select id="selectByParam" parameterType="map" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_system_jenkins
+    
+     <where>
+    	<if test="systemId!=null and systemId!=''">
+    	and  SYSTEM_ID = #{systemId,jdbcType=BIGINT} 
+    		
+    	</if>
+    	<if test="systemScmId!=null and systemScmId!=''">
+    	and	system_scm_id=#{systemScmId,jdbcType=BIGINT}
+    	</if>
+    	
+    </where>
+  </select>
+  
+  
+  
+<!-- 查询手动 -->
+   <select id="selectByParamManual" parameterType="map" resultType="cn.pioneeruniverse.dev.entity.TblSystemJenkins">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_system_jenkins where   SYSTEM_ID = #{systemId,jdbcType=BIGINT}  and 	status=#{status,jdbcType=TINYINT}
+    and system_scm_id is null
+    
+  </select>
+
+
+<!--查询正在部署的手动job-->
+    <select id="selectBreakName" parameterType="map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from tbl_system_jenkins where   SYSTEM_ID = #{systemId}  and 	status=#{status}
+        and job_Type= #{jobType} and create_Type= #{createType} and (DEPLOY_STATUS=2 or DEPLOY_STATUS=3)
+
+    </select>
+
+	<select id="selectSortJobByMap" parameterType="map" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />,
+		if(JOB_PATH='',JOB_NAME, concat(JOB_PATH,'/',JOB_NAME)) orderMsg
+		from tbl_system_jenkins
+		where SYSTEM_ID=#{systemId,jdbcType=BIGINT} and JOB_TYPE=#{jobType,jdbcType=TINYINT} 
+		and CREATE_TYPE=#{createType,jdbcType=TINYINT} and STATUS=#{status,jdbcType=TINYINT} 
+		order by orderMsg
+	</select>
+  
+<!--  插入-->
+ <insert id="insertNew"  keyProperty="id" useGeneratedKeys="true" parameterType="cn.pioneeruniverse.dev.entity.TblSystemJenkins">
+    insert into tbl_system_jenkins (system_ID,system_scm_id,tool_ID,job_Name,job_Path,root_pom,STATUS,create_type
+    ,JOB_TYPE,BUILD_STATUS,CREATE_BY,CREATE_DATE,LAST_UPDATE_BY,LAST_UPDATE_DATE,JOB_CRON,CRON_JOB_NAME,DEPLOY_STATUS,ENVIRONMENT_TYPE,GOALS_OPTIONS
+    )
+    values (#{systemId,jdbcType=BIGINT},#{systemScmId,jdbcType=BIGINT},#{toolId,jdbcType=VARCHAR},
+    #{jobName,jdbcType=VARCHAR}, #{jobPath,jdbcType=VARCHAR}, #{rootPom,jdbcType=VARCHAR}, 
+    #{status,jdbcType=TINYINT},#{createType,jdbcType=TINYINT},#{jobType,jdbcType=TINYINT},#{buildStatus,jdbcType=TINYINT},
+    #{createBy,jdbcType=TIMESTAMP}, #{createDate,jdbcType=TIMESTAMP},#{lastUpdateBy,jdbcType=BIGINT},
+    #{lastUpdateDate,jdbcType=TIMESTAMP},#{jobCron,jdbcType=VARCHAR},#{cronJobName,jdbcType=VARCHAR},#{deployStatus,jdbcType=TINYINT},#{environmentType,jdbcType=TINYINT},
+    #{goalsOptions,jdbcType=VARCHAR}
+    
+    )
+  </insert>
+
+    <select id="findByBuildStatusQuery" parameterType="cn.pioneeruniverse.dev.vo.common.request.JenkinsJobBuildStateQuery" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from tbl_system_jenkins
+        where system_id = #{systemId,jdbcType=BIGINT}
+
+        <choose>
+            <when test="timedTaskFlag">
+                and cron_job_name is not null
+                and job_cron is not null
+            </when>
+            <otherwise>
+                and cron_job_name is null
+                and job_cron is null
+            </otherwise>
+        </choose>
+        and job_type = #{jobType,jdbcType=TINYINT}
+        and system_scm_id = #{systemScmId,jdbcType=BIGINT}
+        and create_type = 1
+        and status = 1
+    </select>
+ 
+  
+  
+<!--   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long"> -->
+<!--     delete from tbl_system_jenkins -->
+<!--     where ID = #{id,jdbcType=BIGINT} -->
+<!--   </delete> -->
+  <!--  <insert id="insert" keyProperty="id" useGeneratedKeys="true"  parameterType="cn.pioneeruniverse.dev.entity.TblSystemJenkins">
+     insert into tbl_system_jenkins (ID, system_ID, system_scm_id, 
+      tool_ID, job_Name, root_pom,  
+      Goals_options, STATUS, CREATE_BY,  
+       CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE ,BUILD_STATUS,job_type,create_type
+       ) 
+     values (#{id,jdbcType=BIGINT}, #{systemId,jdbcType=BIGINT}, #{systemScmId,jdbcType=BIGINT},  
+      #{toolId,jdbcType=BIGINT}, #{jobName,jdbcType=VARCHAR}, #{rootPom,jdbcType=VARCHAR},  
+       #{goalsOptions,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP} , #{buildStatus,jdbcType=TINYINT}
+       , #{jobType,jdbcType=VARCHAR},#{createType,jdbcType=TINYINT}
+       ) 
+  </insert>  -->
+<!--   <insert id="insertSelective" parameterType="cn.pioneeruniverse.dev.entity.TblSystemJenkins"> -->
+<!--     insert into tbl_system_jenkins -->
+<!--     <trim prefix="(" suffix=")" suffixOverrides=","> -->
+<!--       <if test="id != null"> -->
+<!--         ID, -->
+<!--       </if> -->
+<!--       <if test="systemId != null"> -->
+<!--         system_ID, -->
+<!--       </if> -->
+<!--       <if test="systemScmId != null"> -->
+<!--         system_scm_id, -->
+<!--       </if> -->
+<!--       <if test="toolId != null"> -->
+<!--         tool_ID, -->
+<!--       </if> -->
+<!--       <if test="jobName != null"> -->
+<!--         job_Name, -->
+<!--       </if> -->
+<!--       <if test="rootPom != null"> -->
+<!--         root_pom, -->
+<!--       </if> -->
+<!--       <if test="goalsOptions != null"> -->
+<!--         Goals_options, -->
+<!--       </if> -->
+<!--       <if test="status != null"> -->
+<!--         STATUS, -->
+<!--       </if> -->
+<!--       <if test="createBy != null"> -->
+<!--         CREATE_BY, -->
+<!--       </if> -->
+<!--       <if test="createDate != null"> -->
+<!--         CREATE_DATE, -->
+<!--       </if> -->
+<!--       <if test="lastUpdateBy != null"> -->
+<!--         LAST_UPDATE_BY, -->
+<!--       </if> -->
+<!--       <if test="lastUpdateDate != null"> -->
+<!--         LAST_UPDATE_DATE, -->
+<!--       </if> -->
+<!--     </trim> -->
+<!--     <trim prefix="values (" suffix=")" suffixOverrides=","> -->
+<!--       <if test="id != null"> -->
+<!--         #{id,jdbcType=BIGINT}, -->
+<!--       </if> -->
+<!--       <if test="systemId != null"> -->
+<!--         #{systemId,jdbcType=BIGINT}, -->
+<!--       </if> -->
+<!--       <if test="systemScmId != null"> -->
+<!--         #{systemScmId,jdbcType=BIGINT}, -->
+<!--       </if> -->
+<!--       <if test="toolId != null"> -->
+<!--         #{toolId,jdbcType=BIGINT}, -->
+<!--       </if> -->
+<!--       <if test="jobName != null"> -->
+<!--         #{jobName,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="rootPom != null"> -->
+<!--         #{rootPom,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="goalsOptions != null"> -->
+<!--         #{goalsOptions,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="status != null"> -->
+<!--         #{status,jdbcType=TINYINT}, -->
+<!--       </if> -->
+<!--       <if test="createBy != null"> -->
+<!--         #{createBy,jdbcType=BIGINT}, -->
+<!--       </if> -->
+<!--       <if test="createDate != null"> -->
+<!--         #{createDate,jdbcType=TIMESTAMP}, -->
+<!--       </if> -->
+<!--       <if test="lastUpdateBy != null"> -->
+<!--         #{lastUpdateBy,jdbcType=BIGINT}, -->
+<!--       </if> -->
+<!--       <if test="lastUpdateDate != null"> -->
+<!--         #{lastUpdateDate,jdbcType=TIMESTAMP}, -->
+<!--       </if> -->
+<!--     </trim> -->
+<!--   </insert> -->
+<!--   <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblSystemJenkins"> -->
+<!--     update tbl_system_jenkins -->
+<!--     <set> -->
+<!--       <if test="systemId != null"> -->
+<!--         system_ID = #{systemId,jdbcType=BIGINT}, -->
+<!--       </if> -->
+<!--       <if test="systemScmId != null"> -->
+<!--         system_scm_id = #{systemScmId,jdbcType=BIGINT}, -->
+<!--       </if> -->
+<!--       <if test="toolId != null"> -->
+<!--         tool_ID = #{toolId,jdbcType=BIGINT}, -->
+<!--       </if> -->
+<!--       <if test="jobName != null"> -->
+<!--         job_Name = #{jobName,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="rootPom != null"> -->
+<!--         root_pom = #{rootPom,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="goalsOptions != null"> -->
+<!--         Goals_options = #{goalsOptions,jdbcType=VARCHAR}, -->
+<!--       </if> -->
+<!--       <if test="status != null"> -->
+<!--         STATUS = #{status,jdbcType=TINYINT}, -->
+<!--       </if> -->
+<!--       <if test="createBy != null"> -->
+<!--         CREATE_BY = #{createBy,jdbcType=BIGINT}, -->
+<!--       </if> -->
+<!--       <if test="createDate != null"> -->
+<!--         CREATE_DATE = #{createDate,jdbcType=TIMESTAMP}, -->
+<!--       </if> -->
+<!--       <if test="lastUpdateBy != null"> -->
+<!--         LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT}, -->
+<!--       </if> -->
+<!--       <if test="lastUpdateDate != null"> -->
+<!--         LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}, -->
+<!--       </if> -->
+<!--     </set> -->
+<!--     where ID = #{id,jdbcType=BIGINT} -->
+<!--   </update> -->
+<!--   <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblSystemJenkins"> -->
+<!--     update tbl_system_jenkins -->
+<!--     set system_ID = #{systemId,jdbcType=BIGINT}, -->
+<!--       system_scm_id = #{systemScmId,jdbcType=BIGINT}, -->
+<!--       tool_ID = #{toolId,jdbcType=BIGINT}, -->
+<!--       job_Name = #{jobName,jdbcType=VARCHAR}, -->
+<!--       root_pom = #{rootPom,jdbcType=VARCHAR}, -->
+<!--       Goals_options = #{goalsOptions,jdbcType=VARCHAR}, -->
+<!--       STATUS = #{status,jdbcType=TINYINT}, -->
+<!--       CREATE_BY = #{createBy,jdbcType=BIGINT}, -->
+<!--       CREATE_DATE = #{createDate,jdbcType=TIMESTAMP}, -->
+<!--       LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT}, -->
+<!--       LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP} -->
+<!--     where ID = #{id,jdbcType=BIGINT} -->
+<!--   </update> -->
+</mapper>

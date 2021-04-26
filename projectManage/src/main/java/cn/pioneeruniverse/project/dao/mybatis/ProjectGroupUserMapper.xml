@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.ProjectGroupUserMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblProjectGroupUser">
+  	<id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="PROJECT_GROUP_ID" jdbcType="BIGINT" property="projectGroupId" />
+    <result column="USER_ID" jdbcType="BIGINT" property="userId" />
+    <result column="USER_POST" jdbcType="TINYINT" property="userPost" />
+    <result column="PLAN_START_DATE" jdbcType="DATE" property="planStartDate" />
+    <result column="PLAN_END_DATE" jdbcType="DATE" property="planEndDate" />
+    <result column="ALLOCATE_WORKLOAD" jdbcType="DOUBLE" property="allocateWorkload" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+    
+  </resultMap>
+  <sql id="Base_Column_List">
+   		ID, PROJECT_GROUP_ID, USER_ID, USER_POST, PLAN_START_DATE, PLAN_END_DATE, ALLOCATE_WORKLOAD, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+	<!--查询项目小组所有人员-->
+  <select id="getProjectUserPost" resultType="String">
+  	SELECT DISTINCT pgu.USER_POST 
+	FROM tbl_project_group_user pgu
+	LEFT JOIN tbl_project_group pg ON pg.ID = pgu.PROJECT_GROUP_ID AND pg.STATUS = 1
+	WHERE pg.PROJECT_ID = #{projectId} and pgu.status = 1 
+	<if test="userPostIds!=null and userPostIds !=''">
+		and pgu.USER_POST not in
+		<foreach collection="userPostIds.split(',')" index="index" item="item" open="(" separator="," close=")"> 
+			#{item}
+		</foreach>
+	</if>
+	
+  </select>
+	<!--查询项目小组人员-->
+  <select id="findProjectGroupIdsByUserId" parameterType="java.lang.Long" resultType="long">
+  	select PROJECT_GROUP_ID from TBL_PROJECT_GROUP_USER where USER_ID = #{userId,jdbcType=BIGINT}
+  </select>
+	<!--查询项目小组人员-->
+  <select id="findProjectGroupIdsByUserIdAndUserPost" parameterType="map" resultType="long">
+  	select PROJECT_GROUP_ID from TBL_PROJECT_GROUP_USER where USER_ID = #{userId,jdbcType=BIGINT} and USER_POST = #{code,jdbcType=TINYINT} and STATUS = 1
+  </select>
+	<!--根据人员id查询项目小组-->
+	<select id="findProjectGroupIdsByUserIdAndUserPostNew" parameterType="map" resultType="long">
+  	select PROJECT_GROUP_ID from TBL_PROJECT_GROUP_USER where USER_ID in
+		<foreach collection="userIds" index="index" item="userId" separator="," open="(" close=")">
+			#{userId,jdbcType=BIGINT}
+		</foreach> and USER_POST = #{code,jdbcType=TINYINT} and STATUS = 1
+  </select>
+	<!--查询项目小组集合的所有人员-->
+  <select id="findUserId" parameterType="map" resultType="long">
+  	select USER_ID from tbl_project_group_user 
+  						<where>
+  						USER_POST = #{userPost,jdbcType=TINYINT} and STATUS = 1 and
+  						PROJECT_GROUP_ID in 
+  								<foreach collection="projectGroupIds" index="index" item="projectGroupId" separator="," open="(" close=")">
+  	 								#{projectGroupId,jdbcType=BIGINT}
+  	 							</foreach>
+  	 					</where>
+  </select>
+	<!--查询项目小组人员-->
+  <select id="selectProjectGroupUserByProjectGroupId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" /> from tbl_project_group_user where PROJECT_GROUP_ID = #{projectGroupId,jdbcType=BIGINT} and STATUS = 1
+  </select>
+
+	<!--liushan:查询测试组长、测试管理岗人员-->
+	<select id="selectGroupUserByProjectIdAndUserPost" parameterType="java.lang.Long" resultType="java.lang.String">
+		SELECT
+			GROUP_CONCAT(gUser.USER_ID) AS USER_ID
+		FROM
+			tbl_project_group_user gUser
+		LEFT JOIN tbl_project_group pGroup ON gUser.PROJECT_GROUP_ID = pGroup.ID
+		AND pGroup.`STATUS` = 1
+		WHERE
+			pGroup.PROJECT_ID = #{projectId}
+		AND gUser.USER_POST IN (8, 10)
+		AND gUser.`STATUS` = 1
+	</select>
+	<!--删除项目小组人员-->
+  <update id="deleteProjectGroupUser" parameterType="map">
+  	update tbl_project_group_user set STATUS = 2,  LAST_UPDATE_BY = #{currentUserId,jdbcType=BIGINT}, LAST_UPDATE_DATE = #{lastUpdateTime,jdbcType=TIMESTAMP}
+  						where PROJECT_GROUP_ID in
+  						 <foreach collection="list" index="index" item="projectGroupId" separator="," open="(" close=")">
+            				#{projectGroupId,jdbcType=BIGINT}
+       		 			 </foreach>
+  </update>
+	<!--修改项目小组人员-->
+  <update id="updateProjectGroupUser" parameterType="map"> 
+  	update tbl_project_group_user set PROJECT_GROUP_ID = #{projectGroupId,jdbcType=BIGINT} 
+  		,USER_ID = #{userId,jdbcType=BIGINT}, USER_POST = #{userPost,jdbcType=TINYINT} where ID = #{peojectGroupUserId,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectIdByProjectGroupId" parameterType="java.lang.Long" resultType="Long">
+  	select ID from tbl_project_group_user 
+  						where PROJECT_GROUP_ID = #{projectGroupId,jdbcType=BIGINT}
+  	 					and STATUS = 1
+  	 					
+  </select>
+	<!--新增项目小组人员-->
+  <insert id="insertProjectGroupUser" parameterType="cn.pioneeruniverse.project.entity.TblProjectGroupUser">
+  	insert into tbl_project_group_user (PROJECT_GROUP_ID, USER_ID, USER_POST, PLAN_START_DATE, PLAN_END_DATE,
+  	 ALLOCATE_WORKLOAD, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE)
+  	 values (#{projectGroupId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{userPost,jdbcType=TINYINT}, #{planStartDate,jdbcType=DATE}, 
+  	 #{planEndDate,jdbcType=DATE}, #{allocateWorkload,jdbcType=DOUBLE}, #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT},
+  	 #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP}
+  	 )
+  </insert>
+  
+  <update id="delProjectGroupUser" parameterType="java.util.List">
+  	update tbl_project_group_user set STATUS = 2 where ID in
+  								<foreach collection="list" index="index" item="l" separator="," open="(" close=")">
+  	 								#{l,jdbcType=BIGINT}
+  	 							</foreach>
+  </update>
+  
+</mapper>
+
+
+
+

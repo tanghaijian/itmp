@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblCommissioningWindowMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblCommissioningWindow">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="WINDOW_DATE" jdbcType="DATE" property="windowDate" />
+    <result column="WINDOW_NAME" jdbcType="VARCHAR" property="windowName" />
+    <result column="WINDOW_TYPE" jdbcType="TINYINT" property="windowType" />
+    <result column="WINDOW_VERSION" jdbcType="VARCHAR" property="windowVersion" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, WINDOW_DATE, WINDOW_NAME, WINDOW_TYPE, WINDOW_VERSION, STATUS, CREATE_BY, CREATE_DATE, 
+    LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+
+<!-- 获取某个需求下的，具体投产窗口下的开发任务，并把开发任务同行显示 -->
+	<select id="getReqFeatureGroupbyWindow" parameterType="Long" resultType="map">
+		SELECT GROUP_CONCAT(trf.FEATURE_CODE) featureCode,tcw.ID windowId,tcw.WINDOW_NAME windowName
+		FROM tbl_requirement_feature trf
+		LEFT JOIN tbl_commissioning_window tcw ON trf.COMMISSIONING_WINDOW_ID = tcw.ID AND tcw.STATUS  =1
+		WHERE trf.STATUS = 1 AND trf.REQUIREMENT_ID = #{requirementId} 
+		GROUP BY tcw.ID
+	</select>
+
+<!--  <select id="selectAfterTimeOrderBy" resultMap="BaseResultMap" resultType="list">-->
+<!--  	SELECT ID,WINDOW_DATE,WINDOW_NAME FROM tbl_commissioning_window-->
+<!--	WHERE WINDOW_DATE &gt;= curdate() AND  STATUS = 1 ORDER BY WINDOW_DATE-->
+<!--  </select>-->
+
+<!-- 查询某个日期之后的投产窗口 -->
+  <select id="selectAfterTimeLimit" resultMap="BaseResultMap" resultType="list">
+  	SELECT ID,WINDOW_DATE,WINDOW_NAME FROM tbl_commissioning_window
+	WHERE WINDOW_DATE &gt;= curdate()  AND  STATUS = 1 ORDER BY WINDOW_DATE
+  </select>
+
+
+<!-- 查询某个时间之前的投产窗口 -->
+  <select id="selectBeforeTimeOrderBy" resultMap="BaseResultMap">
+  	SELECT ID,WINDOW_DATE,WINDOW_NAME FROM tbl_commissioning_window
+	WHERE WINDOW_DATE &lt; curdate() AND  STATUS = 1 ORDER BY WINDOW_DATE DESC
+	LIMIT 0,1
+  </select>
+
+<!-- 获取投产窗口名称 -->
+  <select id="getWindowName" parameterType="Long" resultType="String">
+  	select WINDOW_NAME 
+  	from tbl_commissioning_window
+  	where ID = #{id} and STATUS = 1
+  </select>
+  
+  <!-- 获取所有有效的投产窗口 -->
+  <select id="getAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tbl_commissioning_window
+    where STATUS = 1
+  </select>
+  
+  <!-- 获取当前时间之后的投产窗口 -->
+  <select id="selectAfterTime" resultMap="BaseResultMap" resultType="list">
+  	SELECT ID,WINDOW_DATE,WINDOW_NAME FROM tbl_commissioning_window 
+	WHERE WINDOW_DATE &gt;= now() AND  STATUS = 1
+  </select>
+  <select id="selectBeforeTime" resultMap="BaseResultMap">
+  	SELECT ID,WINDOW_DATE,WINDOW_NAME FROM tbl_commissioning_window 
+	WHERE WINDOW_DATE &lt; now() AND  STATUS = 1 ORDER BY WINDOW_DATE DESC
+	LIMIT 0,1
+  </select>
+  <!-- 获取当前时间之前的投产窗口 -->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tbl_commissioning_window
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <!-- 删除投产窗口 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_commissioning_window
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 保存投产窗口 -->
+  <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblCommissioningWindow">
+    insert into tbl_commissioning_window (ID, WINDOW_DATE, WINDOW_NAME, 
+      WINDOW_TYPE, WINDOW_VERSION, STATUS, 
+      CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, 
+      LAST_UPDATE_DATE)
+    values (#{id,jdbcType=BIGINT}, #{windowDate,jdbcType=DATE}, #{windowName,jdbcType=VARCHAR}, 
+      #{windowType,jdbcType=TINYINT}, #{windowVersion,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
+      #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, 
+      #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!-- 保存投产窗口 -->
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.dev.entity.TblCommissioningWindow">
+    insert into tbl_commissioning_window
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="windowDate != null">
+        WINDOW_DATE,
+      </if>
+      <if test="windowName != null">
+        WINDOW_NAME,
+      </if>
+      <if test="windowType != null">
+        WINDOW_TYPE,
+      </if>
+      <if test="windowVersion != null">
+        WINDOW_VERSION,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="windowDate != null">
+        #{windowDate,jdbcType=DATE},
+      </if>
+      <if test="windowName != null">
+        #{windowName,jdbcType=VARCHAR},
+      </if>
+      <if test="windowType != null">
+        #{windowType,jdbcType=TINYINT},
+      </if>
+      <if test="windowVersion != null">
+        #{windowVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <!-- 更新投产窗口 -->
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblCommissioningWindow">
+    update tbl_commissioning_window
+    <set>
+      <if test="windowDate != null">
+        WINDOW_DATE = #{windowDate,jdbcType=DATE},
+      </if>
+      <if test="windowName != null">
+        WINDOW_NAME = #{windowName,jdbcType=VARCHAR},
+      </if>
+      <if test="windowType != null">
+        WINDOW_TYPE = #{windowType,jdbcType=TINYINT},
+      </if>
+      <if test="windowVersion != null">
+        WINDOW_VERSION = #{windowVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <!-- 更新投产窗口 -->
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblCommissioningWindow">
+    update tbl_commissioning_window
+    set WINDOW_DATE = #{windowDate,jdbcType=DATE},
+      WINDOW_NAME = #{windowName,jdbcType=VARCHAR},
+      WINDOW_TYPE = #{windowType,jdbcType=TINYINT},
+      WINDOW_VERSION = #{windowVersion,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+<!-- 获取某个系统的投产窗口 -->
+  <select id="findWindowBySystemId" resultMap="BaseResultMap">
+  	SELECT tcw.ID,tcw.WINDOW_NAME,tcw.WINDOW_DATE,tcw.WINDOW_TYPE from tbl_commissioning_window tcw
+	LEFT JOIN tbl_requirement_feature trf ON trf.COMMISSIONING_WINDOW_ID = tcw.ID AND trf.STATUS=1
+	LEFT JOIN tbl_system_info tsi ON trf.SYSTEM_ID = tsi.ID AND tsi.STATUS=1
+	WHERE tcw.STATUS=1  AND tsi.ID=#{systemId} AND tcw.WINDOW_DATE &gt; now()
+	GROUP BY tcw.ID
+	ORDER BY tcw.WINDOW_DATE ASC
+	LIMIT 0,2
+  </select>
+
+  <!--添加查询投产窗口-->
+  <select id="getAllComWindow" parameterType="hashmap" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM tbl_commissioning_window
+    <where>
+      STATUS = 1
+      <if test="win.windowName != null and win.windowName != ''">
+        AND WINDOW_NAME LIKE CONCAT(CONCAT('%',#{win.windowName},'%'))
+      </if>
+      <if test="win.windowType != null and win.windowType != ''">
+        AND WINDOW_TYPE = #{win.windowType}
+      </if>
+      <if test="win.windowVersion != null and win.windowVersion != ''">
+        AND WINDOW_VERSION  LIKE CONCAT(CONCAT('%',#{win.windowVersion},'%'))
+      </if>
+    </where>
+    order by window_date desc
+    <if test="start != null and pageSize != null">
+      LIMIT #{start},#{pageSize}
+    </if>
+  </select>
+
+<!-- 查询投产窗口数量 -->
+  <select id="getAllComWindowTotal" parameterType="hashmap" resultType="java.lang.Integer">
+    SELECT
+    count(ID)
+    FROM tbl_commissioning_window
+    <where>
+      `STATUS` = 1
+      <if test="win.windowName != null and win.windowName != ''">
+        AND WINDOW_NAME LIKE CONCAT(CONCAT('%',#{win.windowName},'%'))
+      </if>
+      <if test="win.windowType != null and win.windowType != ''">
+        AND WINDOW_TYPE = #{win.windowType}
+      </if>
+      <if test="win.windowVersion != null and win.windowVersion != ''">
+        AND WINDOW_VERSION  LIKE CONCAT(CONCAT('%',#{win.windowVersion},'%'))
+      </if>
+    </where>
+  </select>
+
+<!-- 分页查询投产窗口数量 -->
+  <select id="selectWindows" parameterType="map" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM tbl_commissioning_window
+    <where>
+      <if test="windowName != null and windowName != ''">
+        and WINDOW_NAME like concat("%",#{windowName,jdbcType=VARCHAR},"%")
+      </if>
+      and STATUS = 1
+    </where>
+    order by ID DESC
+    limit #{start} ,#{pageSize}
+  </select>
+  
+  <!-- 获取已经实施完成的开发任务关联的投产窗口 -->
+  <select id="getAllWindowDesc" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tbl_commissioning_window  tcw
+    where  id in (select trf.COMMISSIONING_WINDOW_ID id from tbl_requirement_feature trf where trf.system_id=#{systemId}
+    and trf.status=1 and trf.REQUIREMENT_FEATURE_STATUS='03')
+    and tcw.STATUS = 1 order by tcw.WINDOW_DATE desc
+  </select>
+
+<!-- 获取所有投产窗口 -->
+  <select id="getAllWindow"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tbl_commissioning_window  tcw
+    where  tcw.STATUS = 1 order by tcw.WINDOW_DATE desc
+  </select>
+
+<!-- 获取某个开发任务的投产窗口 -->
+  <select id="findWindowByFeatureId" parameterType="Long" resultMap="BaseResultMap">
+ 	SELECT tcw.ID,tcw.WINDOW_DATE FROM tbl_commissioning_window tcw
+ 	LEFT JOIN tbl_requirement_feature trf ON trf.COMMISSIONING_WINDOW_ID=tcw.ID AND trf.`STATUS`=1
+	WHERE trf.ID=#{featureId} AND tcw.status=1
+ </select>
+ 
+ <!-- 获取某个包件关联的投产窗口 -->
+  <select id="getWindowsByartId" parameterType="map"  resultMap="BaseResultMap">
+
+    select tcw.*
+    from tbl_commissioning_window tcw left join tbl_requirement_feature trf on tcw.id=trf.COMMISSIONING_WINDOW_ID where trf.id  in (
+    select
+    tarf.REQUIREMENT_FEATURE_ID id from tbl_artifact_requirement_feature tarf  where tarf.status=1
+    and tarf.ARTIFACT_ID in
+    <if test="artIds.size() > 0">
+      <foreach item="artId" index="index" collection="artIds" open="(" separator="," close=")">
+        #{artId}
+      </foreach>
+    </if>
+    ) and tcw.status=1 order by tcw.WINDOW_DATE desc
+  </select>
+
+
+
+</mapper>

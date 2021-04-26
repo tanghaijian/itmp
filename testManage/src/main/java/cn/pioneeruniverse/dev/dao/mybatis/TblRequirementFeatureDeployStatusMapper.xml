@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblRequirementFeatureDeployStatusMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblRequirementFeatureDeployStatus">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="REQUIREMENT_FEATURE_ID" jdbcType="BIGINT" property="requirementFeatureId" />
+    <result column="DEPLOY_STATU" jdbcType="INTEGER" property="deployStatu" />
+    <result column="DEPLOY_TIME" jdbcType="TIMESTAMP" property="deployTime" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, REQUIREMENT_FEATURE_ID, DEPLOY_STATU, DEPLOY_TIME,
+    STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  <select id="findByReqFeatureId" resultMap="BaseResultMap">
+      select  <include refid="Base_Column_List" />
+      from tbl_requirement_feature_deploy_status
+      where REQUIREMENT_FEATURE_ID = #{featureId} and STATUS=1
+      order by DEPLOY_TIME DESC
+  </select>
+
+  <select id="findByReqFeatureIdDeployStatu" resultMap="BaseResultMap">
+    select  <include refid="Base_Column_List" />
+    from tbl_requirement_feature_deploy_status
+    where REQUIREMENT_FEATURE_ID = #{featureId}
+    and DEPLOY_STATU = #{deployStatu,jdbcType=INTEGER} and STATUS=1
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+      select
+      <include refid="Base_Column_List" />
+      from tbl_requirement_feature_deploy_status
+      where ID = #{id,jdbcType=BIGINT}
+  </select>
+
+  <insert id="insertFeatureDeployStatus" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeatureDeployStatus">
+      insert into tbl_requirement_feature_deploy_status(REQUIREMENT_FEATURE_ID,DEPLOY_STATU,
+      DEPLOY_TIME,STATUS,CREATE_BY,CREATE_DATE,LAST_UPDATE_BY,LAST_UPDATE_DATE)
+      values
+      (#{requirementFeatureId,jdbcType=BIGINT},#{deployStatu,jdbcType=INTEGER},#{deployTime,jdbcType=TIMESTAMP},
+      #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT},#{createDate,jdbcType=TIMESTAMP},
+      #{lastUpdateBy,jdbcType=BIGINT},#{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+
+    <update id="updateFeatureDeployStatus" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeatureDeployStatus">
+      update tbl_requirement_feature_deploy_status
+      set
+      REQUIREMENT_FEATURE_ID = #{requirementFeatureId,jdbcType=BIGINT},
+      DEPLOY_STATU = #{deployStatu,jdbcType=INTEGER},
+      DEPLOY_TIME = #{deployTime,jdbcType=TIMESTAMP},
+      STATUS = #{status,jdbcType=TINYINT},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+      where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+  <delete id="deleteByFeatureId" parameterType="java.lang.Long">
+    UPDATE tbl_requirement_feature_deploy_status
+    set STATUS = 2
+    where REQUIREMENT_FEATURE_ID = #{featureId,jdbcType=BIGINT}
+  </delete>
+
+  <delete id="deleteById" parameterType="java.lang.Long">
+    UPDATE tbl_requirement_feature_deploy_status
+    set STATUS = 2
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <select id="getReqFeatureIdBySql" resultType="long">
+  	select REQUIREMENT_FEATURE_ID from tbl_requirement_feature_deploy_status
+  	where status = 1
+  	and DEPLOY_STATU
+  	 in
+  		<foreach collection="deployStatusSql.split(',')" item="item" open="(" separator="," close=")">
+  			#{item}
+  		</foreach>
+  </select>
+  
+  <select id="getNotReqFeatureIdBySql" resultType="long">
+  	SELECT REQUIREMENT_FEATURE_ID FROM tbl_requirement_feature_deploy_status deploy1
+	WHERE NOT EXISTS 
+	(select 1 from tbl_requirement_feature_deploy_status deploy2
+  	where deploy2.status = 1
+  	and deploy2.DEPLOY_STATU
+  	in
+  		<foreach collection="deployStatusSql.split(',')" item="item" open="(" separator="," close=")">
+  			#{item}
+  		</foreach>
+  	and deploy2.REQUIREMENT_FEATURE_ID = deploy1.REQUIREMENT_FEATURE_ID
+)
+  </select>
+</mapper>

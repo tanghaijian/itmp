@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblTestSetExecuteRoundCaseResultMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.tblTestSetExecuteRoundCaseResult">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="TEST_SET_CASE_ID" jdbcType="INTEGER" property="testSetCaseId" />
+    <result column="EXECUTE_ROUND" jdbcType="INTEGER" property="excuteRound" />
+    <result column="CASE_EXECUTE_RESULT" jdbcType="TINYINT" property="caseExecuteResult" />
+   	<result column="EXECUTE_USER_ID" jdbcType="BIGINT" property="executeUserId" /> 
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    ID, TEST_SET_CASE_ID, EXECUTE_ROUND, CASE_EXECUTE_RESULT, STATUS, CREATE_BY, CREATE_DATE, 
+    LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+ 
+  <select id="selectByPrimaryKey" parameterType="map" resultType="map">
+    SELECT DISTINCT turnCase.id,setcase.id as setCaseID,testset.id as testSetId,setcase.SYSTEM_ID,testset.TEST_SET_NUMBER,
+		testset.EXECUTE_ROUND,setcase.CASE_TYPE,turnCase.CASE_EXECUTE_RESULT,
+    turnCase.EXECUTE_ROUND,setcase.CASE_NAME,setcase.CASE_NUMBER,task.TEST_TASK_CODE,setcase.CASE_PRECONDITION 
+    from tbl_test_set_execute_round_case_result turnCase
+		LEFT JOIN tbl_test_set_case setcase
+		on turnCase.TEST_SET_CASE_ID=setcase.ID
+		LEFT JOIN tbl_test_set testset
+		on setcase.TEST_SET_ID =testset.ID
+		LEFT JOIN tbl_test_task task
+		on testset.TEST_TASK_ID=task.id
+		LEFT JOIN tbl_test_set_execute_round_user setUser
+		on setUser.TEST_SET_ID=testset.id
+		LEFT JOIN tbl_user_info userinfo
+		on userinfo.id=setUser.EXECUTE_USER_ID
+		<where>
+		setUser.EXECUTE_USER_ID=#{id} and turnCase.STATUS=1
+		<if test=" caseName != null and  caseName!= ''">
+				AND setcase.CASE_NAME LIKE CONCAT('%',#{caseName},'%')
+		</if>
+		<if test=" taskCode != null and  taskCode!= ''">
+				AND task.TEST_TASK_CODE LIKE CONCAT('%',#{taskCode},'%')
+		</if>
+		<if test=" testSetNumber != null and  testSetNumber != ''">
+				AND testset.TEST_SET_NUMBER LIKE CONCAT('%',#{testSetNumber},'%')
+		</if>
+		<if test=" excuteRound != null and  excuteRound != ''">
+				AND turnCase.EXECUTE_ROUND =#{excuteRound}
+		</if>
+		</where>
+  </select> 
+  	<!-- 执行结果更新 -->
+   <update id="updateSelective" parameterType="map">
+       update tbl_test_set_execute_round_case_result
+       <set>
+            CASE_EXECUTE_RESULT = #{testSetCase.caseExecuteResult},
+            LAST_UPDATE_BY = #{testSetCase.lastUpdateBy},
+            LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
+            EXECUTE_USER_ID = #{testSetCase.lastUpdateBy}
+       </set>
+       <where>
+            TEST_SET_CASE_ID = #{testSetCase.id}
+            and EXECUTE_ROUND = #{testSetCase.excuteRound}
+       </where>
+  </update>
+ <!--  添加执行结果 -->
+ <insert id="insertSelective" parameterType="map" >
+     INSERT INTO tbl_test_set_execute_round_case_result (
+         TEST_SET_CASE_ID,
+         EXECUTE_ROUND,
+         CASE_EXECUTE_RESULT,
+         CREATE_BY,
+         EXECUTE_USER_ID,
+         CREATE_DATE,
+         LAST_UPDATE_DATE
+     ) VALUES
+     (
+       #{testSetCase.id,jdbcType=BIGINT},
+       #{testSetCase.excuteRound,jdbcType=INTEGER},
+       #{testSetCase.caseExecuteResult,jdbcType=VARCHAR},
+       #{testSetCase.lastUpdateBy,jdbcType=BIGINT},
+       #{testSetCase.lastUpdateBy,jdbcType=BIGINT},
+       CURRENT_TIMESTAMP,
+       CURRENT_TIMESTAMP
+     )
+  </insert>
+  <!-- 批量用 -->
+  <insert id="insertResltPass" parameterType="map" >
+    insert into tbl_test_set_execute_round_case_result (TEST_SET_CASE_ID,EXECUTE_ROUND,CASE_EXECUTE_RESULT,
+    CREATE_BY,EXECUTE_USER_ID,CREATE_DATE,LAST_UPDATE_DATE) values (
+               #{tblCaseStep.setCaseId,jdbcType=BIGINT},
+               #{tblCaseStep.excuteRound,jdbcType=INTEGER},
+               2,
+               #{createBy,jdbcType=BIGINT},
+               #{createBy,jdbcType=BIGINT},
+               CURRENT_TIMESTAMP,
+               CURRENT_TIMESTAMP
+                )
+      
+  </insert>
+ <!--  批量通行 -->
+  <update id="updateRoundResult" parameterType="map">
+  	 	update  tbl_test_set_execute_round_case_result  
+          	<set>
+               CASE_EXECUTE_RESULT =2,
+               LAST_UPDATE_BY=#{createBy},
+               LAST_UPDATE_DATE=CURRENT_TIMESTAMP,
+               EXECUTE_USER_ID=#{createBy}
+            </set>
+            <where>
+            TEST_SET_CASE_ID=#{setCaseId}
+            and EXECUTE_ROUND=#{excuteRound}
+            </where>
+  </update>
+  
+</mapper>

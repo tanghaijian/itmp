@@ -1,0 +1,10 @@
+.col-sm-5{width: 200px;}
+.col-sm-offset-1 .col-xs-12{margin-bottom: 4px;}
+.check_value{margin-right:20px;}
+#roleDesc{width:436px;}
+.chosen-container>.chosen-single, [class*="chosen-container"]>.chosen-single {
+    line-height: 28px;
+    height: 30px;
+    box-shadow: none;
+    background: #fafafa;
+}

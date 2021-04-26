@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.itReAssetLibrary.ReTblSystemDirectoryDocumentChaptersRequirementFeatureMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChaptersRequirementFeature">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="SYSTEM_DIRECTORY_DOCUMENT_CHAPTERS_ID" jdbcType="BIGINT" property="systemDirectoryDocumentChaptersId" />
+    <result column="REQUIREMENT_FEATURE_ID" jdbcType="BIGINT" property="requirementFeatureId" />
+    <result column="CHAPTERS_VERSION" jdbcType="TINYINT" property="chaptersVersion" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, SYSTEM_DIRECTORY_DOCUMENT_CHAPTERS_ID, REQUIREMENT_FEATURE_ID, CHAPTERS_VERSION
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_system_directory_document_chapters_requirement_feature
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_system_directory_document_chapters_requirement_feature
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChaptersRequirementFeature">
+    insert into tbl_system_directory_document_chapters_requirement_feature (ID, SYSTEM_DIRECTORY_DOCUMENT_CHAPTERS_ID, 
+      REQUIREMENT_FEATURE_ID, CHAPTERS_VERSION)
+    values (#{id,jdbcType=BIGINT}, #{systemDirectoryDocumentChaptersId,jdbcType=BIGINT}, 
+      #{requirementFeatureId,jdbcType=BIGINT}, #{chaptersVersion,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChaptersRequirementFeature">
+    insert into tbl_system_directory_document_chapters_requirement_feature
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="systemDirectoryDocumentChaptersId != null">
+        SYSTEM_DIRECTORY_DOCUMENT_CHAPTERS_ID,
+      </if>
+      <if test="requirementFeatureId != null">
+        REQUIREMENT_FEATURE_ID,
+      </if>
+      <if test="chaptersVersion != null">
+        CHAPTERS_VERSION,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="systemDirectoryDocumentChaptersId != null">
+        #{systemDirectoryDocumentChaptersId,jdbcType=BIGINT},
+      </if>
+      <if test="requirementFeatureId != null">
+        #{requirementFeatureId,jdbcType=BIGINT},
+      </if>
+      <if test="chaptersVersion != null">
+        #{chaptersVersion,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChaptersRequirementFeature">
+    update tbl_system_directory_document_chapters_requirement_feature
+    <set>
+      <if test="systemDirectoryDocumentChaptersId != null">
+        SYSTEM_DIRECTORY_DOCUMENT_CHAPTERS_ID = #{systemDirectoryDocumentChaptersId,jdbcType=BIGINT},
+      </if>
+      <if test="requirementFeatureId != null">
+        REQUIREMENT_FEATURE_ID = #{requirementFeatureId,jdbcType=BIGINT},
+      </if>
+      <if test="chaptersVersion != null">
+        CHAPTERS_VERSION = #{chaptersVersion,jdbcType=TINYINT},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChaptersRequirementFeature">
+    update tbl_system_directory_document_chapters_requirement_feature
+    set SYSTEM_DIRECTORY_DOCUMENT_CHAPTERS_ID = #{systemDirectoryDocumentChaptersId,jdbcType=BIGINT},
+      REQUIREMENT_FEATURE_ID = #{requirementFeatureId,jdbcType=BIGINT},
+      CHAPTERS_VERSION = #{chaptersVersion,jdbcType=TINYINT}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!--liushan:章节关联的所有开发任务-->
+  <select id="selectRequirementFeatureByChaptersId" resultType="cn.pioneeruniverse.project.entity.TblRequirementFeature">
+    SELECT
+      a.ID AS id,
+      a.FEATURE_CODE AS featureCode,
+      a.FEATURE_NAME AS featureName
+    FROM
+      tbl_requirement_feature a,
+    (
+      SELECT
+        REQUIREMENT_FEATURE_ID
+      FROM
+        tbl_system_directory_document_chapters_requirement_feature
+      WHERE
+        SYSTEM_DIRECTORY_DOCUMENT_CHAPTERS_ID = #{chaptersId}
+      ORDER BY ID DESC
+      <if test="limitNumber != null">
+        LIMIT 0,#{limitNumber}
+      </if>
+    ) b
+    WHERE
+    a.ID = b.REQUIREMENT_FEATURE_ID
+  </select>
+  
+   <insert id="insertChaptersRequirementFeature" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChaptersRequirementFeature">
+    insert into tbl_system_directory_document_chapters_requirement_feature ( SYSTEM_DIRECTORY_DOCUMENT_CHAPTERS_ID, 
+      REQUIREMENT_FEATURE_ID, CHAPTERS_VERSION)
+    values (#{systemDirectoryDocumentChaptersId,jdbcType=BIGINT}, 
+      #{requirementFeatureId}, #{chaptersVersion,jdbcType=TINYINT})
+  </insert>
+</mapper>

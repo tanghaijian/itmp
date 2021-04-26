@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>svn代码库管理</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jquery-ztree/3.5.36/css/metroStyle/metroStyle.css"/>
+    <link rel="stylesheet" type="text/css" media="screen"
+          href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css"/>
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/codeBase/codeBase.css"/>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+    <script type="text/javascript"
+            src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.core.js"></script>
+    <script type="text/javascript"
+            src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.excheck.min.js"></script>
+    <script type="text/javascript"
+            src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.exhide.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript"
+            src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript"
+            src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/devManageui/static/js/codeBase/codeBase.js"></script>
+    <script>
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap4';
+        $.jgrid.defaults.iconSet = "fontAwesome";
+    </script>
+</head>
+<body>
+    ##左侧代码库列表
+<div class="leftDiv" style="margin-right: 1rem;">
+    #foreach($data in ${codeBase.getMyProjectSystems($token)})
+        <div class="codeMenu">
+            <div class="codeMenu_tit">
+                <div class="pull-left" title="$data.systemName">
+                    <input id="systemName_$data.id" type="hidden" value="$data.systemName">
+                    $data.systemName
+                </div>
+                <div class="pull-right" style="margin-right: 10px">
+                    #if($auth.hasPermission("$token","devManage:version:createBase"))
+                        <button type="button" class="btn btn-primary newBase"
+                                onclick="CodeBase.createNewCodeBase($data.id,'treeId$data.id')">新建库
+                        </button>
+                    #end
+                    #if($auth.hasPermission("$token","devManage:version:codeSubmitConfig"))
+                        <button type="button" class="btn btn-primary configBtn"
+                                onclick="CodeBase.codeSubmitConfig($data.id)">代码提交配置
+                        </button>
+                    #end
+                    #* 开发管理岗专用 *#
+                    #if($auth.hasPermission("$token","devManage:version:codeSubmitConfig4Dev"))
+                        <button type="button" class="btn btn-primary configBtn" s
+                                onclick="CodeBase.codeSubmitConfig4Manager($data.id)">提交用户配置
+                        </button>
+                    #end
+                </div>
+            </div>
+            <ul id="treeId$data.id" systemId="$data.id" systemName="$data.systemName" class="ztree codeMenu_cont"></ul>
+        </div>
+    #end
+</div>
+
+    ##人员权限列表
+<div class="codeContent" style="min-height: 30em">
+    <div class="contTit">
+        分派人员权限:
+    </div>
+    <div class="content-btngroup">
+        #if($auth.hasPermission("$token","devManage:version:addUser"))
+            <button id="addSvnUserButton" type="button" class="btn btn-primary">增加人员</button>&nbsp;
+        #end
+        #if($auth.hasPermission("$token","devManage:version:removeUser"))
+            <button id="delSvnUserButton" type="button" class="btn btn-default">移除人员</button>&nbsp;
+        #end
+        #if($auth.hasPermission("$token","devManage:version:saveModify"))
+            <button id="saveButton" type="button" class="btn btn-default" style="display: none">
+                保存修改
+            </button>
+        #end
+    </div>
+    <div class="wode" style="width:calc(100% - 5px); ">
+        <table id="list2"></table>
+    </div>
+</div>
+
+<div id="loading">
+    <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif"/>
+</div>
+
+    ##人员权限 增加弹窗
+<div class="modal fade bs-example-modal-lg" id="svnUserModal" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg modal-user" role="document">
+        <div class="modal-content modalStyle">
+
+        </div>
+    </div>
+</div>
+
+    ##新建代码库弹窗
+<div class="modal fade" id="createCodeBaseModel" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+    ##代码提交配置弹窗
+<div class="modal fade bs-example-modal-lg" id="codeSubmitConfigModel" tabindex="-1" role="dialog"
+     aria-labelledby="configModel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+    #*人员弹框*#
+<div class="modal fade bs-example-modal-lg" id="codeSubmitConfigUserModal" tabindex="-1" role="dialog"
+     aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg modal-user" role="document">
+        <div class="modal-content modalStyle">
+
+        </div>
+    </div>
+</div>
+
+    ##版本选择
+<div class="modal fade bs-example-modal-sm" tabindex="-1" id="versionSelModal" role="dialog"
+     aria-labelledby="versionSelModal">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" aria-hidden="true">
+                    &times;
+                </button>
+                <span class="modal-title">请选择版本</span>
+            </div>
+            <div class="modal-body">
+                <select class="selectpicker" id="selVersion">
+                    <option value="">请选择</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <div class="bottom-container">
+                    <button type="button" class="btn btn-primary" onclick="CodeSubmitConfigModal.commitVersion()">确定
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    ##批量选择是否提交
+<div class="modal fade bs-example-modal-sm" tabindex="-1" id="isSubmitModal" role="dialog"
+     aria-labelledby="isSubmitModal">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" aria-hidden="true">
+                    &times;
+                </button>
+                <span class="modal-title">请选择是否提交</span>
+            </div>
+            <div class="modal-body">
+                <select class="selectpicker" id="submit_AllStatus">
+                    <option value="">请选择</option>
+                    <option value="1">是</option>
+                    <option value="2">否</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <div class="bottom-container">
+                    <button type="button" class="btn btn-primary" onclick="CodeSubmitConfigModal.commitAllSubmit()">确定
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    ##批量选择投产窗口
+<div class="modal fade bs-example-modal-sm" tabindex="-1" id="selectWindowModal" role="dialog"
+     aria-labelledby="selectWindowModal">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" aria-hidden="true">
+                    &times;
+                </button>
+                <span class="modal-title">请选择投产窗口</span>
+            </div>
+            <div class="modal-body">
+                <select class="selectpicker" id="select_AllWindow">
+                    <option value="">请选择</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <div class="bottom-container">
+                    <button type="button" class="btn btn-primary"
+                            onclick="CodeSubmitConfigModal.commitselect_AllWindow()">确定
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="menuContent" class="menuContent" style="display:none; position: absolute;">
+    <ul id="projectSelect" class="ztree"></ul>
+</div>
+
+<div id="projectGroupContent" class="menuContent" style="display:none; position: absolute;">
+    <ul id="projectGroupSelect" class="ztree"></ul>
+</div>
+
+
+<script>
+    var CodeBase = {
+        //读写权限变更触发
+        authChange: function (obj, id, userName, userRealName) {
+            var className = $(obj).prop("className");
+            var statu = $(obj).prop("checked");
+            if (className == 'write_check') {
+                if (statu) {
+                    //勾选
+                    $(obj).prev().prop("checked", true);
+                    $(obj).prev().attr("disabled", true);
+                } else {
+                    //取消勾选
+                    $(obj).prev().removeAttr("disabled");
+                }
+            }
+            var svnAuthorityArray = [];
+            $(obj).parents("td[aria-describedby='list2_svnAuthorityCheck']").find("input:checkbox:checked").each(function () {
+                svnAuthorityArray.push($(this).val());
+            });
+            var addedUser = addUsers.find(function (value) {
+                return value["id"] == id;
+            });
+            if (addedUser != undefined) {
+                addedUser["authority"] = svnAuthorityArray.join("");
+            } else {
+                var index;
+                var modifiedUser = modifyUsers.find(function (value, i) {
+                    index = i;
+                    return value["id"] == id;
+                });
+                if (modifiedUser != undefined) {
+                    var oldSvnAuthority = $("td[aria-describedby='list2_svnAuthorityCheck']").eq($('#' + id)[0].rowIndex - 1).attr("oldValue");
+                    if (svnAuthorityArray.join("") == oldSvnAuthority) {
+                        modifyUsers.splice(index, 1);
+                    } else {
+                        modifiedUser["authority"] = svnAuthorityArray.join("");
+                    }
+                } else {
+                    modifyUsers.push({
+                        id: id,
+                        userRealName: userRealName,
+                        username: userName,
+                        authority: svnAuthorityArray.join("")
+                    });
+                }
+            }
+            CodeBase.saveButtonStatusControl();
+        },
+        //增加人员
+        addUser: function () {
+            //模态窗口
+            $('#svnUserModal').modal({
+                'show': true,
+                'remote': '/devManageui/versioncontrol/getUserList?existUsers=' + existUsers.join(",") + '&codeBaseType=svn'
+            });
+        },
+        //新建库
+        createNewCodeBase: function (systemId, treeId) {
+            $('#createCodeBaseModel').modal({
+                'show': true,
+                'remote': '/devManageui/versioncontrol/createCodeBase?scmType=2&systemId=' + systemId + '&treeId=' + treeId
+            });
+        },
+        //代码提交配置
+        codeSubmitConfig: function (systemId) {
+            $("#loading").show();
+            $("#singDivCont").empty();
+            $(".wildcardArea").empty();
+            $("#codeSubmitConfigModel").modal({
+                'show': true,
+                'remote': '/devManageui/versioncontrol/codeSubmitConfig?scmType=2&systemId=' + systemId
+            });
+
+        },
+        //提交用户配置
+        codeSubmitConfig4Manager: function (systemId) {
+            $("#loading").show();
+            $("#singDivCont").empty();
+            $(".wildcardArea").empty();
+            $("#codeSubmitConfigModel").modal({
+                'show': true,
+                'remote': '/devManageui/versioncontrol/codeSubmitConfig4Manager?scmType=2&systemId=' + systemId
+            });
+
+        },
+        addUserToJqGrid: function (data) {
+            $("#svnUserModal").modal('hide');
+            for (var i in data) {
+                var dataRow = {
+                    id: data[i].id,
+                    userScmAccount: data[i].userScmAccount == null ? "" : data[i].userScmAccount,
+                    userName: data[i].userName,
+                    deptName: data[i].deptName,
+                    companyName: data[i].companyName,
+                    svnAuthority: "rw"//新增人员默认读权限
+                }
+                //将新添加的行插入到第一列
+                $("#list2").jqGrid("addRowData", data[i].id, dataRow, "first");
+                var dIndex;
+                var deledUser = delUsers.find(function (value, i) {
+                    dIndex = i;
+                    return value["id"] == dataRow.id;
+                });
+                if (deledUser != undefined) {
+                    if (deledUser["authority"] != dataRow.svnAuthority) {
+                        modifyUsers.push({
+                            id: dataRow.id,
+                            userRealName: dataRow.userName,
+                            username: dataRow.userScmAccount,
+                            authority: dataRow.svnAuthority
+                        });
+                    }
+                    $("td[aria-describedby='list2_svnAuthorityCheck']").eq($('#' + dataRow.id)[0].rowIndex - 1).attr("oldValue", deledUser["authority"]);
+                    delUsers.splice(dIndex, 1);
+                } else {
+                    addUsers.push({
+                        id: dataRow.id,
+                        userRealName: dataRow.userName,
+                        username: dataRow.userScmAccount,
+                        password: data[i].userScmPassword,
+                        authority: dataRow.svnAuthority
+                    });
+                }
+            }
+            CodeBase.saveButtonStatusControl();
+        },
+        //批量删除人员
+        delUser: function () {
+            //获取多选到的id集合
+            var ids = $("#list2").jqGrid("getGridParam", "selarrrow");
+            if (ids != "") {
+                $(ids).each(function (index, id) {
+                    CodeBase.delOneUser(id, $("#list2").jqGrid('getRowData', id)["userScmAccount"], $("#list2").jqGrid('getRowData', id)["userName"]);
+                });
+            } else {
+                layer.alert("请选中一行", {
+                    icon: 2,
+                    title: "提示信息"
+                });
+            }
+        },
+        //删除单个人员
+        delOneUser: function (id, userName, userRealName) {
+            var oldSvnAuthority = $("td[aria-describedby='list2_svnAuthorityCheck']").eq($('#' + id)[0].rowIndex - 1).attr("oldValue");
+            $("#list2").jqGrid('delRowData', id);
+            var aIndex;
+            var addedUser = addUsers.find(function (value, i) {
+                aIndex = i;
+                return value["id"] == id;
+            });
+            if (addedUser != undefined) {
+                addUsers.splice(aIndex, 1);
+            } else {
+                var mindex;
+                var modifiedUser = modifyUsers.find(function (value, i) {
+                    mindex = i;
+                    return value["id"] == id;
+                });
+                if (modifiedUser != undefined) {
+                    modifyUsers.splice(mindex, 1);
+                }
+                delUsers.push({
+                    id: id,
+                    userRealName: userRealName,
+                    username: userName,
+                    authority: oldSvnAuthority
+                });
+            }
+            CodeBase.saveButtonStatusControl();
+        },
+        //展示/隐藏保存修改按钮
+        saveButtonStatusControl: function () {
+            if (addUsers.length > 0 || delUsers.length > 0 || modifyUsers.length > 0) {
+                #if($auth.hasPermission("$token","devManage:version:saveModify"))
+                    $("#saveButton").show();
+                    document.getElementById("saveButton").addEventListener("click", CodeBase.saveModify, false);
+                #end
+            } else {
+                #if($auth.hasPermission("$token","devManage:version:saveModify"))
+                    $("#saveButton").hide();
+                    document.getElementById("saveButton").removeEventListener("click", CodeBase.saveModify, false);
+                #end
+            }
+        },
+        //保存修改
+        saveModify: function () {
+            $("#loading").css('display', 'block');
+            var ztreeObj = $.fn.zTree.getZTreeObj(currentTreeId);
+            var operateHistory = [{operate: "add", addUserAuth: addUsers}, {
+                operate: "delete",
+                delUserAuth: delUsers
+            }, {operate: "modify", modifyUserAuth: modifyUsers}];
+            $.ajax({
+                type: "POST",
+                url: "/devManage/version/saveSvnModify",
+                contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+                dataType: "json", //返回值为对象使用
+                data: {
+                    accessProtocol: ztreeObj.getSelectedNodes()[0].accessProtocol,
+                    ip: ztreeObj.getSelectedNodes()[0].ip,
+                    repositoryName: ztreeObj.getSelectedNodes()[0].repositoryName,
+                    path: ztreeObj.getSelectedNodes()[0].path,
+                    modifyOperates: JSON.stringify(operateHistory)
+                },
+                success: function (msg) {
+                    $("#loading").css('display', 'none');
+                    if (msg.flag) {
+                        #if($auth.hasPermission("$token","devManage:version:saveModify"))
+                            $("#saveButton").hide();
+                            document.getElementById("saveButton").removeEventListener("click", CodeBase.saveModify, false);
+                        #end
+                        layer.alert(msg.data, {
+                            icon: 7,
+                            title: "提示信息"
+                        });
+                        //刷新表格
+                        CodeBase.zTreeOnClick(null, currentTreeId, ztreeObj.getSelectedNodes()[0]);
+                    } else {
+                        layer.alert("保存修改异常！", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $("#loading").css('display', 'none');
+                    //alert(XMLHttpRequest.status);
+                    //alert(XMLHttpRequest.readyState);
+                    //alert(textStatus);
+                    if (XMLHttpRequest.status != 999) {
+                        layer.alert("服务器异常！请联系系统管理员", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                    }
+                }
+            });
+        },
+        //重置密码
+        resetPassword: function (id, userScmAccount) {
+            layer.confirm("确定要重置svn代码库密码吗？", {icon: 3}, function () {
+                $("#loading").css('display', 'block');
+                $.ajax({
+                    url: "/system/user/resetSvnPassword",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        userId: id,
+                        userScmAccount: userScmAccount
+                    },
+                    success: function (msg) {
+                        $("#loading").css('display', 'none');
+                        if (msg.flag) {
+                            layer.alert(msg.data == null ? "密码重置成功！" : msg.data, {
+                                icon: 7,
+                                title: "提示信息"
+                            });
+                        } else {
+                            layer.alert("密码重置失败！", {
+                                icon: 2,
+                                title: "提示信息"
+                            });
+                        }
+                    }
+
+                })
+            })
+        },
+        pageInit: function (ip, repositoryName, path) {
+            $("#list2").jqGrid({
+                url: '/devManage/version/getSvnUsers',
+                datatype: "json",
+                height: 'auto',
+                mtype: "POST",
+                cellEdit: true,
+                multiselect: true,
+                postData: {
+                    ip: ip,
+                    repositoryName: repositoryName,
+                    path: path
+                },
+                width: $(".wode").width() * 0.999,
+                colNames: ['id', 'svnAuthority', 'SVN账号', '姓名|SVN账号', '所属部门', '所属公司', '权限', '操作'],
+                colModel: [
+                    {name: 'id', index: 'id', hidden: true},
+                    {name: 'svnAuthority', hidden: true},
+                    {name: 'userScmAccount', hidden: true},
+                    {
+                        name: 'userNameAndScmAccount',
+                        formatter: function (value, grid, rows, state) {
+                            return rows.userName + "|" + rows.userScmAccount;
+                        },
+                        sortable: false
+                    },
+                    {name: 'deptName', sortable: false},
+                    {name: 'companyName', sortable: false},
+                    {
+                        name: 'svnAuthorityCheck',
+                        formatter: function (value, grid, rows, state) {
+                            if (rows.svnAuthority == "r") {
+                                return '<input type="checkBox" value="r" class="read_check" checked onchange=CodeBase.authChange(this,"' + rows.id + '","' + rows.userScmAccount + '","' + rows.userName + '")></input>  读 &nbsp;&nbsp;&nbsp; <input type="checkBox" value="w" class="write_check" onchange=CodeBase.authChange(this,"' + rows.id + '","' + rows.userScmAccount + '","' + rows.userName + '")></input>  写 ';
+                            } else if (rows.svnAuthority == "rw") {
+                                return '<input type="checkBox" value="r" class="read_check" checked disabled  onchange=CodeBase.authChange(this,"' + rows.id + '","' + rows.userScmAccount + '","' + rows.userName + '")></input>  读 &nbsp;&nbsp;&nbsp; <input type="checkBox" value="w" class="write_check" checked onchange=CodeBase.authChange(this,"' + rows.id + '","' + rows.userScmAccount + '","' + rows.userName + '")></input>  写 ';
+                            } else {
+                                return '<input type="checkBox" value="r" class="read_check"  onchange=CodeBase.authChange(this,"' + rows.id + '","' + rows.userScmAccount + '","' + rows.userName + '")></input>  读 &nbsp;&nbsp;&nbsp; <input type="checkBox" value="w" class="write_check" onchange=CodeBase.authChange(this,"' + rows.id + '","' + rows.userScmAccount + '","' + rows.userName + '")></input>  写 ';
+                            }
+                        },
+                        sortable: false
+                    },
+                    {
+                        name: 'operation',
+                        formatter: function (value, grid, rows, state) {
+                            var opt = [];
+                            var str1 = '<a class="a_style" style="cursor: pointer" onclick=CodeBase.delOneUser("' + rows.id + '","' + rows.userScmAccount + '","' + rows.userName + '")>移除</a>';
+                            var str2 = '<a class="a_style" style="cursor: pointer" onclick=CodeBase.resetPassword(' + rows.id + ',"' + rows.userScmAccount + '")>重置密码</a>';
+
+                            #if($auth.hasPermission("$token","devManage:version:remove"))
+                                opt.push(str1);
+                            #end
+                            #if($auth.hasPermission("$token","devManage:version:resetSvnPassword"))
+                                opt.push(str2);
+                            #end
+                            return opt.join(" | ");
+                        },
+                        sortable: false
+                    }
+                ],
+                rowNum: -1,
+                loadtext: "数据加载中......",
+                beforeRequest: function () {
+                    #if($auth.hasPermission("$token","devManage:version:saveModify"))
+                        $("#saveButton").hide();
+                        document.getElementById("saveButton").removeEventListener("click", CodeBase.saveModify, false);
+                    #end
+                    existUsers = [];
+                    addUsers = [];
+                    delUsers = [];
+                    modifyUsers = [];
+                },
+                gridComplete: function () {
+                    existUsers = [];
+                    var rowIds = $("#list2").getDataIDs();
+                    $.each(rowIds, function (index, rowId) {
+                        existUsers.push(rowId);
+                        var row = $("#list2").jqGrid('getRowData', rowId);
+                        $("td[aria-describedby='list2_svnAuthorityCheck']").eq($('#' + rowId)[0].rowIndex - 1).attr("oldValue", row.svnAuthority);
+                    });
+                    #if($auth.hasPermission("$token","devManage:version:addUser"))
+                        $("#addSvnUserButton").prop("disabled", false);
+                        document.getElementById("addSvnUserButton").addEventListener("click", CodeBase.addUser, false);
+                    #end
+                    #if($auth.hasPermission("$token","devManage:version:removeUser"))
+                        $("#delSvnUserButton").prop("disabled", false);
+                        document.getElementById("delSvnUserButton").addEventListener("click", CodeBase.delUser, false);
+                    #end
+                    #if($auth.hasPermission("$token","devManage:version:saveModify"))
+                        if ($("#saveButton").is(":visible")) {
+                            $("#saveButton").prop("disabled", false);
+                            document.getElementById("saveButton").addEventListener("click", CodeBase.saveModify, false);
+                        }
+                    #end
+                },
+                loadError: function (xhr, status, error) {
+                    $("#loading").css('display', 'none');
+                    #if($auth.hasPermission("$token","devManage:version:addUser"))
+                        $("#addSvnUserButton").prop("disabled", true);
+                        document.getElementById("addSvnUserButton").removeEventListener("click", CodeBase.addUser, false);
+                    #end
+
+                    #if($auth.hasPermission("$token","devManage:version:removeUser"))
+                        $("#delSvnUserButton").prop("disabled", true);
+                        document.getElementById("delSvnUserButton").removeEventListener("click", CodeBase.delUser, false);
+                    #end
+
+                    #if($auth.hasPermission("$token","devManage:version:saveModify"))
+                        $("#saveButton").prop("disabled", true);
+                        document.getElementById("saveButton").removeEventListener("click", CodeBase.saveModify, false);
+                    #end
+                    if (xhr.status != 999) {
+                        layer.alert("获取svn下人员权限异常", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                    }
+                },
+                loadComplete: function (xhr) {
+                    $("#loading").css('display', 'none');
+                }
+            });
+        },
+        zTreeOnClick: function (event, treeId, treeNode) {
+            if (currentTreeId !== undefined && currentTreeId !== treeId) {
+                $.fn.zTree.getZTreeObj(currentTreeId).cancelSelectedNode();
+            }
+            currentTreeId = treeId;
+            $('#list2').jqGrid("clearGridData");
+            $('#list2').jqGrid("setGridParam", {
+                postData: {
+                    ip: treeNode.ip,
+                    repositoryName: treeNode.repositoryName,
+                    path: treeNode.path
+                }
+            }).trigger("reloadGrid");
+        },
+        zTreeOnExpand: function (event, treeId, treeNode) {
+            if (treeNode.children.length == 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "/devManage/version/getSvnSonFileTree",
+                    dataType: "json",
+                    async: false,
+                    contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+                    data: {
+                        repositoryUrl: treeNode.repositoryUrl,
+                        accessProtocol: treeNode.accessProtocol,
+                        username: treeNode.username,
+                        password: treeNode.password,
+                        ip: treeNode.ip,
+                        port: treeNode.port,
+                        path: treeNode.path,
+                        repositoryName: treeNode.repositoryName
+                    },
+                    success: function (msg) {
+                        if (msg.flag) {
+                            $.fn.zTree.getZTreeObj(treeId).addNodes(treeNode, msg.data);
+                        } else {
+                            layer.alert("加载svn文件目录失败", {
+                                icon: 2,
+                                title: "提示信息"
+                            });
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        if (XMLHttpRequest.status != 999) {
+                            layer.alert("加载svn文件目录失败", {
+                                icon: 2,
+                                title: "提示信息"
+                            });
+                        }
+                    }
+                });
+            }
+        }
+    };
+
+    //ztree 模块
+    var firstLoadSuccessTreeId;
+    var currentTreeId;
+    var commonSetting = {
+        async: {
+            enable: true,
+            type: "POST",
+            dataType: "json",
+            contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+            url: "/devManage/version/getSvnFileTree"
+        },
+        view: {
+            showIcon: false
+        },
+        callback: {
+            onClick: CodeBase.zTreeOnClick,
+            onExpand: CodeBase.zTreeOnExpand,
+
+            //所有树加载成功后判断firstLoadSuccessTreeId是否为null,为null赋值当前树treeId
+            onAsyncSuccess: function (event, treeId) {
+                if (firstLoadSuccessTreeId == null && $.fn.zTree.getZTreeObj(treeId).getNodes().length > 0) {
+                    firstLoadSuccessTreeId = treeId;
+                } else return;
+                // 若存在被加载成功的树，则选中第一颗被成功加载树的第一个节点做查询
+                if (firstLoadSuccessTreeId != null) {
+                    var firstLoadSuccessTree = $.fn.zTree.getZTreeObj(firstLoadSuccessTreeId);
+                    firstLoadSuccessTree.selectNode(firstLoadSuccessTree.getNodes()[0]);
+                    currentTreeId = firstLoadSuccessTreeId;
+                    CodeBase.pageInit(firstLoadSuccessTree.getNodes()[0].ip, firstLoadSuccessTree.getNodes()[0].repositoryName, firstLoadSuccessTree.getNodes()[0].path);
+                } else {
+                    #if($auth.hasPermission("$token","devManage:version:addUser"))
+                        $("#addSvnUserButton").prop("disabled", true);
+                        document.getElementById("addSvnUserButton").removeEventListener("click", CodeBase.addUser, false);
+                    #end
+                    #if($auth.hasPermission("$token","devManage:version:removeUser"))
+                        $("#delSvnUserButton").prop("disabled", true);
+                        document.getElementById("delSvnUserButton").removeEventListener("click", CodeBase.delUser, false);
+                    #end
+                    #if($auth.hasPermission("$token","devManage:version:saveModify"))
+                        $("#saveButton").prop("disabled", true);
+                        document.getElementById("saveButton").removeEventListener("click", CodeBase.saveModify, false);
+                    #end
+                }
+
+            }
+        }
+    };
+
+    var existUsers = [];
+
+    var addUsers = [];
+    var delUsers = [];
+    var modifyUsers = [];
+
+    $(document).ready(function () {
+        var window_h = window.innerHeight;
+        $(".leftDiv").css('max-height', window_h - 20 + 'px');
+        $(".codeContent").css('max-height', window_h - 20 + 'px');
+        var systemElementsNum = $(".leftDiv").find("div[class='codeMenu']").length;
+        $(".leftDiv").find("div[class='codeMenu']").each(function (index, element) {
+            var treeObjSetting = commonSetting;
+            var treeElement = $(element).find("ul[class='ztree codeMenu_cont']");
+            treeObjSetting.async.otherParam = ["systemId", treeElement.attr("systemId")];
+            //所有树加载失败都有XXX系统访问svn代码库失败提示
+            treeObjSetting.callback.onAsyncError = function (event, treeId, treeNode, XMLHttpRequest, textStatus, errorThrown) {
+                var systemName = $("ul#" + treeId).attr("systemName");
+                layer.alert("访问系统(" + systemName + ")关联的svn代码库异常", {
+                    icon: 2,
+                    title: "提示信息"
+                });
+                if (index == (systemElementsNum - 1)) {
+                    //当加载完最后一颗树无论成功与否都清空遮罩层
+                    $("#loading").css('display', 'none');
+                    //若不存在任何一颗被加载成功的树，禁用按钮,移除点击事件
+                    if (firstLoadSuccessTreeId == null) {
+                        #if($auth.hasPermission("$token","devManage:version:addUser"))
+                            $("#addSvnUserButton").prop("disabled", true);
+                            document.getElementById("addSvnUserButton").removeEventListener("click", CodeBase.addUser, false);
+                        #end
+                        #if($auth.hasPermission("$token","devManage:version:removeUser"))
+                            $("#delSvnUserButton").prop("disabled", true);
+                            document.getElementById("delSvnUserButton").removeEventListener("click", CodeBase.delUser, false);
+                        #end
+                        #if($auth.hasPermission("$token","devManage:version:saveModify"))
+                            $("#saveButton").prop("disabled", true);
+                            document.getElementById("saveButton").removeEventListener("click", CodeBase.saveModify, false);
+                        #end
+                    } else {
+                        // 若存在被加载成功的树，则选中第一颗被成功加载树的第一个节点做查询
+                        var firstLoadSuccessTree = $.fn.zTree.getZTreeObj(firstLoadSuccessTreeId);
+                        firstLoadSuccessTree.selectNode(firstLoadSuccessTree.getNodes()[0]);
+                        currentTreeId = firstLoadSuccessTreeId;
+                        CodeBase.pageInit(firstLoadSuccessTree.getNodes()[0].ip, firstLoadSuccessTree.getNodes()[0].repositoryName, firstLoadSuccessTree.getNodes()[0].path);
+                    }
+                }
+            }
+            //第一颗树未加载前展示遮罩层
+            if (index == 0) {
+                treeObjSetting.callback.beforeAsync = function () {
+                    $("#loading").css('display', 'block')
+                }
+            }
+            var treeObj = $.fn.zTree.init(treeElement, treeObjSetting);
+            treeObj.expandAll(false);
+        });
+    });
+
+    $("#svnUserModal").on("show.bs.modal", function () {
+        $("#loading").css('display', 'block');
+    });
+
+    $("#svnUserModal").on("shown.bs.modal", function () {
+        $("#loading").css('display', 'none');
+    });
+
+    $("#svnUserModal").on("hidden.bs.modal", function () {
+        $(this).removeData("bs.modal");
+    });
+
+    $("#createCodeBaseModel").on("show.bs.modal", function () {
+        $("#loading").css('display', 'block');
+    });
+
+    $("#createCodeBaseModel").on("shown.bs.modal", function () {
+        $("#loading").css('display', 'none');
+    });
+
+    $("#createCodeBaseModel").on("hidden.bs.modal", function () {
+        $(this).removeData("bs.modal");
+    });
+
+    $("#codeSubmitConfigModel").on("show.bs.modal", function () {
+        $("#loading").css('display', 'block');
+    });
+
+    $("#codeSubmitConfigModel").on("shown.bs.modal", function () {
+        $("#loading").css('display', 'none');
+    });
+
+    $("#codeSubmitConfigModel").on("hidden.bs.modal", function () {
+        $(this).removeData("bs.modal");
+    });
+
+    $("#codeSubmitConfigUserModal").on("show.bs.modal", function () {
+        $("#loading").css('display', 'block');
+    });
+
+    $("#codeSubmitConfigUserModal").on("shown.bs.modal", function () {
+        $("#loading").css('display', 'none');
+    });
+
+    $("#codeSubmitConfigUserModal").on("hidden.bs.modal", function () {
+        $(this).removeData("bs.modal");
+        $("input[userModalShow=true]").removeAttr("userModalShow");
+    });
+
+    $('#versionSelModal').on('show.bs.modal', function () {
+        $("#loading").css('display', 'block');
+    });
+
+    $('#versionSelModal').on('shown.bs.modal', function () {
+        $("#loading").css('display', 'none');
+    });
+
+    $('#versionSelModal').on('hidden.bs.modal', function () {
+        $(this).removeData("bs.modal");
+        $("#selVersion").selectpicker("val", "");
+        $("#selVersion").off("shown.bs.select");
+    });
+
+</script>
+</body>
+</html>
+ 

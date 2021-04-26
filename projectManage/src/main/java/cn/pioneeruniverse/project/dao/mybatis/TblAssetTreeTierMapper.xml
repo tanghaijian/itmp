@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.TblAssetTreeTierMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblAssetTreeTier">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="ASSET_TREE_TYPE" jdbcType="BIGINT" property="assetTreeType" />
+    <result column="ASSET_TREE_NAME" jdbcType="VARCHAR" property="assetTreeName" />
+    <result column="TIER_NUMBER" jdbcType="BIGINT" property="tierNumber" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, ASSET_TREE_TYPE, ASSET_TREE_NAME, TIER_NUMBER, STATUS, CREATE_BY, CREATE_DATE, 
+    LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_asset_tree_tier
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_asset_tree_tier
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.pioneeruniverse.project.entity.TblAssetTreeTier">
+    insert into tbl_asset_tree_tier (ID, ASSET_TREE_TYPE, ASSET_TREE_NAME, 
+      TIER_NUMBER, STATUS, CREATE_BY, 
+      CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+      )
+    values (#{id,jdbcType=BIGINT}, #{assetTreeType,jdbcType=BIGINT}, #{assetTreeName,jdbcType=VARCHAR}, 
+      #{tierNumber,jdbcType=BIGINT}, #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT},
+      #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.project.entity.TblAssetTreeTier">
+    insert into tbl_asset_tree_tier
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="assetTreeType != null">
+        ASSET_TREE_TYPE,
+      </if>
+      <if test="assetTreeName != null">
+        ASSET_TREE_NAME,
+      </if>
+      <if test="tierNumber != null">
+        TIER_NUMBER,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="assetTreeType != null">
+        #{assetTreeType,jdbcType=BIGINT},
+      </if>
+      <if test="assetTreeName != null">
+        #{assetTreeName,jdbcType=VARCHAR},
+      </if>
+      <if test="tierNumber != null">
+        #{tierNumber,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.project.entity.TblAssetTreeTier">
+    update tbl_asset_tree_tier
+    <set>
+      <if test="assetTreeType != null">
+        ASSET_TREE_TYPE = #{assetTreeType,jdbcType=BIGINT},
+      </if>
+      <if test="assetTreeName != null">
+        ASSET_TREE_NAME = #{assetTreeName,jdbcType=VARCHAR},
+      </if>
+      <if test="tierNumber != null">
+        TIER_NUMBER = #{tierNumber,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.project.entity.TblAssetTreeTier">
+    update tbl_asset_tree_tier
+    set ASSET_TREE_TYPE = #{assetTreeType,jdbcType=BIGINT},
+      ASSET_TREE_NAME = #{assetTreeName,jdbcType=VARCHAR},
+      TIER_NUMBER = #{tierNumber,jdbcType=BIGINT},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!-- 查询 业务树层级列表-->
+  <select id="getAssetTreeList" parameterType="java.lang.Integer" resultType="cn.pioneeruniverse.project.entity.TblAssetTreeTier">
+    SELECT
+        tier.ID AS id,
+        tier.ASSET_TREE_TYPE AS assetTreeType,
+        tier.ASSET_TREE_NAME AS assetTreeName,
+        tier.TIER_NUMBER AS tierNumber,
+        tier.CREATE_BY AS createBy,
+        userInfo.USER_NAME AS createName,
+        tier.CREATE_DATE AS createDate,
+        tier.LAST_UPDATE_BY AS lastUpdateBy,
+        userInfo1.USER_NAME AS lastUpdateName,
+        tier.LAST_UPDATE_DATE AS lastUpdateDate
+    FROM
+      tbl_asset_tree_tier tier
+    LEFT JOIN tbl_user_info userInfo ON tier.CREATE_BY = userInfo.ID
+    AND userInfo.`STATUS` = 1
+    AND userInfo.USER_STATUS = 1
+    LEFT JOIN tbl_user_info userInfo1 ON tier.LAST_UPDATE_BY = userInfo1.ID
+    AND userInfo1.`STATUS` = 1
+    AND userInfo1.USER_STATUS = 1
+    WHERE
+    tier.`STATUS` = 1
+    AND tier.ASSET_TREE_TYPE = #{assetTreeType}
+    ORDER BY tier.TIER_NUMBER ASC
+  </select>
+
+  <!--根据类型查询层级信息-->
+  <select id="getTierNumbersByTreeType" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    SELECT
+      ID,
+      ASSET_TREE_TYPE,
+      ASSET_TREE_NAME,
+      TIER_NUMBER
+    FROM
+      tbl_asset_tree_tier
+    WHERE
+      `STATUS` = 1
+      AND ASSET_TREE_TYPE = #{assetTreeType}
+    ORDER BY
+    TIER_NUMBER ASC
+  </select>
+
+  <!--根据层级类型和层级号查询-->
+  <select id="getAssetTree" resultMap="BaseResultMap">
+    SELECT
+    ID,
+    ASSET_TREE_TYPE,
+    ASSET_TREE_NAME,
+    TIER_NUMBER
+    FROM
+    tbl_asset_tree_tier
+    WHERE
+    `STATUS` = 1
+    AND ASSET_TREE_TYPE = #{assetTreeType}
+    AND TIER_NUMBER = #{tierNumber}
+  </select>
+</mapper>

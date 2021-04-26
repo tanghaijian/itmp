@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.itReAssetLibrary.ReSystemDirectoryDao">
+
+    <select id="getDirectoryTreeForDocumentLibrary" resultMap="systemDirectoryTreeMap">
+      SELECT
+      tsd.ID,
+      tsd.PROJECT_ID,
+      tsd.CREATE_TYPE,
+      tsd.PROJECT_TYPE,
+      tsd.DOCUMENT_TYPES,
+      tsd.PARENT_ID,
+      tsd.PARENT_IDS,
+      tsd.DIR_NAME,
+      tsd.CREATE_TYPE
+      FROM tbl_system_directory tsd
+      WHERE
+      tsd.PROJECT_TYPE = 2
+      AND tsd.PROJECT_ID = #{projectId}
+      AND tsd.PARENT_ID = 0
+      AND tsd.STATUS = 1
+      ORDER BY tsd.DIR_NAME,tsd.ORDER_NUMBER
+    </select>
+
+    <select id="getAllSonDirectoryIds" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectory"
+            resultType="java.lang.Long">
+        SELECT ID
+        FROM tbl_system_directory
+        WHERE STATUS = 1
+        AND PROJECT_ID = #{projectId}
+        AND PROJECT_TYPE = 2
+        AND CREATE_TYPE = 2
+        AND (LOCATE(CONCAT(',',#{id},','),PARENT_IDS) OR ID = #{id})
+    </select>
+
+    <select id="getSystemDirectoryListForZtree" resultMap="systemDirectoryTreeMap">
+        SELECT
+        tsd.ID,
+        tsd.DIR_NAME,
+        tsd.SYSTEM_ID,
+        tsd.PARENT_ID,
+        tsd.PARENT_IDS,
+        tsd.CREATE_TYPE
+        FROM tbl_system_directory tsd
+        <if test="projectId != null">
+            LEFT JOIN tbl_project_system tps ON tps.SYSTEM_ID = tsd.SYSTEM_ID
+        </if>
+        WHERE
+        tsd.PROJECT_TYPE = 2
+        <if test="systemIds != null and systemIds != ''">
+            AND tsd.SYSTEM_ID IN
+            <foreach collection="systemIds.split(',')" item="item1" open="(" separator="," close=")"
+                     index="index1">
+                #{item1}
+            </foreach>
+        </if>
+        <if test="projectId != null">
+            AND tps.PROJECT_ID = #{projectId}
+        </if>
+        AND tsd.PARENT_ID = 0
+        AND tsd.STATUS = 1
+        ORDER BY tsd.DIR_NAME,tsd.ORDER_NUMBER
+    </select>
+
+    <select id="getDirectoryTypes" resultMap="systemDirectoryDTOMap">
+        SELECT
+        tsd.ID,
+        tsd.PARENT_ID,
+        tsdt.DOCUMENT_TYPE2S
+        FROM tbl_system_directory tsd
+        LEFT JOIN tbl_system_directory_template tsdt ON tsd.SYSTEM_DIRECTORY_TEMPLATE_ID = tsdt.ID AND
+        tsd.CREATE_TYPE = 1 AND tsdt.PROJECT_TYPE = 2 AND tsdt.STATUS = 1
+        WHERE tsd.ID = #{directoryId} AND tsd.PROJECT_TYPE = 2 AND tsd.STATUS = 1
+    </select>
+	 <select id="selectByDirectory" parameterType="java.lang.Long"
+            resultMap="systemDirectoryMap">
+        SELECT ID,PROJECT_TYPE,DIR_NAME,ORDER_NUMBER,TIER_NUMBER,CREATE_TYPE
+        FROM tbl_system_directory
+        WHERE 
+         ID=#{id}
+    </select>
+	 <select id="getDocumentType" resultMap="systemDirectoryDTOMap">
+        SELECT
+        tsd.ID,
+        tsd.PROJECT_ID,
+        tsd.PARENT_ID,
+        tsd.PARENT_IDS,
+        tsd.DOCUMENT_TYPES
+        FROM tbl_system_directory tsd
+        WHERE tsd.ID = #{directoryId} AND tsd.STATUS = 1
+    </select>
+    <delete id="delSystemDirectory" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectory">
+        DELETE FROM tbl_system_directory WHERE LOCATE(CONCAT(',',#{id},','),PARENT_IDS) OR ID = #{id}
+    </delete>
+
+    <delete id="delSystemDirectoryBySystemId">
+        DELETE FROM tbl_system_directory WHERE SYSTEM_ID = #{systemId}
+    </delete>
+
+    <delete id="delSystemDirectoriesByIds">
+        DELETE FROM tbl_system_directory WHERE ID IN
+        <foreach collection="directoryIds" item="item1" open="(" separator="," close=")"
+                 index="index1">
+            #{item1}
+        </foreach>
+    </delete>
+
+    <insert id="addSystemDirectory" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectory"
+            useGeneratedKeys="true" keyProperty="id">
+       INSERT INTO tbl_system_directory(
+        PROJECT_ID,
+        PROJECT_TYPE,
+        DOCUMENT_TYPES,
+        DIR_NAME,
+        ORDER_NUMBER,
+        TIER_NUMBER,
+        PARENT_ID,
+        PARENT_IDS,
+        CREATE_TYPE,
+        STATUS,
+        CREATE_BY,
+        CREATE_DATE,
+        LAST_UPDATE_BY,
+        LAST_UPDATE_DATE
+        ) VALUES (
+         #{projectId},
+         #{projectType},
+         #{documentTypes},
+         #{dirName},
+         #{orderNumber},
+         #{tierNumber},
+         #{parentId},
+         #{parentIds},
+         #{createType},
+         #{status},
+         #{createBy},
+         #{createDate},
+         #{lastUpdateBy},
+         #{lastUpdateDate}
+        )
+    </insert>
+
+    <select id="getSystemDirectoryChildrenNodes" resultMap="systemDirectoryTreeMap">
+     SELECT
+     tsd.ID,
+     tsd.PROJECT_TYPE,
+     tsd.PROJECT_ID,
+     tsd.PARENT_ID,
+     tsd.PARENT_IDS,
+     tsd.DOCUMENT_TYPES,
+     tsd.DIR_NAME,
+     tsd.CREATE_TYPE
+     FROM tbl_system_directory tsd
+     WHERE
+     tsd.PARENT_ID = #{parentId}
+     AND tsd.PROJECT_ID = #{projectId}
+     AND tsd.PROJECT_TYPE = 2
+     AND tsd.STATUS = 1
+     ORDER BY tsd.DIR_NAME,tsd.ORDER_NUMBER
+    </select>
+
+    <update id="updateSystemDirectoryName" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectory">
+        UPDATE tbl_system_directory SET DIR_NAME = #{dirName} WHERE ID = #{id}
+    </update>
+    <!-- 根据项目ID查询系统 -->
+	<select id="selectSystemByProject" parameterType="java.lang.Long" resultType="map">
+	SELECT DISTINCT system.ID as systemId,
+	system.SYSTEM_NAME as systemName
+	 FROM tbl_system_directory systemDirectory
+		LEFT JOIN tbl_project_system projectSystem
+		ON systemDirectory.PROJECT_ID=projectSystem.PROJECT_ID
+		LEFT JOIN tbl_system_info system
+		ON  projectSystem.SYSTEM_ID=system.ID
+		WHERE system.`STATUS`=1 AND projectSystem.`STATUS`=1
+		AND systemDirectory.`STATUS` AND systemDirectory.PROJECT_ID=#{projectId}
+	</select>
+
+    <resultMap type="cn.pioneeruniverse.project.entity.TblSystemDirectory" id="systemDirectoryMap">
+        <id column="ID" property="id"/>
+        <result column="SYSTEM_ID" property="systemId"/>
+        <result column="PROJECT_ID" property="projectId"/>
+        <result column="PROJECT_TYPE" property="projectType"/>
+        <result column="DOCUMENT_TYPES" property="documentTypes"/>
+        <result column="DIR_NAME" property="dirName"/>
+        <result column="ORDER_NUMBER" property="orderNumber"/>
+        <result column="TIER_NUMBER" property="tierNumber"/>
+        <result column="PARENT_ID" property="parentId"/>
+        <result column="PARENT_IDS" property="parentIds"/>
+        <result column="CREATE_TYPE" property="createType"/>
+        <result column="STATUS" property="status"/>
+        <result column="CREATE_BY" property="createBy"/>
+        <result column="CREATE_DATE" property="createDate"/>
+        <result column="LAST_UPDATE_BY" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate"/>
+    </resultMap>
+
+    <resultMap type="cn.pioneeruniverse.project.entity.TblSystemDirectory" id="systemDirectoryTreeMap"
+               extends="systemDirectoryMap">
+        <collection property="children" column="{parentId=ID,projectId=PROJECT_ID}"
+                    ofType="cn.pioneeruniverse.project.entity.TblSystemDirectory"
+                    select="getSystemDirectoryChildrenNodes">
+        </collection>
+    </resultMap>
+
+    <resultMap type="cn.pioneeruniverse.project.entity.TblSystemDirectory" id="systemDirectoryDTOMap"
+               extends="systemDirectoryMap">
+        <result column="DOCUMENT_TYPE2S" property="documentType2s"/>
+    </resultMap>
+
+</mapper>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.ProjectGroupMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblProjectGroup">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="PROJECT_ID" jdbcType="BIGINT" property="projectId"/>
+        <result column="PROJECT_GROUP_NAME" jdbcType="VARCHAR" property="projectGroupName"/>
+        <result column="ORDER_SEQ" jdbcType="INTEGER" property="orderSeq"/>
+        <result column="PARENT_ID" jdbcType="BIGINT" property="parentId"/>
+        <result column="PARENT_IDS" jdbcType="VARCHAR" property="parentIds"/>
+        <result column="DISPLAY_SEQ" jdbcType="INTEGER" property="displaySeq"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+
+    </resultMap>
+    <sql id="Base_Column_List">
+   		ID, PROJECT_ID, PROJECT_GROUP_NAME, ORDER_SEQ, PARENT_ID, PARENT_IDS, DISPLAY_SEQ, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+    <!--获取项目小组集合的项目id-->
+    <select id="findProjectIdsByProjectGroupIds" parameterType="java.util.List" resultType="long">
+        select PROJECT_ID from tbl_project_group where STATUS = 1 and ID in
+        <foreach collection="list" index="index" item="id" separator="," open="(" close=")">
+            #{id,jdbcType=BIGINT}
+        </foreach>
+    </select>
+
+    <!--获取项目组的项目小组id-->
+    <select id="findProjectGroupIdsByProjectId" parameterType="java.lang.Long" resultType="long">
+  	select ID from tbl_project_group where PROJECT_ID = #{id,jdbcType=BIGINT} and STATUS = 1
+  </select>
+    <!--获取项目组的项目小组信息-->
+    <select id="selectProjectGroups" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_project_group where PROJECT_ID = #{id,jdbcType=BIGINT} and STATUS = 1
+    </select>
+    <!--删除项目小组-->
+    <update id="untyingProjectGroup" parameterType="java.lang.Long">
+  	update tbl_project_group set STATUS = 2 where PROJECT_ID = #{id,jdbcType=BIGINT}
+  </update>
+    <!--修改-->
+    <update id="updateProjectGroup" parameterType="map">
+  	update tbl_project_group set PROJECT_ID = #{id,jdbcType=BIGINT}, STATUS = 1 where ID = #{projectGroupId,jdbcType=BIGINT}
+  </update>
+    <!--查询子项目小组-->
+    <select id="getChildrenProjectGroup" parameterType="map" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        tbl_project_group
+        WHERE
+        PARENT_IDS = #{parentId}
+        and STATUS = 1
+        ORDER BY
+        ORDER_SEQ
+    </select>
+    <!--查询子项目小组-->
+    <select id="getChildren" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        tbl_project_group
+        where PARENT_IDS LIKE CONCAT(CONCAT(#{parentIds},"%")) and STATUS = 1
+    </select>
+    <!--查询子项目小组-->
+    <select id="selectParentProjectGroups" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_project_group
+        where PROJECT_ID = #{id,jdbcType=BIGINT} and PARENT_ID is NULL and STATUS = 1
+        ORDER BY ORDER_SEQ
+    </select>
+    <!--删除-->
+    <update id="deletePeojectGroup" parameterType="map">
+        update tbl_project_group
+        set STATUS = 2 ,LAST_UPDATE_BY = #{currentUserId,jdbcType=BIGINT} , LAST_UPDATE_DATE =
+        #{lastUpdateTime,jdbcType=TIMESTAMP}
+        where ID in
+        <foreach collection="list" index="index" item="projectGroupId" separator="," open="(" close=")">
+            #{projectGroupId,jdbcType=BIGINT}
+        </foreach>
+    </update>
+
+    <update id="editProjectGroup" parameterType="cn.pioneeruniverse.project.entity.TblProjectGroup">
+  	update tbl_project_group set
+  		PROJECT_GROUP_NAME = #{projectGroupName,jdbcType=VARCHAR}, ORDER_SEQ = #{orderSeq,jdbcType=INTEGER},
+  		LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT}, LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+  			where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+    <select id="selectParentIds" parameterType="java.lang.Long" resultType="string">
+  	select PARENT_IDS from tbl_project_group where ID = #{parent,jdbcType=BIGINT}
+  </select>
+
+    <insert id="saveProjectGroup" useGeneratedKeys="true" keyProperty="id"
+            parameterType="cn.pioneeruniverse.project.entity.TblProjectGroup">
+  	insert into tbl_project_group (PROJECT_ID, PROJECT_GROUP_NAME, ORDER_SEQ, PARENT_ID, PARENT_IDS, DISPLAY_SEQ, STATUS, CREATE_BY, 
+  			CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE) values
+  			 (#{projectId,jdbcType=BIGINT}, #{projectGroupName,jdbcType=VARCHAR}, #{orderSeq,jdbcType=INTEGER}, #{parentId,jdbcType=BIGINT},
+  			 #{parentIds,jdbcType=VARCHAR}, #{displaySeq,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT},
+  			 #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+
+    <insert id="saveTmpProjectGroup" useGeneratedKeys="true" keyProperty="id"
+            parameterType="cn.pioneeruniverse.project.entity.TblProjectGroup">
+  	insert into tbl_project_group (ID,PROJECT_ID, PROJECT_GROUP_NAME, ORDER_SEQ, PARENT_ID, PARENT_IDS, DISPLAY_SEQ, STATUS, CREATE_BY, 
+  			CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE) values
+  			 (#{id,jdbcType=BIGINT}, #{projectId,jdbcType=BIGINT}, #{projectGroupName,jdbcType=VARCHAR}, #{orderSeq,jdbcType=INTEGER}, #{parentId,jdbcType=BIGINT},
+  			 #{parentIds,jdbcType=VARCHAR}, #{displaySeq,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT},
+  			 #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+
+    <select id="findAllProjectGroupForZTree" resultType="java.util.HashMap">
+        SELECT
+        tpg.ID AS "id",
+        tpg.PARENT_ID AS "pId",
+        tpg.PROJECT_GROUP_NAME AS "name",
+        CONCAT("归属项目:",IFNULL(tpi.PROJECT_NAME,"未知")) AS "projectName"
+        FROM tbl_project_group tpg
+        LEFT JOIN tbl_project_info tpi on tpi.ID = tpg.PROJECT_ID AND tpi.STATUS = 1
+        WHERE
+        tpg.STATUS = 1 AND tpg.PROJECT_ID IS NOT NULL
+        <if test="projectId != null">
+            AND tpg.PROJECT_ID = #{projectId}
+        </if>
+        ORDER BY tpg.DISPLAY_SEQ
+    </select>
+
+    <select id="findAllProjectGroupBySystemIdForZTree" resultType="java.util.HashMap">
+        SELECT distinct
+        tpg.ID AS "id",
+        tpg.DISPLAY_SEQ,
+        tpg.PARENT_ID AS "pId",
+        tpg.PROJECT_GROUP_NAME AS "name",
+        CONCAT("归属项目:",IFNULL(tpi.PROJECT_NAME,"未知")) AS "projectName"
+        FROM tbl_project_group tpg
+        LEFT JOIN tbl_project_info tpi ON tpi.ID = tpg.PROJECT_ID AND tpi.STATUS = 1
+        LEFT JOIN tbl_project_system prosys ON prosys.PROJECT_ID = tpi.ID AND prosys.status = 1 AND prosys.RELATION_TYPE = 1
+        LEFT JOIN tbl_system_info tsi ON prosys.SYSTEM_ID = tsi.ID AND tsi.STATUS = 1
+        WHERE
+        tpg.STATUS = 1
+        AND tpg.PROJECT_ID IS NOT NULL
+        AND prosys.PROJECT_ID IS NOT NULL
+        <if test="systemId != null">
+            AND tsi.ID = #{systemId}
+        </if>
+        ORDER BY tpg.DISPLAY_SEQ
+    </select>
+
+    <select id="findChildProjectGroups" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_project_group where PARENT_ID = #{projectGroupId,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM tbl_project_group
+        WHERE ID = #{id} AND STATUS = 1
+    </select>
+
+</mapper>

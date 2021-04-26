@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.UserMapper">
+ <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblUserInfo">
+  	<id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="USER_ACCOUNT" jdbcType="VARCHAR" property="userAccount" />
+    <result column="USER_PASSWORD" jdbcType="VARCHAR" property="userPassword" />
+    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+    <result column="EMPLOYEE_NUMBER" jdbcType="VARCHAR" property="employeeNumber" />
+    <result column="EMAIL" jdbcType="VARCHAR" property="email" />
+    <result column="GENDER" jdbcType="TINYINT" property="gender" />
+    <result column="BIRTHDAY" jdbcType="DATE" property="birthday" />
+    <result column="USER_TYPE" jdbcType="TINYINT" property="userType" />
+    <result column="COMPANY_ID" jdbcType="BIGINT" property="companyId" />
+    <result column="ENTRY_DATE" jdbcType="DATE" property="entryDate" />
+    <result column="LEAVE_DATE" jdbcType="DATE" property="leaveDate" />
+    <result column="DEPT_ID" jdbcType="INTEGER" property="deptId" />
+    <result column="USER_STATUS" jdbcType="TINYINT" property="userStatus" />
+    <result column="IS_ALLOWED" jdbcType="TINYINT" property="isAllowed" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+    
+  </resultMap>
+  <sql id="Base_Column_List">
+		ID, USER_ACCOUNT, USER_PASSWORD, USER_NAME, EMPLOYEE_NUMBER, EMAIL, GENDER, BIRTHDAY, USER_TYPE, COMPANY_ID, ENTRY_DATE, LEAVE_DATE,
+		DEPT_ID, USER_STATUS, IS_ALLOWED, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+    <!--根据ID查询人员信息-->
+  <select id="getUserInfoByUserIds" resultType="cn.pioneeruniverse.common.dto.TblUserInfoDTO">
+  		 SELECT
+        DISTINCT TUI.ID id,
+        TUI.USER_NAME userName,
+        TUI.USER_ACCOUNT userAccount,
+        TUI.USER_SCM_ACCOUNT userScmAccount,
+        TUI.EMPLOYEE_NUMBER employeeNumber,
+        TUI.USER_SCM_PASSWORD userScmPassword,
+        TUI.EMAIL email,
+        TDE.DEPT_NAME deptName,
+        TCO.COMPANY_NAME companyName,
+        GROUP_CONCAT(DISTINCT TPG.PROJECT_GROUP_NAME) AS myProjectGroupName,
+        GROUP_CONCAT(DISTINCT TPI.PROJECT_NAME) AS myProjectName
+        FROM TBL_USER_INFO TUI
+        LEFT JOIN TBL_DEPT_INFO TDE ON TDE.ID = TUI.DEPT_ID AND TDE.STATUS = 1
+        LEFT JOIN TBL_COMPANY_INFO TCO ON TCO.ID =TUI.COMPANY_ID AND TCO.STATUS = 1
+        LEFT JOIN TBL_PROJECT_GROUP_USER TPGU ON TPGU.USER_ID = TUI.ID AND TPGU.STATUS = 1
+        LEFT JOIN TBL_PROJECT_GROUP TPG ON TPG.ID = TPGU.PROJECT_GROUP_ID AND TPG.STATUS = 1
+        LEFT JOIN TBL_PROJECT_INFO TPI ON TPG.PROJECT_ID = TPI.ID AND TPI.STATUS = 1
+        <where>
+            TUI.STATUS = 1
+            AND TUI.ID IN
+            <foreach collection="ids" item="item1" open="(" separator="," close=")"
+                     index="index1">
+                #{item1}
+            </foreach>
+        </where>
+        GROUP BY TUI.ID
+  </select>
+
+    <!--根据用户姓名查询ID-->
+  <select id="findIdByUserName" parameterType="String" resultType="long">
+  	select ID from TBL_USER_INFO where USER_NAME = #{userName,jdbcType=VARCHAR}
+  </select>
+
+
+
+
+
+    <!--根据用户姓名查询ID-->
+    <select id="findIdByUserNameNew" parameterType="String" resultType="long">
+  	select ID from TBL_USER_INFO where USER_NAME = #{userName,jdbcType=VARCHAR} and status=1
+  </select>
+
+    <!--根据ID集合查询用户姓名-->
+  <select id="findUserNameByIds" parameterType="java.util.List" resultType="string">
+  	select USER_NAME from tbl_user_info where ID in 
+  								<foreach collection="list" index="index" item="userId" separator="," open="(" close=")">
+  	 								#{userId,jdbcType=BIGINT}
+  	 							</foreach>
+  </select>
+  <!-- 同步时查询用户信息，无视状态 -->
+  <select id="findIdByUserAccount" parameterType="java.lang.String" resultType="long">
+  	select ID from TBL_USER_INFO WHERE USER_ACCOUNT = #{userAccount,jdbcType=VARCHAR} AND STATUS=1
+  </select> 
+  
+  <select id="selectUserById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" /> from tbl_user_info where ID = #{userId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectUser" parameterType="map" resultMap="BaseResultMap">
+  	select  <include refid="Base_Column_List" /> from TBL_USER_INFO
+	<where>
+		<if test="userName != null and userName != '' ">
+			and USER_NAME like concat("%",#{userName,jdbcType=VARCHAR},"%")
+		</if>
+		<if test="employeeNumber != null and employeeNumber != '' ">
+			and EMPLOYEE_NUMBER like concat("%",#{employeeNumber,jdbcType=VARCHAR},"%")
+		</if>
+		<if test="deptIds != null and deptIds.size() != 0">
+		and DEPT_ID in 
+				<foreach collection="deptIds" item="deptId" separator="," open="(" close=")">
+					#{deptId}
+				</foreach>
+		</if>
+		<if test="companyIds != null and companyIds.size() != 0">
+		and COMPANY_ID in 
+				<foreach collection="companyIds" item="companyId" separator="," open="(" close=")">
+					#{companyId}
+				</foreach>
+		</if>
+	</where>
+          limit #{start},#{pageSize}
+  </select>
+  
+  <select id="selectUserIdByUserName" parameterType="java.lang.String" resultType="long">
+  	select ID from tbl_user_info where USER_NAME = #{userName,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getUserNameById" parameterType="java.lang.Long" resultType="string">
+  	select USER_NAME from tbl_user_info where ID = #{id}
+  </select>
+</mapper>

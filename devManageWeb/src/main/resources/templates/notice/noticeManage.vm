@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>公告管理</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/daterangepicker-bs3.css" /> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css" /> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/moment.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/daterangepicker.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/devManageui/static/js/notice/noticeManage.js"></script>
+	<script>
+		$.jgrid.defaults.responsive = true;
+		$.jgrid.defaults.styleUI = 'Bootstrap4';
+		$.jgrid.defaults.iconSet = "fontAwesome";
+		var ctxStatic = "${ctxStatic}";
+		var noticeEdit = $auth.hasPermission("$token", "system:notice:edit");
+		var noticeDelete = $auth.hasPermission("$token", "system:notice:delete");
+	</script>
+
+</head>
+<body>
+	<input type="hidden" id="project_id" name="" value="$!projectIds"/>
+	<input type="hidden" id="project_type" name="" value="$!type"/>
+	<div class="color1">
+		<div class="container-fluid search_div" id="search_div">
+			<div class="row control-row">
+				<div class="col-md-3">
+					<div class="search_font">
+						<label class="control-label">公告内容：</label>
+					</div>
+					<div class="search_input">
+						<input type="text" class="form-control" placeholder="请输入" id="noticeContent" name="noticeContent" />
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="search_font">
+						<label class="control-label">公告状态：</label>
+					</div>
+					<div class="search_input">
+						<select class="selectpicker" id="status" name="status">
+							<option value="">请选择</option>
+							<option value="1">正常</option>
+							<option value="2">废弃</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="search_font">
+						<label class="control-label">创建日期：</label>
+					</div>
+					<div class="search_input">
+						<input size="16" type="text" readonly placeholder="请选择创建日期" class="form-control form_datetime" id="createDateStr" name="createDateStr" />
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="search_font">
+						<label class="control-label">有效日期：</label>
+					</div>
+					<div class="search_input">
+						<input size="16" type="text" readonly placeholder="请选择有效日期" class="form-control form_datetime" id="validDateStr" name="validDateStr" />
+					</div>
+				</div>
+			</div>
+			<div class="row control-row search_btn">
+				<button type="button" class="btn btn-primary" onclick="searchInfo()">搜&nbsp;&nbsp;&nbsp;索</button>
+				<button type="button" onclick="clearSearch()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+			</div>
+		</div>
+		<div id="downBtn">
+			<span class="fa fa-caret-up"></span>
+		</div>
+	</div>
+	<div class="main-content">
+		<div class="content-btn">
+			#if($auth.hasPermission("$token","system:notice:add"))
+			<button type="button" onclick="addNotice()" class="btn btn-primary">新建公告</button>
+			#end
+		</div>
+		<div class="content-table">
+			<div class="wode">
+				<table id="list2"></table>
+				<div id="pager2"></div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 新建公告 -->
+	<div class="modal fade bs-example-modal-lg" id="new_notice"
+		tabindex="-1" role="dialog" aria-labelledby="add_wiondow">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">新建公告</h4>
+				</div>
+				<div class="modal-body">
+					<form id="newform">
+						<div class="allInfo">
+							<div class="def_title">
+								<span>公告基本信息</span>
+							</div>
+							<div class="def_content">
+								<div class="rowdiv">
+									<div class="form-group def_col_20">
+										<div class="def_col_9">
+											<label class="control-label"><span class="redStar" style="color: red;">*</span>公告内容:</label>
+										</div>
+										<div class="def_col_27">
+											<textarea class="form-control" rows="3" cols="80" id="new_noticeContent"></textarea>
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group def_col_20">
+										<div class="def_col_9 font_right select-label"><span class="redStar" style="color: red;">*</span>公告类型:</div>
+										<div class="def_col_27">
+											<select class="selectpicker" id="new_noticeType" name="new_noticeType" onchange="changeNoticeType(this)">
+												<option value="">请选择</option>
+												#if($manageFlag)
+												<option value="1">系统公告</option>
+												#end
+												<option value="2">项目公告</option>
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv" style="display: none;">
+									<div class="form-group def_col_20">
+										<div class="def_col_9 font_right select-label"><span class="redStar" style="color: red;">*</span>项目组:</div>
+										<div class="def_col_27">
+											<select class="selectpicker" style="overflow: scroll" multiple id="new_projectName" name="new_projectName" data-live-search="true"></select>
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group def_col_20">
+										<div class="def_col_9">
+											<label class="control-label"><span class="redStar" style="color: red;">*</span>公告有效日期:</label>
+										</div>
+										<div class="def_col_27">
+											<input size="16" type="text" readonly placeholder="请选择有效日期" class="form-control form_datetime" id="new_validDateStr" name="new_validDateStr" />
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" onclick="addNoticeSubmit()" class="btn btn-primary">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 编辑公告 -->
+	<div class="modal fade bs-example-modal-lg" id="edit_notice"
+		tabindex="-1" role="dialog" aria-labelledby="add_wiondow">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">编辑公告</h4>
+				</div>
+				<div class="modal-body">
+					<form id="newform2">
+					<input type="hidden" id="edit_id" value="" />
+						<div class="allInfo">
+							<div class="def_title">
+								<span>公告基本信息</span>
+							</div>
+							<div class="def_content">
+								<div class="rowdiv">
+									<div class="form-group def_col_20">
+										<div class="def_col_9">
+											<label class="control-label"><span class="redStar" style="color: red;">*</span>公告内容:</label>
+										</div>
+										<div class="def_col_27">
+											<textarea class="form-control" rows="3" cols="80" id="edit_noticeContent"></textarea>
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group def_col_20">
+										<div class="def_col_9 font_right select-label"><span class="redStar" style="color: red;">*</span>公告类型:</div>
+										<div class="def_col_27">
+											<select class="selectpicker" id="edit_noticeType" name="edit_noticeType" onchange="changeNoticeType(this)">
+												<option value="">请选择</option>
+												#if($manageFlag)
+												<option value="1">系统公告</option>
+												#end
+												<option value="2">项目公告</option>
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv" style="display: none;">
+									<div class="form-group def_col_20">
+										<div class="def_col_9 font_right select-label"><span class="redStar" style="color: red;">*</span>项目组:</div>
+										<div class="def_col_27">
+											<select class="selectpicker" style="overflow: scroll" multiple id="edit_projectName" name="edit_projectName" data-live-search="true"></select>
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group def_col_20">
+										<div class="def_col_9">
+											<label class="control-label"><span class="redStar" style="color: red;">*</span>公告有效日期:</label>
+										</div>
+										<div class="def_col_27">
+											<input size="16" type="text" readonly placeholder="请选择有效日期" class="form-control form_datetime" id="edit_validDateStr" name="edit_validDateStr" />
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" onclick="editNoticeSubmit()" class="btn btn-primary">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div id="loading">
+		<img class="loadingImg"
+			src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+	</div>
+</body>
+</html>

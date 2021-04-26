@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.assetLibrary.TblSystemDirectoryRoleRelationMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblSystemDirectoryRoleRelation">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="SYSTEM_DIRECTORY_ROLE_ID" jdbcType="BIGINT" property="systemDirectoryRoleId" />
+    <result column="SYSTEM_DIRECTORY_ID" jdbcType="BIGINT" property="systemDirectoryId" />
+    <result column="READ_AUTH" jdbcType="TINYINT" property="readAuth" />
+    <result column="WRITE_AUTH" jdbcType="TINYINT" property="writeAuth" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, SYSTEM_DIRECTORY_ROLE_ID, SYSTEM_DIRECTORY_ID, READ_AUTH, WRITE_AUTH, STATUS, 
+    CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  <!-- 获取当前用户所拥有的文档目录权限 -->
+  <select id="getCurentUserRoleRelations" resultType="cn.pioneeruniverse.project.entity.TblSystemDirectoryRoleRelation">
+   SELECT DISTINCT sdrr.ID id,sdrr.SYSTEM_DIRECTORY_ROLE_ID systemDirectoryRoleId,sdrr.SYSTEM_DIRECTORY_ID systemDirectoryId,sdrr.READ_AUTH readAuth,sdrr.WRITE_AUTH writeAuth
+   FROM tbl_system_directory_role_relation sdrr
+   LEFT JOIN tbl_system_directory_role sdr ON sdrr.SYSTEM_DIRECTORY_ROLE_ID  = sdr.ID AND sdr.STATUS = 1
+   LEFT JOIN tbl_system_directory_role_user sdru ON sdru.SYSTEM_DIRECTORY_ROLE_ID = sdr.ID AND sdru.STATUS = 1
+   WHERE sdr.PROJECT_ID = #{projectId} AND sdrr.SYSTEM_DIRECTORY_ID = #{systemDirectoryId} AND sdru.USER_ID = #{userId} and sdrr.status = 1
+  </select>
+  
+  <!-- 保存目录角色和目录关联关系 -->
+  <insert id="batchInsert" >
+  	insert into tbl_system_directory_role_relation(SYSTEM_DIRECTORY_ROLE_ID, SYSTEM_DIRECTORY_ID, READ_AUTH, WRITE_AUTH, STATUS, 
+    CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE)
+    values
+    <foreach collection="list" item="item" separator=",">
+    	(#{item.systemDirectoryRoleId},#{item.systemDirectoryId},#{item.readAuth},#{item.writeAuth},
+    	#{item.status},#{item.createBy},#{item.createDate},#{item.lastUpdateBy},#{item.lastUpdateDate}
+    	)
+    </foreach>
+  	
+  </insert>
+  
+  <!-- 删除目录角色关联 -->
+  <delete id="deleteByRoleId" parameterType="Long">
+  	delete from tbl_system_directory_role_relation
+  	where SYSTEM_DIRECTORY_ROLE_ID = #{systemDirectoryRoleId}
+  </delete>
+  
+  <!--获取某个角色下的目录-->
+  <select id="getSystemDirectoryRoleRelationByRoleId" parameterType="Long" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/>
+  	from tbl_system_directory_role_relation
+  	where SYSTEM_DIRECTORY_ROLE_ID = #{systemDirectoryRoleId} and status = 1
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_system_directory_role_relation
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_system_directory_role_relation
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryRoleRelation">
+    insert into tbl_system_directory_role_relation (ID, SYSTEM_DIRECTORY_ROLE_ID, SYSTEM_DIRECTORY_ID, 
+      READ_AUTH, WRITE_AUTH, STATUS, 
+      CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, 
+      LAST_UPDATE_DATE)
+    values (#{id,jdbcType=BIGINT}, #{systemDirectoryRoleId,jdbcType=BIGINT}, #{systemDirectoryId,jdbcType=BIGINT}, 
+      #{readAuth,jdbcType=TINYINT}, #{writeAuth,jdbcType=TINYINT}, #{status,jdbcType=TINYINT}, 
+      #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, 
+      #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryRoleRelation">
+    insert into tbl_system_directory_role_relation
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="systemDirectoryRoleId != null">
+        SYSTEM_DIRECTORY_ROLE_ID,
+      </if>
+      <if test="systemDirectoryId != null">
+        SYSTEM_DIRECTORY_ID,
+      </if>
+      <if test="readAuth != null">
+        READ_AUTH,
+      </if>
+      <if test="writeAuth != null">
+        WRITE_AUTH,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="systemDirectoryRoleId != null">
+        #{systemDirectoryRoleId,jdbcType=BIGINT},
+      </if>
+      <if test="systemDirectoryId != null">
+        #{systemDirectoryId,jdbcType=BIGINT},
+      </if>
+      <if test="readAuth != null">
+        #{readAuth,jdbcType=TINYINT},
+      </if>
+      <if test="writeAuth != null">
+        #{writeAuth,jdbcType=TINYINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryRoleRelation">
+    update tbl_system_directory_role_relation
+    <set>
+      <if test="systemDirectoryRoleId != null">
+        SYSTEM_DIRECTORY_ROLE_ID = #{systemDirectoryRoleId,jdbcType=BIGINT},
+      </if>
+      <if test="systemDirectoryId != null">
+        SYSTEM_DIRECTORY_ID = #{systemDirectoryId,jdbcType=BIGINT},
+      </if>
+      <if test="readAuth != null">
+        READ_AUTH = #{readAuth,jdbcType=TINYINT},
+      </if>
+      <if test="writeAuth != null">
+        WRITE_AUTH = #{writeAuth,jdbcType=TINYINT},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryRoleRelation">
+    update tbl_system_directory_role_relation
+    set SYSTEM_DIRECTORY_ROLE_ID = #{systemDirectoryRoleId,jdbcType=BIGINT},
+      SYSTEM_DIRECTORY_ID = #{systemDirectoryId,jdbcType=BIGINT},
+      READ_AUTH = #{readAuth,jdbcType=TINYINT},
+      WRITE_AUTH = #{writeAuth,jdbcType=TINYINT},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

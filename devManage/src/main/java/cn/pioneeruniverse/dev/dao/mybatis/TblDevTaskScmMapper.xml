@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblDevTaskScmMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblDevTaskScm">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="DEV_TASK_ID" jdbcType="BIGINT" property="devTaskId"/>
+        <result column="DEV_USER_ID" jdbcType="BIGINT" property="devUserId"/>
+        <result column="SCM_TYPE" jdbcType="TINYINT" property="scmType"/>
+        <result column="COMMIT_NUMBER" jdbcType="VARCHAR" property="commitNumber"/>
+        <result column="COMMIT_MASSAGE" jdbcType="VARCHAR" property="commitMassage"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        ID, DEV_TASK_ID, DEV_USER_ID, COMMIT_NUMBER, COMMIT_MASSAGE,STATUS, CREATE_BY, CREATE_DATE,
+        LAST_UPDATE_BY, LAST_UPDATE_DATE
+    </sql>
+
+    <!--添加或修改工作任务关联表-->
+    <insert id="insertOrUpdateDevTaskScm" parameterType="cn.pioneeruniverse.dev.entity.TblDevTaskScm"
+            useGeneratedKeys="true" keyColumn="ID" keyProperty="id">
+        INSERT INTO tbl_dev_task_scm
+        (
+        DEV_TASK_ID,
+        DEV_USER_ID,
+        SCM_TYPE,
+        COMMIT_NUMBER,
+        COMMIT_MASSAGE,
+        STATUS,
+        CREATE_BY,
+        CREATE_DATE,
+        LAST_UPDATE_BY,
+        LAST_UPDATE_DATE
+        ) VALUES (
+        #{devTaskId,jdbcType=BIGINT},
+        #{devUserId,jdbcType=BIGINT},
+        #{scmType,jdbcType=TINYINT},
+        #{commitNumber,jdbcType=VARCHAR},
+        #{commitMassage,jdbcType=VARCHAR},
+        #{status,jdbcType=TINYINT},
+        #{createBy,jdbcType=BIGINT},
+        #{createDate,jdbcType=TIMESTAMP},
+        #{lastUpdateBy,jdbcType=BIGINT},
+        #{lastUpdateDate,jdbcType=TIMESTAMP}
+        ) ON DUPLICATE KEY UPDATE
+        DEV_USER_ID = VALUES(DEV_USER_ID),
+        COMMIT_NUMBER = VALUES(COMMIT_NUMBER),
+        COMMIT_MASSAGE = VALUES(COMMIT_MASSAGE),
+        LAST_UPDATE_BY = VALUES(LAST_UPDATE_BY),
+        LAST_UPDATE_DATE = VALUES(LAST_UPDATE_DATE)
+    </insert>
+
+    <!--查询列表-->
+    <select id="selectDevTaskScmPage" resultMap="devTaskScmDTOMap">
+        SELECT
+        tbts.ID,
+        tdt.ID AS "DEV_TASK_ID",
+        tdt.DEV_TASK_CODE,
+        tdt.DEV_TASK_NAME,
+        tbts.SCM_TYPE,
+        tdt.CODE_REVIEW_STATUS,
+        tsi.SYSTEM_NAME,
+        tdt.DEV_USER_ID,
+        tsi.CODE_REVIEW_USER_IDS
+        FROM tbl_dev_task tdt
+        LEFT JOIN tbl_dev_task_scm tbts ON tdt.ID = tbts.DEV_TASK_ID
+        LEFT JOIN tbl_requirement_feature trf ON trf.ID = tdt.REQUIREMENT_FEATURE_ID
+        LEFT JOIN tbl_system_info tsi ON trf.SYSTEM_ID = tsi.ID
+        <where>
+            1 = 1
+            AND tdt.STATUS = 1
+            AND (tdt.DEV_USER_ID = #{currentUserId} OR FIND_IN_SET(#{currentUserId},tsi.CODE_REVIEW_USER_IDS))
+            AND (tdt.CODE_REVIEW_STATUS IN (2,3) OR (tdt.CODE_REVIEW_STATUS = 1 AND
+            tsi.CODE_REVIEW_STATUS = 1))
+            AND tdt.DEV_TASK_STATUS !=0
+            <if test="tblDevTaskScm.devTaskCode != null and tblDevTaskScm.devTaskCode != ''">
+                AND LOWER(tdt.DEV_TASK_CODE) LIKE CONCAT(CONCAT('%',LOWER(#{tblDevTaskScm.devTaskCode}),'%'))
+            </if>
+            <if test="tblDevTaskScm.devTaskName != null and tblDevTaskScm.devTaskName != ''">
+                AND tdt.DEV_TASK_NAME LIKE CONCAT(CONCAT('%',#{tblDevTaskScm.devTaskName},'%'))
+            </if>
+            <if test="tblDevTaskScm.devUserIds != null and tblDevTaskScm.devUserIds != ''">
+                AND FIND_IN_SET(tdt.DEV_USER_ID,#{tblDevTaskScm.devUserIds})
+            </if>
+            <if test="tblDevTaskScm.codeReviewStatus != null and tblDevTaskScm.codeReviewStatus != ''">
+                AND tdt.CODE_REVIEW_STATUS = #{tblDevTaskScm.codeReviewStatus}
+            </if>
+        </where>
+        ORDER BY tbts.LAST_UPDATE_DATE DESC
+    </select>
+
+    <!--根据工作任务查询工作任务信息-->
+    <select id="getDevTaskDetailByDevTaskId" parameterType="java.lang.Long" resultMap="devTaskScmDTOMap">
+        SELECT
+        tdt.ID AS "DEV_TASK_ID",
+        tdt.DEV_TASK_CODE,
+        tdt.DEV_TASK_NAME,
+        tdt.DEV_TASK_OVERVIEW,
+        tdt.CODE_REVIEW_STATUS,
+        tui.USER_NAME AS "DEV_USER_NAME"
+        FROM tbl_dev_task tdt
+        LEFT JOIN tbl_user_info tui ON tui.ID = tdt.DEV_USER_ID
+        WHERE tdt.ID = #{devTaskId}
+    </select>
+
+    <!-- DTO 扩展字段 -->
+    <resultMap type="cn.pioneeruniverse.dev.entity.TblDevTaskScm" id="devTaskScmDTOMap" extends="BaseResultMap">
+        <result column="DEV_TASK_CODE" property="devTaskCode"/>
+        <result column="DEV_TASK_NAME" property="devTaskName"/>
+        <result column="DEV_TASK_OVERVIEW" property="devTaskOverview"/>
+        <result column="CODE_REVIEW_STATUS" property="codeReviewStatus"/>
+        <result column="SYSTEM_NAME" property="systemName"/>
+        <result column="DEV_USER_NAME" property="devUserName"/>
+        <result column="CODE_REVIEW_USER_NAMES" property="codeReviewUserNames"/>
+        <result column="CODE_REVIEW_USER_IDS" property="codeReviewUserIds"/>
+    </resultMap>
+</mapper>

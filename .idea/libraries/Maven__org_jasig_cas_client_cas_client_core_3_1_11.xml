@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.jasig.cas.client:cas-client-core:3.1.11">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../Java/apache-maven-3.5.4/maven-Repository/org/jasig/cas/client/cas-client-core/3.1.11/cas-client-core-3.1.11.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/../../Java/apache-maven-3.5.4/maven-Repository/org/jasig/cas/client/cas-client-core/3.1.11/cas-client-core-3.1.11-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../../Java/apache-maven-3.5.4/maven-Repository/org/jasig/cas/client/cas-client-core/3.1.11/cas-client-core-3.1.11-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

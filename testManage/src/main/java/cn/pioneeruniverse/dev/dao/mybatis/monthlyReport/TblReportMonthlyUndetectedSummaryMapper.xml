@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.monthlyReport.TblReportMonthlyUndetectedSummaryMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlyUndetectedSummary">
+        <id column="ID" jdbcType="BIGINT"  property="id" />
+        <result column="ITMS_CODE" jdbcType="VARCHAR" property="itmsCode"/>
+        <result column="SYSTEM_NAME" jdbcType="VARCHAR" property="systemName"/>
+        <result column="SERIOUS_LEVEL" jdbcType="VARCHAR" property="seriousLevel"/>
+        <result column="REPORT_DATE" jdbcType="VARCHAR" property="reportDate"/>
+        <result column="SUMMARY" jdbcType="VARCHAR" property="summary"/>
+        <result column="REQUIREMENT_CODE" jdbcType="VARCHAR" property="requirementCode"/>
+        <result column="REASON_ANALYSIS" jdbcType="VARCHAR" property="reasonAnalysis"/>
+        <result column="MISSED_REASON" jdbcType="VARCHAR" property="missedReason"/>
+        <result column="EXPERIENCE_SUMMARY" jdbcType="VARCHAR" property="experienceSummary"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+    </resultMap>
+    <select id="findAll" resultMap="BaseResultMap">
+        select  * from tbl_report_monthly_undetected_summary
+    </select>
+
+
+</mapper>

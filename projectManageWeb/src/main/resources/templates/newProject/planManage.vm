@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <title>新建项目管理</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+  <link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/newProject/planManage.css" />
+
+
+  <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+  <script type="text/ecmascript" src="#springUrl('')/projectManageui/static/js/newProject/planManage.js"></script>
+</head>
+ <style>
+	#tree_table {
+		width: 1140px;
+		border-radius:5px;
+	}
+ </style>
+<body>
+	<input type="hidden" id="project_id" name="" value="$!id" />
+  <input type="hidden" id="project_name" name="" value="$!name" />
+  <input type="hidden" id="plan_version" name="" value="$!version" />
+	<div class="p_10 flex bor_b justify_c_b">
+	    <div class="flex items_c">
+	      <div class="return"></div>
+	      <h5 class="font_14 p_l_10" id="projectName"><span id="projectName">$!name</span>：项目计划管理（
+	        <span id="version_id"></span>）</h5>
+	    </div>
+	    <button class="btn btn-primary" onclick="to_check_chart()">切换视图</button>
+    </div>
+    <div class="rowdiv m_t_10">
+		<table id="tree_table" class="table table-bordered">
+			<thead>
+				<tr>
+					<td class="center">项目计划/任务编号</td>
+					<td class="center">项目计划/任务名称</td>
+					<td class="center">计划开始</td>
+					<td class="center">计划结束</td>
+					<td class="center">进度（%）</td>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</div>
+</body>
+</html>
+
+  <!-- 修改计划
+  <div class="modal fade bs-example-modal-lg" id="update_project_modal" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="add_tit">修改计划</h4>
+          <input type="hidden" id="edit_id" />
+        </div>
+        <div class="modal-body">
+          <form id="update_form">
+            <div class="rowdiv">
+              <div class="def_col_4"><label class="control-label fontWeihgt">计划名称：</label></div>
+              <div class="def_col_32">
+                <input type="text" id="planName" class="form-control" placeholder="请输入" />
+              </div>
+            </div>
+            <div class="rowdiv">
+              <div class="def_col_4"><label class="control-label fontWeihgt">开始日期：</label></div>
+              <div class="def_col_14">
+                <input type="text" id="startDate" class="form-control pointStyle" placeholder="请选择" />
+              </div>
+              <div class="def_col_8">
+                <input type="checkbox" id="startDate_milestone">
+                <span class="fontWeihgt">里程碑</span>
+              </div>
+            </div>
+            <div class="rowdiv">
+              <div class="def_col_4"><label class="control-label fontWeihgt">结束日期：</label></div>
+              <div class="def_col_14">
+                <input type="text" id="endDate" class="form-control pointStyle" placeholder="请选择" />
+              </div>
+              <div class="def_col_8">
+                <input type="checkbox" id="endDate_milestone">
+                <span class="fontWeihgt">里程碑</span>
+              </div>
+            </div>
+            <div class="rowdiv">
+              <div class="def_col_4"><label class="control-label fontWeihgt">责任人：</label></div>
+              <div class="def_col_14">
+                <input type="text" onclick="userTableShowAll()" id="Manager" class="form-control pointStyle"
+                  placeholder="请选择" />
+              </div>
+              <div class="def_col_4"><label class="control-label fontWeihgt">成果物：</label></div>
+              <div class="def_col_14">
+                <input type="text" id="result" class="form-control" placeholder="请输入" />
+              </div>
+            </div>
+            <div class="rowdiv">
+              <div class="def_col_4"><label class="control-label fontWeihgt">里程碑描述：</label></div>
+              <div class="def_col_32">
+                <textarea type="text" id="remark" class="form-control" placeholder="请输入"></textarea>
+              </div>
+            </div>
+          </form>
+          <p class="font_center p_t_100" id="">
+            <i class="fa fa-info-circle red" aria-hidden="true"></i>
+            <span id="prompt" class="red">该计划已经正式提交确认，如修改内容，需提交变更审批流程，审批通过后，变更生效。</span>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" onclick="update_submit()" class="btn btn-primary">保存</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        </div>
+      </div>
+    </div>
+  </div> -->

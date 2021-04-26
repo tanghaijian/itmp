@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <title>测试月报详情</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="no-cache,IE=edge,Chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link rel="stylesheet" href="#springUrl('')/testManageui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/testManageui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/testManageui/static/css/testMonthReport/mypopper.css"/>
+    <link rel="stylesheet" href="#springUrl('')/testManageui/static/css/testMonthReport/testMonthReport.css"/>
+
+    <style id="theme"></style>
+    <script>
+        //设置每一页高度
+        var height = window.innerHeight
+        height = height > 400 ? height : 400
+        var style = document.getElementById('theme')
+        var cssText = '.content{min-height: ' + height + 'px!important;}'
+        if (style.styleSheet) { //IE
+            var func = function () {
+                try { //防止IE中stylesheet数量超过限制而发生错误
+                    style.styleSheet.cssText = cssText;
+                } catch (e) {
+                }
+            }
+            //如果当前styleSheet还不能用，则放到异步中则行
+            if (style.styleSheet.disabled) {
+                setTimeout(func, 10);
+            } else {
+                func();
+            }
+        } else { //w3c
+            style.innerHTML = cssText;
+        }
+    </script>
+    <style>
+        .my_chart_relative {
+            position: relative;
+        }
+
+        /* 加载框 */
+        #loading{
+            width: 100%;
+            height: 100%;
+            background-color:rgba(0,0,0,.5);
+            position: fixed;
+            top:0;
+            left:0;
+            z-index: 1050;
+            display: none;
+        }
+        .loadingImg{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+        }
+        .module_content{
+            min-height: 40px;
+        }
+        .modal-biggest,.modal-biggest .modal-content{
+             position: relative;
+             margin:0;
+             width: 100% !important;
+             height: 100% !important;
+             padding: 0;
+             left: 0;
+         }
+        .modal-biggest .modal-header,.modal-biggest .modal-body,.modal-biggest .modal-footer{
+            position: absolute;
+            width: 100%;
+        }
+        .modal-biggest .modal-header{
+            top: 0;
+            height: 43px;
+        }
+        .modal-biggest .modal-body{
+            top: 43px;
+            bottom: 52px;
+            padding: 20px ;
+        }
+        .modal-biggest .modal-footer{
+            bottom: 0px;
+            height: 52px;
+        }
+
+        .modal-biggest .modal-body{
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+        .modal-biggest .modal-body{
+            overflow: auto;
+        }
+        body {
+            padding-right: 0!important;
+        }
+        .modal-open {
+            overflow-y: scroll;
+            padding-right: 0 !important;
+        }
+        .bootstrap-table{
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+        .bootstrap-table tr{
+            border-bottom: 1px solid #ddd;
+        }
+        .bootstrap-table thead tr{
+            background: #27C7EF;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="swiper-container">
+    <div class="swiper-wrapper">
+        <!--page1-->
+        <div data-page="1" class="swiper-slide">
+            <div class="content right_bg page1">
+                <img class="logo" src="#springUrl('')/testManageui/static/images/testMonthReport/logo.png" alt="">
+                <div class="con_1">
+                    <div id="module_1_1" class="title_2 module_content"></div>
+                    <div id="module_1_2" class="department text_18 module_content"></div>
+                </div>
+            </div>
+        </div>
+        <!--page2-->
+        <div data-page="2" class="swiper-slide">
+            <div class="content left_bg page_number">
+                <img class="logo login-absolute" src="#springUrl('')/testManageui/static/images/testMonthReport/logo.png" alt="">
+                <div class="page_num_con">
+                    <div class="con_number">
+                        <div class="number_80_class">01</div>
+                    </div>
+                    <div class="con_summary">
+                        <div class="text_18 summary_class">本月测试情况概述</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--page3-->
+        <div data-page="3" class="swiper-slide">
+            <div class="content page3 pdt_20">
+                <img class="logo login-absolute" src="#springUrl('')/testManageui/static/images/testMonthReport/logo.png" alt="">
+                <div class="title_blue"><span class="title_blue_img"></span>本月测试情况概述</div>
+                <div class="con_1">
+                    <div class="arrow_class mgb_20">本月测试基本指标</div>
+                    <div id="module_3_1" class="norm1 text_14 line_2 module_content"></div>
+                    <ul id="module_3_2" class="norm1 text_14 line_2 module_content" style="padding-left: 16px"></ul>
+                    <div class="arrow_class mg_20">本月开发缺陷率最低及最高的系统排名</div>
+                    <div class="norm2 text_14">
+                        <div class="table_wraps">
+                            <div class="table_wrap_box">
+                                <div class="table_wrap mgr_20">
+                                    <table id="p3table1" class="table table_style_one table_pinto  green_table ">
+                                        <thead>
+                                        <tr>
+                                            <th>运维期系统-非敏捷（测试缺陷率最低）</th>
+                                            <th>测试缺陷率</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="p3table1_body"></tbody>
+                                    </table>
+                                </div>
+                                <div class="table_wrap mgr_20">
+                                    <table class="table table_style_one table_pinto green_table ">
+                                        <thead>
+                                        <tr>
+                                            <th>敏捷类系统</th>
+                                            <th>测试缺陷率</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="p3table3_body"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="table_wrap_box">
+                                <div class="table_wrap mgr_20">
+                                    <table class="table table_style_one table_pinto  red_table ">
+                                        <thead>
+                                        <tr>
+                                            <th>运维期系统-非敏捷（测试缺陷率最高）</th>
+                                            <th>测试缺陷率</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="p3table2_body"></tbody>
+                                    </table>
+                                </div>
+                                <div class="table_wrap mgr_20">
+                                    <table data-hide="project_period" class="table table_style_one table_pinto green_table ">
+                                        <thead>
+                                        <tr>
+                                            <th>项目期系统-非敏捷</th>
+                                            <th>测试缺陷率</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="p3table4_body"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table_wrap_right table_wrap_tips">
+                            <div class="notes">注1：测试风险评定（根据版本变更率评定）</div>
+                            <table class="table table_style_one" style="width: auto">
+                                <tbody>
+                                <tr>
+                                    <td><10%</td>
+                                    <td>低</td>
+                                </tr>
+                                <tr>
+                                    <td>10%~20%</td>
+                                    <td>中</td>
+                                </tr>
+                                <tr>
+                                    <td>>20%</td>
+                                    <td>高</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div class="mark mg_5">★版本变更率=(临时增加任务数+临时删减任务数)/测试任务总数*100%</div>
+                            <div class="notes">注2：开发质量评定（根据缺陷率评定）</div>
+                            <table class="table table_style_one">
+                                <tbody>
+                                <tr>
+                                    <td><2%</td>
+                                    <td>较高</td>
+                                </tr>
+                                <tr>
+                                    <td>2%~4%</td>
+                                    <td>一般</td>
+                                </tr>
+                                <tr>
+                                    <td>>4%</td>
+                                    <td>较低</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div class="mark">★缺陷率=(缺陷数/设计用例数）*100%</div>
+                            <div id="module_3_3" class="mgb_10 module_content" ></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--page4-->
+        <div data-page="4" class="swiper-slide">
+            <div class="content left_bg page_number">
+                <img class="logo login-absolute" src="#springUrl('')/testManageui/static/images/testMonthReport/logo.png" alt="">
+                <div class="page_num_con">
+                    <div class="con_number">
+                        <div class="number_80_class">02</div>
+                    </div>
+                    <div class="con_summary">
+                        <div class="text_18 summary_class">本月测试详情</div>
+                        <div class="text_18 summary_tips">从版本次数、版本变更率、任务数等方面进行分析</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--page5-->
+        <div data-page="5" class="swiper-slide">
+            <div class="content page5 pdt_20">
+                <img class="logo login-absolute" src="#springUrl('')/testManageui/static/images/testMonthReport/logo.png" alt="">
+                <div class="title_blue"><span class="title_blue_img"></span><span class="edit_1">本月测试详情</span></div>
+                <div class="con_1">
+                    <div><span class="ling_class">A</span><span class="title_style_1">版本次数</span></div>
+                    <div class="flex-r-start_sb mgt_20">
+                        <div class="table_wrap">
+                            <table class="table table_style_two">
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>计划内版本数</th>
+                                    <th>临时版本数</th>
+                                    <th>月总版本数</th>
+                                </tr>
+                                </thead>
+                                <tbody id="p5table1">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="char_wrap">
+                            <div id="page5_chart" class="fb_canvas my_chart_relative"></div>
+                            <div id="module_5_1" class="mgl_10 module_content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--page6-->
+        <div data-page="6" class="swiper-slide">
+            <div class="content page6 pdt_20">
+                <img class="logo login-absolute" src="#springUrl('')/testManageui/static/images/testMonthReport/logo.png" alt="">
+                <div class="title_blue"><span class="title_blue_img"></span>本月测试详情</div>
+                <div class="mgl_20">
+                    <div><span class="ling_class">B</span><span class="title_style_1">版本变更率</span></div>
+                    <div class="flex-r-start_sb mgt_20">
+                        <div class="char_wrap1">
+                            <div id="page6_chart1" class="my_chart_relative"></div>
+                        </div>
+                        <div class="char_wrap2">
+                            <div id="page6_chart2" class="fb_canvas my_chart_relative"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div id="module_6_1" class="module_content"></div>
+                        <div id="module_6_2" class="module_content mgt_20" style="padding-left: 30px">★版本变更率=(临时增加任务数+临时删减任务数)/测试任务总数*100%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--page71-->
+        <div data-page="7" class="swiper-slide">
+            <div class="content page71 pdt_20">
+                <img class="logo login-absolute" src="#springUrl('')/testManageui/static/images/testMonthReport/logo.png" alt="">
+                <div class="title_blue"><span class="title_blue_img"></span>本月测试详情</div>
+                <div class="mgl_20">
+                    <div class="flex-r-start_sb">
+                        <div class="flex-r-cc con_1">
+                            <span class="ling_class">C</span>
+                            <div>
+                                <span class="title_style_1">任务数</span><br>
+                                <span class="title_style_1">用例数</span><br>
+                                <span class="title_style_1">缺陷数</span>
+                            </div>
+                        </div>
+                        <div class="con_2">
+                            <div class="title_blue">敏捷类系统</div>
+                            <div id="module_7_1" class="line_2 module_content"> </div>
+                        </div>
+                    </div>
+                    <div class="chars_wrap mgb_20">
+                        <div id="page71_chart1" class="chars fb_canvas my_chart_relative"></div>
+                        <table class="table table_style_three table_pinto">
+                            <thead>
+                            <tr style="color: #fff;">
+                                <th>系统</th>
+                                <th>测试任务数</th>
+                                <th>用例数</th>
+                                <th>缺陷数</th>
+                                <th>缺陷率</th>
+                            </tr>
+                            </thead>
+                            <tbody id="p71table1"></tbody>
+                        </table>
+                    </div>
+                    <div id="module_7_2" class="mgl_38per module_content"></div>
+                </div>
+            </div>
+        </div>
+        <!--page7-->
+        <div data-page="8" class="swiper-slide">
+            <div class="content page7 pdt_20">
+                <img class="logo login-absolute" src="#springUrl('')/testManageui/static/images/testMonthReport/logo.png" alt="">
+                <div class="title_blue"><span class="title_blue_img"></span>本月测试详情</div>
+                <div class="mgl_20">
+                    <div class="flex-r-start_sb">
+                        <div class="flex-r-cc con_1">
+                            <span class="ling_class">C</span>
+                            <div>
+                                <span class="title_style_1">任务数</span><br>
+                                <span class="title_style_1">用例数</span><br>
+                                <span class="title_style_1">缺陷数</span>
+                            </div>
+                        </div>
+                        <div class="con_2">
+                            <div class="title_blue">运维期系统（非敏捷）</div>
+                            <div class="line_2">
+                                <div id="module_8_1" class="module_content"></div>
+                                <div id="module_8_2" class="notes mgl_30 mgt_20 module_content"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chars_wrap">
+                        <div id="page7_chart1" class="chars fb_canvas my_chart_relative"></div>
+                        <div id="page7_chart2" class="chars fb_canvas my_chart_relative"></div>
+                        <div id="page7_chart3" class="chars fb_canvas my_chart_relative"></div>
+                        <div id="page7_chart4" class="chars fb_canvas my_chart_relative"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--page72-->
+        <div data-hide="project_period" data-page="9" class="swiper-slide">
+            <div class="content page72 pdt_20">
+                <img class="logo login-absolute" src="#springUrl('')/testManageui/static/images/testMonthReport/logo.png" alt="">
+                <div class="title_blue"><span class="title_blue_img"></span>本月测试详情</div>
+                <div class="mgl_20">
+                    <div class="flex-r-start_sb">
+                        <div class="flex-r-cc con_1">
+                            <span class="ling_class">C</span>
+                            <div>
+                                <span class="title_style_1">任务数</span><br>
+                                <span class="title_style_1">用例数</span><br>
+                                <span class="title_style_1">缺陷数</span>
+                            </div>
+                        </div>
+                        <div class="con_2">
+                            <div class="title_blue">项目期系统（非敏捷）</div>
+                            <div id="module_9_1" class="line_2 module_content"></div>
+                        </div>
+                    </div>
+                    <div class="chars_wrap">
+                        <div id="page72_chart1" class="chars fb_canvas my_chart_relative"></div>
+                        <table class="table table_style_three table_pinto">
+                            <thead>
+                            <tr style="color: #fff;">
+                                <th>系统</th>
+                                <th>测试任务数</th>
+                                <th>用例数</th>
+                                <th>缺陷数</th>
+                                <th>缺陷率</th>
+                            </tr>
+                            </thead>
+                            <tbody id="p72table1">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--page9-->
+        <div data-page="10" class="swiper-slide">
+            <div class="content page9 pdt_20">
+                <img class="logo login-absolute" src="#springUrl('')/testManageui/static/images/testMonthReport/logo.png" alt="">
+                <div class="title_blue"><span class="title_blue_img"></span>本月测试详情</div>
+                <div class="mgl_20">
+                    <div class="flex-r-start con_1">
+                        <span class="ling_class">D</span>
+                        <span class="title_style_1">缺陷修复轮次</span>
+                    </div>
+                    <div class="mgl_40">
+                        <div class="chars_wrap">
+                            <div id="page9_chart1" class="chars fb_canvas my_chart_relative"></div>
+                            <div id="page9_chart2" class="chars fb_canvas mgl_40 my_chart_relative"></div>
+                        </div>
+                        <div id="module_10_1" class="pdt_20 module_content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--page10-->
+        <div data-page="11" class="swiper-slide">
+            <div class="content page10 pdt_20">
+                <img class="logo login-absolute" src="#springUrl('')/testManageui/static/images/testMonthReport/logo.png" alt="">
+                <div class="title_blue"><span class="title_blue_img"></span>本月测试详情</div>
+                <div class="mgl_20">
+                    <div class="flex-r-start con_1">
+                        <span class="ling_class">E</span>
+                        <span class="title_style_1">缺陷等级分布</span>
+                    </div>
+                    <div class="mgl_40 mgt_20">
+                        <div class="chars_wrap">
+                            <div class="tables">
+                                <table class="table table_style_three table_pinto">
+                                    <thead>
+                                    <tr>
+                                        <th style="text-align: left;padding-left: 12%">类型</th>
+                                        <th style="color: #ffffff">缺陷个数</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="p10table1">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tables mgl_40">
+                                <table class="table table_style_three table_pinto">
+                                    <thead>
+                                    <tr>
+                                        <th style="text-align: left;padding-left: 15%">缺陷等级</th>
+                                        <th style="color: #ffffff">个数</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="p10table2">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="page10_chart1" class="chars fb_canvas mgl_40 my_chart_relative"></div>
+                        </div>
+                        <div id="module_11_1" class="pdt_20 module_content">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--page11-->
+        <div data-page="12" class="swiper-slide">
+            <div class="content page11 pdt_20">
+                <img class="logo login-absolute" src="#springUrl('')/testManageui/static/images/testMonthReport/logo.png" alt="">
+                <div class="title_blue"><span class="title_blue_img"></span>本月测试详情</div>
+                <div class="mgl_20">
+                    <div class="flex-r-start con_1">
+                        <span class="ling_class">F</span>
+                        <span class="title_style_1">漏检情况</span>
+                    </div>
+                    <div class="con_wrap pdt_20">
+                        <div class="w_50p">
+                            <div class="tables">
+                                <table class="table table_style_three table_pinto">
+                                    <thead>
+                                    <tr>
+                                        <th style="color: #ffffff">月份</th>
+                                        <th style="color: #ffffff">漏检个数</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="p11table">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="module_12_1" class="module_content"> </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--page12-->
+        <div data-page="13" class="swiper-slide">
+            <div class="content left_bg page_number">
+                <img class="logo login-absolute" src="#springUrl('')/testManageui/static/images/testMonthReport/logo.png" alt="">
+                <div class="page_num_con">
+                    <div class="con_number">
+                        <div class="number_80_class">03</div>
+                    </div>
+                    <div class="con_summary">
+                        <div class="text_18 summary_class">本月系统测试情况分析</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--page131-->
+        <div data-page="14" class="swiper-slide">
+            <div class="content page131 pdt_20">
+                <img class="logo login-absolute" src="#springUrl('')/testManageui/static/images/testMonthReport/logo.png" alt="">
+                <div class="title_blue"><span class="title_blue_img"></span>本月系统测试情况分析</div>
+                <div class="mgt_40 mgl_40">
+                    <div class="con h_400">
+                        <div id="page131_chart1" class="chars fb_canvas my_chart_relative"></div>
+                        <div class="excel_link_wrap mgl_20">
+                            <div onclick="showExcelTable(this)" data-url="getThisMonthlySystemData" data-type="1" class="excel_link"></div>
+                            <p><span class="set-value" data-value="year"></span>年<span class="set-value" data-value="month"></span>月敏捷类系统缺陷率数据</p></div>
+                    </div>
+                    <div id="module_14_1" class="pdt_20 module_content"></div>
+                </div>
+            </div>
+        </div>
+        <!--page13-->
+        <div data-page="15" class="swiper-slide">
+            <div class="content page13 pdt_20">
+                <img class="logo login-absolute" src="#springUrl('')/testManageui/static/images/testMonthReport/logo.png" alt="">
+                <div class="title_blue"><span class="title_blue_img"></span>本月系统测试情况分析</div>
+                <div class="mgt_40 mgl_40">
+                    <div class="con h_400">
+                        <div id="page13_chart1" class="chars fb_canvas my_chart_relative"></div>
+                        <div class="excel_link_wrap mgl_20">
+                            <div onclick="showExcelTable(this)" data-url="getThisMonthlySystemData" data-type="1" class="excel_link"></div>
+                            <p><span class="set-value" data-value="year"></span>年<span class="set-value" data-value="month"></span>运维期系统缺陷率数据</p></div>
+                    </div>
+                    <div id="module_15_1" class="pdt_20 module_content">
+                        <div class="arrow_class">
+                            本月30个运维期系统（非敏捷）总体缺陷率为2.29%，开发质量(注2)一般。
+                        </div>
+                        <div class="arrow_class">
+                            质量好的系统请继续保持，质量差的系统请控制开发质量，降低缺陷率。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--page14-->
+        <div data-page="16" class="swiper-slide">
+            <div class="content left_bg page_number">
+
+                <img class="logo login-absolute" src="#springUrl('')/testManageui/static/images/testMonthReport/logo.png" alt="">
+                <div class="page_num_con">
+                    <div class="con_number">
+                        <div class="number_80_class">04</div>
+                    </div>
+                    <div class="con_summary">
+                        <div class="text_18 summary_class">全年系统测试情况分析</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--page15-->
+        <div data-page="17" class="swiper-slide">
+            <div class="content page15 pdt_20">
+                <img class="logo login-absolute" src="#springUrl('')/testManageui/static/images/testMonthReport/logo.png" alt="">
+                <div class="title_blue"><span class="title_blue_img"></span>全年系统测试情况分析</div>
+                <div class="mgt_40 mgl_40">
+                    <div class="con h_400">
+                        <div id="page15_chart1" class="chars fb_canvas my_chart_relative"></div>
+                        <div class="excel_link_wrap mgl_20">
+                            <div onclick="showExcelTable(this)" data-url="getThisYearSystemData" data-type="2" class="excel_link"></div>
+                            <p><span class="set-value" data-value="year"></span>年敏捷类系统缺陷率数据</p>
+                        </div>
+                    </div>
+                    <div id="module_17_1" class="pdt_20 module_content"> </div>
+                </div>
+            </div>
+        </div>
+        <!--page152-->
+        <div data-page="18" class="swiper-slide">
+            <div class="content page152 pdt_20">
+                <img class="logo login-absolute" src="#springUrl('')/testManageui/static/images/testMonthReport/logo.png" alt="">
+                <div class="title_blue"><span class="title_blue_img"></span>全年系统测试情况分析</div>
+                <div class="mgt_40 mgl_40">
+                    <div class="con h_400">
+                        <div id="page152_chart1" class="chars fb_canvas my_chart_relative"></div>
+                        <div class="excel_link_wrap mgl_20">
+                            <div onclick="showExcelTable(this)" data-url="getThisYearSystemData" data-type="2" class="excel_link"></div>
+                            <p><span class="set-value" data-value="year"></span>年运维期系统缺陷率数据</p></div>
+                    </div>
+                    <div class="pdt_20">
+                        <div id="module_18_1" class="module_content"></div>
+                        <div id="module_18_2" class="notes module_content" style="margin-left: 28px">*注：全年任务数小于等于5个的系统，不参与按系统的全年累计排名。</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--page18-->
+        <div data-page="19" class="swiper-slide">
+            <div class="content left_bg page18 page_number">
+
+                <img class="logo login-absolute" src="#springUrl('')/testManageui/static/images/testMonthReport/logo.png" alt="">
+                <div class="page_num_con">
+                    <div class="con_number">
+                        <div class="number_80_class">05</div>
+                    </div>
+                    <div class="con_summary">
+                        <div  class="text_18 summary_class">遗留缺陷清单及漏检经验总结</div>
+                        <div class="text_18 summary_tips">
+                            <div class="more_excel mgl_40">
+                                <div id="module_19_1" class="excel_name module_content">8月遗留缺陷清单</div>
+                                <div class="excel_link_wrap ">
+                                    <div onclick="showExcelTable(this)" data-url="getRemainDefect" data-type="3" class="excel_link"></div>
+                                    <p>遗留缺陷清单</p>
+                                </div>
+                            </div>
+                            <div class="more_excel mgt_20 mgl_40">
+                                <div id="module_19_2" class="excel_name module_content">漏检经验总结</div>
+                                <div class="excel_link_wrap">
+                                    <div onclick="showExcelTable(this)"  data-url="getAllUndetectedSummary" data-type="3" class="excel_link"></div>
+                                    <p>漏检经验总结</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--page19-->
+        <div data-page="20" class="swiper-slide">
+            <div class="content right_bg page19" style="border-bottom: none">
+                <div class="con_1">
+                    <div class="title"><span class="thank">THANK</span> <span class="you"> YOU</span></div>
+                    <div id="page20_department" class="department f-20 mgt_80">信息科技部测试共享处</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="loading">
+        <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+    </div>
+    <div class="modal fade bs-example-modal-biggest" id="watch_excel"
+         tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-biggest" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <span class="modal-title">查看</span>
+                </div>
+
+                <div class="modal-body" style="bottom: 10px">
+                    <div id="excel_table_type1" style="display: none">
+                        <div>★缺陷率=（缺陷数）/(设计用例数)*100%</div>
+                        <table id="excel_table_1"></table>
+                        <table id="excel_table_2"></table>
+                        <table id="excel_table_3"></table>
+                        <div id="excel_table_type2">
+                            <p>★缺陷率=(缺陷数)/(设计用例数)*100%</p>
+                            <p>★测试检出率=(发布前缺陷数)/(发布前缺陷数+发布后缺陷数）*100%</p>
+                            <p>★平均修复轮次=累计修复轮次/修复的缺陷数</p>
+                        </div>
+                    </div>
+                    <div id="excel_table_type3" style="display: none">
+                        <table id="excel_table"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script type="text/javascript" src="#springUrl('')/testManageui/static/js/frame/jquery.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/testManageui/static/js/frame/bootstrap.min.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/testManageui/static/js/frame/layer.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/testManageui/static/js/testMonthReport/echarts.min.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/testManageui/static/js/testMonthReport/uitl.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/testManageui/static/js/testMonthReport/c_popper.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/testManageui/static/js/testMonthReport/t_popper.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/testManageui/static/js/testMonthReport/e_popper.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/testManageui/static/js/testMonthReport/edit_tpl.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/testManageui/static/js/testMonthReport/menuRightClick.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/testManageui/static/js/testMonthReport/testMonthReport.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+</html>

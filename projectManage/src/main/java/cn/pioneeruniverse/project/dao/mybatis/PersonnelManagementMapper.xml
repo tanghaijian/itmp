@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.PersonnelManagementMapper">
+
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblUserInfo">
+        <id column="ID" jdbcType="BIGINT" property="id" />
+        <result column="USER_ACCOUNT" jdbcType="VARCHAR" property="userAccount" />
+        <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+        <result column="DEPT_ID" jdbcType="INTEGER" property="deptId" />
+        <result column="DEPT_NAME" jdbcType="VARCHAR" property="deptName" />
+        <result column="COMPANY_ID" jdbcType="INTEGER" property="companyId" />
+        <result column="company_NAME" jdbcType="VARCHAR" property="companyName" />
+        <result column="STATUS" jdbcType="TINYINT" property="status" />
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+    </resultMap>
+
+<!-- 获取公司列表 -->
+    <select id="selectCompanyVague" resultType="cn.pioneeruniverse.project.entity.Company" parameterType="String">
+        select t.ID id,t.COMPANY_NAME companyName
+        from tbl_company_info t
+        where t.COMPANY_NAME LIKE CONCAT('%',#{companyName},'%') and t.STATUS=1
+        order by t.ID asc
+	    LIMIT 0,10
+    </select>
+    
+    <!-- 获取部门列表 -->
+    <select id="selectDeptVague" resultType="cn.pioneeruniverse.project.entity.TblDeptInfo" parameterType="String">
+        select t.ID id,t.DEPT_NAME deptName
+        from TBL_DEPT_INFO t
+        where t.DEPT_NAME LIKE CONCAT('%',#{deptName},'%') and t.STATUS=1
+        order by t.ID asc
+	    LIMIT 0,10
+    </select>
+
+<!-- 获取项目列表 -->
+    <select id="selectProjectVague" resultType="cn.pioneeruniverse.project.entity.TblProjectInfo" parameterType="String">
+        select t.ID id,t.PROJECT_NAME projectName,t.PROJECT_CODE projectCode
+        from tbl_project_info t
+        where t.STATUS=1
+        <if test="projectName !=null">
+            and t.PROJECT_NAME LIKE CONCAT('%',#{projectName},'%')
+        </if>
+        <if test="projectCode !=null">
+            and t.PROJECT_CODE LIKE CONCAT('%',#{projectCode},'%')
+        </if>
+        and t.PROJECT_STATUS != 4
+        order by t.ID asc
+        LIMIT 0,10
+    </select>
+
+<!-- 获取用户列表 -->
+    <select id="selectUserInfoVague" resultType="cn.pioneeruniverse.project.entity.TblUserInfo">
+        SELECT t.ID id,t.USER_ACCOUNT userAccount,t.USER_NAME userName
+        FROM tbl_user_info t
+        WHERE t.STATUS=1 and (t.USER_ACCOUNT LIKE CONCAT('%',#{userAndAccount},'%')
+        OR t.USER_NAME LIKE CONCAT('%',#{userAndAccount},'%'))
+        <if test="ids != null">
+            and t.ID not in
+            <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        order by t.ID asc
+        LIMIT 0,10
+        <!-- SELECT t.ID,t.USER_ACCOUNT userAndAccount FROM tbl_user_info t
+            WHERE t.USER_ACCOUNT LIKE CONCAT('%',#{userAndAccount},'%') and t.STATUS=1
+            UNION ALL
+            SELECT t.ID,t.USER_NAME userAndAccount FROM tbl_user_info t
+            WHERE t.USER_NAME  LIKE CONCAT('%',#{userAndAccount},'%') and t.STATUS=1-->
+    </select>
+
+<!-- 前端查询结果，列表总数 -->
+    <select id="getAllUserProjectCount" resultType="Integer" parameterType="map">
+        select count(t.ID) from
+        (select userInfo.ID,userInfo.USER_ACCOUNT,userInfo.USER_NAME,dept.DEPT_NAME,company.company_NAME
+        from TBL_USER_INFO userInfo
+        LEFT JOIN TBL_DEPT_INFO dept on userInfo.DEPT_ID = dept.ID and dept.status=1
+        LEFT JOIN tbl_company_info company on userInfo.COMPANY_ID = company.ID and company.status=1
+        <if test="(projectId != null and projectId != '') or (projectCode != null and projectCode != '')">
+            LEFT JOIN tbl_project_group_user tpgu on tpgu.USER_ID = userInfo.ID and tpgu.STATUS=1
+            LEFT JOIN tbl_project_group tpg ON tpgu.PROJECT_GROUP_ID = tpg.ID and tpg.status=1
+            LEFT JOIN tbl_project_info tpi on tpg.PROJECT_ID = tpi.ID AND tpi.STATUS = 1 and tpi.PROJECT_STATUS != 4
+        </if>
+        <where>
+            <if test="userAccount != null and userAccount != ''">
+                and userInfo.USER_ACCOUNT = #{userAccount}
+            </if>
+            <if test="userName != null and userName != ''">
+                and userInfo.USER_NAME = #{userName}
+            </if>
+            <if test="deptId != null and deptId != ''">
+                and userInfo.DEPT_ID = #{deptId}
+            </if>
+            <if test="companyId != null and companyId != ''">
+                and userInfo.COMPANY_ID = #{companyId}
+            </if>
+            <if test="projectId != null and projectId != ''">
+                and tpi.ID = #{projectId}
+            </if>
+            <if test="projectCode != null and projectCode != ''">
+                and tpi.PROJECT_CODE = #{projectCode,jdbcType=VARCHAR}
+            </if>
+            and userInfo.STATUS = 1
+        </where>
+        GROUP BY userInfo.ID) t
+    </select>
+
+<!-- 前端列表信息 -->
+    <select id="getAllUserProject" resultMap="BaseResultMap" parameterType="map">
+        select userInfo.ID,userInfo.USER_ACCOUNT,userInfo.USER_NAME,dept.DEPT_NAME,company.company_NAME
+        from TBL_USER_INFO userInfo
+        LEFT JOIN TBL_DEPT_INFO dept on userInfo.DEPT_ID = dept.ID and dept.status=1
+        LEFT JOIN tbl_company_info company on userInfo.COMPANY_ID = company.ID and company.status=1
+        <if test="(projectId != null and projectId != '') or (projectCode != null and projectCode != '')">
+            LEFT JOIN tbl_project_group_user tpgu on tpgu.USER_ID = userInfo.ID and tpgu.STATUS=1
+            LEFT JOIN tbl_project_group tpg ON tpgu.PROJECT_GROUP_ID = tpg.ID and tpg.status=1
+            LEFT JOIN tbl_project_info tpi on tpg.PROJECT_ID = tpi.ID AND tpi.STATUS = 1 and tpi.PROJECT_STATUS != 4
+        </if>
+        <where>
+            <if test="userAccount != null and userAccount != ''">
+               and userInfo.USER_ACCOUNT LIKE CONCAT('%',#{userAccount},'%')
+            </if>
+            <if test="userName != null and userName != ''">
+                and userInfo.USER_NAME LIKE CONCAT('%',#{userName},'%')
+            </if>
+            <if test="deptId != null and deptId != ''">
+                and userInfo.DEPT_ID = #{deptId}
+            </if>
+            <if test="companyId != null and companyId != ''">
+                and userInfo.COMPANY_ID = #{companyId}
+            </if>
+            <if test="projectId != null and projectId != ''">
+                and tpi.ID = #{projectId}
+            </if>
+            <if test="projectCode != null and projectCode != ''">
+                and tpi.PROJECT_CODE = #{projectCode,jdbcType=VARCHAR}
+            </if>
+            and userInfo.STATUS = 1
+        </where>
+        GROUP BY userInfo.ID
+        ORDER BY userInfo.ID DESC
+        Limit #{pageIndex},#{pageSize}
+    </select>
+
+<!-- 通过用户获取项目信息 -->
+    <select id="getProjectInfoByUser" resultType="String" parameterType="Long">
+       SELECT GROUP_CONCAT(t.PROJECT_NAME)
+       from (
+          SELECT CONCAT(" ",tpi.PROJECT_NAME," | ",tpi.PROJECT_CODE) PROJECT_NAME FROM tbl_project_info tpi
+		  LEFT JOIN tbl_project_group tpg on tpg.PROJECT_ID = tpi.ID AND tpg.STATUS = 1
+		  LEFT JOIN tbl_project_group_user tpgu ON tpgu.PROJECT_GROUP_ID = tpg.ID and tpgu.status=1
+		  WHERE tpi.STATUS = 1 AND tpgu.USER_ID = #{userId} and tpi.PROJECT_STATUS != 4
+		  GROUP BY tpi.ID
+		) t
+    </select>
+<!-- 获取所有项目 -->
+    <select id="getAllProject" resultType="cn.pioneeruniverse.project.entity.TblProjectInfo">
+        select tpi.ID id,tpi.PROJECT_NAME projectName
+        FROM tbl_project_info tpi where tpi.STATUS = 1 and tpi.PROJECT_STATUS != 4
+    </select>
+
+<!-- 通过项目ID获取小组 -->
+    <select id="getProjectGroupByProjectId" resultType="cn.pioneeruniverse.project.entity.TblProjectGroup"
+            parameterType="Long">
+        SELECT tpg.ID id,tpg.PROJECT_GROUP_NAME projectGroupName
+        FROM tbl_project_group tpg
+        LEFT JOIN tbl_project_info tpi on tpg.PROJECT_ID = tpi.ID AND tpi.STATUS = 1 and tpi.PROJECT_STATUS != 4
+        WHERE tpg.status = 1
+        <if test="_parameter != null and _parameter != 0">
+            and tpg.PROJECT_ID = #{projectId,jdbcType=BIGINT}
+        </if>
+    </select>
+<!-- 项目和项目小组同行显示，将小组信息合并到一行 -->
+    <select id="previewProject" resultType="cn.pioneeruniverse.project.entity.TblProjectGroup"
+            parameterType="Long">
+        SELECT tpi.ID projectId,tpi.PROJECT_NAME projectName,GROUP_CONCAT(tpg.PROJECT_GROUP_NAME) projectGroupName
+        FROM tbl_project_info tpi
+        LEFT JOIN tbl_project_group tpg ON tpg.PROJECT_ID=tpi.ID AND tpg.`STATUS`=1
+        WHERE tpi.status = 1 and tpi.PROJECT_STATUS != 4
+        <if test="_parameter != null and _parameter != 0">
+            and tpi.ID = #{projectId,jdbcType=BIGINT}
+        </if>
+        GROUP BY tpi.ID
+    </select>
+
+<!-- 获取关联过的小组人员总数 -->
+    <select id="getCountByGroupUser" resultType="Integer"
+            parameterType="cn.pioneeruniverse.project.entity.TblProjectGroupUser">
+        SELECT COUNT(tpgu.ID)
+        FROM tbl_project_group_user tpgu
+        WHERE tpgu.PROJECT_GROUP_ID = #{projectGroupId} and tpgu.USER_ID = #{userId}
+        and tpgu.USER_POST = #{userPost} and tpgu.status = 1
+    </select>
+
+<!-- 插入开发库项目组人员 -->
+    <insert id="insertItmpProjectGroupUser" parameterType="cn.pioneeruniverse.project.entity.TblProjectGroupUser"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_project_group_user(PROJECT_GROUP_ID,USER_ID,USER_POST,STATUS,CREATE_BY,
+        CREATE_DATE,LAST_UPDATE_BY,LAST_UPDATE_DATE)
+        values (#{projectGroupId},#{userId},#{userPost},#{status},#{createBy},#{createDate},
+        #{lastUpdateBy},#{lastUpdateDate})
+    </insert>
+<!-- 插入测试库项目组成员 -->
+    <insert id="insertTmpProjectGroupUser" parameterType="cn.pioneeruniverse.project.entity.TblProjectGroupUser">
+        insert into tbl_project_group_user(ID,PROJECT_GROUP_ID,USER_ID,USER_POST,STATUS,CREATE_BY,
+        CREATE_DATE,LAST_UPDATE_BY,LAST_UPDATE_DATE)
+        values (#{id},#{projectGroupId},#{userId},#{userPost},#{status},#{createBy},
+        #{createDate},#{lastUpdateBy},#{lastUpdateDate})
+    </insert>
+</mapper>

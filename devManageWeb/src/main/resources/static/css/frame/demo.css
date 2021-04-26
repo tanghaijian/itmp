@@ -1,0 +1,103 @@
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;padding: 0;border: 0;outline: 0;font-weight: inherit;font-style: inherit;font-size: 100%;font-family: inherit;vertical-align: baseline;}
+body {color: #2f332a;font-family: '微软雅黑';background: #f0f6e4 \9;}
+h1, h2, h3, h4, h5, h6 {color: #2f332a;font-weight: bold;font-family: Helvetica, Arial, sans-serif;}
+h1 {font-size: 24px;line-height: 34px;text-align: center;}
+h2 {font-size: 14px;line-height: 24px;padding-top: 5px;}
+h6 {font-weight: normal;font-size: 12px;letter-spacing: 1px;line-height: 24px;text-align: center;}
+a{text-decoration:none; }
+a:link{text-decoration:none; }  /* 指正常的未被访问过的链接*/ 
+a:visited{text-decoration:none; }/*指已经访问过的链接*/ 
+a:hover{text-decoration:none;}/*指鼠标在链接*/} 
+a:active{text-decoration:none;}/* 指正在点的链接*/  
+input.radio {margin: 0 2px 0 8px;}
+input.radio.first {margin-left:0;}
+input.empty {color: lightgray;}
+code {color: #2f332a;}
+.highlight_red {color:#A60000;}
+.highlight_green {color:#A7F43D;}
+li {font-size: 12px;}
+li.title {list-style: none;}
+ul.list {margin-left: 17px;} 
+div.content_wrap {width: 600px;height:380px;}
+div.content_wrap div.left{float: left;width: 250px;}
+div.content_wrap div.right{float: right;width: 340px;}
+div.zTreeDemoBackground {width:250px;height:362px;text-align:left;}
+
+ul.ztree {margin-top: 10px;width:220px;height:360px;overflow-y:scroll;overflow-x:auto;}
+ul.log {border: 1px solid #617775;background: #f0f6e4;width:300px;height:170px;overflow: hidden;}
+ul.log.small {height:45px;}
+ul.log li {color: #666666;list-style: none;padding-left: 10px;}
+ul.log li.dark {background-color: #E3E3E3;}
+
+/* ruler */
+div.ruler {height:20px; width:220px; background-color:#f0f6e4;border: 1px solid #333; margin-bottom: 5px; cursor: pointer}
+div.ruler div.cursor {height:20px; width:30px; background-color:#3C6E31; color:white; text-align: right; padding-right: 5px; cursor: pointer}
+
+/*闅愯棌婊氬姩鏉�*/
+#treeDemo::-webkit-scrollbar {
+	width:0px;
+	height:0px;
+}
+#treeDemo::-webkit-scrollbar-button    {
+	background-color:rgba(0,0,0,0);
+}
+#treeDemo::-webkit-scrollbar-track     {
+	background-color:rgba(0,0,0,0);
+}
+#treeDemo::-webkit-scrollbar-track-piece {
+	background-color:rgba(0,0,0,0);
+}
+#treeDemo::-webkit-scrollbar-thumb{
+	background-color:rgba(0,0,0,0);
+}
+#treeDemo::-webkit-scrollbar-corner {
+	background-color:rgba(0,0,0,0);
+}
+#treeDemo::-webkit-scrollbar-resizer  {
+	background-color:rgba(0,0,0,0);
+}
+#treeDemo::-webkit-scrollbar {
+	width:0px;
+	height:0px;
+}
+/*o鍐呮牳*/
+#treeDemo .-o-scrollbar{
+	-moz-appearance: none !important;
+	background: rgba(0,255,0,0) !important;
+}
+#treeDemo::-o-scrollbar-button    {
+	background-color:rgba(0,0,0,0);
+}
+#treeDemo::-o-scrollbar-track     {
+	background-color:rgba(0,0,0,0);
+}
+#treeDemo::-o-scrollbar-track-piece {
+	background-color:rgba(0,0,0,0);
+}
+#treeDemo::-o-scrollbar-thumb{
+	background-color:rgba(0,0,0,0);
+}
+#treeDemo::-o-scrollbar-corner {
+	background-color:rgba(0,0,0,0);
+}
+#treeDemo::-o-scrollbar-resizer  {
+	background-color:rgba(0,0,0,0);
+}
+/*IE10,IE11,IE12*/
+#treeDemo{
+	-ms-scroll-chaining: chained;
+	-ms-overflow-style: none;
+	-ms-content-zooming: zoom;
+	-ms-scroll-rails: none;
+	-ms-content-zoom-limit-min: 100%;
+	-ms-content-zoom-limit-max: 500%;
+	-ms-scroll-snap-type: proximity;
+	-ms-scroll-snap-points-x: snapList(100%, 200%, 300%, 400%, 500%);
+	-ms-overflow-style: none;
+	overflow: auto;
+	margin: 0 auto;
+	margin-top: 15px;
+	width: 300px;
+	border: 1px solid rgb(222,222,222);
+}

@@ -1,0 +1,37 @@
+
+.ui-jqgrid-titlebar{
+    display: none;
+}
+.ui-search-clear,.ui-search-oper{
+    display: none;
+}
+.ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td{
+    line-height: normal !important;
+    vertical-align: middle !important;
+    padding: 8px 8px 8px 8px  !important;	
+}
+#pg_pager2 .table td,#pg_pager2 .table th{
+    padding: 4px;
+}
+.ui-sortable th{
+    background: #F4F4F4;
+    padding: 8px !important;
+}
+#list2,#pager2{
+    font-size: 12px !important;
+}
+.ui-search-input input{ 
+    font-size: 12px !important;
+    padding: 3px 25px 3px 8px !important;
+} 
+.ui-jqgrid-labels{
+    font-size: 13px;
+    font-weight: bold;
+}
+.ui-pg-input,.ui-pg-selbox{
+    border: 1px solid #ccc;
+    padding:3px 5px !important;
+}
+.ui-jqgrid .ui-jqgrid-pager .ui-pager-table, .ui-jqgrid .ui-jqgrid-toppager .ui-pager-table{
+	height: auto;
+}

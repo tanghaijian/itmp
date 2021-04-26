@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblDevTaskLogMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblDevTaskLog">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="DEV_TASK_ID" jdbcType="BIGINT" property="devTaskId" />
+    <result column="LOG_TYPE" jdbcType="VARCHAR" property="logType" />
+    <result column="LOG_DETAIL" jdbcType="VARCHAR" property="logDetail" />
+    <result column="USER_ID" jdbcType="BIGINT" property="userId" />
+    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+    <result column="USER_ACCOUNT" jdbcType="VARCHAR" property="userAccount" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, DEV_TASK_ID, LOG_TYPE, LOG_DETAIL, USER_ID, USER_NAME, USER_ACCOUNT, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  <!--根据id查询-->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_dev_task_log
+    where DEV_TASK_ID = #{id,jdbcType=BIGINT}
+    order by id desc
+  </select>
+  <!-- 新增开发工作任务日志 -->
+  <insert id="insertAdd" parameterType="cn.pioneeruniverse.dev.entity.TblDevTaskLog">
+    insert into tbl_dev_task_log (DEV_TASK_ID, LOG_TYPE, 
+      LOG_DETAIL, USER_ID, USER_NAME, 
+      USER_ACCOUNT,
+       CREATE_BY, CREATE_DATE
+    )
+    values (#{devTaskId,jdbcType=BIGINT}, #{logType,jdbcType=VARCHAR}, 
+      #{logDetail,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, 
+      #{userAccount,jdbcType=VARCHAR},
+      #{createBy,jdbcType=BIGINT}, CURRENT_TIMESTAMP 
+      )
+  </insert>
+  
+  <!-- 新增开发工作任务日志 -->
+  <insert id="insertDefectLog" parameterType="cn.pioneeruniverse.dev.entity.TblDevTaskLog" useGeneratedKeys="true" keyProperty="id">
+    insert into tbl_dev_task_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="devTaskId != null">
+        DEV_TASK_ID,
+      </if>
+      <if test="logType != null">
+        LOG_TYPE,
+      </if>
+      <if test="userId != null">
+        USER_ID,
+      </if>
+      <if test="userName != null">
+        USER_NAME,
+      </if>
+      <if test="userAccount != null">
+        USER_ACCOUNT,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+      <if test="logDetail != null">
+        LOG_DETAIL,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="devTaskId != null">
+        #{devTaskId,jdbcType=BIGINT},
+      </if>
+      <if test="logType != null">
+        #{logType,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userAccount != null">
+        #{userAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="logDetail != null">
+        #{logDetail,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 更新开发工作任务日志内容 -->
+  <update id="updateLogById" parameterType="cn.pioneeruniverse.dev.entity.TblDevTaskLog">
+    update tbl_dev_task_log
+    <set>
+      <if test="logDetail != null">
+        LOG_DETAIL = #{logDetail,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+ 
+</mapper>

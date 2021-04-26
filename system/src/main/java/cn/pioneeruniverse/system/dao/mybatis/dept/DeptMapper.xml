@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.system.dao.mybatis.dept.DeptDao">
+
+    <sql id="baseColumn">
+  ID,
+  DEPT_NAME,
+  DEPT_NUMBER,
+  PARENT_DEPT_NUMBER,
+  PARENT_DEPT_ID,
+  PARENT_DEPT_IDS,
+  STATUS,
+  CREATE_BY,
+  CREATE_DATE,
+  LAST_UPDATE_BY,
+  LAST_UPDATE_DATE
+</sql>
+<!-- 通过部门名获取部门信息 -->
+	<select id="getDeptByDeptName" parameterType="cn.pioneeruniverse.system.entity.TblDeptInfo" resultType="cn.pioneeruniverse.system.entity.TblDeptInfo">
+		select ID id,DEPT_NAME deptName
+		from TBL_DEPT_INFO
+		where STATUS = 1 
+		<if test="deptName!=null and deptName!=''">
+			 and DEPT_NAME like concat("%",LOWER(#{deptName}),"%")
+		</if>
+		
+	</select>
+	<!-- 获取所有有效的部门 -->
+    <select id="getAllDept" resultMap="deptResultWithNoChild">
+      SELECT
+        ID,
+        DEPT_NAME
+      FROM TBL_DEPT_INFO
+      WHERE `STATUS` = 1
+    </select>
+<!-- 获取所有有效的部门 -->
+    <select id="getAllDeptInfo" resultMap="deptDTOResult">
+        SELECT <include refid="baseColumn"/>
+         FROM TBL_DEPT_INFO
+         WHERE STATUS = 1
+    </select>
+<!-- 通过编码获取部门 -->
+    <select id="getDeptByCode" parameterType="java.lang.String" resultMap="deptResultWithNoChild">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        tbl_dept_info
+        WHERE
+        DEPT_NUMBER = #{depCode}
+        AND `STATUS` = 1
+    </select>
+    
+    <!-- 通过ID获取部门 -->
+    <select id="selectDeptById" parameterType="Long" resultMap="deptResultWithNoChild">
+		SELECT
+        <include refid="baseColumn"/>
+        FROM
+        tbl_dept_info
+        WHERE
+        ID = #{id}
+        AND `STATUS` = 1
+	</select>
+	
+	
+	
+	
+	<!-- 获取部门分页 -->
+	 <select id="getAllDeptByPage" parameterType="map" resultMap="deptResultWithNoChild">
+        SELECT <include refid="baseColumn"/>
+         FROM TBL_DEPT_INFO tdi
+          <where>
+            <if test="dept.deptName != null and dept.deptName!= ''">
+                AND tdi.DEPT_NAME LIKE CONCAT('%',#{dept.deptName},'%')
+            </if>
+            <if test="dept.deptNumber != null and dept.deptNumber != ''">
+                AND tdi.DEPT_NUMBER LIKE CONCAT('%',#{dept.deptNumber},'%')
+            </if>
+            and tdi.status = 1
+        </where>
+         
+         <if test="start != null and pageSize != null">
+            LIMIT #{start},#{pageSize}
+        </if>
+         
+    </select>
+	
+	
+	
+	<!-- 保存部门 -->
+    <insert id="insertDept" parameterType="cn.pioneeruniverse.system.entity.TblDeptInfo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_dept_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="deptName != null">
+                DEPT_NAME,
+            </if>
+            <if test="deptNumber != null">
+                DEPT_NUMBER,
+            </if>
+            <if test="parentDeptNumber != null">
+                PARENT_DEPT_NUMBER,
+            </if>           
+            <if test="parentDeptId != null">
+                PARENT_DEPT_ID,
+            </if>
+            <if test="parentDeptIds != null">
+                PARENT_DEPT_IDS,
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY,
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="deptName != null">
+                #{deptName,jdbcType=VARCHAR},
+            </if>
+            <if test="deptNumber != null">
+                #{deptNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="parentDeptNumber != null">
+                #{parentDeptNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="parentDeptId != null">
+                #{parentDeptId,jdbcType=BIGINT},
+            </if>
+            <if test="parentDeptIds != null">
+                #{parentDeptIds,jdbcType=VARCHAR},
+            </if>
+            <if test="lastUpdateBy != null">
+                #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>	
+
+    <resultMap type="cn.pioneeruniverse.system.entity.TblDeptInfo" id="deptResultWithNoChild">
+        <id column="ID" property="id"/>
+        <result column="DEPT_NAME" property="deptName"/>
+        <result column="DEPT_NUMBER" property="deptNumber"/>
+        <result column="PARENT_DEPT_NUMBER" property="parentDeptNumber"/>
+        <result column="PARENT_DEPT_ID" property="parentDeptId"/>
+        <result column="PARENT_DEPT_IDS" property="parentDeptIds"/>
+        <result column="STATUS" property="status"/>
+        <result column="CREATE_BY" property="createBy"/>
+        <result column="CREATE_DATE" property="createDate"/>
+        <result column="LAST_UPDATE_BY" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate"/>
+    </resultMap>
+
+    <resultMap type="cn.pioneeruniverse.common.dto.TblDeptInfoDTO" id="deptDTOResult" extends="deptResultWithNoChild">
+    </resultMap>
+
+
+</mapper>

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="cn.pioneeruniverse.project.dao.mybatis.NewProjectMapper">
+	<resultMap id="BaseResultMap"
+		type="cn.pioneeruniverse.project.entity.TblProjectInfo">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="PROJECT_NAME" jdbcType="VARCHAR" property="projectName" />
+		<result column="PROJECT_CODE" jdbcType="VARCHAR" property="projectCode" />
+		<result column="PROJECT_TYPE" jdbcType="TINYINT" property="projectType" />
+		<result column="PROJECT_CLASS" jdbcType="TINYINT" property="projectClass" />
+		<result column="DEVELOPMENT_MODE" jdbcType="TINYINT" property="developmentMode" />
+		<result column="PROJECT_STATUS" jdbcType="TINYINT" property="projectStatus" />
+		<result column="APPROVAL_DATE" jdbcType="DATE" property="approvalDate" />
+		<result column="CLOSE_DATE" jdbcType="DATE" property="closeDate" />
+		<result column="LONG_TIME_STATUS" jdbcType="TINYINT" property="longTimeStatus" />
+		<result column="PLAN_START_DATE" jdbcType="DATE" property="planStartDate" />
+		<result column="PLAN_END_DATE" jdbcType="DATE" property="planEndDate" />
+		<result column="PLAN_COMMISSIONING_DATE" jdbcType="DATE" property="planCommissioningDate" />
+		<result column="PROJECT_PLAN_NUMBER" jdbcType="INTEGER" property="projectPlanNumber" />
+		<result column="PROJECT_PLAN_STATUS" jdbcType="TINYINT" property="projectPlanStatus" />
+		<result column="DEPT_ID" jdbcType="BIGINT" property="deptId" />
+		<result column="BUSINESS_DEPT_ID" jdbcType="BIGINT" property="businessDeptId" />
+		<result column="BUDGET_REMARK" jdbcType="VARCHAR" property="budgetRemark" />
+		<result column="BUDGET_NUMBER" jdbcType="VARCHAR" property="budgetNumber" />
+		<result column="MANAGER_USER_ID" jdbcType="BIGINT" property="managerUserId" />
+		<result column="PROJECT_OVERVIEW" jdbcType="VARCHAR" property="projectOverview" />
+		<result column="PROJECT_SCOPE" jdbcType="VARCHAR" property="projectScope" />
+		<result column="PROJECT_BACKGROUND" jdbcType="VARCHAR" property="projectBackground" />
+		<result column="STATUS" jdbcType="TINYINT" property="status" />
+		<result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+		<result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+		<result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+		<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+
+	</resultMap>
+	<!-- <sql id="Base_Column_List">
+		ID, PROJECT_NAME, PROJECT_CODE, PROJECT_TYPE, PROJECT_STATUS,
+		APPROVAL_DATE,LONG_TIME_STATUS, PLAN_START_DATE, PLAN_END_DATE,
+		PLAN_COMMISSIONING_DATE, DEPT_ID, MANAGER_USER_ID, PROJECT_OVERVIEW,
+		STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+	</sql> -->
+	
+	<!-- 系统管理员 -->
+	<select id="getAllNewProject" parameterType="map" resultMap="BaseResultMap">
+		select distinct
+		project.ID , project.PROJECT_NAME , project.PROJECT_CODE , project.PROJECT_TYPE , project.PROJECT_CLASS,
+		project.PROJECT_STATUS , project.PLAN_START_DATE , project.PLAN_END_DATE ,
+		project.DEPT_ID , dept.DEPT_NAME deptName ,project.DEVELOPMENT_MODE
+		from  tbl_project_info project
+		left join tbl_dept_info dept on dept.ID = project.DEPT_ID
+		left join tbl_project_group tpg on tpg.PROJECT_ID = project.ID and project.PROJECT_TYPE = 2
+		left join tbl_project_group_user tpgu on tpgu.PROJECT_GROUP_ID = tpg.ID
+		left join tbl_project_system prosys on prosys.PROJECT_ID = project.ID and prosys.RELATION_TYPE = 1 and prosys.STATUS = 1
+		<where>
+			<if test="projectInfo.projectCode != null and projectInfo.projectCode != ''">
+				and project.PROJECT_CODE like concat("%",#{projectInfo.projectCode,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="projectInfo.projectName != null and projectInfo.projectName != ''">
+				and project.PROJECT_NAME like concat("%",#{projectInfo.projectName,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="projectInfo.projectClass != null and projectInfo.projectClass != ''">
+				and project.PROJECT_CLASS = #{projectInfo.projectClass,jdbcType=TINYINT} 
+			</if>
+			<if test="projectInfo.projectStatus != null and projectInfo.projectStatus != ''">
+				and project.PROJECT_STATUS = #{projectInfo.projectStatus,jdbcType=TINYINT} 
+			</if>
+			<if test="projectInfo.planStartDate != null">
+				and project.PLAN_START_DATE &gt;= #{projectInfo.planStartDate,jdbcType=DATE} 
+			</if>
+			<if test="projectInfo.planEndDate != null">
+				and project.PLAN_END_DATE &lt;= #{projectInfo.planEndDate,jdbcType=DATE} 
+			</if>
+			<if test="projectInfo.managerUserId != null and projectInfo.managerUserId != ''">
+				and project.MANAGER_USER_ID = #{projectInfo.managerUserId,jdbcType=BIGINT}
+			</if>
+			<!-- <if test="projectInfo.projectUserIds != null and projectInfo.projectUserIds != ''">
+				and tpgu.USER_ID in 
+				<foreach collection="projectInfo.projectUserIds.split(',')" index="index" item="item" open="(" separator="," close=")">
+               	#{item}
+            	</foreach>
+			</if> -->
+			<if test="projectInfo.developmentMode != null and projectInfo.developmentMode != ''">
+				and project.DEVELOPMENT_MODE = #{projectInfo.developmentMode,jdbcType=TINYINT}
+			</if>
+			<if test="projectInfo.systemId != null and projectInfo.systemId != ''">
+				and prosys.SYSTEM_ID = #{projectInfo.systemId}
+			</if>
+			and project.PROJECT_TYPE = 2
+			and project.STATUS = 1
+		</where>
+		order by project.ID DESC
+		limit #{start},#{rows}
+	</select>
+	
+	<select id="getNewProjectByUid" parameterType="map" resultMap="BaseResultMap">
+		select distinct
+		project.ID , project.PROJECT_NAME , project.PROJECT_CODE , project.PROJECT_TYPE , project.PROJECT_CLASS,
+		project.PROJECT_STATUS , project.PLAN_START_DATE , project.PLAN_END_DATE ,
+		project.DEPT_ID , dept.DEPT_NAME deptName ,project.DEVELOPMENT_MODE
+		from 
+		tbl_project_info project
+		left join tbl_dept_info dept on dept.ID = project.DEPT_ID
+		left join tbl_project_group tpg on tpg.PROJECT_ID = project.ID and project.PROJECT_TYPE = 2
+		left join tbl_project_group_user tpgu on tpgu.PROJECT_GROUP_ID = tpg.ID
+		left join tbl_project_system prosys on prosys.PROJECT_ID = project.ID and prosys.RELATION_TYPE = 1 and prosys.STATUS = 1
+		<where>
+			<if test="uid!=null and uid!=''">
+				and (tpgu.USER_ID = #{uid} or project.CREATE_BY = #{uid} or project.MANAGER_USER_ID = #{uid})
+			</if>
+			<if test="projectInfo.projectCode != null and projectInfo.projectCode != ''">
+				and project.PROJECT_CODE like concat("%",#{projectInfo.projectCode,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="projectInfo.projectName != null and projectInfo.projectName != ''">
+				and project.PROJECT_NAME like concat("%",#{projectInfo.projectName,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="projectInfo.projectClass != null and projectInfo.projectClass != ''">
+				and project.PROJECT_CLASS = #{projectInfo.projectClass,jdbcType=TINYINT} 
+			</if>
+			<if test="projectInfo.projectStatus != null and projectInfo.projectStatus != ''">
+				and project.PROJECT_STATUS = #{projectInfo.projectStatus,jdbcType=TINYINT} 
+			</if>
+			<if test="projectInfo.planStartDate != null">
+				and project.PLAN_START_DATE &gt;= #{projectInfo.planStartDate,jdbcType=DATE} 
+			</if>
+			<if test="projectInfo.planEndDate != null">
+				and project.PLAN_END_DATE &lt;= #{projectInfo.planEndDate,jdbcType=DATE} 
+			</if>
+			<if test="projectInfo.managerUserId != null and projectInfo.managerUserId != ''">
+				and project.MANAGER_USER_ID = #{projectInfo.managerUserId,jdbcType=BIGINT}
+			</if>
+			<!-- <if test="projectInfo.projectUserIds != null and projectInfo.projectUserIds != ''">
+				and tpgu.USER_ID in 
+				<foreach collection="projectInfo.projectUserIds.split(',')" index="index" item="item" open="(" separator="," close=")">
+               	#{item}
+            	</foreach>
+			</if> -->
+			<if test="projectInfo.developmentMode != null and projectInfo.developmentMode != ''">
+				and project.DEVELOPMENT_MODE = #{projectInfo.developmentMode,jdbcType=TINYINT}
+			</if>
+			<if test="projectInfo.systemId != null and projectInfo.systemId != ''">
+				and prosys.SYSTEM_ID = #{projectInfo.systemId}
+			</if>
+			
+			and project.PROJECT_TYPE = 2
+			and project.STATUS = 1
+		</where>
+		order by project.ID DESC
+		limit #{start},#{rows}
+	</select>
+	
+	<select id="getNewProjectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select project.*, dept.DEPT_NUMBER deptNumber, dept2.DEPT_NUMBER businessDeptNumber, user.USER_NAME managerUserName
+			from tbl_project_info project 
+			left join tbl_dept_info dept on dept.ID = project.DEPT_ID
+			left join tbl_dept_info dept2 on dept2.ID = project.BUSINESS_DEPT_ID 
+			left join tbl_user_info user on user.ID = project.MANAGER_USER_ID
+			where project.ID = #{id}
+	</select>
+	
+	<select id="getCountNewProject" resultType="long">
+		select count(*) from tbl_project_info where PROJECT_TYPE = 2
+	</select>
+	
+	<insert id="insertNewProject" useGeneratedKeys="true" keyProperty="id" parameterType="cn.pioneeruniverse.project.entity.TblProjectInfo">
+		insert into tbl_project_info (PROJECT_NAME, PROJECT_CODE, PROJECT_TYPE, PROJECT_CLASS, DEVELOPMENT_MODE, PROJECT_STATUS,
+			APPROVAL_DATE, CLOSE_DATE, LONG_TIME_STATUS, PLAN_START_DATE, PLAN_END_DATE, PLAN_COMMISSIONING_DATE, PROJECT_PLAN_NUMBER,
+			PROJECT_PLAN_STATUS, DEPT_ID, BUSINESS_DEPT_ID, BUDGET_REMARK, BUDGET_NUMBER, MANAGER_USER_ID, PROJECT_OVERVIEW, 
+			PROJECT_SCOPE, PROJECT_BACKGROUND, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE)
+			values
+			(#{projectName}, #{projectCode}, #{projectType}, #{projectClass}, #{developmentMode}, #{projectStatus}, #{approvalDate},
+			#{closeDate}, #{longTimeStatus}, #{planStartDate}, #{planEndDate}, #{planCommissioningDate}, #{projectPlanNumber},
+			#{projectPlanStatus}, #{deptId}, #{businessDeptId}, #{budgetRemark}, #{budgetNumber}, #{managerUserId}, #{projectOverview},
+			#{projectScope}, #{projectBackground}, #{status}, #{createBy}, #{createDate}, #{lastUpdateBy}, #{lastUpdateDate})
+	</insert>
+	
+	<select id="getNewProjectByPage"  parameterType="map" resultMap="BaseResultMap">
+		select project.*, dept.DEPT_NAME deptName from tbl_project_info project
+		left join tbl_dept_info dept on dept.ID = project.DEPT_ID
+		<where>
+		 	<if test="projectSearchInfo.projectCode != null and projectSearchInfo.projectCode != ''">
+				project.PROJECT_CODE like concat("%",#{projectSearchInfo.projectCode,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="projectSearchInfo.projectName != null and projectSearchInfo.projectName != ''">
+				and project.PROJECT_NAME like concat("%",#{projectSearchInfo.projectName,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="projectSearchInfo.deptName != null and projectSearchInfo.deptName != ''">
+				and dept.DEPT_NAME like concat("%",#{projectSearchInfo.deptName,jdbcType=VARCHAR},"%")
+			</if>
+	 		and project.STATUS = 1 
+		 	and project.PROJECT_TYPE = 2 
+		 	and project.PROJECT_STATUS in (1,2,3)
+		</where>
+		 <!-- where project.STATUS = 1 
+		 	and project.PROJECT_TYPE = 2 
+		 	and project.PROJECT_STATUS in (1,2,3)
+		 	and project.PROJECT_CODE = #{projectCode} 
+		 	and project.PROJECT_NAME = #{projectName} 
+		 	and dept.DEPT_NAME = #{deptName} -->
+		limit #{start}, #{pageSize}
+	</select>
+	
+	<update id="updateNewProject" parameterType="cn.pioneeruniverse.project.entity.TblProjectInfo">
+		update tbl_project_info set PROJECT_NAME = #{projectName}, PROJECT_CLASS = #{projectClass}, DEVELOPMENT_MODE = #{developmentMode},
+			CLOSE_DATE = #{closeDate}, PLAN_START_DATE = #{planStartDate}, PLAN_END_DATE = #{planEndDate}, DEPT_ID = #{deptId},
+			BUSINESS_DEPT_ID = #{businessDeptId}, BUDGET_REMARK = #{budgetRemark}, BUDGET_NUMBER = #{budgetNumber}, MANAGER_USER_ID = #{managerUserId},
+			PROJECT_SCOPE = #{projectScope}, PROJECT_BACKGROUND = #{projectBackground}, LAST_UPDATE_BY = #{lastUpdateBy}, LAST_UPDATE_DATE = #{lastUpdateDate}
+			where ID = #{id}
+	</update>
+	
+	<select id="getProjectCodeById" parameterType="java.lang.Long" resultType="string">
+		select PROJECT_CODE from tbl_project_info where ID = #{id}
+	</select>
+	
+</mapper>

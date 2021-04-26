@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <title>计划管理</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+  <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+  <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+  <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+  <link rel=stylesheet href="#springUrl('')/projectManageui/static/css/newProject/gantt/platform.css">
+  <link rel=stylesheet href="#springUrl('')/projectManageui/static/css/newProject/gantt/jquery.dateField.css" type="text/css">
+  <link rel=stylesheet href="#springUrl('')/projectManageui/static/css/newProject/gantt/gantt.css" type="text/css">
+  <link rel=stylesheet href="#springUrl('')/projectManageui/static/css/newProject/gantt/ganttPrint.css" type="text/css" media="print">
+  <link rel=stylesheet href="#springUrl('')/projectManageui/static/css/newProject/gantt/mb.slider.css" type="text/css" media="print">
+  <link href="#springUrl('')/projectManageui/static/css/newProject/plan_chart.css" type="text/css" rel="stylesheet" />
+
+  <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+  <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+  <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+  <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/jquery/jquery.livequery.1.1.1.min.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/jquery/jquery.timers.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/utilities.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/forms.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/date.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/dialogs.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/layout.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/i18nJs.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/jquery/dateField/jquery.dateField.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/jquery/JST/jquery.JST.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/jquery/valueSlider/jquery.mb.slider.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/jquery/svg/jquery.svg.min.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/jquery/svg/jquery.svgdom.1.8.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/ganttUtilities.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/ganttTask.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/ganttDrawerSVG.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/ganttZoom.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/ganttGridEditor.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/ganttMaster.js"></script>
+  <script type="text/javascript" src="#springUrl('')/systemui/static/js/common/fuzzy_serach.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/gantt.js"></script>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/planChart.js"></script>
+</head>
+
+<body>
+  <input type="hidden" id="project_id" value="$!id" />
+  <input type="hidden" id="project_name" value="$!name" />
+  <input type="hidden" id="approveRequestId" />
+  <input type="hidden" id="requestUserId" value="$!requestUserId" />
+  <input type="hidden" id="plan_Status" />
+  <input type="hidden" id="plan_version" />
+  <input type="hidden" id="current_userId" />
+  <input type="hidden" id="approve_user_id" />
+  
+  <!-- 正式版 -->
+  <div class="p_10 flex bor_b justify_c_b">
+    <div class="flex items_c relative">
+      <img class="img" id="u504_img" src="#springUrl('')/projectManageui/static/images/detail/u504.png">
+      <h5 class="bold p_l_10" id="projectName">
+        <span id="projectName">$!name</span>：计划与进度管理（<span id="version_id"></span>）
+      </h5>
+      <a class="a_style red _hide" href="#" id="official_status" onclick="version_logs()">点此查看计划变更历史>>></a>
+      <ul class="absolute" id="show_version_logs"></ul>
+    </div>
+    <button class="btn btn-primary _hide" id="tab_check_List" onclick="to_check_List()">切换视图</button>
+  </div>
+  ## 状态区
+  <div class="rowdiv version_status">
+    <div class="def_col_35">
+      <h5 class="red p_l_20 _hide" id="draft_status">
+        <i class="fa fa-info-circle red" aria-hidden="true"></i>
+        该项目计划为草稿状态，尚未正式提交，【确认提交】后项目计划状态为“正式”
+      </h5>
+      <h5 class="red p_l_20 flex items_c  _hide" id="approve_status">
+        <i class="fa fa-info-circle red" aria-hidden="true"></i>
+        有对该项目计划的变更审批中,在此期间无法对现有项目计划再做修改，
+        <a href="#" class="red text_d" onclick="approve_log()">点此查看审批情况>>></a> 
+      </h5>
+      <h5 class="red p_l_20 flex items_c  _hide" id="update_status">
+        <i class="fa fa-info-circle red" aria-hidden="true"></i>
+        该视图为待变更审批的项目计划。点击【返回】按钮，查看正式项目计划；点击【取消修改】按钮，取消修改内容，恢复为上次确认的状态；点击【提交变更】按钮，将本次所有修改内容提交变更审批，审批完成后将正式更新项目计划。
+        您也可以继续修改项目计划内容，所有修改内容将一次性提交变更审批。
+      </h5>
+      <h5 class="red p_l_20 flex items_c  _hide" id="modifying_status">
+        <i class="fa fa-info-circle red" aria-hidden="true"></i>
+        有对该项目计划的修改，点击【确认提交】按钮，将本次所有修改内容提交成正式版本更新项目计划。
+      </h5>
+      <h5 class="red p_l_20 flex items_c  _hide" id="modifying_status2">
+        <i class="fa fa-info-circle red" aria-hidden="true"></i>
+        有对该项目计划的修改，点击【提交变更】按钮，将本次所有修改内容提交变更审批，审批完成后将正式更新项目计划。
+      </h5>
+    </div>
+  </div>
+  
+  <!-- 甘特图 -->
+  <div class="rowdiv m_10">
+    
+
+    <div id="workSpace" style="background: #fff;padding:0px; overflow-y:auto; overflow-x:hidden;border:1px solid #e5e5e5;position:relative;margin:20px;margin-top: 0;">
+    </div>
+
+    <div id="gantEditorTemplates" style="display:none;">
+      <div class="__template__" type="GANTBUTTONS"><!--
+        <div class="ganttButtonBar noprint">
+          <div class="buttons">
+            <button onclick="$('#workSpace').trigger('undo.gantt');return false;" class="button textual icon requireCanWrite" title="撤销"><span class="teamworkIcon">&#39;</span></button>
+            <button onclick="$('#workSpace').trigger('redo.gantt');return false;" class="button textual icon requireCanWrite" title="恢复"><span class="teamworkIcon">&middot;</span></button>
+            <span class="ganttButtonSeparator requireCanWrite requireCanAdd"></span>
+            <button onclick="$('#workSpace').trigger('addAboveCurrentTask.gantt');return false;" class="button textual icon requireCanWrite requireCanAdd" title="前插入"><span class="teamworkIcon">l</span></button>
+            <button onclick="$('#workSpace').trigger('addBelowCurrentTask.gantt');return false;" class="button textual icon requireCanWrite requireCanAdd" title="后插入"><span class="teamworkIcon">X</span></button>
+            <span class="ganttButtonSeparator requireCanWrite requireCanInOutdent"></span>
+            <button onclick="$('#workSpace').trigger('outdentCurrentTask.gantt');return false;" class="button textual icon requireCanWrite requireCanInOutdent" title="升级"><span class="teamworkIcon">.</span></button>
+            <button onclick="$('#workSpace').trigger('indentCurrentTask.gantt');return false;" class="button textual icon requireCanWrite requireCanInOutdent" title="降级"><span class="teamworkIcon">:</span></button>
+            <span class="ganttButtonSeparator requireCanWrite requireCanMoveUpDown"></span>
+            <button onclick="$('#workSpace').trigger('moveUpCurrentTask.gantt');return false;" class="button textual icon requireCanWrite requireCanMoveUpDown" title="前移"><span class="teamworkIcon">k</span></button>
+            <button onclick="$('#workSpace').trigger('moveDownCurrentTask.gantt');return false;" class="button textual icon requireCanWrite requireCanMoveUpDown" title="后移"><span class="teamworkIcon">j</span></button>
+            <span class="ganttButtonSeparator requireCanWrite requireCanDelete"></span>
+            <button onclick="$('#workSpace').trigger('deleteFocused.gantt');return false;" class="button textual icon delete requireCanWrite" title="删除"><span class="teamworkIcon">&cent;</span></button>
+            <span class="ganttButtonSeparator"></span>
+            <button onclick="$('#workSpace').trigger('expandAll.gantt');return false;" class="button textual icon " title="展开"><span class="teamworkIcon">6</span></button>
+            <button onclick="$('#workSpace').trigger('collapseAll.gantt'); return false;" class="button textual icon " title="收起"><span class="teamworkIcon">5</span></button>
+
+          <span class="ganttButtonSeparator"></span>
+            <button onclick="$('#workSpace').trigger('zoomMinus.gantt'); return false;" class="button textual icon " title="缩小日历"><span class="teamworkIcon">)</span></button>
+            <button onclick="$('#workSpace').trigger('zoomPlus.gantt');return false;" class="button textual icon " title="放大日历"><span class="teamworkIcon">(</span></button>
+          <span class="ganttButtonSeparator"></span>
+            <button onclick="$('#workSpace').trigger('print.gantt');return false;" class="button textual icon " title="打印"><span class="teamworkIcon">p</span></button>
+          <span class="ganttButtonSeparator requireCanSeeCriticalPath"></span>
+            <button onclick="ge.splitter.resize(.1);return false;" class="button textual icon"   title="日历移到左边"><span class="teamworkIcon">F</span></button>
+            <button onclick="ge.splitter.resize(50);return false;" class="button textual icon"   title="日历移到中间"><span class="teamworkIcon">O</span></button>
+            <button onclick="ge.splitter.resize(100);return false;" class="button textual icon"  title="日历移到右边"><span class="teamworkIcon">R</span></button>
+            <span class="ganttButtonSeparator"></span>
+          <button onclick="editResources();" class="button textual requireWrite _hide" title="操作责任人" id="editResources"><span class="teamworkIcon">M</span></button>
+            &nbsp; &nbsp; &nbsp; &nbsp;
+          <button onclick="saveLocalStorage();" class="button big requireWrite btn btn-default submit_btn" disabled="true">暂&nbsp;&nbsp;&nbsp;&nbsp;存</button>
+          <button onclick='confirm_submit();' class='btn btn-primary submit_btn' disabled="true">确认提交</button>
+          <button class='btn btn-primary _hide update_btn' onclick="confirm_submit()">提交变更</button>
+          <button class='btn btn-danger _hide update_btn' onclick='off_update_approve()'>取消修改</button>
+          <button class="button big requireWrite btn btn-default _hide update_btn" onclick="back_history_version()">返&nbsp;&nbsp;&nbsp;&nbsp;回</button>
+          </div></div>
+        --></div>
+
+      <div class="__template__" type="TASKSEDITHEAD"><!--
+        <table class="gdfTable" cellspacing="0" cellpadding="0">
+          <thead>
+          <tr style="height:40px">
+            <th class="gdfColHeader" style="width:35px; border-right: none"></th>
+            <th class="gdfColHeader" style="width:25px;"></th>
+            <th class="gdfColHeader gdfResizable" style="width:100px;">编号</th>
+            <th class="gdfColHeader gdfResizable" style="width:200px;">名称</th>
+            <th class="gdfColHeader"  align="center" style="width:20px;" title="Start date is a milestone."><span class="teamworkIcon" style="font-size: 8px;">^</span></th>
+            <th class="gdfColHeader gdfResizable" style="width:90px;">开始</th>
+            <th class="gdfColHeader"  align="center" style="width:20px;" title="End date is a milestone."><span class="teamworkIcon" style="font-size: 8px;">^</span></th>
+            <th class="gdfColHeader gdfResizable" style="width:90px;">结束</th>
+            <th class="gdfColHeader gdfResizable" style="width:80px;">工期</th>
+            <th class="gdfColHeader gdfResizable" style="width:80px;">完成百分比</th>
+            <th class="gdfColHeader gdfResizable" style="width:500px;">成果物</th>
+          </tr>
+          </thead>
+        </table>
+        --></div>
+
+      <div class="__template__" type="TASKROW">
+        <!--<tr id="tid_(#=obj.id#)" taskId="(#=obj.id#)" class="taskEditRow (#=obj.isParent()?'isParent':''#) (#=obj.collapsed?'collapsed':''#)" level="(#=level#)">
+          <th class="gdfCell edit" align="right" style="cursor:pointer;">
+            <span class="taskRowIndex">(#=obj.getRow()+1#)</span> 
+            <span class="teamworkIcon" style="font-size:12px;" >e</span>
+          </th>
+          <td class="gdfCell noClip" align="center">
+            <div class="taskStatus cvcColorSquare" status="(#=obj.status#)"></div>
+          </td>
+          <td class="gdfCell">
+            <input type="text" name="code" value="(#=obj.code?obj.code:''#)">
+          </td>
+          <td class="gdfCell indentCell" style="padding-left:(#=obj.level*10+18#)px;">
+            <div class="exp-controller" align="center"></div>
+            <input type="text" name="name" value="(#=obj.name#)">
+          </td>
+          <td class="gdfCell" align="center"><input type="checkbox" name="startIsMilestone"></td>
+          <td class="gdfCell"><input type="text" name="start"  value="" class="date"></td>
+          <td class="gdfCell" align="center"><input type="checkbox" name="endIsMilestone"></td>
+          <td class="gdfCell"><input type="text" name="end" value="" class="date"></td>
+          <td class="gdfCell"><input type="text" name="duration" autocomplete="off" value="(#=obj.duration#)"></td>
+          <td class="gdfCell">
+            <input type="text" name="progress" class="validated"maxlength=3 entrytype="PERCENTILE" autocomplete="off" 
+              value="(#=obj.progress?obj.progress:''#)" (#=obj.progressByWorklog?"readOnly":""#)>
+          </td>
+          <td class="gdfCell" title="(#=obj.description#)">
+            <input type="text" name="description" autocomplete="off" value="(#=obj.description#)">
+          </td>
+        </tr>-->
+      </div>
+
+      <div class="__template__" type="TASKEMPTYROW"><!--
+        <tr class="taskEditRow emptyRow" >
+          <th class="gdfCell" align="right"></th>
+          <td class="gdfCell noClip" align="center"></td>
+          <td class="gdfCell"></td>
+          <td class="gdfCell"></td>
+          <td class="gdfCell"></td>
+          <td class="gdfCell"></td>
+          <td class="gdfCell"></td>
+          <td class="gdfCell"></td>
+          <td class="gdfCell"></td>
+          <td class="gdfCell"></td>
+          <td class="gdfCell requireCanSeeDep"></td>
+        </tr>
+        --></div>
+
+      <div class="__template__" type="TASKBAR"><!--
+        <div class="taskBox taskBoxDiv" taskId="(#=obj.id#)" >
+          <div class="layout (#=obj.hasExternalDep?'extDep':''#)">
+            <div class="taskStatus" status="(#=obj.status#)"></div>
+            <div class="taskProgress" style="width:(#=obj.progress>100?100:obj.progress#)%; background-color:(#=obj.progress>100?'red':'rgb(153,255,51);'#);"></div>
+            <div class="milestone (#=obj.startIsMilestone?'active':''#)" ></div>
+
+            <div class="taskLabel"></div>
+            <div class="milestone end (#=obj.endIsMilestone?'active':''#)" ></div>
+          </div>
+        </div>
+        --></div>
+
+
+      <div class="__template__" type="CHANGE_STATUS">
+        <!--
+          <div class="taskStatusBox">
+          <div class="taskStatus cvcColorSquare" status="STATUS_ACTIVE" title="Active"></div>
+          <div class="taskStatus cvcColorSquare" status="STATUS_WAITING" title="Waiting"></div>
+          <div class="taskStatus cvcColorSquare" status="STATUS_SUSPENDED" title="Suspended"></div>
+          <div class="taskStatus cvcColorSquare" status="STATUS_FAILED" title="Failed"></div>
+          <div class="taskStatus cvcColorSquare" status="STATUS_DONE" title="done"></div>
+          </div>
+        -->
+      </div>
+      <div class="__template__" type="TASK_EDITOR">
+        <!--<div class="ganttTaskEditor">
+          <h2 class="taskData">修改计划</h2>
+          <table  cellspacing="1" cellpadding="5" width="100%" class="taskData table" border="0">
+            <tr>
+              <td colspan="3" valign="top" class="rowdiv">
+                <label for="name" class="required def_col_5 font_right">里程碑名称：</label>
+                <input type="text" name="name" id="name"class="formElements def_col_25" autocomplete='off' 
+                  maxlength=255 value="" required="true" oldvalue="1">
+              </td>
+            </tr>
+            <tr>
+              <td style="height: 80px"  valign="top" class="rowdiv">
+                <label for="code" class="def_col_5 font_right">里程碑编号：</label>
+                <input type="text" name="code" id="code" value="" size=15 class="formElements def_col_25" 
+                  autocomplete='off' maxlength=255 oldvalue="1">
+              </td>
+            </tr>
+            <tr class="dateRow">
+              <td style="position:relative" class="rowdiv">
+                <label for="start" class="def_col_5 font_right">开始日期：</label>
+                <div class="def_col_25 p_l_0">
+                  <input type="text" name="start" id="start" size="8" class="formElements dateField validated date pointStyle" 
+                    autocomplete="off" maxlength="255" value="" oldvalue="1" entrytype="DATE">
+                  <span title="calendar" id="starts_inputDate" class="teamworkIcon openCalendar pointStyle" 
+                    onclick="$(this).dateField({inputField:$(this).prevAll(':input:first'),isSearchField:false});">m</span> 
+                  <input type="checkbox" id="startIsMilestone" name="startIsMilestone" value="yes"> &nbsp;&nbsp;
+                  <label for="startIsMilestone" class="inline">里程碑</label> 
+                </div>      
+              </td>
+            </tr>
+            <tr class="dateRow">
+              <td class="rowdiv">
+                <label for="end" class="def_col_5 font_right">结束日期：</label>
+                <div class="def_col_25 p_l_0">
+                  <input type="text" name="end" id="end" size="8" class="formElements dateField validated date pointStyle" 
+                    autocomplete="off" maxlength="255" value="" oldvalue="1" entrytype="DATE">
+                  <span title="calendar" id="ends_inputDate" class="teamworkIcon openCalendar pointStyle" 
+                    onclick="$(this).dateField({inputField:$(this).prevAll(':input:first'),isSearchField:false});">m</span>
+                  <input type="checkbox" id="endIsMilestone" name="endIsMilestone" value="yes"> &nbsp;&nbsp;
+                  <label for="endIsMilestone" class="inline">里程碑</label>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="rowdiv">
+                <label for="duration" class="def_col_5 font_right">工期：</label>
+                <input type="text" name="duration" id="duration" size="4" class="def_col_25 formElements validated durationdays" 
+                  title="Duration is in working days." autocomplete="off" maxlength="255" value="" oldvalue="1" entrytype="DURATIONDAYS">&nbsp;
+              </td>
+            </tr>
+            <tr>
+              <td valign="top" nowrap class="rowdiv">
+                <label class="def_col_5 font_right">完成百分比：</label>
+                <input type="text" name="progress" id="progress" size="7" class="def_col_25 formElements validated percentile" autocomplete="off" 
+                  maxlength="3" value="" oldvalue="1" entrytype="PROGEESS">
+              </td>
+            <tr>
+              <td valign="top" nowrap class="rowdiv">
+                <label for="description" class="def_col_5 font_right">成果物：</label>
+                <input type="text" name="description" id="description" value="" size=15 class="def_col_25 formElements" autocomplete='off' 
+                  maxlength=255 oldvalue="1">
+              </td>
+            </tr>
+          </table>
+          <div style="text-align: right; padding-top: 20px">
+            <button id="saveButton" class="btn btn-primary" onClick="$(this).trigger('saveFullEditor.gantt');">保存</button>
+          </div>
+        </div>-->
+      </div>
+
+      <div class="__template__" type="ASSIGNMENT_ROW">
+        <!--<tr taskId="(#=obj.task.id#)" assId="(#=obj.assig.id#)" class="assigEditRow" >
+          <td ><select name="resourceId"  class="formElements" (#=obj.assig.id.indexOf("tmp_")==0?"":"disabled"#) ></select></td>
+          <td ><select type="select" name="roleId"  class="formElements"></select></td>
+          <td ><input type="text" name="effort" value="(#=getMillisInHoursMinutes(obj.assig.effort)#)" size="5" class="formElements"></td>
+          <td align="center"><span class="teamworkIcon delAssig del" style="cursor: pointer">d</span></td>
+        </tr>-->
+      </div>
+
+      <div class="__template__" type="RESOURCE_EDITOR"><!--
+        <div class="resourceEditor" style="padding: 5px;">
+          <h2>责任人</h2>
+          <table  cellspacing="1" cellpadding="0" width="100%" id="resourcesTable">
+            <tr>
+              <th style="width:100px;">名称</th>
+              <th style="width:30px;" id="addResource"><span class="teamworkIcon" style="cursor: pointer">+</span></th>
+            </tr>
+          </table>
+          <div style="text-align: right; padding-top: 20px"><button id="resSaveButton" class="button big">Save</button></div>
+        </div>
+        --></div>
+
+
+
+      <div class="__template__" type="RESOURCE_ROW"><!--
+        <tr resId="(#=obj.id#)" class="resRow" >
+          <td ><input type="text" name="name" value="(#=obj.name#)" style="width:100%;" class="formElements"></td>
+          <td align="center"><span class="teamworkIcon delRes del" style="cursor: pointer">d</span></td>
+        </tr>
+        --></div>
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 设置责任人-->
+  <div class="modal fade in cmn_cont drc-pb" id="user_modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="bold" id="user_tit">设置责任人</h5>
+        </div>
+        <div class="modal-body">
+          <form role="form" class="form-horizontal" id="user_Form">
+            <div class="rowdiv form-group">
+              <label class="def_col_6 font_right control-label fontWeihgt"><span class="redStar">*</span>责任人：</label>
+              <label class="def_col_30 p_l_0">
+                <input id="responsibleUserId" type="hidden" class=""/>
+                <input id="responsibleUser" name="responsibleUser"
+                  class="form-control" type="text" placeholder="请输入"/>
+              </label>
+            </div>
+            <div class="_hide" id="approve_user_body">
+              <div class="rowdiv form-group _hide select_user_body">
+                <label class="def_col_6 font_right control-label fontWeihgt"><span class="redStar">*</span>一级审批人：</label>
+                <label class="def_col_30 p_l_0">
+                  <input id="approve_UserId1" type="hidden" class=""/>
+                  <input id="approve_User1" name="approve_User1"
+                    class="form-control" type="text" placeholder="请输入"/>
+                </label>
+              </div>
+              <div class="rowdiv form-group _hide select_user_body">
+                <label class="def_col_6 font_right control-label fontWeihgt">二级审批人：</label>
+                <label class="def_col_30 p_l_0">
+                  <input id="approve_UserId2" type="hidden" class=""/>
+                  <input id="approve_User2" name="approve_User2"
+                    class="form-control" type="text" placeholder="请输入"/>
+                </label>
+              </div>
+              <div class="rowdiv form-group _hide select_user_body">
+                <label class="def_col_6 font_right control-label fontWeihgt">三级审批人：</label>
+                <label class="def_col_30 p_l_0">
+                  <input id="approve_UserId3" type="hidden" class=""/>
+                  <input id="approve_User3" name="approve_User3"
+                    class="form-control" type="text" placeholder="请输入"/>
+                </label>
+              </div>
+              <div class="rowdiv form-group _hide select_user_body">
+                <label class="def_col_6 font_right control-label fontWeihgt">四级审批人：</label>
+                <label class="def_col_30 p_l_0">
+                  <input id="approve_UserId4" type="hidden" class=""/>
+                  <input id="approve_User4" name="approve_User4"
+                    class="form-control" type="text" placeholder="请输入"/>
+                </label>
+              </div>
+              <div class="rowdiv form-group _hide select_user_body">
+                <label class="def_col_6 font_right control-label fontWeihgt">五级审批人：</label>
+                <label class="def_col_30 p_l_0">
+                  <input id="approve_UserId5" type="hidden" class=""/>
+                  <input id="approve_User5" name="approve_User5"
+                    class="form-control" type="text" placeholder="请输入"/>
+                </label>
+              </div>
+              <div class="rowdiv form-group _hide select_user_body">
+                <label class="def_col_6 font_right control-label fontWeihgt">六级审批人：</label>
+                <label class="def_col_30 p_l_0">
+                  <input id="approve_UserId6" type="hidden" class=""/>
+                  <input id="approve_User6" name="approve_User6"
+                    class="form-control" type="text" placeholder="请输入"/>
+                </label>
+              </div>
+              <div class="rowdiv form-group _hide select_user_body">
+                <label class="def_col_6 font_right control-label fontWeihgt">七级审批人：</label>
+                <label class="def_col_30 p_l_0">
+                  <input id="approve_UserId7" type="hidden" class=""/>
+                  <input id="approve_User7" name="approve_User7"
+                    class="form-control" type="text" placeholder="请输入"/>
+                </label>
+              </div>
+              <div class="rowdiv form-group _hide select_user_body">
+                <label class="def_col_6 font_right control-label fontWeihgt">八级审批人：</label>
+                <label class="def_col_30 p_l_0">
+                  <input id="approve_UserId8" type="hidden" class=""/>
+                  <input id="approve_User8" name="approve_User8"
+                    class="form-control" type="text" placeholder="请输入"/>
+                </label>
+              </div>
+              <div class="rowdiv">
+                <div class="def_col_7 font_right">
+                  <button type="button" class="btn btn-primary" style="width: 110px;" onclick="add_approve_user(this)">添加下级审批人</button>
+                </div>
+              </div>
+              <div class="rowdiv form-group">
+                <label class="def_col_6 font_right control-label fontWeihgt">备注：</label>
+                <div class="def_col_30">
+                  <textarea type="text" id="user_remark" class="form-control" placeholder="请输入"></textarea>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary btn_submit" onclick="Submit_user()">保存</button>
+          <button type="button" class="btn btn-default btn_close" data-dismiss="modal">取消</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  ## 变更审批
+  <div class="modal fade bs-example-modal-lg" id="approve_Modal" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog modal-biggest" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="add_tit">$!name：项目计划变更审批</h4>
+          <input type="hidden" id="checkDefectID" value="" />
+        </div>
+        <div class="modal-body">
+          <div class="defectBody">
+            <div class="defectInfos def_col_24">
+              <div class="allInfo" id="defectBaseInfo">
+                <div class="def_title">
+                  <h5 class="blue fontWeihgt lab_tit">申请单详情：</h5>
+                </div>
+                <div class="def_content down_content">
+                  <div class="rowdiv">
+                    <div class="def_col_6 font_right fontWeihgt">流程状态：</div>
+                    <div class="def_col_12" id="check_status"></div>
+                  </div>
+                  <div class="rowdiv">
+                    <div class="def_col_6 font_right fontWeihgt">申请人：</div>
+                    <div class="def_col_12" id="check_user"></div>
+                    <div class="def_col_6 font_right fontWeihgt">申请时间：</div>
+                    <div class="def_col_12" id="check_date"></div>
+                  </div>
+                  <div class="rowdiv">
+                    <div class="def_col_6 font_right fontWeihgt">申请事由：</div>
+                    <div class="def_col_28" id="check_Workload"></div>
+                  </div>
+                </div>
+
+                <div class="def_title">
+                  <h5 class="blue fontWeihgt lab_tit">变更前项目计划：</h5>
+                </div>
+                <table class="table table-bordered">
+                  <thead>
+                    <tr class="rowdiv">
+                      <th style="width: 8.333333%;">序号</th>
+                      <th style="width: 16.666666%;">项目计划编号</th>
+                      <th style="width: 21.444444%;">项目计划名称</th>
+                      <th style="width: 14.222222%;">周期</th>
+                      <th style="width: 11.111111%;">负责人</th>
+                      <th style="width: 28.222224%;">成果物</th>
+                    </tr>
+                  </thead>
+                  <tbody id="up_before_tbody"></tbody>
+                </table>
+
+                <div class="def_title">
+                  <h5 class="blue fontWeihgt lab_tit">变更后项目计划：</h5>
+                </div>
+                <table class="table table-bordered">
+                  <thead>
+                    <tr class="rowdiv">
+                      <th style="width: 8.333333%;">序号</th>
+                      <th style="width: 16.666666%;">项目计划编号</th>
+                      <th style="width: 21.444444%;">项目计划名称</th>
+                      <th style="width: 14.222222%;">周期</th>
+                      <th style="width: 11.111111%;">负责人</th>
+                      <th style="width: 28.222224%;">成果物</th>
+                    </tr>
+                  </thead>
+                  <tbody id="up_after_tbody"></tbody>
+                </table>
+                <div class="def_title">
+                  <h5 class="blue fontWeihgt lab_tit">审批意见：</h5>
+                </div>
+                <div class="rowdiv">
+                  <div class="def_col_2"></div>
+                  <div class="def_col_31">
+                    <textarea type="text" id="remark" class="form-control" placeholder="请输入审批意见"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="def_col_12">
+              <div class="allInfo defectHandlingLog">
+                <div class="def_title" id="titleOfwork">
+                  <span class="def_controlTit def_changeTit">流程处理情况</span>
+                </div>
+                <div class="def_content">
+                  <div class="dealLog p_l_20" id="logs_body"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary _hide approve_btn1" style="width: 155px;" data-dismiss="modal" onclick="approve_flow(1)">同意并提交下级审批人</button>
+          <button type="button" class="btn btn-primary _hide approve_btn2" data-dismiss="modal" onclick="approve_flow(2)">同意并办结</button>
+          <button type="button" class="btn btn-primary _hide approve_btn1" data-dismiss="modal" onclick="approve_flow(3)">驳&nbsp;&nbsp;回</button>
+          <button type="button" class="btn btn-default btn_close" data-dismiss="modal">关&nbsp;&nbsp;闭</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="loading">
+    <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+  </div>
+
+</body>
+  <script src="#springUrl('')/projectManageui/static/js/newProject/gantt/planChart_handle.js"></script>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/jquery-1.8.0.min.js"></script>
+</head>
+<body>
+<input type="button" value="test" onclick="test()"></input>
+</body>
+<script type="text/javascript">
+function test(){
+   
+   var url = "../menu/getMenusWithRole";
+	$.ajax(
+		 {
+			 type : "POST", 
+			 url : url,
+			 dataType : "json", 
+ 		 	 contentType :"application/x-www-form-urlencoded;charset=UTF-8",
+ 			 success:function(msg)
+ 			  {
+    	       console.log(msg);
+ 			  },
+ 		     error:function(msg,status,error){
+ 		    	console.log(error);
+ 			  }
+    	 
+		 });
+
+}
+ 
+</script>
+</html>

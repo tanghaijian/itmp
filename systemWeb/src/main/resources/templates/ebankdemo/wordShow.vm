@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/echarts.common.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <style>
+        body{
+            padding:15px;
+            font-size: 12px;
+        }
+        .tableStyle tbody>tr>td{
+            padding: 3px 8px !important;
+            white-space: nowrap;
+        }
+        .embedStyle {
+            width:100%;
+            height:100%
+        }
+    </style>
+</head>
+<body>
+<div class="tableDiv">
+    <table id="test" class="tableStyle"></table>
+    #*<div class="embedStyle">
+        <embed width="100%" height="100%" name="plugin" id="plugin" autostart="true" />
+    </div>*#
+</div>
+
+<script>
+    $(document).ready(function() {
+        initTable()
+    })
+
+    function initTable() {
+        $("#test").bootstrapTable('destroy');
+        var _data1 = {
+            indexNum: '',
+            name: "DEMO需求说明 (1)",
+            path: "../static/files/DEMO需求说明 (1).pptx",
+            type: "pptx"
+        };
+        var _data2 = {
+            indexNum: '',
+            name: "测试综合管理平台 - 需.docx",
+            path: "../static/files/测试综合管理平台 - 需.docx",
+            type: "docx"
+        };
+        var _data3 = {
+            indexNum: '',
+            name: "缺陷信息20190121104246.xls",
+            path: "../static/files/缺陷信息20190121104246.xls",
+            type: "xls"
+        };
+        $("#test").bootstrapTable({
+            pagination: false,
+            columns: [{
+                field: "indexNum",
+                title: "序号",
+                align: 'center',
+                class: 'fontCenter',
+                width: 100,
+                formatter: function (value, rows,index) {
+                    return index+1;
+                }
+            }, {
+                field: "name",
+                title: "文件名称",
+                align: 'center'
+            }, {
+                field: "path",
+                title: "文件路径",
+                align: 'center',
+                visible : false,
+            },{
+                field: "type",
+                title: "文件类型",
+                align: 'center'
+            },{
+                field: "sum",
+                title: "操作",
+                align: 'center',
+                formatter: function (value, rows,index ) {
+                    var data = JSON.stringify(rows).replace(/"/g, '&quot;');
+                    var opt = '<embed width="100%" height="100%" name="plugin" id="plugin" src="" autostart="true" class="embedStyle"/>';
+                    return '<button class="btn btn-default" onclick="openFile('+data+')">编辑文件</button>';
+                }
+            }],
+            onLoadSuccess: function () {
+
+            }
+        });
+        $("#test").bootstrapTable('append', _data1);
+        $("#test").bootstrapTable('append', _data2);
+        $("#test").bootstrapTable('append', _data3);
+    }
+
+    function openFile(data){
+        window.open(data.path);
+    }
+</script>
+</body>
+</html>

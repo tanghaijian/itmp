@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title>交付视图</title>
+        <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+        <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+        <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css"/>
+
+        <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+        <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+        <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+		<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/echarts.min.js"></script>
+        <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+        <script type="text/ecmascript" src="#springUrl('')/projectManageui/static/js/deliveryChart/deliveryChart.js"></script>
+</head>
+    <style>
+    .main-content{
+        padding: 30px;
+    }
+    .modal-header .close{
+        margin-top: -22px;
+    }
+
+    .Max-content{
+        top:0 !important;
+        bottom:0 !important;
+    }
+    .col_9cc{
+        background:#9ccde3 !important;
+    }
+    .pie_tit{
+        background: #b9d9e7;
+        text-align: center;
+        padding: 10px 0;
+        margin-bottom: 10px;
+        color:#000;
+    }
+    .chart_border{
+        border: 1px solid #000;
+        border-radius:4px;
+        box-shadow: 3px 3px 6px #514d4d;
+    }
+    .m_0_auto{
+        margin:0 auto;
+    }
+    .m_t_20{
+        margin-top: 20px;
+    }
+    .m_b_0{
+        margin-bottom: 0px;
+    }
+    .m_t_0{
+        margin-top: 0px;
+    }
+    .inline-block{
+        display:inline-block;
+    }
+    ._flex_between{
+        display:flex;
+        justify-content: space-between;
+    }
+    .requirement_tit{
+        text-align: left;
+        background: #dedede;
+        padding: 10px 0;
+        padding-left: 5px;
+        color: #000;
+    }
+    </style>
+<body>
+    <div class="color1">
+        <div class="container-fluid" id="search_div">
+            <div class="row control-row">
+                <div class="col-md-4">
+                    <div class="search_font">
+                        <label class="control-label">需求编号：</label>
+                    </div>
+                    <div class="search_input">
+                        <input type="text" class="form-control" placeholder="请输入" id="reqCode" name="reqCode"/>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="search_font">
+                        <label class="control-label">需求名称：</label>
+                    </div>
+                    <div class="search_input">
+                        <input type="text" class="form-control" placeholder="请输入" id="reqName" name="reqName"/>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="search_font">
+                        <label class="control-label">需求名称：</label>
+                    </div>
+                    <div class="search_input">
+                        <input type="text" class="form-control" placeholder="请输入" id="reqName" name="reqName"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row control-row">
+                <div class="col-md-4">
+                    <div class="search_font">
+                        <label class="control-label">需求编号：</label>
+                    </div>
+                    <div class="search_input">
+                        <input type="text" class="form-control" placeholder="请输入" id="reqCode" name="reqCode"/>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="search_font">
+                        <label class="control-label">需求名称：</label>
+                    </div>
+                    <div class="search_input">
+                        <input type="text" class="form-control" placeholder="请输入" id="reqName" name="reqName"/>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="search_font">
+                        <label class="control-label">需求名称：</label>
+                    </div>
+                    <div class="search_input">
+                        <input type="text" class="form-control" placeholder="请输入" id="reqName" name="reqName"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row control-row search_btn">
+                <button type="button" class="btn btn-primary" onclick="searchInfo()">统&nbsp;&nbsp;&nbsp;计</button>
+                <button type="button" class="btn btn-default" onclick="clearSearch()">重&nbsp;&nbsp;&nbsp;置</button>
+            </div>
+        </div>
+        <div id="downBtn">
+            <span class="fa fa-caret-up"></span>
+        </div>
+    </div>
+
+    <div class="main-content m_0_auto">
+        <h5 class="pie_tit col_9cc">交付状态统计</h5>
+        <div class="_flex_between m_t_20">
+            <!-- 开发任务状态分布统计图 -->
+            <div class="chart_border">
+                <h5  class="pie_tit  m_b_0 m_t_0">开发任务状态分布统计图</h5>
+                <div id="main2" style="width: 500px;height:450px;"></div>
+            </div>
+
+            <!-- 需求状态分布统计图   -->
+            <div class="chart_border">
+                <h5  class="pie_tit  m_b_0 m_t_0">需求状态分布统计图</h5>
+                <div id="main" style="width: 500px;height:450px;"></div>
+            </div>
+        </div>
+
+	    <!-- 需求交付进度统计 -->
+        <div class="chart_border m_t_20">
+            <h5  class="pie_tit  m_b_0 m_t_0">需求交付进度统计</h5>
+            <div id="main3" style="width: 1000px;height:450px;"></div>
+        </div>
+	    
+	    <!-- 系统交付进度统计 -->
+        <div class="chart_border m_t_20">
+            <h5  class="pie_tit  m_b_0 m_t_0">系统交付进度统计</h5>
+            <div id="main4" style="width: 1000px;height:450px;"></div>
+        </div>
+    </div>
+    
+
+    <!-- 需求交付明细 -->
+    <div class="modal" tabindex="-1" role="dialog" id="requirementMapModal" aria-labelledby="" aria-hidden="true"> 
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content Max-content">
+            <div class="modal-header">
+                <h5 class="modal-title">需求交付明细</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- 需求交付进度统计 -->
+                <div id="main9" class="m_0_auto" style="width: 800px;height:300px;"></div>
+                <h5  class="requirement_tit">提示：点击系统进度刷新下面状态分布统计图</h5>
+                <!-- 分布统计图 -->
+                <div id="main5" class="m_0_auto" style="width: 600px;height:300px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 子系统交付明细 -->
+    <div class="modal" tabindex="-1" role="dialog" id="systemMapModal" aria-labelledby="" aria-hidden="true"> 
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">子系统交付明细</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="main6" class="m_0_auto" style="width: 600px;height:400px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading">
+        <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif"/>
+    </div>
+</body>
+</html>

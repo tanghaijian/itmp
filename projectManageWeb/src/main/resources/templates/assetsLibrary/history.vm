@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head> 
+	<title>历史版本</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <META HTTP-EQUIV="pragma" CONTENT="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="no-cache,IE=edge,Chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" /> 
+	</head> 
+	<style>
+		*{
+			font-size: 12px;
+		}
+		.content-table{
+			margin: 20px;
+		}
+	</style>
+	<body> 
+	    <div class="content-table">
+	        <div class="wode">
+	            <table id="historyTable"></table>
+	        </div>
+	    </div>
+
+	    <div class="modal fade" id="export_Modal" tabindex="-1" role="dialog" aria-labelledby="" type="hidden">
+		    <div class="modal-dialog" role="document">
+		        <div class="modal-content"> 
+	                <div class="modal-header">
+	                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true" style="font-size:20px;">&times;</span>
+											</button>
+	                    <span class="modal-title">选择导出类型</span>
+	                </div>
+	                <div class="modal-body">
+	                	<ul id="ulFileExport">
+	                		<li><input name="file" type="radio" value="word" checked />word</li>
+		                	<li><input name="file" type="radio" value="pdf" />pdf</li>
+	                	</ul>
+		            </div>
+		            <div class="modal-footer"> 
+	                    <button type="button" class="btn btn-primary" onclick="exportCommit()">提交</button>
+	                	 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+	                </div>  
+		        </div>
+		    </div>
+			</div> 
+
+			## 导出
+			<div class="modal fade" id="export_Modal" tabindex="-1" role="dialog" aria-labelledby="" type="hidden">
+					<div class="modal-dialog" role="document">
+							<div class="modal-content"> 
+										<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+												<span class="modal-title">选择导出类型</span>
+										</div>
+										<div class="modal-body">
+											<ul id="ulFileExport">
+												<li><input name="file" type="radio" value="word" />word</li>
+												<li><input name="file" type="radio" value="pdf" />pdf</li>
+											</ul>
+									</div>
+									<div class="modal-footer"> 
+												<button type="button" class="btn btn-primary" onclick="exportCommit()">提交</button>
+											<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+										</div>  
+							</div>
+					</div>
+			</div> 
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script> 
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>  
+	    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script> 
+	    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script> 
+	    <script type="text/ecmascript" src="#springUrl('')/projectManageui/static/js/assetsLibrary/history.js"></script>
+    </body> 
+</html>

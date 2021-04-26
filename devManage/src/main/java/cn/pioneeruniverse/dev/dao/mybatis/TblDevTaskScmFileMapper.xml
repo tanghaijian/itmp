@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblDevTaskScmFileMapper">
+
+    <insert id="insertOrUpdateDevTaskScmFile" useGeneratedKeys="true">
+        INSERT INTO tbl_dev_task_scm_file
+        (
+        DEV_TASK_ID,
+        DEV_TASK_SCM_ID,
+        SCM_URL,
+        COMMIT_NUMBER,
+        LAST_COMMIT_NUMBER,
+        COMMIT_FILE,
+        OPERATE_TYPE,
+        STATUS,
+        CREATE_BY,
+        CREATE_DATE,
+        LAST_UPDATE_BY,
+        LAST_UPDATE_DATE
+        ) VALUES
+        <foreach collection="commitFiles" item="commitFile" index="index" separator=",">
+            (
+            #{tblDevTaskScmFile.devTaskId,jdbcType=BIGINT},
+            #{tblDevTaskScmFile.devTaskScmId,jdbcType=BIGINT},
+            #{tblDevTaskScmFile.scmUrl,jdbcType=VARCHAR},
+            #{tblDevTaskScmFile.commitNumber,jdbcType=VARCHAR},
+            <choose>
+                <when test="commitFile.revision != null and commitFile.revision != ''">
+                    #{commitFile.revision,jdbcType=VARCHAR},
+                </when>
+                <otherwise>
+                    #{tblDevTaskScmFile.lastCommitNumber,jdbcType=VARCHAR},
+                </otherwise>
+            </choose>
+            #{commitFile.filePath,jdbcType=VARCHAR},
+            #{commitFile.type,jdbcType=VARCHAR},
+            #{tblDevTaskScmFile.status,jdbcType=TINYINT},
+            #{tblDevTaskScmFile.createBy,jdbcType=BIGINT},
+            #{tblDevTaskScmFile.createDate,jdbcType=TIMESTAMP},
+            #{tblDevTaskScmFile.lastUpdateBy,jdbcType=BIGINT},
+            #{tblDevTaskScmFile.lastUpdateDate,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        DEV_TASK_ID = VALUES(DEV_TASK_ID),
+        COMMIT_NUMBER = VALUES(COMMIT_NUMBER),
+        OPERATE_TYPE = VALUES(OPERATE_TYPE),
+        LAST_UPDATE_BY = VALUES(LAST_UPDATE_BY),
+        LAST_UPDATE_DATE = VALUES(LAST_UPDATE_DATE)
+    </insert>
+
+<!-- 获取某开发工作任务某次提交的代码文件 -->
+    <select id="getReviewFilesByDevTaskScmId" parameterType="java.lang.Long" resultMap="devTaskScmFileMap">
+        SELECT
+        tdtsf.ID,
+        tdtsf.SCM_URL,
+        tdtsf.COMMIT_NUMBER,
+        tdtsf.LAST_COMMIT_NUMBER,
+        tdtsf.COMMIT_FILE,
+        tdtsf.OPERATE_TYPE
+        FROM tbl_dev_task_scm_file tdtsf
+        WHERE tdtsf.DEV_TASK_SCM_ID = #{devTaskScmId} AND tdtsf.STATUS = 1
+        ORDER BY tdtsf.LAST_UPDATE_DATE DESC
+    </select>
+
+<!-- 获取某开发工作任务提交的代码文件 -->
+    <select id="getSvnFilesByDevTaskId" resultMap="devTaskScmFileMap">
+        SELECT
+        tdtsf.ID,
+        tdtsf.SCM_URL,
+        tdtsf.COMMIT_NUMBER,
+        tdtsf.COMMIT_FILE,
+        tdtsf.CREATE_DATE
+        FROM tbl_dev_task_scm_file tdtsf
+        WHERE tdtsf.DEV_TASK_ID = #{devTaskId} AND tdtsf.STATUS = 1
+        ORDER BY tdtsf.LAST_UPDATE_DATE DESC
+    </select>
+    
+    <!-- 获取多个开发工作任务提交的代码文件 -->
+    <select id="getSvnFilesByDevTaskIds" parameterType="map" resultType="java.util.HashMap">
+        SELECT
+        DISTINCT
+        tdtsf.`DEV_TASK_ID`,
+        tdt.DEV_TASK_CODE,
+        tdtsf.COMMIT_FILE
+        FROM tbl_dev_task_scm_file tdtsf
+        LEFT  JOIN tbl_dev_task tdt on tdt.id=tdtsf.DEV_TASK_ID
+        WHERE tdtsf.STATUS = 1 and tdtsf.DEV_TASK_ID in
+        <foreach collection="devTaskIds" item="devTaskId" index="index" open="(" separator="," close=")">
+            #{devTaskId}
+        </foreach>
+    </select>
+
+    <resultMap type="cn.pioneeruniverse.dev.entity.TblDevTaskScmFile" id="devTaskScmFileMap">
+        <id column="ID" property="id"/>
+        <result column="DEV_TASK_ID" property="devTaskId"/>
+        <result column="DEV_TASK_SCM_ID" property="devTaskScmId"/>
+        <result column="SCM_URL" property="scmUrl"/>
+        <result column="COMMIT_NUMBER" property="commitNumber"/>
+        <result column="LAST_COMMIT_NUMBER" property="lastCommitNumber"/>
+        <result column="COMMIT_FILE" property="commitFile"/>
+        <result column="OPERATE_TYPE" property="operateType"/>
+        <result column="STATUS" property="status"/>
+        <result column="CREATE_BY" property="createBy"/>
+        <result column="CREATE_DATE" property="createDate"/>
+        <result column="LAST_UPDATE_BY" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate"/>
+    </resultMap>
+
+</mapper>

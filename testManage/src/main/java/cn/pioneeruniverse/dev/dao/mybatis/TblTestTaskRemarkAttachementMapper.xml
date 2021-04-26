@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblTestTaskRemarkAttachementMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblTestTaskRemarkAttachement">
+  	  <id column="ID" jdbcType="BIGINT" property="id" />
+      <result column="TEST_TASK_REMARK_ID" jdbcType="BIGINT" property="testTaskRemarkId" />
+      <result column="FILE_NAME_NEW" jdbcType="VARCHAR" property="fileNameNew" />
+      <result column="FILE_NAME_OLD" jdbcType="VARCHAR" property="fileNameOld" />
+      <result column="FILE_TYPE" jdbcType="VARCHAR" property="fileType" />
+      <result column="FILE_PATH" jdbcType="VARCHAR" property="filePath" />
+      <result column="FILE_S3_BUCKET" jdbcType="VARCHAR" property="fileS3Bucket" />
+      <result column="FILE_S3_KEY" jdbcType="VARCHAR" property="fileS3Key" />
+       <result column="STATUS" jdbcType="TINYINT" property="status" />
+      <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+   	  <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+   	  <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+   	  <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+   <sql id="Base_Column_List">
+    ID, TEST_TASK_REMARK_ID, FILE_NAME_NEW, FILE_NAME_OLD, FILE_TYPE, FILE_PATH, 
+    FILE_S3_BUCKET, FILE_S3_KEY, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+
+    <!-- 查询测试开发任务备注附件信息  -->
+   <select id="findTaskRemarkAttachement" parameterType="java.lang.Long"  resultMap="BaseResultMap">
+  	select ID ,TEST_TASK_REMARK_ID ,FILE_NAME_OLD,FILE_NAME_NEW,
+   FILE_TYPE,FILE_PATH ,FILE_S3_BUCKET ,FILE_S3_KEY
+  	from tbl_test_task_remark_attachement
+  	<where>
+  	 STATUS = 1
+  	  and TEST_TASK_REMARK_ID in
+  	<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+	   #{item}
+	</foreach>
+  	</where>
+  	
+  	</select>
+
+    <!-- 批量添加附件 -->
+  	  <insert id="addRemarkAttachement">
+  	insert into tbl_test_task_remark_attachement (TEST_TASK_REMARK_ID,FILE_NAME_NEW,FILE_NAME_OLD,FILE_TYPE,FILE_PATH,FILE_S3_BUCKET,FILE_S3_KEY,CREATE_BY,CREATE_DATE)
+  	values
+  	  <foreach collection ="list" item="item" index= "index" separator =",">
+  	   (
+                 #{item.testTaskRemarkId},
+                #{item.fileNameNew},
+                #{item.fileNameOld},
+                 #{item.fileType},
+                  #{item.filePath},
+                  #{item.fileS3Bucket},
+                  #{item.fileS3Key},
+                  #{item.createBy},
+                  CURRENT_TIMESTAMP
+                )
+  	  </foreach>
+  </insert>
+  </mapper>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.menu.MenuDao">
+
+    <sql id="baseColumn">
+      ID,
+      MENU_BUTTON_TYPE,
+      MENU_BUTTON_NAME,
+      MENU_BUTTON_CODE,
+      PARENT_ID,
+      PARENT_IDS,
+      CSS,
+      URL,
+      MENU_ORDER,
+      VALID_STATUS,
+      STATUS,
+      CREATE_BY,
+      CREATE_DATE,
+      LAST_UPDATE_BY,
+      LAST_UPDATE_DATE
+    </sql>
+
+    <!-- 根据类型获取菜单-->
+    <select id="getMenusWithTYPE" parameterType="hashmap" resultMap="menuResultWithNoChild">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        TBL_MENU_BUTTON_INFO
+        WHERE
+        MENU_BUTTON_TYPE = #{menuType}
+        AND PARENT_ID IS NULL
+        AND STATUS = 1
+        AND VALID_STATUS = 1
+        AND OPEN_STATUS = 1
+        ORDER BY
+        MENU_ORDER
+    </select>
+
+    <!-- 获取子集菜单-->
+    <select id="getChildrenMenus" parameterType="hashmap" resultMap="menuResultWithNoChild">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        TBL_MENU_BUTTON_INFO
+        WHERE
+        PARENT_IDS = #{parentId}
+        AND MENU_BUTTON_TYPE = #{menuType}
+        AND STATUS = 1
+        AND VALID_STATUS = 1
+        AND OPEN_STATUS = 1
+        ORDER BY
+        MENU_ORDER
+    </select>
+
+    <!-- 根据PARENT_IDS 获取菜单  -->
+    <select id="findRoleMenu" parameterType="java.lang.String" resultMap="menuResultWithNoChild">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        TBL_MENU_BUTTON_INFO
+        where PARENT_IDS LIKE CONCAT(CONCAT(#{parentIds},"%"))
+        AND MENU_BUTTON_TYPE = 1
+        AND VALID_STATUS = 1
+        AND STATUS = 1
+        AND OPEN_STATUS = 1
+        ORDER BY
+        PARENT_IDS
+    </select>
+
+    <!-- 获取按钮 -->
+    <select id="getButton" parameterType="hashmap" resultMap="menuResult">
+        select
+        <include refid="baseColumn"/>
+        from TBL_MENU_BUTTON_INFO
+        where MENU_BUTTON_TYPE = #{buttonType}
+        and PARENT_ID = #{parentId}
+        AND STATUS = 1
+        AND VALID_STATUS = 1
+        AND OPEN_STATUS = 1
+        ORDER BY
+        MENU_ORDER
+    </select>
+
+    <!-- 获取权限按钮-->
+    <select id="getButtonByRid" parameterType="hashmap" resultMap="menuResultWithNoChild">
+        select
+        a.*
+        FROM
+            tbl_role_info a
+        INNER JOIN tbl_role_menu_button b ON a.id = b.ROLE_ID
+        where b.ROLE_ID = #{id} and b.MENU_BUTTON_ID = #{buttonId}
+    </select>
+
+
+    <!-- 根据 PARENT_ID 获取菜单 -->
+    <select id="selectMenuByParentId" parameterType="Long" resultMap="menuResult">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM TBL_MENU_BUTTON_INFO WHERE PARENT_ID = #{id}
+        AND MENU_BUTTON_TYPE = 1 AND status = 1 AND VALID_STATUS = 1
+    </select>
+    <resultMap type="cn.pioneeruniverse.project.entity.TblMenuButtonInfo" id="menuResultWithNoChild">
+        <id column="ID" property="id"/>
+        <result column="MENU_BUTTON_TYPE" property="menuButtonType"/>
+        <result column="MENU_BUTTON_NAME" property="menuButtonName"/>
+        <result column="MENU_BUTTON_CODE" property="menuButtonCode"/>
+        <result column="PARENT_ID" property="parentId"/>
+        <result column="PARENT_IDS" property="parentIds"/>
+        <result column="CSS" property="css"/>
+        <result column="URL" property="url"/>
+        <result column="MENU_ORDER" property="menuOrder"/>
+        <result column="STATUS" property="status"/>
+        <result column="VALID_STATUS" property="validStatus"/>
+        <result column="CREATE_BY" property="createBy"/>
+        <result column="CREATE_DATE" property="createDate"/>
+        <result column="LAST_UPDATE_BY" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate"/>
+    </resultMap>
+
+    <resultMap type="cn.pioneeruniverse.project.entity.TblMenuButtonInfo" id="menuResult"
+               extends="menuResultWithNoChild">
+        <collection property="childMenu" ofType="cn.pioneeruniverse.project.entity.TblMenuButtonInfo" column="ID"
+                    select="selectMenuByParentId"></collection>
+    </resultMap>
+</mapper>

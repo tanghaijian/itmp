@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblCaseStepMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblCaseStep">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <id column="CASE_ID" jdbcType="BIGINT" property="caseId" />
+    <id column="STEP_ORDER" jdbcType="INTEGER" property="stepOrder" />
+    <id column="STEP_DESCRIPTION" jdbcType="VARCHAR" property="stepDescription" />
+    <id column="STEP_EXPECTED_RESULT" jdbcType="VARCHAR" property="stepExpectedResult" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, CASE_ID, STEP_ORDER, STEP_DESCRIPTION, STEP_EXPECTED_RESULT, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  
+  <insert id="insertCaseStep" useGeneratedKeys="true" keyProperty="id"  parameterType="cn.pioneeruniverse.dev.entity.TblCaseStep">
+  	insert into tbl_case_step (CASE_ID, STEP_ORDER, STEP_DESCRIPTION, STEP_EXPECTED_RESULT, 
+  		STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE)
+  		values (#{caseId,jdbcType=BIGINT}, #{stepOrder,jdbcType=INTEGER}, #{stepDescription,jdbcType=VARCHAR},
+  		#{stepExpectedResult,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT},
+  		#{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <select id="findCaseStepByCaseId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" /> from tbl_case_step where CASE_ID = #{id,jdbcType=BIGINT} and STATUS = 1
+  </select>
+  
+  <update id="updateCaseStepByCaseId" parameterType="map">
+  	update tbl_case_step set STATUS = 2, LAST_UPDATE_BY = #{userId}, LAST_UPDATE_DATE = #{time} where CASE_ID = #{id}
+  </update>
+  
+  <select id="getCaseStepsByCaseIds" parameterType="java.util.List" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" /> from tbl_case_step where CASE_ID in
+  				<foreach collection="list" index="index" item="id" separator="," open="(" close=")">
+  	 				#{id}
+  	 			</foreach>
+  	 			and STATUS = 1
+  </select>
+  
+  <insert id="batchInsert">
+  		insert into tbl_case_step (CASE_ID, STEP_ORDER, STEP_DESCRIPTION, STEP_EXPECTED_RESULT, 
+  		STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE) values
+  		<foreach collection="list" item="item" separator=",">
+  			(#{item.caseId,jdbcType=BIGINT}, #{item.stepOrder,jdbcType=INTEGER}, #{item.stepDescription,jdbcType=VARCHAR},
+  		#{item.stepExpectedResult,jdbcType=VARCHAR}, #{item.status,jdbcType=TINYINT}, #{item.createBy,jdbcType=BIGINT},
+  		#{item.createDate,jdbcType=TIMESTAMP}, #{item.lastUpdateBy,jdbcType=BIGINT}, #{item.lastUpdateDate,jdbcType=TIMESTAMP})
+  		</foreach>
+  </insert>
+  
+  <select id="getCaseStepsByCaseId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" /> from tbl_case_step where CASE_ID = #{caseId}
+  	 			and STATUS = 1
+  </select>
+  <delete id="deleteCaseStep" parameterType="java.lang.Long">
+  		DELETE  FROM tbl_case_step where CASE_ID = #{caseId}
+  </delete>
+  
+  <update id="updateStatus" >
+  	update tbl_case_step set STATUS = 2
+  		where id in
+  	<foreach collection="list" item="id" open="(" separator="," close=")">
+  		#{id}
+  	</foreach>
+  </update>
+  
+  <update id="updateCaseStep" parameterType="map">
+  	update tbl_case_step set STEP_ORDER = #{stepOrder}, STEP_DESCRIPTION = #{stepDescription}, STEP_EXPECTED_RESULT = #{stepExpectedResult},
+  		LAST_UPDATE_BY=#{lastUpdateBy}, LAST_UPDATE_DATE=CURRENT_TIMESTAMP where ID=#{id} 
+  </update>
+  
+  <insert id="insert" parameterType="map">
+  		insert into tbl_case_step (CASE_ID, STEP_ORDER, STEP_DESCRIPTION, STEP_EXPECTED_RESULT, 
+  		STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE)
+  		values (#{caseId,jdbcType=BIGINT}, #{stepOrder,jdbcType=INTEGER}, #{stepDescription,jdbcType=VARCHAR},
+  		#{stepExpectedResult,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT},
+  		CURRENT_TIMESTAMP
+  </insert>
+   <insert id="insertStep" parameterType="map">
+  	insert into tbl_case_step(CASE_ID, STEP_ORDER, STEP_DESCRIPTION, STEP_EXPECTED_RESULT, 
+    CREATE_BY, CREATE_DATE)values
+    <foreach collection="list" item="item" index="index" separator=",">
+             (#{caseId},
+              #{item.stepOrder},
+              #{item.stepDescription},
+              #{item.stepExpectedResult},
+              #{createBy},
+              CURRENT_TIMESTAMP
+              )
+        </foreach>
+  </insert>
+  
+  <update id="updateStep" parameterType="cn.pioneeruniverse.dev.entity.TblCaseStep">
+  	update tbl_case_step set STEP_ORDER = #{stepOrder}, STEP_DESCRIPTION = #{stepDescription}, 
+  		STEP_EXPECTED_RESULT = #{stepExpectedResult}, LAST_UPDATE_BY=#{lastUpdateBy}, LAST_UPDATE_DATE = #{lastUpdateDate}
+  		 where ID=#{id} 
+  </update>
+  
+  <select id="getStepIdsByCaseId" parameterType="java.lang.Long" resultType="long">
+  	select ID from tbl_case_step where CASE_ID = #{id} and STATUS = 1
+  </select>
+  
+  <update id="deleteCaseSteps" parameterType="map">
+  	update tbl_case_step set STATUS = 2, LAST_UPDATE_BY = #{userId}, LAST_UPDATE_DATE = #{time}
+  		where ID in 
+  			<foreach collection="resultList" index="index" item="id" separator="," open="(" close=")">
+  	 				#{id}
+  	 		</foreach>
+  </update>
+
+    <!--liushan:根据测试案例id添加测试案例步骤数据-->
+    <insert id="insertByTestSetCaseId">
+        INSERT INTO `tbl_case_step` (
+            `CASE_ID`,
+            `STEP_ORDER`,
+            `STEP_DESCRIPTION`,
+            `STEP_EXPECTED_RESULT`,
+            `CREATE_BY`,
+            `LAST_UPDATE_BY`,
+            `CREATE_DATE`,
+            `LAST_UPDATE_DATE`
+        ) SELECT
+            #{newTestSetCaseId} AS `CASE_ID`,
+            `STEP_ORDER`,
+            `STEP_DESCRIPTION`,
+            `STEP_EXPECTED_RESULT`,
+            #{currentUserId} AS CREATE_BY,
+            #{currentUserId} AS LAST_UPDATE_BY,
+            CURRENT_TIMESTAMP AS `CREATE_DATE`,
+            CURRENT_TIMESTAMP AS `LAST_UPDATE_DATE`
+        FROM
+            tbl_test_set_case_step
+        WHERE
+            TEST_SET_CASE_ID = #{oldTestSetCaseId}
+            AND STATUS = 1
+    </insert>
+</mapper>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>用户管理</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css"/>
+
+    <link rel="stylesheet" type="text/css" media="screen"
+          href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/systemManagement/userManagement/css.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css"/>
+    <link rel="stylesheet"
+          href="#springUrl('')/systemui/static/css/systemManagement/menuManagement/menuManagement.css"/>
+
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript"
+            src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript"
+            src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.extend.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/component.js"></script>
+    <script src="#springUrl('')/systemui/static/js/common/common.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jeesite.js"></script>
+    <script src="#springUrl('')/systemui/static/js/systemManagement/menuManagement/menuManagement.js"></script>
+    <script>
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap4';
+        $.jgrid.defaults.iconSet = "fontAwesome";
+
+        //页面按钮权限
+        var menuEdit = $auth.hasPermission("$token","system:menu:edit");
+        var newMenu = $auth.hasPermission("$token","system:menu:newMenu");
+        var status2 = $auth.hasPermission("$token","system:menu:status");
+        var status1 = $auth.hasPermission("$token","system:menu:status1");
+        var menuDelete = $auth.hasPermission("$token","system:menu:delete");
+
+    </script>
+    <style>
+        /* 加载框 */
+        #loading {
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, .5);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1050;
+            display: none;
+        }
+
+        .loadingImg {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+<div class="main-content">
+    <div class="content-btn">
+        <div class="bottom-container">
+            #if($auth.hasPermission("$token","system:menu:newOneMenu"))
+                <button type="button" onclick="insertFirstMenu_btn()" class="btn btn-primary">新建一级菜单</button>
+            #end
+        </div>
+    </div>
+    <div class="content-table">
+        <div class="wode">
+            <div class="box-body">
+                <table id="menuList"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="loading">
+    <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif"/>
+</div> 
+</body> 
+</html>
+ 

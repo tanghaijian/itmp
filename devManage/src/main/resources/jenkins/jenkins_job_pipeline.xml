@@ -1,0 +1,39 @@
+<flow-definition plugin="workflow-job@2.25">
+    <actions/>
+    <description>自动构建</description>
+    <!-- 依赖性，默认false（注暂时不知道作用） -->
+    <keepDependencies>false</keepDependencies>
+    <properties>
+        <!-- 禁用并发构建 -->
+        <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
+        <!-- 丢弃旧版本 -->
+        <jenkins.model.BuildDiscarderProperty>
+            <!-- 策略 默认 Log Rotator -->
+            <strategy class="hudson.tasks.LogRotator">
+                <!-- 构建记录记录的保存天数 -->
+                <daysToKeep>-1</daysToKeep>
+                <!-- 保存构建建记录的最大条数 -->
+                <numToKeep>-1</numToKeep>
+                <!-- 发布包保留天数 -->
+                <artifactDaysToKeep>-1</artifactDaysToKeep>
+                <!-- 发布包最大保留 -->
+                <artifactNumToKeep>-1</artifactNumToKeep>
+            </strategy>
+        </jenkins.model.BuildDiscarderProperty>
+    </properties>
+    <definition
+            class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition"
+            plugin="workflow-cps@2.54">
+        <script>
+            <!-- pipeline脚本 -->
+
+        </script>
+        <!-- 使用 Groovy 沙盒 默认：true -->
+        <sandbox>true</sandbox>
+    </definition>
+    <triggers/>
+    <!-- 静默期，job触发到真正开始构建中的等待时间 -->
+    <quietPeriod>0</quietPeriod>
+    <!-- 关闭构建 默认：false -->
+    <disabled>false</disabled>
+</flow-definition>

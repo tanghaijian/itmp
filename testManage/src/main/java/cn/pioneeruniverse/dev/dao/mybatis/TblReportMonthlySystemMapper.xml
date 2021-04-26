@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="cn.pioneeruniverse.dev.dao.mybatis.TblReportMonthlySystemMapper">
+	<resultMap id="BaseResultMap"
+		type="cn.pioneeruniverse.dev.entity.TblReportMonthlySystem">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="YEAR_MONTH" jdbcType="VARCHAR"
+			property="yearMonth" />
+		<result column="SYSTEM_ID" jdbcType="BIGINT"
+			property="systemId" />
+		<result column="SYSTEM_NAME" jdbcType="VARCHAR"
+			property="systemName" />
+		<result column="TASK_NUMBER" jdbcType="INTEGER"
+			property="taskNumber" />
+		<result column="DEFECT_NUMBER" jdbcType="INTEGER"
+			property="defectNumber" />
+		<result column="REPAIRED_DEFECT_NUMBER" jdbcType="INTEGER"
+			property="repairedDefectNumber" />
+		<result column="UNREPAIRED_DEFECT_NUMBER" jdbcType="INTEGER"
+			property="unrepairedDefectNumber" />
+		<result column="DESIGN_CASE_NUMBER" jdbcType="INTEGER"
+			property="designCaseNumber" />
+		<result column="DEFECT_PERCENT" jdbcType="DOUBLE"
+			property="defectPercent" />
+		<result column="TOTAL_REPAIR_ROUND" jdbcType="INTEGER"
+			property="totalRepairRound" />
+		<result column="AVG_REPAIR_ROUND" jdbcType="INTEGER"
+			property="avgRepairRound" />
+		<result column="LASTMONTH_UNDEFECTED_NUMBER" jdbcType="INTEGER"
+			property="lastmonthUndefectedNumber" />
+		<result column="LASTMONTH_UNDEFECTED_BELONGER"
+			jdbcType="VARCHAR" property="lastmonthUndefectedBelonger" />
+		<result column="CREATE_BY" jdbcType="BIGINT"
+			property="createBy" />
+		<result column="CREATE_DATE" jdbcType="TIMESTAMP"
+			property="createDate" />
+		<result column="LAST_UPDATE_BY" jdbcType="BIGINT"
+			property="lastUpdateBy" />
+		<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP"
+			property="lastUpdateDate" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, `YEAR_MONTH`, SYSTEM_ID, TASK_NUMBER, DEFECT_NUMBER,
+		REPAIRED_DEFECT_NUMBER, UNREPAIRED_DEFECT_NUMBER,
+		DESIGN_CASE_NUMBER,
+		DEFECT_PERCENT, TOTAL_REPAIR_ROUND, AVG_REPAIR_ROUND,
+		LASTMONTH_UNDEFECTED_NUMBER,
+		LASTMONTH_UNDEFECTED_BELONGER, CREATE_BY,
+		CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tbl_report_monthly_system
+		where ID = #{id,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from
+		tbl_report_monthly_system
+		where ID = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert"
+		parameterType="cn.pioneeruniverse.dev.entity.TblReportMonthlySystem">
+		insert into tbl_report_monthly_system (ID, YEAR_MONTH,
+		SYSTEM_ID,
+		TASK_NUMBER, DEFECT_NUMBER, REPAIRED_DEFECT_NUMBER,
+		UNREPAIRED_DEFECT_NUMBER, DESIGN_CASE_NUMBER,
+		DEFECT_PERCENT,
+		TOTAL_REPAIR_ROUND, AVG_REPAIR_ROUND,
+		LASTMONTH_UNDEFECTED_NUMBER,
+		LASTMONTH_UNDEFECTED_BELONGER,
+		CREATE_BY, CREATE_DATE, LAST_UPDATE_BY,
+		LAST_UPDATE_DATE)
+		values (#{id,jdbcType=BIGINT},
+		#{yearMonth,jdbcType=VARCHAR},
+		#{systemId,jdbcType=BIGINT},
+		#{taskNumber,jdbcType=INTEGER}, #{defectNumber,jdbcType=INTEGER},
+		#{repairedDefectNumber,jdbcType=INTEGER},
+		#{unrepairedDefectNumber,jdbcType=INTEGER},
+		#{designCaseNumber,jdbcType=INTEGER},
+		#{defectPercent,jdbcType=DOUBLE},
+		#{totalRepairRound,jdbcType=INTEGER},
+		#{avgRepairRound,jdbcType=INTEGER},
+		#{lastmonthUndefectedNumber,jdbcType=INTEGER},
+		#{lastmonthUndefectedBelonger,jdbcType=VARCHAR},
+		#{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP},
+		#{lastUpdateBy,jdbcType=BIGINT},
+		#{lastUpdateDate,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="cn.pioneeruniverse.dev.entity.TblReportMonthlySystem">
+		insert into tbl_report_monthly_system
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="yearMonth != null">
+				YEAR_MONTH,
+			</if>
+			<if test="systemId != null">
+				SYSTEM_ID,
+			</if>
+			<if test="taskNumber != null">
+				TASK_NUMBER,
+			</if>
+			<if test="defectNumber != null">
+				DEFECT_NUMBER,
+			</if>
+			<if test="repairedDefectNumber != null">
+				REPAIRED_DEFECT_NUMBER,
+			</if>
+			<if test="unrepairedDefectNumber != null">
+				UNREPAIRED_DEFECT_NUMBER,
+			</if>
+			<if test="designCaseNumber != null">
+				DESIGN_CASE_NUMBER,
+			</if>
+			<if test="defectPercent != null">
+				DEFECT_PERCENT,
+			</if>
+			<if test="totalRepairRound != null">
+				TOTAL_REPAIR_ROUND,
+			</if>
+			<if test="avgRepairRound != null">
+				AVG_REPAIR_ROUND,
+			</if>
+			<if test="lastmonthUndefectedNumber != null">
+				LASTMONTH_UNDEFECTED_NUMBER,
+			</if>
+			<if test="lastmonthUndefectedBelonger != null">
+				LASTMONTH_UNDEFECTED_BELONGER,
+			</if>
+			<if test="createBy != null">
+				CREATE_BY,
+			</if>
+			<if test="createDate != null">
+				CREATE_DATE,
+			</if>
+			<if test="lastUpdateBy != null">
+				LAST_UPDATE_BY,
+			</if>
+			<if test="lastUpdateDate != null">
+				LAST_UPDATE_DATE,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="yearMonth != null">
+				#{yearMonth,jdbcType=VARCHAR},
+			</if>
+			<if test="systemId != null">
+				#{systemId,jdbcType=BIGINT},
+			</if>
+			<if test="taskNumber != null">
+				#{taskNumber,jdbcType=INTEGER},
+			</if>
+			<if test="defectNumber != null">
+				#{defectNumber,jdbcType=INTEGER},
+			</if>
+			<if test="repairedDefectNumber != null">
+				#{repairedDefectNumber,jdbcType=INTEGER},
+			</if>
+			<if test="unrepairedDefectNumber != null">
+				#{unrepairedDefectNumber,jdbcType=INTEGER},
+			</if>
+			<if test="designCaseNumber != null">
+				#{designCaseNumber,jdbcType=INTEGER},
+			</if>
+			<if test="defectPercent != null">
+				#{defectPercent,jdbcType=DOUBLE},
+			</if>
+			<if test="totalRepairRound != null">
+				#{totalRepairRound,jdbcType=INTEGER},
+			</if>
+			<if test="avgRepairRound != null">
+				#{avgRepairRound,jdbcType=INTEGER},
+			</if>
+			<if test="lastmonthUndefectedNumber != null">
+				#{lastmonthUndefectedNumber,jdbcType=INTEGER},
+			</if>
+			<if test="lastmonthUndefectedBelonger != null">
+				#{lastmonthUndefectedBelonger,jdbcType=VARCHAR},
+			</if>
+			<if test="createBy != null">
+				#{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdateBy != null">
+				#{lastUpdateBy,jdbcType=BIGINT},
+			</if>
+			<if test="lastUpdateDate != null">
+				#{lastUpdateDate,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="cn.pioneeruniverse.dev.entity.TblReportMonthlySystem">
+		update tbl_report_monthly_system
+		<set>
+			<if test="yearMonth != null">
+				YEAR_MONTH = #{yearMonth,jdbcType=VARCHAR},
+			</if>
+			<if test="systemId != null">
+				SYSTEM_ID = #{systemId,jdbcType=BIGINT},
+			</if>
+			<if test="taskNumber != null">
+				TASK_NUMBER = #{taskNumber,jdbcType=INTEGER},
+			</if>
+			<if test="defectNumber != null">
+				DEFECT_NUMBER = #{defectNumber,jdbcType=INTEGER},
+			</if>
+			<if test="repairedDefectNumber != null">
+				REPAIRED_DEFECT_NUMBER =
+				#{repairedDefectNumber,jdbcType=INTEGER},
+			</if>
+			<if test="unrepairedDefectNumber != null">
+				UNREPAIRED_DEFECT_NUMBER =
+				#{unrepairedDefectNumber,jdbcType=INTEGER},
+			</if>
+			<if test="designCaseNumber != null">
+				DESIGN_CASE_NUMBER =
+				#{designCaseNumber,jdbcType=INTEGER},
+			</if>
+			<if test="defectPercent != null">
+				DEFECT_PERCENT = #{defectPercent,jdbcType=DOUBLE},
+			</if>
+			<if test="totalRepairRound != null">
+				TOTAL_REPAIR_ROUND =
+				#{totalRepairRound,jdbcType=INTEGER},
+			</if>
+			<if test="avgRepairRound != null">
+				AVG_REPAIR_ROUND = #{avgRepairRound,jdbcType=INTEGER},
+			</if>
+			<if test="lastmonthUndefectedNumber != null">
+				LASTMONTH_UNDEFECTED_NUMBER =
+				#{lastmonthUndefectedNumber,jdbcType=INTEGER},
+			</if>
+			<if test="lastmonthUndefectedBelonger != null">
+				LASTMONTH_UNDEFECTED_BELONGER =
+				#{lastmonthUndefectedBelonger,jdbcType=VARCHAR},
+			</if>
+			<if test="createBy != null">
+				CREATE_BY = #{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="createDate != null">
+				CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdateBy != null">
+				LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+			</if>
+			<if test="lastUpdateDate != null">
+				LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="cn.pioneeruniverse.dev.entity.TblReportMonthlySystem">
+		update tbl_report_monthly_system
+		set YEAR_MONTH =
+		#{yearMonth,jdbcType=VARCHAR},
+		SYSTEM_ID = #{systemId,jdbcType=BIGINT},
+		TASK_NUMBER = #{taskNumber,jdbcType=INTEGER},
+		DEFECT_NUMBER =
+		#{defectNumber,jdbcType=INTEGER},
+		REPAIRED_DEFECT_NUMBER =
+		#{repairedDefectNumber,jdbcType=INTEGER},
+		UNREPAIRED_DEFECT_NUMBER =
+		#{unrepairedDefectNumber,jdbcType=INTEGER},
+		DESIGN_CASE_NUMBER =
+		#{designCaseNumber,jdbcType=INTEGER},
+		DEFECT_PERCENT =
+		#{defectPercent,jdbcType=DOUBLE},
+		TOTAL_REPAIR_ROUND =
+		#{totalRepairRound,jdbcType=INTEGER},
+		AVG_REPAIR_ROUND =
+		#{avgRepairRound,jdbcType=INTEGER},
+		LASTMONTH_UNDEFECTED_NUMBER =
+		#{lastmonthUndefectedNumber,jdbcType=INTEGER},
+		LASTMONTH_UNDEFECTED_BELONGER =
+		#{lastmonthUndefectedBelonger,jdbcType=VARCHAR},
+		CREATE_BY =
+		#{createBy,jdbcType=BIGINT},
+		CREATE_DATE =
+		#{createDate,jdbcType=TIMESTAMP},
+		LAST_UPDATE_BY =
+		#{lastUpdateBy,jdbcType=BIGINT},
+		LAST_UPDATE_DATE =
+		#{lastUpdateDate,jdbcType=TIMESTAMP}
+		where ID = #{id,jdbcType=BIGINT}
+	</update>
+	<insert id="batchInsert">
+		insert into tbl_report_monthly_system ( `YEAR_MONTH`, SYSTEM_ID,
+		TASK_NUMBER, DEFECT_NUMBER, REPAIRED_DEFECT_NUMBER,
+		UNREPAIRED_DEFECT_NUMBER, DESIGN_CASE_NUMBER,
+		DEFECT_PERCENT,
+		TOTAL_REPAIR_ROUND, AVG_REPAIR_ROUND,
+		LASTMONTH_UNDEFECTED_NUMBER,
+		LASTMONTH_UNDEFECTED_BELONGER,
+		CREATE_BY, CREATE_DATE, LAST_UPDATE_BY,
+		LAST_UPDATE_DATE) values
+		<foreach collection="list" item="item" separator=",">
+			(
+			#{item.yearMonth,jdbcType=VARCHAR},
+			#{item.systemId,jdbcType=BIGINT},
+			#{item.taskNumber,jdbcType=INTEGER},
+			#{item.defectNumber,jdbcType=INTEGER},
+			#{item.repairedDefectNumber,jdbcType=INTEGER},
+			#{item.unrepairedDefectNumber,jdbcType=INTEGER},
+			#{item.designCaseNumber,jdbcType=INTEGER},
+			#{item.defectPercent,jdbcType=DOUBLE},
+			#{item.totalRepairRound,jdbcType=INTEGER},
+			#{item.avgRepairRound,jdbcType=DOUBLE},
+			#{item.lastmonthUndefectedNumber,jdbcType=INTEGER},
+			#{item.lastmonthUndefectedBelonger,jdbcType=VARCHAR},
+			#{item.createBy,jdbcType=BIGINT},
+			#{item.createDate,jdbcType=TIMESTAMP},
+			#{item.lastUpdateBy,jdbcType=BIGINT},
+			#{item.lastUpdateDate,jdbcType=TIMESTAMP})
+		</foreach>
+	</insert>
+
+	<!-- 查询年总缺陷率 -->
+	<select id="selectDefectPro" resultType="map">
+		SELECT *,(CASE WHEN
+		designCaseNumber = 0 THEN 0 ELSE defectNumber/designCaseNumber*100
+		END)
+		defectPercent,
+		(CASE WHEN repairedDefectNumber = 0 THEN 0 ELSE
+		totalRepairRound/repairedDefectNumber
+		END) avgRepairRound,
+		'100%' checkPro
+		FROM(
+		SELECT report.`YEAR_MONTH` yearMonth, sum(report.TASK_NUMBER) taskNumber,
+		sum(report.DEFECT_NUMBER) defectNumber,
+		sum(report.REPAIRED_DEFECT_NUMBER)
+		repairedDefectNumber, sum(report.UNREPAIRED_DEFECT_NUMBER)
+		unrepairedDefectNumber,
+		sum(report.DESIGN_CASE_NUMBER) designCaseNumber,
+		sum(report.TOTAL_REPAIR_ROUND) totalRepairRound,
+		sum(report.LASTMONTH_UNDEFECTED_NUMBER) lastmonthUndefectedNumber
+		FROM tbl_report_monthly_system report
+		left join tbl_system_info system
+		on system.id = report.SYSTEM_ID
+		WHERE SUBSTR(`YEAR_MONTH`,1,4) = #{year}
+		AND SUBSTR(`YEAR_MONTH`,6) &lt;= #{month}
+		AND system.SYSTEM_CODE IN
+		<foreach collection="systemCode.split(',')" item="item"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		GROUP BY `YEAR_MONTH`
+		) a
+	</select>
+
+	<!-- 查询系统缺陷率 -->
+	<select id="selectReportBySystem" resultType="map">
+		SELECT report.`YEAR_MONTH` yearMonth, system.SYSTEM_NAME systemName,
+		system.SYSTEM_CODE systemCode,
+		report.TASK_NUMBER taskNumber, report.DEFECT_NUMBER defectNumber,
+		report.REPAIRED_DEFECT_NUMBER repairedDefectNumber,
+		report.UNREPAIRED_DEFECT_NUMBER unrepairedDefectNumber,
+		report.DESIGN_CASE_NUMBER designCaseNumber, report.DEFECT_PERCENT
+		defectPercent, report.TOTAL_REPAIR_ROUND totalRepairRound,
+		report.AVG_REPAIR_ROUND avgRepairRound,
+		report.LASTMONTH_UNDEFECTED_NUMBER lastmonthUndefectedNumber,
+		report.LASTMONTH_UNDEFECTED_BELONGER lastmonthUndefectedBelonger,
+		'100%' checkPro
+		FROM
+		tbl_report_monthly_system report
+		LEFT JOIN tbl_system_info system
+		ON
+		system.ID = report.SYSTEM_ID
+		WHERE SUBSTR(report.`YEAR_MONTH`,6) = #{month}
+		AND
+		SUBSTR(report.`YEAR_MONTH`,1,4) = #{year}
+		AND system.STATUS = 1
+	</select>
+	
+	<!-- 查询系统年缺陷率 -->
+	<select id="selectReportBySystemYear" resultType="map">
+		select *,(CASE WHEN
+		designCaseNumber = 0 THEN 0 ELSE defectNumber/designCaseNumber*100
+		END) defectPercent,
+		(CASE WHEN repairedDefectNumber = 0 THEN 0 ELSE
+		totalRepairRound/repairedDefectNumber
+		END) avgRepairRound from
+		(
+			SELECT  system.SYSTEM_NAME systemName,
+			system.SYSTEM_CODE systemCode,
+			sum(report.TASK_NUMBER) taskNumber, sum(report.DEFECT_NUMBER) defectNumber,
+			sum(report.REPAIRED_DEFECT_NUMBER) repairedDefectNumber,
+			sum(report.UNREPAIRED_DEFECT_NUMBER) unrepairedDefectNumber,
+			sum(report.DESIGN_CASE_NUMBER) designCaseNumber,
+			sum(report.TOTAL_REPAIR_ROUND) totalRepairRound,
+			sum(report.LASTMONTH_UNDEFECTED_NUMBER) lastmonthUndefectedNumber,
+			sum(report.LASTMONTH_UNDEFECTED_BELONGER) lastmonthUndefectedBelonger,
+			'100%' checkPro
+			FROM
+			tbl_report_monthly_system report
+			LEFT JOIN tbl_system_info system
+			ON
+			system.ID = report.SYSTEM_ID
+			WHERE SUBSTR(report.`YEAR_MONTH`,6) 
+			between 1 and #{month}
+			AND
+			SUBSTR(report.`YEAR_MONTH`,1,4) = #{year}
+			AND system.STATUS = 1
+			group by system.SYSTEM_NAME,system.SYSTEM_CODE
+		) a
+	</select>
+	
+	<!-- 统计最差项目 -->
+	<select id="selectWorseSystem" resultType="map">
+ SELECT report.`YEAR_MONTH` yearMonth, system.SYSTEM_NAME systemName,
+		report.DEFECT_NUMBER defectNumber,
+		report.TASK_NUMBER taskNumber,
+		report.DESIGN_CASE_NUMBER designCaseNumber, report.DEFECT_PERCENT defectPercent
+		FROM tbl_report_monthly_system report
+		left join tbl_system_info system
+		on system.id = report.SYSTEM_ID
+		WHERE SUBSTR(report.`YEAR_MONTH`,1,4) = #{year}
+		AND system.SYSTEM_CODE IN
+		<foreach collection="systemCode.split(',')" item="item"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		and system.SYSTEM_NAME != '新人身险系统'
+		and system.SYSTEM_NAME is not null
+	</select>
+	
+	<delete id="deleteByYearMonth">
+		delete from tbl_report_monthly_system
+		where `YEAR_MONTH` = #{yearMonth}
+	</delete>
+	
+	<select id="jugeHis" resultType="int">
+		select count(id) from tbl_report_monthly_system
+		where `YEAR_MONTH` = #{yearMonth}
+	</select>
+	
+	<select id="selectReportSystem" resultMap="BaseResultMap">
+		select
+		report.`YEAR_MONTH`, system.SYSTEM_NAME, report.TASK_NUMBER, report.DEFECT_NUMBER,
+		report.REPAIRED_DEFECT_NUMBER, report.UNREPAIRED_DEFECT_NUMBER,
+		report.DESIGN_CASE_NUMBER,
+		report.DEFECT_PERCENT, report.TOTAL_REPAIR_ROUND, report.AVG_REPAIR_ROUND,
+		report.LASTMONTH_UNDEFECTED_NUMBER,
+		report.LASTMONTH_UNDEFECTED_BELONGER
+		from tbl_report_monthly_system report
+		left join tbl_system_info system
+		on system.id = report.SYSTEM_ID
+		where report.`YEAR_MONTH` = #{yearMonth}
+	</select>
+</mapper>

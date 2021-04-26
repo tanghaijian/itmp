@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script src="https://cdn.bootcss.com/sockjs-client/1.0.0/sockjs.min.js"></script>
+    <script src="https://cdn.bootcss.com/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+
+<button class="btn btn-default" type="button" onclick="startTask()">开始执行任务</button>
+<button class="btn btn-default" type="button" onclick="endTask()">结束执行任务</button>
+
+<script>
+    var stompClient = null;
+    $(document).ready(function () {
+        var socket = new SockJS('/devManageui/notify-websocket');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/greetings', function(response) {
+                alert(response.body);
+            });
+        },function errorCallBack (error) {
+            console.log('连接失败【' + error + '】');
+        });
+    });
+    
+    function startTask() {
+        stompClient.send("/send/hello", {}, '12345');
+    }
+
+    function endTask() {
+        $.ajax({
+            type: "POST",
+            url: "../devManageui/taskExecuteEnd",
+            async: true,
+            contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+            success: function (msg) {
+                console.log(msg);
+            }
+        });
+    }
+</script>
+</body>
+</html>

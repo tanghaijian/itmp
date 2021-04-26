@@ -1,0 +1,230 @@
+<!-- liushan:测试执行和测试集公共页面 -->
+
+<!-- 测试任务参数 -->
+<input type="hidden" id="reqFeatureId">
+<input type="hidden" id="reqFeature">
+
+<!-- 引入测试集案例弹框 -->
+<div id="leadInTestCaseModal" class="modal fade bs-example-modal-lg"
+     tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+                <span class="modal-title">请选择测试案例</span>
+            </div>
+
+            <div class="modal-body">
+                <div class="color1">
+                    <div class="container-fluid" id="">
+                        <div class="row control-row">
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">测试任务：</label>
+                                </div>
+                                <div class="search_input" style="position: relative;">
+                                    <input type="hidden" id="leadTestTaskId" />
+                                    <input type="text" class="form-control" placeholder="请输入测试任务编号或名称"
+                                           id="leadTestTask" onchange="getWorkTask(this)"/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">测试工作任务：</label>
+                                </div>
+                                <div class="search_input">
+                                    <!-- <input type="text" class="form-control" placeholder="请输入"
+                                        id="leadWordTask" /> -->
+                                    <select class="selectpicker" id="leadWordTask" onchange="getTestSet(this)">
+                                        <option value="">请选择</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">测试集：</label>
+                                </div>
+                                <div class="search_input">
+                                    <!-- <input type="text" class="form-control" placeholder="请输入"
+                                        id="leadTestSet" /> -->
+                                    <select class="selectpicker" id="leadTestSet">
+                                        <option value="">请选择</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row control-row search_btn">
+                            <button type="button" class="btn btn-primary"
+                                    onclick="caseTableShow2()">搜&nbsp;&nbsp;&nbsp;索</button>
+                            <button type="button" class="btn btn-default"
+                                    onclick="clearSearchCase()">重&nbsp;&nbsp;&nbsp;置</button>
+                        </div>
+                    </div>
+                    <div id="downBtn">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br />
+                <div class="content-btn" id="check_box"></div>
+                <div class="content-table">
+                    <div class="wode">
+                        <table id="listCase2"></table>
+                        <div id="pagerTask"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="bottom-container">
+                    <button type="button" id="" class="btn btn-primary" data-task="default" onclick="leadCaseCommit()">引用选择案例</button>
+                    <button type="button" id="" class="btn btn-primary"	data-task="default" onclick="leadAllCaseCommit()">引用全部案例</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 选择案例弹框 -->
+<div id="testCaseModal" class="modal fade bs-example-modal-lg"
+     tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+                <span class="modal-title">请选择测试案例</span>
+            </div>
+
+            <div class="modal-body">
+                <div class="color1">
+                    <div class="container-fluid" id="">
+                        <div class="row control-row">
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">案例编号：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入"
+                                           id="caseCode" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">案例名称：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入"
+                                           id="caseName" />
+                                </div>
+                            </div>
+                             <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">业务类型：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入"
+                                           id="case_businessType" />
+                                </div>
+                            </div>
+                        </div>
+                         <div class="row control-row">
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">模块：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入"
+                                           id="case_moduleName" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">测试项：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入"
+                                           id="case_testPoint" />
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="row control-row search_btn">
+                            <button type="button" class="btn btn-primary"
+                                    onclick="caseTableShow()">搜&nbsp;&nbsp;&nbsp;索</button>
+                            <button type="button" class="btn btn-default"
+                                    onclick="clearSearchCase()">重&nbsp;&nbsp;&nbsp;置</button>
+                        </div>
+                    </div>
+                    <div id="downBtn">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br />
+                <div class="content-table">
+                    <div class="wode">
+                        <table id="listCase"></table>
+                        <div id="pagerTask"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="bottom-container">
+                    <button type="button" id="taskbutton" class="btn btn-primary"
+                            data-task="default" onclick="commitCase()">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 导入 -->
+<div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="POST" enctype="multipart/form-data" id="form1"
+                  action="">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">选择导入文件</h4>
+                    <input id="is_test_set" type="hidden"  />
+                </div>
+                <div class="modal-body">
+                    <div class="">
+                        <a id='leadingOut' href="#" onclick="testSetCase.importExcel.exportExcel()">下载模板</a>&nbsp;提示:导出模板
+                        <input id="upfile" type="file" name="upfile" />
+                        <input id="pidValue" type="hidden" name="pId" value=" " />
+                    </div>
+                    <div class="rowdiv" id="is_test_set_body">
+                            <div class="def_col_15" style="display: flex;align-items: center;">
+                                <div class="search_font">
+                                    <label class="control-label">全量导入：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="radio" name="caseCode" value="1" />
+                                </div>
+                            </div>
+                            <div class="def_col_15" style="display: flex;align-items: center;">
+                                <div class="search_font">
+                                    <label class="control-label">增量导入：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="radio" name="caseCode" value="2" />
+                                </div>
+                            </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="testSetCase.importExcel.upload()"
+                            id="btn">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

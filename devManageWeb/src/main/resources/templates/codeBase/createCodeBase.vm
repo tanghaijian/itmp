@@ -1,0 +1,151 @@
+## 新建代码库弹窗内容
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+    </button>
+    <span class="modal-title" id="microChildService">新建代码库</span>
+</div>
+<div class="modal-body">
+    <div class="rowdiv">
+        <div class="form-group">
+            <label class="def_col_8 control-label font_right fontWeihgt">代码库类型：</label>
+            <div class="def_col_26 control-label">
+                #if($scmType == 1)
+                    <img class="Img_Git" src="#springUrl('')/devManageui/static/images/codeBase/git.png"/>
+                    Git
+                #end
+                #if($scmType == 2)
+                    <img class="Img_SVN" src="#springUrl('')/devManageui/static/images/codeBase/svn.jpg"/>
+                    SVN
+                #end
+            </div>
+        </div>
+    </div>
+    <div class="rowdiv">
+        <div class="form-group">
+            <label class="def_col_8 control-label font_right fontWeihgt">代码库地址：</label>
+            <div class="def_col_26 control-label">
+                <select class="selectpicker" id="codeBaseAddr" name="codeBaseAddr">
+                    <option value="">请选择</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="rowdiv">
+        <div class="form-group">
+            <label class="def_col_8 control-label font_right fontWeihgt">代码库名称：</label>
+            <div class="def_col_26 control-label">
+                <input type="text" class="form-control" placeholder="请填写发布仓库名称"
+                       id="microServiceReleaseRepositoryName" name="releaseRepositoryName"
+                       data-bv-field="releaseRepositoryName">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" onclick="CreateCodeBaseModal.submitAddCodeBase()">确定</button>
+    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+</div>
+<script>
+    $('.selectpicker').selectpicker('refresh');
+
+    var CreateCodeBaseModal = {
+    		//创建新的代码仓库：提交
+        submitAddCodeBase: function () {
+            var codeBaseType = $scmType;
+            var toolId = $("#codeBaseAddr").val();
+            var codeBaseIp = $('#codeBaseAddr option:selected').attr("ip");
+            if (toolId == "" || toolId == undefined) {
+                layer.alert("请选择代码库地址！", {
+                    icon: 2,
+                    title: "提示信息"
+                });
+                return false;
+            }
+            var codeBaseName = $("#microServiceReleaseRepositoryName").val();
+            if (codeBaseName == "") {
+                layer.alert("请填写代码库名称！", {
+                    icon: 2,
+                    title: "提示信息"
+                });
+                return false;
+            }
+            #if($scmType == 2)
+                if (!/^[0-9a-zA-Z]+$/.test(codeBaseName)) {
+                    layer.alert("代码库名称只能由大小写英文和数字构成！", {
+                        icon: 2,
+                        title: "提示信息"
+                    });
+                    return false;
+                }
+            #end
+            $.ajax({
+                type: "POST",
+                url: "/devManage/version/addNewCodeBase",
+                dataType: "json",
+                contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+                data: {
+                    systemId:$systemId,
+                    scmType: codeBaseType,
+                    toolId: toolId,
+                    repositoryName: codeBaseName,
+                    ip: codeBaseIp
+                },
+                beforeSend: function () {
+                    $("#loading").css('display', 'block');
+                },
+                success: function (msg) {
+                    $("#loading").css('display', 'none');
+                    if (msg.flag) {
+                        $("#createCodeBaseModel").modal("hide");
+
+                        //msg.data.id   新增仓库id
+                        //msg.data.repositoryName 新增仓库名称
+
+
+                        //TODO 局部刷新代码库
+                        #if($scmType == 1)
+                            window.location.reload();
+                        #end
+                        #if($scmType == 2)
+                            $.fn.zTree.getZTreeObj("$treeId").reAsyncChildNodes(null, "refresh");
+                            $("#loading").css('display', 'none');
+                        #end
+                    } else {
+                        layer.alert("新增代码库失败,失败原因:" + msg.data.message, {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $("#loading").css('display', 'none');
+                    if (XMLHttpRequest.status != 999) {
+                        layer.alert("系统异常，请联系管理员", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                    }
+                }
+            });
+
+
+        }
+    };
+
+    //仓库地址下拉框输入事件
+    $("#codeBaseAddr").on("shown.bs.select", function () {
+        var obj = $(this);
+        var oldValue = obj.val();
+        obj.find("option").not(":first").remove();
+        $.post("/devManage/version/getCodeBaseAddresses", {codeBaseType: $scmType}, function (data, status) {
+            var options = '';
+            for (var i in data) {
+                options += '<option value="' + data[i].id + '" ip="' + data[i].ip + '">' + data[i].toolName + '(' + data[i].ip + ')</option>';
+            }
+            obj.append(options);
+            obj.selectpicker('refresh');
+            obj.selectpicker("val", oldValue);
+        }, "json");
+    });
+
+</script>

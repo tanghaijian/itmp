@@ -1,0 +1,35 @@
+.edit{
+    display:inline-block
+}
+.bigBox{
+     display: flex;
+ }
+.left-box{
+    flex: 0 0 145px;
+}
+.right-box{
+    flex: 1;
+    padding: 0 18px;
+}
+.splitOpt{
+    display:inline-block
+}
+.file-upload-tb a{
+    color: #428bca;
+}
+.file-upload-tb>tbody>tr>td:first-child {
+    width: 100px;
+}
+.fileTb img{
+    padding-bottom: 3px;
+    height: 20px;
+}
+#importModal table{
+    width: 100% !important;
+}
+.removeSystem,.deleteSystem,.systemDelOpt,.editOpt,.save,.inputContent{
+    display:none
+}
+.sp_red{
+    color:red;
+}

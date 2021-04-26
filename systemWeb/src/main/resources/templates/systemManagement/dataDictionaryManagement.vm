@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    #parse("./common.vm")
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>数据字典</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css"/> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css"/> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css"/> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css"/> 
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css"/>
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/systemManagement/dicManagement/css.css"/>
+
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+    
+    <script type="text/ecmascript" src="$systemuiStatic/js/systemManagement/dicManage/dicManage.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script>
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap4';
+        $.jgrid.defaults.iconSet = "fontAwesome";
+        
+        var addDic= $auth.hasPermission("$token","systemManage:dataDic:add");//新增
+        var  devInvalid= $auth.hasPermission("$token","systemManage:dataDic:invalid"); //设为无效
+        var  deveffective= $auth.hasPermission("$token","systemManage:dataDic:effective"); //设为有效
+        var dicEdit = $auth.hasPermission("$token","systemManage:dataDic:edit");//编辑
+    </script>
+
+</head>
+<body>
+<div id="loading">
+    <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif"/>
+</div>
+<div class="color1">
+    <div class="container-fluid" id="search_div">
+        <div class="row control-row">
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">字典名称：</label></div>
+                <div class="search_input">
+                    <input type="text" class="form-control" placeholder="请输入" id="DicName" name="DicName" value="" onkeyup="this.value=this.value.replace(/(^\s*)|(\s*$)/g, '')"/>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">字典编码：</label></div>
+                <div class="search_input">
+
+                    <input type="text" class="form-control" placeholder="请输入" id="DicCode" name="DicCode" value=""/>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">有效状态：</label></div>
+                <div class="search_input">
+                    <select class="selectpicker" id="DicType" name="thirdParty">
+                        <option value="">请选择</option>
+                        <option value="1">有效</option>
+                        <option value="2">无效</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row control-row search_btn">
+            <button type="button" class="btn btn-primary" onclick="searchInfo()">搜&nbsp;&nbsp;&nbsp;索</button>
+            <button type="button" onclick="clearSearch()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+
+        </div>
+    </div>
+    <div id="downBtn">
+        <span class="fa fa-caret-up"></span>
+    </div>
+</div>
+<div class="main-content">
+    <div class="content-btn">
+    #if($auth.hasPermission("$token","systemManage:dataDic:add"))
+             <button type="button" onclick="modifyDataDic('add')" class="btn btn-primary">新建字典</button>
+        #end
+       
+    </div>
+    <div class="content-table">
+        <div class="wode">
+            <table id="list2"></table>
+            <div id="pager2"></div>
+        </div>
+    </div>
+</div>
+##修改字典弹窗
+<div class="modal fade bs-example-modal-lg" id="modifyDataDictModal" tabindex="-1" role="dialog"
+     aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#modifyDataDictModal").on("hidden.bs.modal", function () {
+        $(this).removeData("bs.modal");
+        $('#modifyDataDictModalForm').data('bootstrapValidator').resetForm();
+    });
+
+</script>
+</body>
+</html>
+ 

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<title>缺陷报表</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="X-UA-Compatible" content="no-cache,IE=edge,Chrome=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/daterangepicker-bs3.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+	
+	<link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/report/defectReport.css" />
+</head>
+
+<body>
+##查询区
+	<div class="color1">
+		<div class="container-fluid search_div" id="search_div">
+			<div class="row control-row">
+				<div class="col-md-4">
+					<div class="search_font">
+						<label class="control-label">子系统：</label>
+					</div>
+					<div class="search_input">
+						<select id="systemIds" class="selectpicker" multiple ></select>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="search_font">
+						<label class="control-label">缺陷类型：</label>
+					</div>
+					<div class="search_input">
+						<select id="defectTypes" class="selectpicker" multiple >
+							#foreach($dictMap in ${dict.getDictMap("TBL_DEFECT_INFO_DEFECT_TYPE").entrySet()})
+								<option value="${dictMap.key}">${dictMap.value}</option>
+							#end
+						</select>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="search_font">
+						<label class="control-label">缺陷来源：</label>
+					</div>
+					<div class="search_input">
+						<select id="defectSource" class="selectpicker" multiple >
+							#foreach($dictMap in ${dict.getDictMap("TBL_DEFECT_INFO_DEFECT_SOURCE").entrySet()})
+								<option value="${dictMap.key}">${dictMap.value}</option>
+							#end 
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row control-row">
+				<div class="col-md-4">
+					<div class="search_font">
+						<label class="control-label">缺陷等级：</label>
+					</div>
+					<div class="search_input">
+						<select id="defectLevel" class="selectpicker form-control" multiple>
+							 #foreach($dictMap in ${dict.getDictMap("TBL_DEFECT_INFO_SEVERITY_LEVEL").entrySet()})
+								<option value="${dictMap.key}">${dictMap.value}</option>
+							#end 
+						</select>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="search_font">
+						<label class="control-label">紧急程度：</label>
+					</div>
+					<div class="search_input">
+						<select id="emergencyLevel" class="selectpicker form-control" multiple>
+							#foreach($dictMap in ${dict.getDictMap("TBL_DEFECT_INFO_EMERGENCY_LEVEL").entrySet()})
+								<option value="${dictMap.key}">${dictMap.value}</option>
+							#end 
+						</select>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="search_font">
+						<label class="control-label">缺陷状态：</label>
+					</div>
+					<div class="search_input">
+						<select id="defectStatus" class="selectpicker form-control" multiple>
+							#foreach($dictMap in ${dict.getDictMap("TBL_DEFECT_INFO_DEFECT_STATUS").entrySet()})
+								<option value="${dictMap.key}">${dictMap.value}</option>
+							#end 
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row control-row">
+				<div class="col-md-4">
+					<div class="search_font">
+						<label class="control-label">缺陷创建时间：</label>
+					</div>
+					<div class="search_input">
+						<input type="text" id="defectDate" class="form-control pointStyle" placeholder="请选择" />
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="search_font">
+						<label class="control-label">投产时间：</label>
+					</div>
+					<div class="search_input">
+            <input type="text" id="commitWindowDate" class="form-control pointStyle" placeholder="请选择" />
+					</div>
+				</div>
+			</div>
+			<div class="row control-row search_btn">
+				<button type="button" class="btn btn-primary" onclick="searchInfo()">统&nbsp;&nbsp;&nbsp;计</button>
+				<button type="button" onclick="clearSearch()" class="btn btn-default">清&nbsp;&nbsp;&nbsp;空</button>
+				<div class="collection">
+					<span class="fa fa-heart-o"></span>&nbsp;收藏此次筛选
+				</div>
+			</div>
+			<div class="row control-row">
+				<div class="col-md-3 col-md-offset-9">
+					<select id="projectType2" class="selectpicker form-control" onchange="tab_option(this)">
+						<option value="">选择收藏方案</option>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="downBtn" id="downBtn">
+			<span class="fa fa-caret-up"></span>
+		</div>
+	</div>
+
+
+	##缺陷紧急程度
+	<div class="flex p_a_30 m_t_20">
+		#*<div class="left_box">
+			<div class="row control-row">
+				<div class="col-md-5">
+					<div class="search_font">
+						<label class="control-label">缺陷状态：</label>
+					</div>
+					<div class="search_input">
+						<select id="defectStatus_chart1" class="selectpicker" multiple>
+							#foreach($dictMap in ${dict.getDictMap("TBL_DEFECT_INFO_DEFECT_STATUS").entrySet()})
+								<option value="${dictMap.key}">${dictMap.value}</option>
+							#end 
+						</select>
+					</div>
+				</div>
+				<div class="col-md-5">
+					<div class="search_font">
+						<label class="control-label">紧急程度：</label>
+					</div>
+					<div class="search_input">
+						<select id="emergencyLevel_chart1" class="selectpicker" multiple>
+							#foreach($dictMap in ${dict.getDictMap("TBL_DEFECT_INFO_EMERGENCY_LEVEL").entrySet()})
+								<option value="${dictMap.key}">${dictMap.value}</option>
+							#end 
+						</select>
+					</div>
+				</div>
+        <div class="col-md-2">
+          <a class="a_style" target="_blank" id="iframe_chart1_a">新窗口预览</a>
+        </div>
+			</div>
+			<iframe src="" height="350px" width="100%" frameborder="no" id="iframe_chart1"></iframe>
+		</div>*#
+		<div style="margin: 0 auto;border: 2px solid #eee;">
+			<div class="row control-row">
+				<div class="col-md-5">
+					<div class="search_font">
+						<label class="control-label">缺陷状态：</label>
+					</div>
+					<div class="search_input">
+						<select id="defectStatus_chart2" class="selectpicker" multiple>
+							 #foreach($dictMap in ${dict.getDictMap("TBL_DEFECT_INFO_DEFECT_STATUS").entrySet()})
+								<option value="${dictMap.key}">${dictMap.value}</option>
+							#end 
+						</select>
+					</div>
+				</div>
+				<div class="col-md-5">
+					<div class="search_font">
+						<label class="control-label">投产窗口：</label>
+					</div>
+					<div class="search_input">
+						<input type="hidden" id="commitWindowId_chart2" />
+						<input type="text" id="commitWindowName_chart2"   onclick="commitWindow()"
+							class="form-control pointStyle" placeholder="请选择" />
+					</div>
+				</div>
+        <div class="col-md-2">
+          <a class="a_style" target="_blank" id="iframe_chart2_a">新窗口预览</a>
+        </div>
+			</div>
+			<iframe src="" height="350px" width="100%" frameborder="no" id="iframe_chart2"></iframe>
+		</div>
+	</div>
+
+	<div class="flex p_a_30 m_t_20">
+	##表图1
+		<div class="left_box">
+			<div class="row control-row">
+				<div class="col-md-5">
+					<div class="search_font">
+						<label class="control-label">缺陷状态：</label>
+					</div>
+					<div class="search_input">
+						<select id="defectStatus_table1" class="selectpicker" multiple>
+							 #foreach($dictMap in ${dict.getDictMap("TBL_DEFECT_INFO_DEFECT_STATUS").entrySet()})
+								<option value="${dictMap.key}">${dictMap.value}</option>
+							#end 
+						</select>
+					</div>
+				</div>
+				<div class="col-md-5">
+					<div class="search_font">
+						<label class="control-label">缺陷来源：</label>
+					</div>
+					<div class="search_input">
+						<select id="defectSource_table1" class="selectpicker" multiple>
+							#foreach($dictMap in ${dict.getDictMap("TBL_DEFECT_INFO_DEFECT_SOURCE").entrySet()})
+								<option value="${dictMap.key}">${dictMap.value}</option>
+							#end 
+						</select>
+					</div>
+				</div>
+				<div class="col-md-2">
+          <a class="a_style" target="_blank" id="iframe_table1_a">新窗口预览</a>
+        </div>
+			</div>
+			<iframe src="" height="200px" width="100%" frameborder="no" id="iframe_table1"></iframe>
+		</div>
+		##表图2
+		<div class="right_box">
+			<div class="row control-row">
+				<div class="col-md-5">
+					<div class="search_font">
+						<label class="control-label">缺陷状态：</label>
+					</div>
+					<div class="search_input">
+						<select id="defectStatus_table2" class="selectpicker" multiple>
+							 #foreach($dictMap in ${dict.getDictMap("TBL_DEFECT_INFO_DEFECT_STATUS").entrySet()})
+								<option value="${dictMap.key}">${dictMap.value}</option>
+							#end 
+						</select>
+					</div>
+				</div>
+				<div class="col-md-5">
+					<div class="search_font">
+						<label class="control-label">紧急程度：</label>
+					</div>
+					<div class="search_input">
+						<select id="emergencyLevel_table2" class="selectpicker" multiple>
+							#foreach($dictMap in ${dict.getDictMap("TBL_DEFECT_INFO_EMERGENCY_LEVEL").entrySet()})
+								<option value="${dictMap.key}">${dictMap.value}</option>
+							#end 
+						</select>
+					</div>
+				</div>
+        <div class="col-md-2">
+          <a class="a_style" target="_blank" id="iframe_table2_a">新窗口预览</a>
+        </div>
+			</div>
+			<iframe src="" height="200px" width="100%" frameborder="no" id="iframe_table2"></iframe>
+		</div>
+	</div>
+
+	## 双图 饼图和表图
+	<div class="p_a_30 m_t_20 border_eee">
+			<div class="row control-row">
+				<div class="col-md-4">
+					<div class="search_font">
+						<label class="control-label">缺陷状态：</label>
+					</div>
+					<div class="search_input">
+						<select id="defectStatus_chart1" class="selectpicker" multiple>
+							#foreach($dictMap in ${dict.getDictMap("TBL_DEFECT_INFO_DEFECT_STATUS").entrySet()})
+								<option value="${dictMap.key}">${dictMap.value}</option>
+							#end 
+						</select>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="search_font">
+						<label class="control-label">紧急程度：</label>
+					</div>
+					<div class="search_input">
+						<select id="emergencyLevel_chart1" class="selectpicker" multiple>
+							#foreach($dictMap in ${dict.getDictMap("TBL_DEFECT_INFO_EMERGENCY_LEVEL").entrySet()})
+								<option value="${dictMap.key}">${dictMap.value}</option>
+							#end 
+						</select>
+					</div>
+				</div>
+		        <div class="col-md-4">
+		          	<a class="a_style" target="_blank" id="iframe_chart1_a">新窗口预览图形</a>
+		          	<a class="a_style" target="_blank" id="iframe_chart1b_a">新窗口预览表格</a>
+		        </div>
+			</div>
+			<div class="rowdiv flex">
+				<iframe src="" height="350px" width="45%" frameborder="no" id="iframe_chart1"></iframe>
+				<iframe src="" height="350px" width="45%" frameborder="no" id="iframe_chart1b"></iframe>
+			</div>
+	</div>
+	
+	<div class="bg_fff p_a_30 m_t_20 border_eee">
+		<div class="row control-row">
+			<div class="col-md-4">
+				<div class="search_font">
+					<label class="control-label">缺陷状态：</label>
+				</div>
+				<div class="search_input">
+					<select id="defectStatus_table3" class="selectpicker" multiple>
+						 #foreach($dictMap in ${dict.getDictMap("TBL_DEFECT_INFO_DEFECT_STATUS").entrySet()})
+							<option value="${dictMap.key}">${dictMap.value}</option>
+						#end 
+					</select>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="search_font">
+					<label class="control-label">子系统：</label>
+				</div>
+				<div class="search_input">
+					<select id="system_table3" class="selectpicker" multiple></select>
+				</div>
+			</div>
+      <div class="col-md-3">
+        <a class="a_style" target="_blank" id="iframe_table3_a">新窗口预览</a>
+      </div>
+		</div>
+		<iframe src="" height="400px" width="100%" frameborder="no" id="iframe_table3"></iframe>
+	</div>
+
+	<div class="bg_fff p_a_30 m_t_20 m_b_40 border_eee">
+		<div class="row control-row">
+			<div class="col-md-5">
+				<div class="search_font">
+					<label class="control-label">缺陷来源：</label>
+				</div>
+				<div class="search_input">
+					<select id="defectSource_table4" class="selectpicker" multiple>
+						#foreach($dictMap in ${dict.getDictMap("TBL_DEFECT_INFO_DEFECT_SOURCE").entrySet()})
+							<option value="${dictMap.key}">${dictMap.value}</option>
+						#end 
+					</select>
+				</div>
+			</div>
+      <div class="col-md-3">
+        <a class="a_style" target="_blank" id="iframe_table4_a">新窗口预览</a>
+      </div>
+		</div>
+		<iframe src="" height="400px" width="100%" frameborder="no" id="iframe_table4"></iframe>
+	</div>
+
+  ## 投产窗口 
+  <div class="modal fade bs-example-modal-lg" id="comWindowModal" tabindex="-1" role="dialog" aria-labelledby="">
+      <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content modalStyle">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                      &times;
+                  </button>
+                  <span>选择投产窗口</span>
+              </div>
+              <div class="modal-body">
+                  <div class="color1">
+                      <div class="container-fluid" id="comWindowForm">
+                          <div class="row control-row">
+                              <div class="col-md-4">
+                                  <div class="search_font"><label class="control-label">窗口名称：</label></div>
+                                  <div class="search_input">
+                                      <input type="text" class="form-control " placeholder="请输入" id="win_windowName" name="windowName" value="" />
+                                  </div>
+                              </div>
+                              <div class="col-md-4">
+                                  <div class="search_font"><label class="control-label">投产日期：</label></div>
+                                  <div class="search_input">
+                              <input size="16"  type="text"  onfocus="this.blur()" class="form-control form_datetime" placeholder="请选择" id="win_windowDate" name="windowDate" />
+                                  </div>
+                              </div>
+                              <div class="col-md-4">
+                                  <div class="search_font"><label class="control-label">窗口类型：</label></div>
+                                  <div class="search_input">
+                                      <select class="selectpicker" id="win_windowType" name="windowType">
+                                          <option value="">请选择</option>
+                                          #foreach($dictMap in ${dict.getDictMap(
+                                              "TBL_COMMISSIONING_WINDOW_WINDOW_TYPE").entrySet()})
+                                              <option value="${dictMap.key}">${dictMap.value}</option>
+                                          #end
+                                      </select>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="row control-row search_btn">
+                              <button type="button" class="btn btn-primary" onclick="commitWindowAll()">搜&nbsp;&nbsp;&nbsp;索</button>
+                              <button type="button" onclick="winReset()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                          </div>
+
+                      </div>
+                      <div id="downBtn" class="downBtn">	
+                      <span class="fa fa-caret-up"></span>
+                  </div>
+                  </div>
+                  <br>
+                  <div class="content-table">
+                      <div class="wode">
+                          <table id="comWindowTable"></table>
+                          <div id="userPage"></div>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="modal-footer">
+                  <div class="bottom-container">
+                      <button type="button" id="windowButton" class="btn btn-primary" data-window="1" onclick="commitWin()">确定</button>
+                      <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  ## 收藏弹窗名称 
+  <div class="modal fade bs-example-modal-lg" id="collect_Modal" tabindex="-1" role="dialog" aria-labelledby="">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content modalStyle">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                      &times;
+                  </button>
+                  <span>添加筛选器名称</span>
+              </div>
+              <div class="modal-body">
+                <div class="row control-row">
+                	<div class="col-md-11">
+	                	<div class="search_font">
+	                		<label class="control-label"><span class="redStar">*</span>筛选器名称：</label>
+	                	</div>
+	                	<div class="search_input">
+	                      <input type="text" class="form-control " placeholder="请输入" id="collect_Name" />
+	                    </div>
+	                </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="windowButton" class="btn btn-primary" onclick="collect_submit()">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+              </div>
+          </div>
+      </div>
+  </div>
+
+	<div id="loading">
+		<img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+	</div>
+</body>
+    <script src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/moment.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/daterangepicker.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script src="#springUrl('')/systemui/static/js/common/common.js"></script>
+
+    <script src="#springUrl('')/projectManageui/static/js/report/defectReport.js"></script>
+</html>

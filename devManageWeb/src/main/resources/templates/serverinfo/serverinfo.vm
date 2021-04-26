@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>服务器管理</title>
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css "> 
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css" />  
+<link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css" /> 
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+<link rel="stylesheet" href="#springUrl('')/devManageui/static/css/serverinfo/serverinfo.css" />
+
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>  
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/component.js"></script> 
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script> 
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/common/common.js"></script>
+
+<script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+
+<script type="text/ecmascript" src="#springUrl('')/devManageui/static/js/serverinfo/serverInfo.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+<script>
+	$.jgrid.defaults.responsive = true;
+	$.jgrid.defaults.styleUI = 'Bootstrap4';
+	$.jgrid.defaults.iconSet = "fontAwesome"; 
+	
+	var serverEdit = $auth.hasPermission("$token","devManage:server:edit"); 
+	var serverRemove = $auth.hasPermission("$token","devManage:server:remove"); 
+</script>
+</head>
+<body>
+	<div class="color1">
+		<div class="container-fluid search_div" id="search_div">
+			<div class="row control-row">
+				
+				<div class="col-md-3">
+					<div class="search_font">
+						<label class="control-label">主机名称：</label>
+					</div>
+					<div class="search_input">
+						<input type="text" class="form-control" placeholder="请输入"
+							id="hostName" name="hostName" value=""  onkeyup="this.value=this.value.replace(/(^\s*)|(\s*$)/g, '')"/>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="search_font">
+						<label class="control-label">状态：</label>
+					</div>
+					<div class="search_input">
+						<select class="selectpicker" id="serverStatusName"
+							name="serverStatusName">
+							<option value="">请选择</option>
+							<option value="1">有效</option>
+							<option value="2">无效</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-3">
+                    <div class="search_font"><label class="control-label">IP：</label></div>
+                    <div class="search_input">
+                        <input type="text" class="form-control" placeholder="请输入" id="ipName" name="ipName" onkeyup="this.value=this.value.replace(/(^\s*)|(\s*$)/g, '')"/>
+                    </div>
+                </div>
+                <div class="col-md-3">
+					<div class="search_font"><label class="control-label">子系统：</label></div>
+					<div class="search_input">
+						<select class="selectpicker" id="system" name="system">
+							<option value="">请选择</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row control-row search_btn">
+				<button type="button" class="btn btn-primary" onclick="searchInfo()">搜&nbsp;&nbsp;&nbsp;索</button>
+				<button type="button" onclick="clearSearch()"
+					class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+				<!-- <div class="collection">
+                <span class="fa fa-heart-o"></span>&nbsp;收藏此次筛选
+            </div> -->
+			</div>
+		</div>
+		<div id="downBtn">
+			<span class="fa fa-caret-up"></span>
+		</div>
+	</div>
+	<div class="main-content">
+		<div class="content-btn">
+		#if($auth.hasPermission("$token","devManage:server:add"))
+			<a type="button" data-toggle="modal" onclick="toAddService()"
+				class="btn btn-primary">新增服务器</a>
+		#end
+		</div>
+		<div class="content-table">
+			<div class="wode">
+				<table id="list2"></table>
+				<div id="pager2"></div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade bs-example-modal-lg" id="add_server"
+		tabindex="-1" role="dialog" aria-labelledby="add_server">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">新增服务器</h4>
+				</div>
+				<div class="modal-body">
+					<div class="allInfo">
+						<div class="def_title">
+							<span>服务器基本信息</span>
+						</div>
+						<div class="def_content">
+							<input type="hidden" id="id">
+                            <div class="rowdiv">
+                                <div class="def_col_36">
+                                    <div class="def_col_5">
+                                        <label class="control-label">子系统名称：</label>
+                                    </div>
+                                    <div class="def_col_29">
+                                        <select class="selectpicker" id="addSystem" name="addSystem">
+                                            <option value="">请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+							<div class="rowdiv">
+								<div class="def_col_36">
+									<div class="def_col_5">
+										<label class="control-label">服务器名称：</label>
+									</div>
+									<div class="def_col_29">
+										<input type="text" class="form-control" placeholder="请输入"
+											id="add_serverName" name="serverName" value="" />
+									</div>
+								</div>
+							</div>
+							<div class="rowdiv">
+								<div class="def_col_36">
+									<div class="def_col_5">
+										<label class="control-label">IP地址：</label>
+									</div>
+									<div class="def_col_29">
+										<input type="text" class="form-control" placeholder="请输入IP地址"
+											id="add_serverIP" name="serverIP" /> <span
+											class="help-block">您输入的内容不能为空</span>
+									</div>
+								</div>
+							</div>
+							<div class="rowdiv">
+								<div class="def_col_36">
+									<div class="def_col_5">
+										<label class="control-label">SSH端口：</label>
+									</div>
+									<div class="def_col_29">
+										<input type="text" class="form-control" placeholder="默认端口为22"
+											id="add_serverPort" name="serverPort" /> <span
+											class="help-block">您输入的内容不能为空</span>
+									</div>
+								</div>
+							</div>
+							<div class="rowdiv">
+								<div class="def_col_36">
+									<div class="def_col_5">
+										<label class="control-label">SSH用户名：</label>
+									</div>
+									<div class="def_col_29">
+										<input type="text" class="form-control" placeholder="请输入登录用户名"
+											id="add_serverUserAcount" name="serverUserAcount" /> <span
+											class="help-block">您输入的内容不能为空</span>
+									</div>
+								</div>
+							</div>
+							<div class="rowdiv">
+								<div class="def_col_36">
+									<div class="def_col_5">
+										<label class="control-label">SSH密码：</label>
+									</div>
+									<div class="def_col_29">
+										<input type="text" class="form-control" placeholder="请输入登录密码"
+											id="add_serverUserPassword" name="serverUserPassword" /> <span
+											class="help-block">您输入的内容不能为空</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" onclick="addServerCommit()"
+						class="btn btn-primary">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 编辑 -->
+	<div class="modal fade bs-example-modal-lg" id="edit_server"
+		tabindex="-1" role="dialog" aria-labelledby="edit_server">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">修改服务器信息</h4>
+				</div>
+				<div class="modal-body">
+					<div class="allInfo">
+						<div class="def_title">
+							<span>服务器基本信息</span>
+						</div>
+						<div class="def_content">
+                            <div class="rowdiv">
+                                <div class="def_col_36">
+                                    <div class="def_col_5">
+                                        <label class="control-label">子系统名称：</label>
+                                    </div>
+                                    <div class="def_col_29">
+                                        <select class="selectpicker" id="editSystem" name="editSystem">
+                                            <option value="">请选择</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+							<div class="rowdiv">
+								<div class="def_col_36">
+									<div class="def_col_5">
+										<label class="control-label">服务器名称：</label>
+									</div>
+									<div class="def_col_31">
+										<input type="text" class="form-control" placeholder="请输入"
+											id="edit_serverName" name="serverName" value="" />
+									</div>
+								</div>
+							</div>
+							<div class="rowdiv">
+								<div class="def_col_36">
+									<div class="def_col_5">
+										<label class="control-label">IP地址：</label>
+									</div>
+									<div class="def_col_31">
+										<input type="text" class="form-control" placeholder="请输入IP地址"
+											id="edit_serverIP" name="serverIP" /><span
+											class="help-block">您输入的内容不能为空</span>
+									</div>
+								</div>
+							</div>
+							<div class="rowdiv">
+								<div class="def_col_36">
+									<div class="def_col_5">
+										<label class="control-label">SSH端口：</label>
+									</div>
+									<div class="def_col_31">
+										<input type="text" class="form-control" placeholder="默认端口为22"
+											id="edit_serverPort" name="serverPort" /><span
+											class="help-block">您输入的内容不能为空</span>
+									</div>
+								</div>
+							</div>
+							<div class="rowdiv">
+								<div class="def_col_36">
+									<div class="def_col_5">
+										<label class="control-label">SSH用户名：</label>
+									</div>
+									<div class="def_col_31">
+										<input type="text" class="form-control" placeholder="请输入登录用户名"
+											id="edit_serverUserAcount" name="serverUserAcount" /><span
+											class="help-block">您输入的内容不能为空</span>
+									</div>
+								</div>
+							</div>
+							<div class="rowdiv">
+								<div class="def_col_36">
+									<div class="def_col_5">
+										<label class="control-label">SSH密码：</label>
+									</div>
+									<div class="def_col_28">
+										<input type="password" class="form-control" placeholder="请输入登录用密码"
+											id="edit_serverUserPassword" name="serverUserPassword" /><span
+											class="help-block">您输入的内容不能为空</span>
+											<!-- <div class="form-icon"><i data-show="1" class=""></i></div> -->
+									</div>
+									<div class="def_col_3">
+											<input type="checkbox" id="ck"/><span>显示密码</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" onclick="editServerCommit()"
+						class="btn btn-primary">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

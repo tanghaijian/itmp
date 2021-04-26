@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.system.dao.mybatis.company.CompanyDao">
+
+    <!-- 获取公司的id和公司名，一般填充下拉框用 -->
+	<select id="getCompany" resultMap="companyResult">
+		 SELECT ID,COMPANY_NAME
+		 FROM TBL_COMPANY_INFO
+		 WHERE `STATUS` = 1
+	</select>
+
+    <!-- 获取所有有效公司 -->
+	<select id="getAllCompanyInfo" resultMap="companyDTOResult">
+		SELECT *
+		 FROM TBL_COMPANY_INFO
+		 where STATUS = 1
+	</select>
+	
+	<resultMap type="cn.pioneeruniverse.system.entity.Company" id="companyResult">
+		<id column="ID" property="id" />
+		<result column="COMPANY_NAME" property="companyName" />
+		<result column="COMPANY_SHORT_NAME" property="companyShortName" />
+		<result column="STATUS" property="status"/>
+		<result column="CREATE_BY" property="createBy"/>
+		<result column="CREATE_DATE" property="createDate"/>
+		<result column="LAST_UPDATE_BY" property="lastUpdateBy"/>
+		<result column="LAST_UPDATE_DATE" property="lastUpdateDate"/>
+	</resultMap>
+
+	<resultMap type="cn.pioneeruniverse.common.dto.TblCompanyInfoDTO" extends="companyResult" id="companyDTOResult">
+	</resultMap>
+
+	
+
+</mapper>

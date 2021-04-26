@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.report.dao.mybatis.report.projectWeeklyDao.ProjectWeeklyMapper">
+
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.report.entity.RequirementFeatureTimeTraceBean">
+        <id column="ID" jdbcType="BIGINT" property="id" />
+        <result column="REQUIREMENT_FEATURE_ID" jdbcType="BIGINT" property="requirementFeatureId" />
+        <result column="REQUIREMENT_FEATURE_CREATE_TIME" jdbcType="TIMESTAMP" property="requirementFeatureCreateTime" />
+        <result column="DEV_TASK_CREATE_TIME" jdbcType="TIMESTAMP" property="devTaskCreateTime" />
+        <result column="CODE_FIRST_COMMIT_TIME" jdbcType="TIMESTAMP" property="codeFirstCommitTime" />
+        <result column="REQUIREMENT_FEATURE_DEV_COMPLETE_TIME" jdbcType="TIMESTAMP" property="requirementFeatureDevCompleteTime" />
+        <result column="REQUIREMENT_FEATURE_FIRST_TEST_DEPLOY_TIME" jdbcType="TIMESTAMP" property="requirementFeatureFirstTestDeployTime" />
+        <result column="REQUIREMENT_FEATURE_TESTING_TIME" jdbcType="TIMESTAMP" property="requirementFeatureTestingTime" />
+        <result column="REQUIREMENT_FEATURE_TEST_COMPLETE_TIME" jdbcType="TIMESTAMP" property="requirementFeatureTestCompleteTime" />
+        <result column="REQUIREMENT_FEATURE_LAST_PROD_TIME" jdbcType="TIMESTAMP" property="requirementFeatureLastProdTime" />
+        <result column="REQUIREMENT_FEATURE_PROD_COMPLETE_TIME" jdbcType="TIMESTAMP" property="requirementFeatureProdCompleteTime" />
+        <result column="REQUIREMENT_FEATURE_PROD_COMPLETE_TIME" jdbcType="DATE" property="prodCompleteTime" />
+        <result column="STATUS" jdbcType="TINYINT" property="status" />
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+    </resultMap>
+
+
+    <resultMap id="BaseResultMap1" type="cn.pioneeruniverse.report.vo.RequirementFeatureTimeTraceVO">
+        <id column="ID" jdbcType="BIGINT" property="id" />
+        <result column="REQUIREMENT_FEATURE_ID" jdbcType="BIGINT" property="requirementFeatureId" />
+        <result column="REQUIREMENT_FEATURE_CREATE_TIME" jdbcType="DATE" property="requirementFeatureCreateTime" />
+        <result column="DEV_TASK_CREATE_TIME" jdbcType="DATE" property="devTaskCreateTime" />
+        <result column="CODE_FIRST_COMMIT_TIME" jdbcType="DATE" property="codeFirstCommitTime" />
+        <result column="REQUIREMENT_FEATURE_DEV_COMPLETE_TIME" jdbcType="DATE" property="requirementFeatureDevCompleteTime" />
+        <result column="REQUIREMENT_FEATURE_FIRST_TEST_DEPLOY_TIME" jdbcType="DATE" property="requirementFeatureFirstTestDeployTime" />
+        <result column="REQUIREMENT_FEATURE_TESTING_TIME" jdbcType="DATE" property="requirementFeatureTestingTime" />
+        <result column="REQUIREMENT_FEATURE_TEST_COMPLETE_TIME" jdbcType="DATE" property="requirementFeatureTestCompleteTime" />
+        <result column="REQUIREMENT_FEATURE_LAST_PROD_TIME" jdbcType="DATE" property="requirementFeatureLastProdTime" />
+        <result column="REQUIREMENT_FEATURE_PROD_COMPLETE_TIME" jdbcType="DATE" property="requirementFeatureProdCompleteTime" />
+        <result column="STATUS" jdbcType="TINYINT" property="status" />
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+    </resultMap>
+
+
+    <!-- 获取开发任务时间点追踪信息 -->
+    <select id="selectBySystemId1" parameterType="cn.pioneeruniverse.report.dto.TaskDeliverDTO" resultMap="BaseResultMap1">
+        SELECT
+            t1.REQUIREMENT_FEATURE_CREATE_TIME,
+            t1.CODE_FIRST_COMMIT_TIME,
+            t1.REQUIREMENT_FEATURE_DEV_COMPLETE_TIME,
+            t1.REQUIREMENT_FEATURE_FIRST_TEST_DEPLOY_TIME,
+            t1.REQUIREMENT_FEATURE_TESTING_TIME,
+            t1.REQUIREMENT_FEATURE_TEST_COMPLETE_TIME,
+            t1.REQUIREMENT_FEATURE_PROD_COMPLETE_TIME
+        FROM
+            tbl_requirement_feature_time_trace t1
+        LEFT JOIN tbl_requirement_feature trf ON t1.REQUIREMENT_FEATURE_ID = trf.ID
+        AND trf.`STATUS` = 1
+        LEFT JOIN tbl_system_info tsi ON trf.SYSTEM_ID = tsi.ID
+        AND tsi.`STATUS` = 1
+        <where>
+            t1.`STATUS` = 1 AND trf.REQUIREMENT_FEATURE_STATUS !='00'
+
+            <if test="systemId != null and systemId.size() > 0">
+                AND tsi.ID IN
+                <foreach item="item" index="index" collection="systemId" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="requirementFeatureSource != null and requirementFeatureSource.size() > 0">
+                AND trf.REQUIREMENT_FEATURE_SOURCE IN
+                <foreach item="item" index="index" collection="requirementFeatureSource" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+        </where>
+      </select>
+
+
+    <!-- 缺陷统计图 1，新建状态，6撤销状态-->
+    <select id="getDefectInfoCountHandler" parameterType="cn.pioneeruniverse.report.dto.DefectInfoDTO" resultType="cn.pioneeruniverse.report.vo.DefectInfoVO">
+        SELECT
+        di.ID AS id,
+        di.SUBMIT_DATE AS submitDate,
+        di.DEFECT_SOURCE AS defectSource,
+        di.CLOSE_TIME AS closeTime,
+        di.EMERGENCY_LEVEL AS emergencyLevel,
+        di.DEFECT_STATUS AS defectStatus
+        FROM
+        tbl_defect_info di
+        LEFT JOIN tbl_system_info si ON di.SYSTEM_ID = si.ID AND si.STATUS = 1
+        <where>
+            di.STATUS = 1  AND  di.DEFECT_STATUS NOT IN(1,6)
+            <if test="startTime != null and startTime != ''">
+                AND di.SUBMIT_DATE  <![CDATA[>=]]> #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND di.SUBMIT_DATE  <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="systemId != null and systemId.size() > 0">
+                AND si.ID IN
+                <foreach item="item" index="index" collection="systemId" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="defectSource != null and defectSource.size() > 0">
+                AND di.DEFECT_SOURCE IN
+                <foreach item="item" index="index" collection="defectSource" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+
+    <!-- 缺陷待解决统计图  1新建状态，6撤销状态，7关闭状态-->
+    <select id="getDefectResolvedHandler" parameterType="cn.pioneeruniverse.report.dto.DefectInfoDTO" resultType="cn.pioneeruniverse.report.vo.DefectResolvedVO">
+        SELECT
+            di.SYSTEM_ID AS systemId,
+            count(*) AS count
+        FROM
+            tbl_defect_info di
+        LEFT JOIN tbl_system_info si ON di.SYSTEM_ID = si.ID
+        AND si. STATUS = 1
+        <where>
+            di. STATUS = 1 AND  di.DEFECT_STATUS NOT IN(1,6,7)  AND di.SYSTEM_ID IS NOT NULL
+            <if test="systemId != null and systemId.size() > 0">
+                AND si.ID IN
+                <foreach item="item" index="index" collection="systemId" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="defectSource != null and defectSource.size() > 0">
+                AND di.DEFECT_SOURCE IN
+                <foreach item="item" index="index" collection="defectSource" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="emergencyLevel != null and emergencyLevel.size() > 0">
+                AND di.EMERGENCY_LEVEL IN
+                <foreach item="item" index="index" collection="emergencyLevel" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            GROUP BY di.SYSTEM_ID
+        </where>
+    </select>
+
+    <!-- 获取系统列表 -->
+    <select id="getSystemInfoList" parameterType="java.util.List" resultType="cn.pioneeruniverse.report.vo.DefectResolvedVO">
+      select ID AS systemId,SYSTEM_NAME AS systemName from tbl_system_info
+      <where>
+          <if test="id != null and id.size() > 0">
+              ID IN
+              <foreach item="item" index="index" collection="id" open="(" separator="," close=")">
+                  #{item}
+              </foreach>
+          </if>
+      </where>
+    </select>
+
+
+    <!--  缺陷列表数据查询   1新建状态，6撤销状态，7关闭状态-->
+    <select id="selectDefectInfoList" parameterType="cn.pioneeruniverse.report.dto.DefectInfoDTO" resultType="cn.pioneeruniverse.report.vo.DefectResolvedVO">
+        SELECT DISTINCT
+        di.ID AS id,
+        di.SYSTEM_ID AS systemId,
+        si.SYSTEM_NAME AS systemName,
+        di.CREATE_DATE AS createDate
+        FROM
+        tbl_defect_info di
+        LEFT JOIN tbl_system_info si ON di.SYSTEM_ID = si.ID
+        AND si. STATUS = 1
+        <where>
+            di. STATUS = 1 AND  di.DEFECT_STATUS NOT IN(1,6,7) AND di.SYSTEM_ID IS NOT NULL
+            <if test="systemId != null and systemId.size() > 0">
+                AND si.ID IN
+                <foreach item="item" index="index" collection="systemId" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="defectSource != null and defectSource.size() > 0">
+                AND di.DEFECT_SOURCE IN
+                <foreach item="item" index="index" collection="defectSource" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="emergencyLevel != null and emergencyLevel.size() > 0">
+                AND di.EMERGENCY_LEVEL IN
+                <foreach item="item" index="index" collection="emergencyLevel" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+</mapper>
+
+
+
+
+

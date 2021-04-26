@@ -1,0 +1,1 @@
+UPDATE AFTERSTOP_UPDATE SET NAME='bbbb>aaaa' where ID=1;

@@ -1,0 +1,114 @@
+#* liushan:测试执行和测试集 公共案例编辑部分*#
+
+<form id="editForm">
+    <input type="hidden" id="editHideId" value="">
+    <input type="hidden" id="caseNumber" value="">
+    <div class="rowdiv">
+        <div class="def_col_36">
+            <label class="def_col_4 control-label font_right">案例名称：</label>
+            <div class="form-group  def_col_32">
+                <input type="text" class="form-control" placeholder="请输入" id="editCaseName" name="editCaseName" />
+            </div>
+        </div>
+    </div>
+
+    <div class="rowdiv">
+        <div class="form-group def_col_36">
+            <div class="form-group def_col_18">
+                <label class="def_col_8 control-label font_right">关联任务：</label>
+                <div class="def_col_28">
+                    <input type="text" class="form-control pointStyle" readonly  placeholder="请输入" idValue id="editTestTaskName" name="editTestTaskName" />
+                </div>
+            </div>
+            <div class="form-group def_col_18">
+                <label class="def_col_8 control-label font_right">所属子系统：</label>
+                <div class="def_col_28">
+                    <input type="text" class="form-control pointStyle" readonly  placeholder="请输入" idValue id="editSystemName" name="editSystemName" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rowdiv">
+        <div class="form-group def_col_36">
+            <div class="form-group def_col_18">
+                <label class="def_col_8 control-label font_right">模块：</label>
+                <div class="def_col_28">
+                    <input type="text" maxlength="50" class="form-control" placeholder="请输入" id="edit_moduleName" name="edit_moduleName" />
+                </div>
+            </div>
+
+            <div class="form-group def_col_18">
+                <label class="def_col_8 control-label font_right">测试项：</label>
+                <div class="def_col_28">
+                    <input type="text" maxlength="100" class="form-control" placeholder="请输入" id="edit_testPoint" name="edit_testPoint" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rowdiv">
+        <div class="form-group def_col_36">
+            <label class="def_col_4 control-label font_right">业务类型：</label>
+            <div class="def_col_14">
+                <input type="text" maxlength="100" class="form-control" placeholder="请输入" id="edit_businessType" name="edit_businessType" />
+            </div>
+        </div>
+    </div>
+
+    <div class="rowdiv">
+        <div class="form-group def_col_36">
+            <label class="def_col_4 control-label font_right">案例描述：</label>
+            <div class="def_col_32">
+                <textarea class="def_textarea" placeholder="请输入" id="edit_CaseDescription" name="edit_CaseDescription"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="rowdiv">
+        <div class="form-group def_col_36">
+            <label class="def_col_4 control-label font_right">前置条件：</label>
+            <div class="def_col_32">
+                <textarea class="def_textarea" placeholder="请输入" id="editCasePrecondition" name="editCasePrecondition"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="rowdiv">
+        <div class="form-group def_col_36">
+            <label class="def_col_4 control-label font_right">输入数据：</label>
+            <div class="def_col_32">
+                <textarea class="def_textarea" type="text"  maxlength="500" placeholder="请输入" id="edit_inputData" name="edit_inputData" ></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="rowdiv">
+        <div class="form-group def_col_36">
+            <label class="def_col_4 control-label font_right">预期结果：</label>
+            <div class="def_col_32">
+                <textarea class="def_textarea" type="text"  maxlength="500" placeholder="请输入" id="edit_expectResult" name="edit_expectResult"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="rowdiv">
+        <div class="form-group def_col_36">
+            <label class="def_col_4 control-label font_right">实际结果：</label>
+            <div class="def_col_32">
+                <textarea class="def_textarea" type="text" maxlength="500" title="长度必须小于500字符" placeholder="请输入" id="edit_caseActualResult" name="edit_expectResult"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="rightModal">
+        <div class="tagTitle">案例步骤：</div>
+        <div class="btnArea">
+            <button type="button" class="btn btn-primary" onclick="testSetCase.edit.addSteps()">增加步骤</button>
+        </div>
+        <div class="tagBody">
+            <table id="editCaseSteps">
+
+            </table>
+        </div>
+    </div>
+</form>

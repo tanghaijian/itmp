@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head> 
+	<title>新建类项目资产库编辑md文档</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache">
+	<meta http-equiv="X-UA-Compatible" content="no-cache,IE=edge,Chrome=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/jquery-ztree/3.5.36/css/metroStyle/metroStyle.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/editormd.css" />  
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/editormd.preview.min.css" />    
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+
+	<link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/assetsLibrary/assetsLibrary.css" />
+	<link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/assetsLibrary/assetsLibraryNeeds.css" />
+	<link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/assetsLibrary/checkMakeDown.css" />
+	 
+</head>
+	<style>
+		.doc_name {
+			background: #e2d8d8;
+			border-radius: 4px;
+			padding: 3px;
+			cursor:pointer;
+			margin-top: 5px;
+    		display: inline-block;
+		}
+		.p_l_10{
+			padding-left:10px;
+		}
+		.dis_between{
+			display:flex;
+			justify-content: space-between;
+		}
+		.font_14{
+			font-size:14px;
+		}
+		.search_list{
+			padding-left:0px;
+		}
+		textarea{
+			resize:none;
+		}
+		.file_Table_style{
+			background: url(/projectManageui/static/images/assetsLibrary/link.png) no-repeat;
+		    background-size: 20px 20px;
+		    background-position: 8px center;
+		    padding: 8px 10px 0px 32px !important;
+		    font-size: 12px;
+		    cursor: pointer;
+		}
+		#relevanceInfo_list_ztree{
+			overflow:auto;
+		}
+	</style>
+<body>
+	<div id="requirement">
+		<div class="makeDownModal">
+			<div class="head">
+					<div class="reqInfo">
+							<span class="headReturn" data-dismiss="modal"></span>
+							<span class="version"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+							<span class="Check_out_people" style="display:none;border: 1px solid red;padding: 3px;border-radius: 4px;background: #f3d2d2;color: red;"></span>
+							&nbsp;&nbsp;<span class="Check_out_user redStar" style="display:none;"></span>					
+							<div class="editHeadDiv" style="display:none;">
+								<div>
+									##<button class="btn btn-primary btn-sm _hide" style="height: unset;margin-right: 200px;padding: 3px 8px !important;font-size: 12px !important;" id="mkd_remark_btn"> 基线标记 </button> &nbsp;&nbsp;
+									<button class="btn btn-default readAuth" id="makeDownStorage" onclick="mkd_submit(1)"> 暂 存 </button>
+									&nbsp;
+									<button class="btn btn-primary readAuth" onclick="mkd_submit(2)"> 提 交 </button> 
+									&nbsp;
+									<button class="btn btn-default readAuth" id="makeDowncancel" onclick="mkd_submit(3)"> 取消签出  </button>
+									&nbsp;
+								</div>
+								<div class="updataFilesBtn" onclick="select_Files_list(2)">
+									<span class="updataFilesIcon">
+									</span>上传附件 
+								</div>
+							</div>
+							<div class="checkHeadDiv readAuth_btn">
+								<button class="btn btn-primary signBtn disableBtn  writeAuth_btn" id="signBtn"> 签 出 </button>
+								<span class="history" id="history"> 
+									<span class="icon_history"></span>
+									<a href="#" onclick="select_history()">历史版本</a>
+								</span>
+								<span class="build"></span>
+								<span class="last"></span>
+							</div>
+					</div>
+			</div>
+			<div class="content">
+					<div class="left">
+							<div class="menu docMenu">
+									<div class="docHead readAuth_btn">
+											条目列表
+											<div class="addEntryDiv">
+												<button class="btn btn-primary" id="export_btn"> 导出 </button>
+												<button class="btn btn-primary writeAuth_btn" id="associated_item_btn">关联条目</button>
+												<button class="btn btn-primary  writeAuth_btn" id="addNotic_btn"> 新增一级条目 </button>
+											</div>
+									</div>
+									
+									<div id="docTree" class="ztree"></div>
+							</div>
+					</div>
+					<div class="right">
+						    <div class="editDiv" id="editDiv">
+						    	<div id='test-editormd-view2'></div> 
+							</div>
+							<div class="requirement">
+									<div class="reqBlock">
+											<div class="def_col_26">
+													<div class="documentArea"> 
+															<div id="test-editormd-view1">		                                
+																	## <textarea id="append-test1">								
+																		<div class="noData">请点击左侧目录，来显示文档列表…</div>			                                
+																	## </textarea>
+															</div> 
+													</div>
+											</div>
+											<div class="def_col_10">
+													<div class="rightArea">
+															<div class="file" id="file_download_list"></div>
+															<div class="relevanceInfo" id="relevanceInfo_list"></div>
+													</div>
+											</div>
+									</div>
+							</div> 
+					</div>
+			</div> 
+		</div>
+	</div>
+	## 新增 条目
+	<div class="modal fade bs-example-modal-lg" id="add_article_modal" tabindex="-1" role="dialog" aria-labelledby="">
+			<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="add_group_tit">新建条目</h4>
+							<input type="hidden" id="add_article_id" />
+						</div>
+						<div class="modal-body">
+							<form id="add_article_form">
+								<div class="rowdiv form-group">
+									<div class="def_col_8">
+										<label class="control-label"><span class="redStar">*</span>条目名称：</label></div>
+									<div class="def_col_28">
+										<input type="text" name="add_article_name" id="add_article_name" 
+											class="form-control" placeholder="请输入" />
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" onclick="addNotic_submit()" class="btn btn-primary">确定</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+						</div>
+					</div>
+			</div>
+	</div>
+	  
+	## 附件列表
+	<div class="modal fade bs-example-modal-lg" id="import_list_Modal" tabindex="-1" role="dialog" aria-labelledby="">
+			<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+							<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">×</span>
+									</button>
+									<h4 class="modal-title" id="myModalLabel">上传附件</h4>
+							</div>
+							<div class="modal-body">
+									<div class="rowdiv">
+										<button type="button" class="btn btn-primary" onclick="add_file()">添加附件</button>
+									</div>
+									<div class="rowdiv">
+										<table class="table table-bordered" id="file_Table">
+											<thead id="">
+												<tr>
+													<th>附件名称</th>
+													<th>操作</th>
+												</tr>
+											</thead>
+											<tbody id="file_Table_tbody"></tbody>
+										</table>
+									</div>
+							</div>
+							<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							</div>
+					</div>
+			</div>
+	</div>
+	## 上传附件
+	<div class="modal fade bs-example-modal-lg" id="importModal" tabindex="-1" role="dialog" aria-labelledby="">
+			<div class="modal-dialog" role="document">
+					<div class="modal-content">
+							<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">×</span>
+									</button>
+									<h4 class="modal-title" id="myModalLabel">添加附件</h4>
+							</div>
+							<div class="modal-body">
+									<form id="importModalForm" class="form-horizontal" enctype="multipart/form-data">
+											<div class="rowdiv form-group">
+													<div class="def_col_8 font_right fontWeihgt">选择文件：</div>
+													<div class="def_col_12">
+															<div class="file-upload-select_file">
+																	<input type="file" class="upload-files" id="opt_uploadFile" multiple="multiple"/>
+															</div>
+															<div class="file-upload-list">
+																	<table class="file-upload-tb" id="optFileTable">
+																	</table>
+															</div>
+													</div>
+											</div>
+									</form>
+							</div>
+							<div class="modal-footer">
+									<button type="button" class="btn btn-primary" onclick="import_files()">确定</button>
+									<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							</div>
+					</div>
+			</div>
+	</div>
+
+	## 历史版本
+	<div class="modal fade bs-example-modal-lg" id="history_list_Modal" tabindex="-1" role="dialog" aria-labelledby="">
+			<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+							<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">×</span>
+									</button>
+									<h4 class="modal-title" id="">历史版本</h4>
+							</div>
+							<div class="modal-body">
+								<div class="content-table">
+										<table id="history_list_Table"></table>
+										## <div id="userPage"></div>
+								</div>
+							</div>
+							<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							</div>
+					</div>
+			</div>
+	</div>
+
+	## 基线标记
+	<div class="modal fade bs-example-modal-lg" id="mkd_remark_modal" tabindex="-1" role="dialog" aria-labelledby="">
+			<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="add_group_tit">基线标记备注</h4>
+						
+						</div>
+						<div class="modal-body">
+							<form id="mkd_remark_form">
+								<div class="rowdiv form-group">
+									<div class="def_col_8">
+										<label class="control-label">备注：</label>
+									</div>
+									<div class="def_col_28">
+										<textarea type="text" id="add_mkd_remark" 
+											class="form-control" placeholder="请输入"></textarea>
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" id="save_mkd_remark" class="btn btn-primary">保存</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+						</div>
+					</div>
+			</div>
+	</div>
+
+	## 关联条目
+	<div class="modal fade bs-example-modal-lg" id="associated_item_modal" tabindex="-1" role="dialog" aria-labelledby="">
+			<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							## <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							## 	<span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title dis_between">
+								<span aria-hidden="true" class="font_14">关联条目</span>
+								<button type="button" onclick="node_change()" class="btn btn-primary">查看关联关系列表</button>
+							</h4>
+						</div>
+						<div class="modal-body">
+								<div class="rowdiv">
+									<div class="def_col_18"></div>
+									<div class="def_col_18">
+										<div class="def_col_4">
+											<button class="btn btn-primary" id="prePower"> 本文档</button>
+										</div>
+										<div class="def_col_6"><label class="control-label">文档名称：</label></div>
+										<div class="def_col_26" style="position: relative;">
+											<input type="hidden" id="doc_Id" />
+											<input type="text" class="form-control" placeholder="请输入" id="doc_Name" />
+										</div>
+									</div>
+									</div>
+								<div class="rowdiv">
+									<div class="def_col_18"></div>
+									<div class="def_col_18">
+										<span class="" id="listsPower" style="font-size: 14px;color: green;"> 已关联文档：</span>&nbsp;
+										<span id="doc_name_list"></span>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="def_col_13">
+										<div class="menu">
+											<h4 style="text-align: center;">本文档</h4>
+											<ul id="menuTree" class="ztree"></ul>
+										</div>
+									</div>
+									<div class="def_col_23">
+										<div class="notRequirement">
+											<h4 style="text-align: center;">关联文档</h4>
+											<div class="tableArea" style="background: #f2f2f2;">
+												<div class="noData" style="display: block;">
+													请点击左侧目录,或上方进行搜索,来显示文档列表…
+												</div>
+												<div class="myTableDiv" style="display: block;">
+													<ul id="documentList" class="ztree"></ul>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" onclick="save_node_submit()" class="btn btn-primary">提交</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+						</div>
+					</div>
+			</div>
+	</div>
+	
+	## 更多附件
+	<div class="modal fade bs-example-modal-lg" id="accessory_all_Modal" tabindex="-1" role="dialog" aria-labelledby="">
+			<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+							<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">×</span>
+									</button>
+									<h4 class="modal-title" id="myModalLabel">附件列表</h4>
+							</div>
+							<div class="modal-body">
+								<table class="table table-bordered">
+									<thead id="">
+										<tr>
+											<th>附件名称</th>
+											<th>操作</th>
+										</tr>
+									</thead>
+									<tbody id="accessory_list_tbody"></tbody>
+								</table>
+							</div>
+							<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							</div>
+					</div>
+			</div>
+	</div>
+	
+	## 关联文档信息
+	<div class="modal fade bs-example-modal-lg" id="information_all_Modal" tabindex="-1" role="dialog" aria-labelledby="">
+			<div class="modal-dialog" role="document">
+					<div class="modal-content">
+							<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">×</span>
+									</button>
+									<h4 class="modal-title" id="">关联文档信息</h4>
+							</div>
+							<div class="modal-body">
+								<table class="table table-bordered">
+									<thead id="">
+										<tr>
+											<th>关联信息</th>
+										</tr>
+									</thead>
+									<tbody id="information_list_tbody"></tbody>
+								</table>
+							</div>
+							<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							</div>
+					</div>
+			</div>
+	</div>
+	
+	## 查看关联信息关系表
+	<div class="modal fade" id="associated_information_Modal" tabindex="-1" role="dialog" aria-labelledby="" type="hidden">
+			<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content"> 
+								<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+										<span class="modal-title">关联关系表</span>
+								</div>
+								<div class="modal-body">
+									<div class=""  style="width:600px;margin: 0 auto;">
+										<table class="table table-bordered">
+											<thead>
+												<tr>
+													<th>当前文档</th>
+													<th>关联文档</th>
+												</tr>
+											</thead>
+											<tbody id="associated_information_tbody"></tbody>
+										</table>	
+									</div>
+								</div>
+								<div class="modal-footer"> 
+									<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+								</div>  
+					</div>
+			</div>
+	</div>
+	
+	## 查看某一版本章节信息
+	<div class="modal fade" id="associated_charpt_Modal" tabindex="-1" role="dialog" aria-labelledby="" type="hidden">
+			<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content"> 
+								<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+										<span class="modal-title" id="his_charpt_tit">章节信息</span>
+								</div>
+								<div class="modal-body">
+									<div id="test-editormd-view33" class="markdown-body editormd-html-preview">
+										<textarea id="append-test33"></textarea>										
+									</div>
+								</div>
+								<div class="modal-footer"> 
+									<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+								</div>  
+					</div>
+			</div>
+	</div>
+			
+	<div class="modal fade" id="export_Modal" tabindex="-1" role="dialog" aria-labelledby="" type="hidden">
+	    <div class="modal-dialog" role="document">
+	        <div class="modal-content"> 
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <span class="modal-title">选择导出类型</span>
+                </div>
+                <div class="modal-body">
+                	<ul id="ulFileExport">
+                		<li><input name="file" type="radio" value="word" checked />word</li>
+	                	<li><input name="file" type="radio" value="pdf" />pdf</li>
+                	</ul>
+	            </div>
+	            <div class="modal-footer"> 
+                    <button type="button" class="btn btn-primary" onclick="exportCommit()">提交</button>
+                	 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>  
+	        </div>
+	    </div>
+	</div>
+	<div id="loading">
+		<img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+	</div>
+
+	    
+</body> 
+	<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script> 
+	<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+	<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+	<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+	<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+	<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+	<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>  
+	<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>   
+	<script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.core.js"></script>
+	<script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.excheck.min.js"></script>
+	<script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.exedit.js"></script>
+	<script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.exhide.js"></script>
+	<script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/fuzzysearch.js"></script>
+
+	<script src="#springUrl('')/projectManageui/static/js/frame/editor/marked.min.js"></script>
+	<script src="#springUrl('')/projectManageui/static/js/frame/editor/prettify.min.js"></script>
+	<script src="#springUrl('')/projectManageui/static/js/frame/editor/raphael.min.js"></script>
+	<script src="#springUrl('')/projectManageui/static/js/frame/editor/underscore.min.js"></script>
+	<script src="#springUrl('')/projectManageui/static/js/frame/editor/sequence-diagram.min.js"></script>
+	<script src="#springUrl('')/projectManageui/static/js/frame/editor/flowchart.min.js"></script>
+	<script src="#springUrl('')/projectManageui/static/js/frame/editor/jquery.flowchart.min.js"></script>
+	<script src="#springUrl('')/projectManageui/static/js/newProject/editormd_edit.min.js"></script> 
+	<script src="#springUrl('')/projectManageui/static/js/assetsLibrary/showdown.min.js"></script>
+	<script src="#springUrl('')/projectManageui/static/js/newProject/uploadImg.js"></script>	
+	
+	<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script> 
+	<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/fuzzy_serach.js"></script> 
+	<script src="#springUrl('')/projectManageui/static/js/newProject/checkMakeDown.js"></script>
+	<script src="#springUrl('')/projectManageui/static/js/newProject/associatedItems.js"></script>
+	<script src="#springUrl('')/projectManageui/static/js/newProject/checkMakeDown_file.js"></script>
+</html>

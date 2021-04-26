@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.itReAssetLibrary.ReTblSystemDirectoryDocumentRequirementFeaturMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentRequirementFeature">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="SYSTEM_DIRECTORY_DOCUMENT_ID" jdbcType="BIGINT" property="systemDirectoryDocumentId" />
+    <result column="REQUIREMENT_FEATURE_ID" jdbcType="BIGINT" property="requiremenFeaturetId" />
+    <result column="DOCUMENT_VERSION" jdbcType="INTEGER" property="documentVersion" />
+    <result column="UPDATE_USER_ID" jdbcType="BIGINT" property="updateUserId" />
+    <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, SYSTEM_DIRECTORY_DOCUMENT_ID, REQUIREMENT_FEATURE_ID, DOCUMENT_VERSION,UPDATE_USER_ID,UPDATE_TIME
+  </sql>
+  <insert id="insert" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentRequirementFeature" useGeneratedKeys="true" keyColumn="ID" keyProperty="id">
+    insert into tbl_system_directory_document_requirement_feature ( 
+    SYSTEM_DIRECTORY_DOCUMENT_ID, REQUIREMENT_FEATURE_ID,DOCUMENT_VERSION,UPDATE_USER_ID,UPDATE_TIME 
+     )
+    values ( #{systemDirectoryDocumentId},#{requiremenFeaturetId},#{documentVersion},#{updateUserId},#{updateTime})
+  </insert>
+  <insert id="insertDocumentReFeature" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentRequirementFeature" useGeneratedKeys="true" keyColumn="ID" keyProperty="id">
+    insert into tbl_system_directory_document_requirement_feature ( 
+    SYSTEM_DIRECTORY_DOCUMENT_ID, REQUIREMENT_FEATURE_ID,DOCUMENT_VERSION,UPDATE_USER_ID,UPDATE_TIME 
+     )
+    values ( #{systemDirectoryDocumentId},#{requiremenFeaturetId},#{documentVersion},#{updateUserId},CURRENT_TIMESTAMP)
+  </insert>
+  <update id="updateDocumentRequirement" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument">
+        UPDATE tbl_system_directory_document_requirement_feature tsdd
+        SET tsdd.DOCUMENT_VERSION = #{documentVersion},
+         tsdd.UPDATE_USER_ID = #{lastUpdateBy},
+         tsdd.UPDATE_TIME = CURRENT_TIMESTAMP
+        WHERE tsdd.SYSTEM_DIRECTORY_DOCUMENT_ID = #{id}
+    </update>
+    
+    <select id="getMinVersion" resultType="java.lang.Long">
+      SELECT
+	    min(DOCUMENT_VERSION)
+      FROM
+          tbl_system_directory_document_requirement
+      WHERE
+        SYSTEM_DIRECTORY_DOCUMENT_ID = #{systemDirectoryDocumentId}
+        AND REQUIREMENT_FEATURE_ID = #{requiremenFeaturetId}
+  </select>
+  <select id="getRequirementByFeatureCode" resultType="java.lang.String">
+      SELECT requirement.REQUIREMENT_CODE FROM tbl_requirement_info requirement
+		LEFT JOIN tbl_requirement_feature feature
+		ON requirement.ID=feature.REQUIREMENT_ID
+		WHERE feature.FEATURE_CODE=#{featureCode}
+  </select>
+  
+</mapper>

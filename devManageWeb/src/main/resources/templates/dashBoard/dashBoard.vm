@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>dashBoard</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/daterangepicker-bs3.css" /> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" /> 
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/dashBoard/dashBoard.css" /> 
+</head>
+<body>
+<div class="topSelect"> 
+	<input id="projectSelect" type="hidden" />
+    <!-- <span>统计项目：</span><select class="selectpicker projectGroup" onchange="selectChange()" id="projectSelect" name="projectSelect"></select> -->
+    <div class="rowdiv selectDiv">
+        <div class="def_col_len">
+            <select class="selectpicker projectGroup" onchange="getSystem(this)" id="cheakProject" name="cheakProject"></select>
+        </div>
+        <div class="def_col_len cheakSystem">
+            <select class="selectpicker projectGroup" id="cheakSystem" name="cheakSystem" onchange="selectChange(this)"></select>
+        </div>
+    </div>
+</div>
+<div class="bottomContent">
+    <div class="leftCont def_col_10">
+        <div class="block">
+            <div class="blockTitle">
+                开发任务
+            </div>
+            <div class="blockContont">
+            	<div class="nowCompletion">
+	            	<div class="completionTit" id="nowCompletionTit">
+	                    <span class="fontWeihgt nowWindows"  >本期投产</span>  <span class="nowWindow" style='margin-left:2px;'> </span>  <span class="fa fa-question-circle promptInfo" id = "sprintingDevelopTasksPrompt"></span> <span class="nowTime"> </span><span class="ruleWindow bgColor1 nowwindowType" style='margin-left:2px;'>常规窗口</span>
+	                </div>
+	                <div class="completionCont">
+	                    <div>
+	                        <div class="completionfont">总任务数</div>
+	                        <div class="completionNum fontColor1 nowAllPro">0</div>
+	                    </div>
+	                    <div>
+	                        <div class="completionfont">待实施</div>
+	                        <div class="completionNum fontColor1 nowWaitpro">0</div>
+	                    </div>
+	                    <div>
+	                        <div class="completionfont">实施中</div>
+	                        <div class="completionNum fontColor1 nowDoing">0</div>
+	                    </div>
+	                    <div>
+	                        <div class="completionfont">已完成</div>
+	                        <div class="completionNum fontColor1 nowDone">0</div>
+	                    </div>
+	                </div>
+                    <div class="completionCont">
+                        <div>
+                            <div class="completionfont nowPending" style="display:none">pending</div>
+                            <div class="completionNum fontColor1 nowPending1" style="display:none">0</div>
+                        </div>
+                        <div>
+                            <div class="completionfont nowTest" style="display:none">测试中</div>
+                            <div class="completionNum fontColor1 nowTest1" style="display:none">0</div>
+                        </div>
+                        <div>
+                            <div class="completionfont nowSingnOff"  style="display:none">singn off</div>
+                            <div class="completionNum fontColor1 nowSingnOff1" style="display:none">0</div>
+                        </div>
+                    </div>
+            	</div>
+            	<div class="nextCompletion">
+            		<div class="completionTit" id="nextCompletionTit">
+	                    <span class="fontWeihgt">下期投产</span> <span class="nextWindow"> </span>  <span class="nextTime"> </span><span class="ruleWindow bgColor2 nextWindowType">常规窗口</span>
+	                </div>
+	                <div class="completionCont">
+	                    <div>
+	                        <div class="completionfont">总任务数</div>
+	                        <div class="completionNum fontColor2 nextAllPro">0</div>
+	                    </div>
+	                    <div>
+	                        <div class="completionfont">待实施</div>
+	                        <div class="completionNum fontColor2 nextWaitpro">0</div>
+	                    </div>
+	                    <div>
+	                        <div class="completionfont">实施中</div>
+	                        <div class="completionNum fontColor2 nextDoing">0</div>
+	                    </div>
+	                    <div>
+	                        <div class="completionfont">已完成</div>
+	                        <div class="completionNum fontColor2 nextDone">0</div>
+	                    </div>
+	                </div>
+            	</div>   
+            </div>
+        </div>
+        <div class="block bottonBlock">
+            <div class="blockTitle">
+                代码管理
+            </div>
+            <div class="blockContont"> 
+                <div class="block2">
+                    <div class="smallTitle">
+                        最近7日的代码提交  <span class="fa fa-question-circle promptInfo" id="last7daysCommitTimesPrompt" ></span>
+                    </div>
+                    <div class="blockTwoCont">
+                        <div class="chartStyle1" id="chart1">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="block2">
+                    <div class="smallTitle">
+                        代码提交总览<span class="fa fa-question-circle promptInfo" id="codeCommitPrompt" ></span>
+                    </div>
+                    <div class="blockTwoCont">
+                        <table class="codeCommit">
+                            <tr>
+                                <td></td>
+                                <td>今日</td>
+                                <td>最近7日</td>
+                                <td>最近14日</td>
+                            </tr>
+                            <tr>
+                                <td>代码提交次数</td>
+                                <td class="fontStyle today_Time">0</td>
+                                <td class="fontStyle scmCount7_Time">0</td>
+                                <td class="fontStyle scmCount14_Time">0</td>
+                            </tr>
+                            <tr>
+                                <td>代码提交人数</td>
+                                <td class="fontStyle today_Preson">0</td>
+                                <td class="fontStyle scmCount7_Preson">0</td>
+                                <td class="fontStyle scmCount14_Preson">0</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="block bottonBlock">
+            <div class="blockTitle">
+                代码质量
+            </div>
+            <div class="blockContont2">
+            	<div class="rowdiv" id="changeChildSystem">
+                    <div class="form-group"> 
+                        <label class="def_col_10 control-label">切换子系统：</label>
+                        <div class="def_col_26">
+                          <select class="selectpicker" id="childSystem" onchange="childSystemChange()" name="childSystem"></select>    
+						</div>
+                    </div>
+                </div>
+                <div class="block2">
+                    <div class="smallTitle">
+                        最近一次代码扫描问题总览 <span class="fa fa-question-circle promptInfo" id="lastCodeScanPrompt" ></span>
+                    </div>
+                    <div class="blockTwoCont" id="position_">
+                        <div class="chartStyle2" id="chart4"></div>
+                        <div id="title_">
+                            <div style="display:flex;">
+                                <span style="color: #e41010;padding-right: 10px;">Coverage:<span id="Coverage" style="color: #e41010;"></span></span>
+                                <span style="color: #b50e90;padding-right: 10px;">Duplications:<span id="Duplications" style="color: #b50e90;"></span></span>
+                                <span style="color:#02ff00;padding-right: 10px;">UnitTestNumber:<span id="UnitTestNumber" style="color:#02ff00;"></span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="block2">
+                    <div class="block2">
+                        <div class="smallTitle">
+                            最近7次代码扫描问题趋势<span class="fa fa-question-circle promptInfo" id="last7daysCodeScanPrompt" ></span>
+                        </div>
+                        <div class="blockTwoCont">
+                            <div class="chartStyle2" id="chart5">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="rightCont def_col_26">
+    	<div class="block">
+            <div class="blockTitle">
+                累计流图 <span class="fa fa-question-circle promptInfo" id="CFDPrompt" ></span> 
+            </div>
+            <div class="blockContont2"> 
+            	<div class="rowdiv timeChange">
+                    <div class="form-group def_col_12"> 
+                        <label class="def_col_12 control-label font_right">时间区间：</label>
+                        <div class="def_col_24">
+                            <input type="text" onfocus="this.blur()" class="form-control" placeholder="请输入" id="timeDate" name="timeDate">
+            			</div>
+                    </div>
+                </div>
+				<div class="chartStyle3" id="chart6">
+
+                </div>               
+            </div>
+            <div class="blockTitle">
+	TTM分布图<span class="fa fa-question-circle promptInfo" id="TTMPrompt" ></span>
+            </div>   
+            <div class="blockContont2">
+            	<div class="chartStyle3" id="chart7">
+
+            	</div>
+            </div>  
+            <div class="blockTitle">
+                 价值流图<span class="fa fa-question-circle promptInfo" id="VSMPrompt" ></span>
+            </div>
+            <div class="blockContont2">  
+				<div class="chartStyle3" id="chart8">
+
+                </div>               
+            </div>
+        </div>
+         
+        
+        <div class="block">
+            <div class="blockTitle">
+                构建情况
+            </div>
+            <div class="blockContont2">
+                <div class="def_col_22">
+                    <div class="block2">
+                        <div class="smallTitle">
+                            最近14日构建次数 <span class="fa fa-question-circle promptInfo" id="last14daysBuildTimesPrompt" ></span>
+                        </div>
+                        <div class="blockTwoCont">
+                            <div class="chartStyle1" id="chart2">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="block2">
+                        <div class="smallTitle">
+                            最近14日平均构建耗时 <span class="fa fa-question-circle promptInfo" id="last14daysBuildAveragesTime" ></span>
+                        </div>
+                        <div class="blockTwoCont">
+                            <div class="chartStyle1" id="chart3">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="def_col_14">
+                    <div class="spacingDiv">
+                        <div class="block2">
+                            <div class="smallTitle">
+                                最新构建记录 <span class="fa fa-question-circle promptInfo" id="lastBuildTimesPrompt" ></span>
+                            </div>
+                            <div class="blockTwoCont newBuildInfo">
+                                
+                            </div>
+                        </div>
+                        <div class="block2">
+                            <div class="smallTitle">
+                                构建情况总览 <span class="fa fa-question-circle promptInfo" id="buildAllPrompt" ></span>
+                            </div>
+                            <div class="blockTwoCont">
+                                <table class="codeCommit">
+                                    <tr>
+                                        <td></td>
+                                        <td>今日</td>
+                                        <td>最近7日</td>
+                                        <td>最近14日</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fontWeihgt">构建次数</td>
+                                        <td class="fontStyle2 jenkinsCount1">0</td>
+                                        <td class="fontStyle2 jenkinsCount7">0</td>
+                                        <td class="fontStyle2 jenkinsCount14">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>总次数</td>
+                                        <td>成功</td>
+                                        <td>失败</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fontWeihgt">最近7日构建情况</td>
+                                        <td class="fontStyle2 jenkinsListInCount">0</td>
+                                        <td class="fontStyle2 jenkinsListSuccess">0</td>
+                                        <td class="fontStyle2 jenkinsListFail">0</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        #*<div class="block">
+            <div class="blockTitle">
+                代码质量
+            </div>
+            <div class="blockContont2"> 
+                <div class="def_col_17">
+                    <div class="block2">
+                        <div class="smallTitle">
+                            最近一次代码扫描问题总览<span class="fa fa-question-circle promptInfo" id="lastCodeScanPrompt" ></span>
+                        </div>
+                        <div class="blockTwoCont">
+                            <div class="chartStyle2" id="chart4">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="def_col_19">
+                    <div class="spacingDiv">
+                        <div class="block2">
+                            <div class="smallTitle">
+                                最近7日代码扫描问题趋势<span class="fa fa-question-circle promptInfo" id="last7daysCodeScanPrompt" ></span>
+                            </div>
+                            <div class="blockTwoCont">
+                                <div class="chartStyle2" id="chart5">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*#
+    </div>
+</div>
+##弹窗
+<div class="modal fade" id="checkedRecord" tabindex="-1" role="dialog" aria-labelledby="checkedRecord">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <span class="modal-title" id="myCheckedRecord"></span>
+            </div>
+            <div class="modal-body">
+                <div class="successInfo" id="buildingFail">
+                    <span class="fa fa-close iconFail"></span> 构建失败!
+                </div>
+                <div class="successInfo" id="buildingSuccess">
+                    <span class="fa fa-check iconSuccess"></span> 构建成功!
+                </div>
+                <div class="rowdiv">
+                    <div class="form-group col-md-6">
+                        <label class="col-sm-4 control-label fontWeihgt">开始构建时间：</label>
+                        <label class="col-sm-8 control-label font_left" id="detailInfoSuccessStartTime"></label>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="col-sm-4 control-label fontWeihgt">结束构建时间：</label>
+                        <label class="col-sm-8 control-label font_left" id="detailInfoSuccessEndDate"></label>
+                    </div>
+                </div>
+                <div class="allInfo" id="buildLogsInfo">
+	                <div class="def_title">
+	                    <span>Sonar扫描结果</span> 
+	                </div> 
+	                <div class="def_content"  id="SonarResult"> 
+	               		<div class="def_title">
+	                    	<span>Sonar扫描结果</span> 
+	                	</div> 
+	                </div> 
+	            </div>
+                <div class="allInfo">
+                    <div class="def_title">
+                        <span >错误日志</span>
+                        <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+                    </div>
+                    <div class="def_content">
+                        <div class="rowdiv">
+                            <div class="form-group">
+                                    <pre class="col-sm-12 preStyle" id="buildLogsInfoPre">
+                                    </pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="loading"> 
+	<img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+</div>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/getTime.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script> 
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/moment.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/echarts.common.min.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/def_daterangepicker.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/devManageui/static/js/dashBoard/dashBoard.js"></script> 
+</body>
+</html>

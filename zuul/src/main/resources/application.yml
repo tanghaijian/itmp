@@ -1,0 +1,93 @@
+server:
+  port: 8080
+
+management:
+  port: 8081
+
+#熔断超时
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: false
+#负载均衡超时
+ribbon:
+  ReadTimeout: 600000
+  ConnectTimeout: 600000
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 1
+  eureka:
+    enabled: true
+
+zuul:
+  routes:
+    loginui:
+      path: /
+      serviceId: systemui
+      sensitive-headers:
+      custom-sensitive-headers: true
+    systemui:
+      path: /systemui/**
+      serviceId: systemui
+      sensitive-headers: 
+      custom-sensitive-headers: true
+    system:
+      path: /system/**
+      serviceId: system
+      sensitive-headers: 
+      custom-sensitive-headers: true
+    devManage:
+      path: /devManage/**
+      serviceId: devManage
+      sensitive-headers: 
+      custom-sensitive-headers: true
+    devManageui:
+      path: /devManageui/**
+      serviceId: devManageui
+      sensitive-headers: 
+      custom-sensitive-headers: true
+    projectManageui:
+      path: /projectManageui/**
+      serviceId: projectManageui
+      sensitive-headers: 
+      custom-sensitive-headers: true
+    projectManage:
+      path: /projectManage/**
+      serviceId: projectManage
+      sensitive-headers: 
+      custom-sensitive-headers: true
+    testManageui:
+      path: /testManageui/**
+      serviceId: testManageui
+      sensitive-headers: 
+      custom-sensitive-headers: true
+    testManage:
+      path: /testManage/**
+      serviceId: testManage
+      sensitive-headers: 
+      custom-sensitive-headers: true
+    job:
+      path: /job/**
+      serviceId: job
+      sensitive-headers: 
+      custom-sensitive-headers: true
+    report:
+      path: /report/**
+      serviceId: report
+      strip-prefix: false
+      custom-sensitive-headers: true
+  add-host-header: true
+  SendErrorFilter:
+      post:
+          disable:true
+
+eureka:
+  instance:
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    hostname: ${spring.cloud.client.ipAddress}
+    prefer-ip-address: true
+  client:
+    healthcheck:
+      enabled: true
+      

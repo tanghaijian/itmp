@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>运维项目管理</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" /> 
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/daterangepicker-bs3.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" /> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css"/>  
+    <link rel="stylesheet"  type="text/css"  media="screen" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+	<link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/oamProjectManage/oamProjectManage.css"/> 
+	 
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/moment.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script> 
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/daterangepicker.js"></script> 
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script> 
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/projectManageui/static/js/project/oamProjectManage/oamProjectManage.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/projectManageui/static/js/project/oamProjectManage/oamVersions.js"></script>
+    <script>
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap4';
+        $.jgrid.defaults.iconSet = "fontAwesome";
+        var ctxStatic="${ctxStatic}";
+        var projectEdit = $auth.hasPermission("$token","projectManage:project:edit"); 
+        var projectEnd = $auth.hasPermission("$token","projectManage:project:end");
+        var userPost = $auth.hasPermission("$token","projectManage:project:userPost");
+        var toRiskPer = $auth.hasPermission("$token","projectManage:project:toRiskPer");
+        var toWikiButton = $auth.hasPermission("$token","projectManage:project:wiki");
+    </script>
+</head>
+<body>
+
+<!-- 查询搜索区 -->
+<div class="color1">
+    <div class="container-fluid search_div" id="search_div"> 
+        <div class="row control-row">
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">项目名称：</label></div>
+                <div class="search_input">
+                    <input type="text" class="form-control" placeholder="请输入" id="projectName" name="projectName" value="" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">项目管理：</label></div>
+                <div class="search_input">
+                  	  <input type="text" class="form-control" placeholder="请输入" id="projectManageName" name="projectManageName" value="" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">开发管理：</label></div>
+                <div class="search_input">
+                  	  <input type="text" class="form-control" placeholder="请输入" id="developManageName" name="developManageName" value="" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">状态：</label></div>
+                <div class="search_input">
+                    <select class="selectpicker" id="projectStatusName" name="projectStatusName">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row control-row search_btn">
+            <button type="button" class="btn btn-primary" onclick="searchInfo()">搜&nbsp;&nbsp;&nbsp;索</button>
+            <button type="button" onclick="clearSearch()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+            <!-- <div class="collection">
+                <span class="fa fa-heart-o"></span>&nbsp;收藏此次筛选
+            </div> -->
+        </div>
+    </div>
+    <div id="downBtn">
+        <span class="fa fa-caret-up"></span>
+    </div>
+</div>
+<div class="main-content">
+    <div class="content-btn">
+    	#if($auth.hasPermission("$token","projectManage:project:add"))
+        <button type="button" onclick="addProject()" class="btn btn-primary">新增项目</button>
+        #end
+    </div>
+    <div class="content-table">
+        <div class="wode">
+           <table id="list2"></table>
+            <div id="pager2"></div> 
+        </div>
+    </div>
+</div>
+
+<!-- 岗位权限 -->
+<div class=" modal fade in bs-example-modal-lg" id="authorityModal" tabindex="-1" role="dialog" aria-labelledby="">
+	<div class="layout row _flex">
+	    <div class="left-box col-md-3"></div>
+	    <div class="main-container col-md-9">
+	        <div class="top-container row">
+	            <div class="MenuManagementAuthority col-md-6">
+	                <div class="titleFont row">
+	                	<p class=" col-md-6">菜单按钮权限</p>
+	                	<div class="col-md-6">
+		                	<div class="search_font"><label class="control-label">模板：</label></div>
+			                <div class="search_input">
+			                    <select class="selectpicker" id="template" name="">
+
+	                    		</select>
+			                </div>
+		                </div>
+	                </div>
+	                <div id="tbDiv">
+	                    <table id="tb1" class=""></table>
+	                    <div id="psg1"></div>
+	                </div>
+	            </div>
+	            <div class="AssociatedPersonnel  col-md-6">
+	                <p class="titleFont">关联人员</p>
+	                #*<div class="btnGroupDiv">
+	                    #if($auth.hasPermission("$token","system:role:user"))
+	                        <button type="button" class="btn btn-primary" onclick="userModel()">关联人员</button>
+	                    #end
+	                    #if($auth.hasPermission("$token","system:role:cancelRelate"))
+	                        <button type="button" class="btn btn-default" onclick="disassociate()">取消关联</button>
+	                    #end
+	                </div>*#
+	                <div id="tbDiv2">
+	                    <table id="tb2"></table>
+	                </div>
+	            </div>
+	        </div>
+	        <div class="bottom-container">
+                <button type="button" class="btn btn-primary" onclick="updateRoleBtn()">保&nbsp;&nbsp;&nbsp;存</button>
+                <button type="button" class="btn btn-default" onclick="resetRoleBtn()" data-dismiss="modal">取&nbsp;&nbsp;&nbsp;消</button>
+	            ## #if($auth.hasPermission("$token","system:role:status"))
+	            ##     <button type="button" id="updateRoleBut" class="btn btn-default" onclick="updateRole()">置为无效</button>
+	            ## #end
+	        </div>
+	    </div>
+	</div>
+</div>
+
+##新增运维类项目
+<div class="modal fade bs-example-modal-lg" id="add_project" tabindex="-1" role="dialog" aria-labelledby="add_preject">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">新增运维类项目</h4>
+            </div> 
+            <div class="modal-body">
+                <form id="newform">
+                    <div class="allInfo">
+                        <div class="def_title">
+                            <span>项目基本信息</span> 
+                        </div>
+                        <div class="def_content">
+                            <div class="rowdiv">
+                                <div class="form-group def_col_36">
+                                    <div class="def_col_5"><label class="control-label"><span class="redStar" style="color:red;">*</span>项目组名称：</label></div>
+                                    <div class="def_col_31">
+                                        <input type="text" class="form-control" placeholder="请输入" id="add_projectName" name="add_projectName" value="" />
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="rowdiv">
+                                <div class="form-group def_col_18">
+                                    <div class="def_col_10"><label class="control-label"><span class="redStar" style="color:red;">*</span>项目编码：</label></div>
+                                    <div class="def_col_26">
+                                        <input type="text" class="form-control" placeholder="请输入" id="add_projectCode" name="add_projectCode" value="" />
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="rowdiv">
+                                <div class="form-group def_col_36">
+                                    <div class="def_col_5"><label class="control-label">项目类型：</label></div>
+                                    <div class="def_col_13">
+                                        <input type="text" class="form-control  readonly" placeholder="" id="add_projectType" name="add_projectType" value="IT运维类" readonly/>
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="rowdiv">
+                                <div class="form-group def_col_36">
+                                    <div class="def_col_5"><label class="control-label">项目备注：</label></div>
+                                    <div class="def_col_31">
+                                        <textarea class="textAreaStyle" id="add_projectOverview" name="add_projectOverview" rows="3" cols="20"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rowdiv">
+                                <div class="form-group def_col_36">
+                                    <div class="def_col_5"><label class="control-label">项目周期：</label></div>
+                                    <div class="def_col_13">
+                                        <input type="text" class="form-control pointStyle" onfocus="this.blur()" placeholder="yyyymmdd-yyyymmdd" id="add_time" name="add_time" value="" />
+                                    </div>
+                                    <div class="def_col_1">
+                                        <input type="checkBox" checked id="add_longTimeStatus" style="dispaly:inline-block;margin-top:9px;" />
+                                    </div>
+                                    <div class="def_col_4"><label class="control-label"  style="text-align:left;">长期项目</label></div>
+                                </div>
+                            </div>  
+                            
+                            <div class="rowdiv">
+                                <div class="form-group def_col_36">
+                                    <div class="def_col_5"><label class="control-label">关联子系统：</label></div>
+                                    <div class="def_col_31">
+                                        <div id="relevanceSys"  class="fakeInput pointStyle"  onclick="selectCorrelation(event)">
+                                        
+                                        </div>
+                                    </div> 
+                                </div>
+                            </div>  
+                        </div>
+                    </div>
+                </form> 
+       		</div>
+       		<div class="modal-footer">
+       			<button type="button" onclick="addPrejectCommit()" class="btn btn-primary">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+       </div>
+   </div>
+</div>  
+
+##系统弹框
+<div class="modal fade bs-example-modal-lg" id="select_Correlation" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg modal-user" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <span class="modal-title" id="myModalLabel">选择关联系统</span>
+            </div>  
+            <div class="modal-body">
+                <form class="form-horizontal" id="userForm">
+                    <div class="color1">
+                        <div class="container-fluid" id="search_div2">
+                            <div class="rowdiv control-row">
+                                <div class="col-md-2">
+                                    
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="search_font"><label class="control-label">子系统名称：</label></div>
+                                    <div class="search_input">
+                                        <input type="text" class="form-control" placeholder="请选择" id="SCsystemName" name="SCsystemName" value="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="search_font"><label class="control-label">子系统编码：</label></div>
+                                    <div class="search_input">
+                                        <input type="text" class="form-control" placeholder="请选择" id="SCsystemCode" name="SCsystemCode" value="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                        
+                                </div>
+                            </div>
+                            <div class="rowdiv control-row search_btn">
+                                <button type="button" class="btn btn-primary" onclick="presonTableShow()">搜&nbsp;&nbsp;&nbsp;索</button>
+                                <button type="button" onclick="clearSearch2()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                            </div>
+
+                        </div>
+                        <div id="downBtn2">
+                            <span class="fa fa-caret-up"></span>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="content-table">
+                        <div class="wode">
+                            <table id="presonTable"></table> 
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="insertRoleUser()">添加</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div> 
+        </div>
+    </div>
+</div>
+
+## 版本管理
+<div class="modal fade bs-example-modal-lg" id="versionsModal" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="versions_tit"></h4>
+            </div> 
+            <div class="modal-body">
+                <div class="content-btn">
+                    <button type="button" onclick="insertVersion()" class="btn btn-primary">新增版本</button>
+                </div>
+                <table id="versionsTable"></table>
+       		</div>
+       		<div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+       </div>
+   </div>
+</div> 
+
+## 新增编辑版本
+<div class="modal fade bs-example-modal-lg" id="addVersion" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="addVersion_tit">新增版本</h4>
+                <input type="hidden" id="edit_Version_id" />
+            </div> 
+            <div class="modal-body">
+                <form id="addVersion_form">
+                    <div class="rowdiv form-group">
+                        <div class="def_col_8"><label class="control-label"><span class="redStar">*</span>版本号：</label></div>
+                        <div class="def_col_28">
+                            <input type="text" class="form-control" placeholder="请输入" id="add_Version" name="add_Version" value="" />
+                        </div>
+                    </div>
+                    <div class="rowdiv form-group">
+                        <div class="def_col_8"><label class="control-label"><span class="redStar">*</span>子系统：</label></div>
+                        <div class="def_col_18">
+                            <select class="selectpicker" id="add_system" name="add_system" multiple data-none-selected-text="请选择" data-actions-box="true"></select>
+                        </div>
+                        <div class="def_col_10">
+                            <button type="button" class="btn btn-primary" onclick="select_Status(1)">全选</button>
+                            <button type="button" class="btn btn-danger" onclick="select_Status(0)">反选</button>
+                        </div>
+                    </div>
+                    <div class="rowdiv form-group">
+                        <div class="def_col_8"><label class="control-label">版本分组标签：</label></div>
+                        <div class="def_col_28">
+                            <input type="text" class="form-control" placeholder="请输入" id="add_label" name="add_label" value="" />
+                        </div>
+                    </div>
+                    <div class="rowdiv form-group">
+                        <div class="def_col_8"><label class="control-label">环境类型：</label></div>
+                        <div class="def_col_28">
+                            <select class="selectpicker" id="add_environment_Type" multiple data-none-selected-text="请选择" data-actions-box="true"></select>
+                        </div>
+                    </div>
+                </form>
+       		</div>
+       		<div class="modal-footer">
+                <button type="button" onclick="insertVersion_submit()" class="btn btn-primary">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+       </div>
+   </div>
+</div> 
+
+<div id="loading"> 
+    <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+</div> 
+
+</body>
+</html>
+ 

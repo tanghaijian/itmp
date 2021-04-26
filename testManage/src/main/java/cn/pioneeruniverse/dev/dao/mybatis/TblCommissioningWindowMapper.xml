@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblCommissioningWindowMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblCommissioningWindow">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="WINDOW_DATE" jdbcType="DATE" property="windowDate" />
+    <result column="WINDOW_NAME" jdbcType="VARCHAR" property="windowName" />
+    <result column="WINDOW_TYPE" jdbcType="TINYINT" property="windowType" />
+    <result column="WINDOW_VERSION" jdbcType="VARCHAR" property="windowVersion" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, WINDOW_DATE, WINDOW_NAME, WINDOW_TYPE, WINDOW_VERSION, STATUS, CREATE_BY, CREATE_DATE, 
+    LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  <select id="getWindowName" parameterType="Long" resultType="String">
+  	select WINDOW_NAME 
+  	from tbl_commissioning_window
+  	where ID = #{id} and STATUS = 1
+  </select>
+  <select id="getWindowNameById" parameterType="Long" resultType="String">
+    select WINDOW_NAME
+    from tbl_commissioning_window
+    where ID = #{id}
+  </select>
+  <select id="getAll" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from tbl_commissioning_window
+    where STATUS = 1
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_commissioning_window
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_commissioning_window
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblCommissioningWindow">
+    insert into tbl_commissioning_window (ID, WINDOW_DATE, WINDOW_NAME, 
+      WINDOW_TYPE, WINDOW_VERSION, STATUS, 
+      CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, 
+      LAST_UPDATE_DATE)
+    values (#{id,jdbcType=BIGINT}, #{windowDate,jdbcType=DATE}, #{windowName,jdbcType=VARCHAR}, 
+      #{windowType,jdbcType=TINYINT}, #{windowVersion,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
+      #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, 
+      #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.dev.entity.TblCommissioningWindow">
+    insert into tbl_commissioning_window
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="windowDate != null">
+        WINDOW_DATE,
+      </if>
+      <if test="windowName != null">
+        WINDOW_NAME,
+      </if>
+      <if test="windowType != null">
+        WINDOW_TYPE,
+      </if>
+      <if test="windowVersion != null">
+        WINDOW_VERSION,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="windowDate != null">
+        #{windowDate,jdbcType=DATE},
+      </if>
+      <if test="windowName != null">
+        #{windowName,jdbcType=VARCHAR},
+      </if>
+      <if test="windowType != null">
+        #{windowType,jdbcType=TINYINT},
+      </if>
+      <if test="windowVersion != null">
+        #{windowVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblCommissioningWindow">
+    update tbl_commissioning_window
+    <set>
+      <if test="windowDate != null">
+        WINDOW_DATE = #{windowDate,jdbcType=DATE},
+      </if>
+      <if test="windowName != null">
+        WINDOW_NAME = #{windowName,jdbcType=VARCHAR},
+      </if>
+      <if test="windowType != null">
+        WINDOW_TYPE = #{windowType,jdbcType=TINYINT},
+      </if>
+      <if test="windowVersion != null">
+        WINDOW_VERSION = #{windowVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblCommissioningWindow">
+    update tbl_commissioning_window
+    set WINDOW_DATE = #{windowDate,jdbcType=DATE},
+      WINDOW_NAME = #{windowName,jdbcType=VARCHAR},
+      WINDOW_TYPE = #{windowType,jdbcType=TINYINT},
+      WINDOW_VERSION = #{windowVersion,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!--查询投产窗口-->
+  <select id="getAllComWindow" parameterType="hashmap" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM tbl_commissioning_window
+    <where>
+      STATUS = 1
+      <if test="win.windowName != null and win.windowName != ''">
+        AND WINDOW_NAME LIKE CONCAT(CONCAT('%',#{win.windowName},'%'))
+      </if>
+      <if test="win.windowType != null and win.windowType != ''">
+        AND WINDOW_TYPE = #{win.windowType}
+      </if>
+      <if test="win.windowVersion != null and win.windowVersion != ''">
+        AND WINDOW_VERSION  LIKE CONCAT(CONCAT('%',#{win.windowVersion},'%'))
+      </if>
+      <if test="win.windowStartTime != null  and win.windowEndTime != null">
+	  <![CDATA[
+	    AND DATE_FORMAT(WINDOW_DATE, '%Y-%m-%d') 
+	    between DATE_FORMAT(#{win.windowStartTime},'%Y-%m-%d')
+	    and DATE_FORMAT(#{win.windowEndTime},'%Y-%m-%d')
+	  ]]>
+	</if>
+    </where>
+    order by WINDOW_DATE DESC
+    <if test="start != null and pageSize != null">
+      LIMIT #{start},#{pageSize}
+    </if>
+  </select>
+
+  <!--统计投产窗口总数-->
+  <select id="getAllComWindowTotal" parameterType="hashmap" resultType="java.lang.Integer">
+    SELECT
+      count(ID)
+    FROM tbl_commissioning_window
+    <where>
+      `STATUS` = 1
+      <if test="win.windowName != null and win.windowName != ''">
+        AND WINDOW_NAME LIKE CONCAT(CONCAT('%',#{win.windowName},'%'))
+      </if>
+      <if test="win.windowType != null and win.windowType != ''">
+        AND WINDOW_TYPE = #{win.windowType}
+      </if>
+      <if test="win.windowVersion != null and win.windowVersion != ''">
+        AND WINDOW_VERSION  LIKE CONCAT(CONCAT('%',#{win.windowVersion},'%'))
+      </if>
+    </where>
+  </select>
+  
+  <select id="selectIdBySql" resultType="java.lang.Long">
+  	select ID from tbl_commissioning_window
+  	where status = 1 and (${windowNameSql})
+  </select>
+</mapper>

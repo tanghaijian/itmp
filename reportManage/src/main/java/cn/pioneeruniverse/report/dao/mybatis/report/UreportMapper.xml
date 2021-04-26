@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.report.dao.mybatis.report.UreportMapper">
+
+  <resultMap id="reportMap"  type="cn.pioneeruniverse.report.vo.TblReportInfo">
+   <id column="ID" property="id"></id>
+   <result column="REPORT_NAME" property="reportName"/>
+   <result column="REPORT_CODE" property="reportCode"/>
+   <result column="FILE_NAME_NEW" property="filenameNew"/>
+   <result column="FILE_NAME_OLD" property="filenameOld"/>
+   <result column="FILE_TYPE" property="fileType"/>
+   <result column="FILE_PATH" property="filePath"/>
+   <result column="FILE_S3_BUCKET" property="fileS3Bucket"/>
+   <result column="FILE_S3_KEY" property="fileS3Key"/>
+   <result column="STATUS" property="status"/>
+   <result column="CREATE_BY" property="createBy"/>
+   <result column="CREATE_DATE" property="createDate"/>
+   <result column="LAST_UPDATE_BY" property="lastUpdateBy"/>
+   <result column="LAST_UPDATE_DATE" property="lastUpdateDate"/>
+  </resultMap>
+ 
+ <!-- 保存文件 -->
+  <insert id="saveFile" parameterType="cn.pioneeruniverse.report.vo.TblReportInfo">
+    insert into tbl_report_info 
+    (
+      report_name,
+	  FILE_NAME_OLD,
+	  FILE_S3_BUCKET,
+	  FILE_S3_KEY,
+	  CREATE_DATE,
+	  LAST_UPDATE_DATE
+    )
+    values
+    (
+     #{reportName},
+     #{filenameOld},
+     #{fileS3Bucket},
+     #{fileS3Key},
+     #{createDate},
+     #{lastUpdateDate}
+    )
+  </insert>
+  <!-- 通过文件名获取文件 -->
+  <select id="selectFileByName" parameterType="java.lang.String" resultMap="reportMap">
+   select * from tbl_report_info where file_name_old = #{filename} and status = 1
+  </select>
+  
+  <!-- 获取所有有效报表文件 -->
+  <select id="selectFileList" resultMap="reportMap">
+   select * from tbl_report_info where status = 1
+  </select>
+  <!-- 通过文件名更新文件 -->
+  <update id="updateFileByName" parameterType="java.lang.String">
+   update tbl_report_info set status = 2 where  file_name_old = #{filename}
+  </update>
+  
+  <!-- 通过文件名删除文件 -->
+  <delete id="delFileByName" parameterType="java.lang.String">
+  delete  from tbl_report_info where file_name_old = #{filename}
+  </delete>
+  
+</mapper>

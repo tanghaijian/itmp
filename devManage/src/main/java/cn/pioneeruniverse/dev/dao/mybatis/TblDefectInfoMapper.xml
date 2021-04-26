@@ -1,0 +1,1127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblDefectInfoMapper">
+    <resultMap id="BaseResultDefectMap" type="cn.pioneeruniverse.dev.entity.TblDefectInfo">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="TEST_TASK_ID" jdbcType="BIGINT" property="testTaskId"/>
+        <result column="SYSTEM_ID" jdbcType="BIGINT" property="systemId"/>
+        <result column="TEST_SET_CASE_EXECUTE_ID" jdbcType="BIGINT" property="testSetCaseExecuteId"/>
+        <result column="DEFECT_CODE" jdbcType="VARCHAR" property="defectCode"/>
+        <result column="DEFECT_SUMMARY" jdbcType="VARCHAR" property="defectSummary"/>
+        <result column="DEFECT_TYPE" jdbcType="TINYINT" property="defectType"/>
+        <result column="DEFECT_SOURCE" jdbcType="TINYINT" property="defectSource"/>
+        <result column="DEFECT_STATUS" jdbcType="TINYINT" property="defectStatus"/>
+        <result column="REPAIR_ROUND" jdbcType="INTEGER" property="repairRound"/>
+        <result column="SEVERITY_LEVEL" jdbcType="TINYINT" property="severityLevel"/>
+        <result column="EMERGENCY_LEVEL" jdbcType="TINYINT" property="emergencyLevel"/>
+        <result column="REJECT_REASON" jdbcType="TINYINT" property="rejectReason"/>
+        <result column="SOLVE_STATUS" jdbcType="TINYINT" property="solveStatus"/>
+        <result column="DEFECT_OVERVIEW" jdbcType="VARCHAR" property="defectOverview"/>
+        <result column="SUBMIT_USER_ID" jdbcType="VARCHAR" property="submitUserId"/>
+        <result column="SUBMIT_DATE" jdbcType="DATE" property="submitDate"/>
+        <result column="ASSIGN_USER_ID" jdbcType="BIGINT" property="assignUserId"/>
+
+        <result column="REQUIREMENT_CODE" jdbcType="VARCHAR" property="requirementCode"/>
+        <result column="COMMISSIONING_WINDOW_ID" jdbcType="BIGINT" property="commissioningWindowId"/>
+
+        <result column="DEV_TASK_ID" jdbcType="BIGINT" property="devTaskId"/>
+        <result column="REQUIREMENT_FEATURE_ID" jdbcType="BIGINT" property="requirementFeatureId"/>
+
+        <result column="PROJECT_GROUP_ID" jdbcType="BIGINT" property="projectGroupId"/>
+        <result column="CLOSE_TIME" jdbcType="TIMESTAMP" property="closeTime"/>
+        <result column="ASSET_SYSTEM_TREE_ID" jdbcType="BIGINT" property="assetSystemTreeId"/>
+        <result column="DETECTED_SYSTEM_VERSION_ID" jdbcType="BIGINT" property="detectedSystemVersionId"/>
+        <result column="REPAIR_SYSTEM_VERSION_ID" jdbcType="BIGINT" property="repairSystemVersionId"/>
+        <result column="EXPECT_REPAIR_DATE" jdbcType="DATE" property="expectRepairDate"/>
+        <result column="ESTIMATE_WORKLOAD" jdbcType="DOUBLE" property="estimateWorkload"/>
+        <result column="ROOT_CAUSE_ANALYSIS" jdbcType="VARCHAR" property="rootCauseAnalysis"/>
+
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+        <result column="Discovery_environment" jdbcType="TINYINT"
+                property="discoveryEnvironment" />
+    </resultMap>
+
+    <resultMap extends="BaseResultDefectMap" id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblDefectInfo">
+        <result column="SYSTEM_NAME" jdbcType="VARCHAR" property="systemName"/>
+        <result column="REQUIREMENT_ID" jdbcType="VARCHAR" property="requirementId"/>
+        <result column="REQUIREMENT_NAME" jdbcType="VARCHAR" property="requirementName"/>
+        <result column="STATUS_NAME" jdbcType="VARCHAR" property="statusName"/>
+        <result column="WINDOW_NAME" jdbcType="VARCHAR" property="windowName"/>
+        <result column="SUBMIT_USER_NAME" jdbcType="VARCHAR" property="submitUserName"/>
+        <result column="TEST_TASK_NAME" jdbcType="VARCHAR" property="testTaskName"/>
+        <result column="TEST_CASE_NAME" jdbcType="VARCHAR" property="testCaseName"/>
+        <result column="ASSIGN_USER_NAME" jdbcType="VARCHAR" property="assignUserName"/>
+        <result column="TEST_STAGE" jdbcType="TINYINT" property="testStage"/>
+        <result column="FEATURE_NAME" jdbcType="VARCHAR" property="featureName"/>
+        <result column="DEV_TASK_NAME" jdbcType="VARCHAR" property="devTaskName"/>
+        <result column="ACTUAL_START_DATE" jdbcType="DATE" property="actualStartDate"/>
+        <result column="REQUIREMENT_FEATURE_STATUS" jdbcType="VARCHAR" property="requirementFeatureStatus"/>
+        <result column="MANAGE_USERS" jdbcType="VARCHAR" property="manageUsers"/>
+    </resultMap>
+
+    <resultMap id="TblRequirementInfoResultMap" type="cn.pioneeruniverse.dev.entity.TblRequirementInfo">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="REQUIREMENT_NAME" jdbcType="VARCHAR" property="requirementName"/>
+        <result column="REQUIREMENT_CODE" jdbcType="VARCHAR" property="requirementCode"/>
+        <result column="REQUIREMENT_STATUS" jdbcType="VARCHAR" property="requirementStatus"/>
+        <result column="REQUIREMENT_SOURCE" jdbcType="VARCHAR" property="requirementSource"/>
+        <result column="REQUIREMENT_TYPE" jdbcType="VARCHAR" property="requirementType"/>
+        <result column="APPLY_USER_ID" jdbcType="BIGINT" property="applyUserId"/>
+        <result column="APPLY_DEPT_ID" jdbcType="BIGINT" property="applyDeptId"/>
+        <result column="DEVELOPMENT_MANAGE_USER_ID" jdbcType="BIGINT" property="developmentManageUserId"/>
+        <result column="DEVELOPMENT_DEPT_ID" jdbcType="BIGINT" property="developmentDeptId"/>
+        <result column="REQUIREMENT_MANAGE_USER_ID" jdbcType="BIGINT" property="requirementManageUserId"/>
+        <result column="REQUIREMENT_ACCEPTANCE_USER_ID" jdbcType="BIGINT" property="requirementAcceptanceUserId"/>
+        <result column="REQUIREMENT_OVERVIEW" jdbcType="VARCHAR" property="requirementOverview"/>
+        <result column="REQUIREMENT_PRIORITY" jdbcType="VARCHAR" property="requirementPriority"/>
+        <result column="REQUIREMENT_PLAN" jdbcType="VARCHAR" property="requirementPlan"/>
+        <result column="EXPECT_ONLINE_DATE" jdbcType="DATE" property="expectOnlineDate"/>
+        <result column="PLAN_ONLINE_DATE" jdbcType="DATE" property="planOnlineDate"/>
+        <result column="ACTUAL_ONLINE_DATE" jdbcType="DATE" property="actualOnlineDate"/>
+        <result column="PLAN_INTEGRATION_TEST_DATE" jdbcType="DATE" property="planIntegrationTestDate"/>
+        <result column="ACTUAL_INTEGRATION_TEST_DATE" jdbcType="DATE" property="actualIntegrationTestDate"/>
+        <result column="OPEN_DATE" jdbcType="DATE" property="openDate"/>
+        <result column="IMPORTANT_REQUIREMENT_STATUS" jdbcType="VARCHAR" property="importantRequirementStatus"/>
+        <result column="IMPORTANT_REQUIREMENT_DELAY_STATUS" jdbcType="VARCHAR"
+                property="importantRequirementDelayStatus"/>
+        <result column="IMPORTANT_REQUIREMENT_TYPE" jdbcType="VARCHAR" property="importantRequirementType"/>
+        <result column="IMPORTANT_REQUIREMENT_ONLINE_QUARTER" jdbcType="VARCHAR"
+                property="importantRequirementOnlineQuarter"/>
+        <result column="IMPORTANT_REQUIREMENT_DELAY_REASON" jdbcType="VARCHAR"
+                property="importantRequirementDelayReason"/>
+        <result column="DIRECT_INCOME" jdbcType="TINYINT" property="directIncome"/>
+        <result column="FORWARD_INCOME" jdbcType="TINYINT" property="forwardIncome"/>
+        <result column="RECESSIVE_INCOME" jdbcType="TINYINT" property="recessiveIncome"/>
+        <result column="DIRECT_COST_REDUCTION" jdbcType="TINYINT" property="directCostReduction"/>
+        <result column="FORWARD_COST_REDUCTION" jdbcType="TINYINT" property="forwardCostReduction"/>
+        <result column="ANTICIPATED_INCOME" jdbcType="VARCHAR" property="anticipatedIncome"/>
+        <result column="ESTIMATE_COST" jdbcType="VARCHAR" property="estimateCost"/>
+        <result column="HANGUP_STATUS" jdbcType="VARCHAR" property="hangupStatus"/>
+        <result column="HANGUP_DATE" jdbcType="DATE" property="hangupDate"/>
+        <result column="CHANGE_COUNT" jdbcType="TINYINT" property="changeCount"/>
+        <result column="REQUIREMENT_PROPERTY" jdbcType="VARCHAR" property="requirementProperty"/>
+        <result column="REQUIREMENT_CLASSIFY" jdbcType="VARCHAR" property="requirementClassify"/>
+        <result column="REQUIREMENT_SUBDIVISION" jdbcType="VARCHAR" property="requirementSubdivision"/>
+        <result column="ACCEPTANCE_DESCRIPTION" jdbcType="VARCHAR" property="acceptanceDescription"/>
+        <result column="ACCEPTANCE_TIMELINESS" jdbcType="VARCHAR" property="acceptanceTimeliness"/>
+        <result column="DATA_MIGRATION_STATUS" jdbcType="VARCHAR" property="dataMigrationStatus"/>
+        <result column="WORKLOAD" jdbcType="DOUBLE" property="workload"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      ID,
+      REQUIREMENT_CODE,
+      COMMISSIONING_WINDOW_ID,
+      TEST_TASK_ID,
+      SYSTEM_ID,
+      SUBMIT_USER_ID,
+      TEST_SET_CASE_EXECUTE_ID,
+      DEFECT_CODE,
+      DEFECT_SUMMARY,
+      DEFECT_TYPE,
+      DEFECT_SOURCE,
+      DEFECT_STATUS,
+      REPAIR_ROUND,
+      SEVERITY_LEVEL,
+      EMERGENCY_LEVEL,
+      SUBMIT_DATE,
+      REJECT_REASON,
+      SOLVE_STATUS,
+      DEFECT_OVERVIEW,
+      ASSIGN_USER_ID,
+      DEV_TASK_ID,
+      REQUIREMENT_FEATURE_ID,
+      PROJECT_GROUP_ID,
+      CLOSE_TIME,
+      ASSET_SYSTEM_TREE_ID,
+      DETECTED_SYSTEM_VERSION_ID,
+      REPAIR_SYSTEM_VERSION_ID,
+      EXPECT_REPAIR_DATE,
+      ESTIMATE_WORKLOAD,
+      ROOT_CAUSE_ANALYSIS,
+      STATUS,
+      CREATE_BY,
+      CREATE_DATE,
+      LAST_UPDATE_BY,
+      LAST_UPDATE_DATE
+  </sql>
+    <sql id="TblRequirementInfo_List">
+    ID,REQUIREMENT_NAME,REQUIREMENT_CODE,REQUIREMENT_STATUS,REQUIREMENT_SOURCE,REQUIREMENT_TYPE,APPLY_USER_ID,
+	APPLY_DEPT_ID,DEVELOPMENT_MANAGE_USER_ID,DEVELOPMENT_DEPT_ID,REQUIREMENT_MANAGE_USER_ID,REQUIREMENT_ACCEPTANCE_USER_ID,
+	REQUIREMENT_OVERVIEW,REQUIREMENT_PRIORITY,REQUIREMENT_PLAN,EXPECT_ONLINE_DATE,PLAN_ONLINE_DATE,ACTUAL_ONLINE_DATE,
+	PLAN_INTEGRATION_TEST_DATE,ACTUAL_INTEGRATION_TEST_DATE,OPEN_DATE,IMPORTANT_REQUIREMENT_STATUS,IMPORTANT_REQUIREMENT_DELAY_STATUS,
+	IMPORTANT_REQUIREMENT_TYPE,IMPORTANT_REQUIREMENT_ONLINE_QUARTER,IMPORTANT_REQUIREMENT_DELAY_REASON,DIRECT_INCOME,FORWARD_INCOME,
+	RECESSIVE_INCOME,DIRECT_COST_REDUCTION,FORWARD_COST_REDUCTION,ANTICIPATED_INCOME,ESTIMATE_COST,HANGUP_STATUS,HANGUP_DATE,
+	CHANGE_COUNT,REQUIREMENT_PROPERTY,REQUIREMENT_CLASSIFY,REQUIREMENT_SUBDIVISION,ACCEPTANCE_DESCRIPTION,ACCEPTANCE_TIMELINESS,
+	DATA_MIGRATION_STATUS,WORKLOAD,STATUS,CREATE_BY,CREATE_DATE,LAST_UPDATE_BY,LAST_UPDATE_DATE
+  </sql>
+
+    <sql id="TblSystemInfo_List">
+    ID id, PROJECT_ID projectId, BUILD_TYPE buildType,CREATE_TYPE
+    createType, system_name systemName, system_code systemCode, group_Id
+    groupId, artifact_Id artifactId, architecture_type architectureType,
+    SNAPSHOT_REPOSITORY_NAME
+    snapshotRepositoryName,RELEASE_REPOSITORY_NAME releaseRepositoryName,
+    STATUS status, CREATE_BY createBy, CREATE_DATE createDate,
+    LAST_UPDATE_BY lastUpdateBy, LAST_UPDATE_DATE lastUpdateDate
+  </sql>
+    <!-- 修改缺陷的投产窗口 ztt -->
+    <update id="updateCommssioningWindowId" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeature">
+  	update tbl_defect_info
+  	set COMMISSIONING_WINDOW_ID = #{commissioningWindowId}
+  	where REQUIREMENT_FEATURE_ID  = #{id}
+  </update>
+
+    <!--根据缺陷id修改缺陷关联的投产窗口-->
+    <update id="updateCommssioningWindowId1" parameterType="java.lang.Long">
+  	update tbl_defect_info
+  	set COMMISSIONING_WINDOW_ID = #{commissioningWindowId}
+  	where ID = #{id}
+  </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_defect_info
+        where ID = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_defect_info
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 新增缺陷 -->
+    <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblDefectInfo">
+    insert into tbl_defect_info (ID, TEST_TASK_ID, SYSTEM_ID,
+      TEST_SET_CASE_EXECUTE_ID, DEFECT_CODE, DEFECT_SUMMARY,
+      DEFECT_TYPE, DEFECT_SOURCE, DEFECT_STATUS,
+      SEVERITY_LEVEL, EMERGENCY_LEVEL, REJECT_REASON,
+      SOLVE_STATUS, DEFECT_OVERVIEW, ASSIGN_USER_ID,
+      STATUS, CREATE_BY, CREATE_DATE,
+      LAST_UPDATE_BY, LAST_UPDATE_DATE)
+    values (#{id,jdbcType=BIGINT}, #{testTaskId,jdbcType=BIGINT}, #{systemId,jdbcType=BIGINT},
+      #{testSetCaseExecuteId,jdbcType=BIGINT}, #{defectCode,jdbcType=VARCHAR}, #{defectSummary,jdbcType=VARCHAR},
+      #{defectType,jdbcType=TINYINT}, #{defectSource,jdbcType=TINYINT}, #{defectStatus,jdbcType=TINYINT},
+      #{severityLevel,jdbcType=TINYINT}, #{emergencyLevel,jdbcType=TINYINT}, #{rejectReason,jdbcType=TINYINT},
+      #{solveStatus,jdbcType=TINYINT}, #{defectOverview,jdbcType=VARCHAR}, #{assignUserId,jdbcType=BIGINT},
+      #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP},
+      #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblDefectInfo">
+        update tbl_defect_info
+        <set>
+            <if test="testTaskId != null">
+                TEST_TASK_ID = #{testTaskId,jdbcType=BIGINT},
+            </if>
+            <if test="systemId != null">
+                SYSTEM_ID = #{systemId,jdbcType=BIGINT},
+            </if>
+            <if test="testSetCaseExecuteId != null">
+                TEST_SET_CASE_EXECUTE_ID = #{testSetCaseExecuteId,jdbcType=BIGINT},
+            </if>
+            <if test="defectCode != null">
+                DEFECT_CODE = #{defectCode,jdbcType=VARCHAR},
+            </if>
+            <if test="defectSummary != null">
+                DEFECT_SUMMARY = #{defectSummary,jdbcType=VARCHAR},
+            </if>
+            <if test="defectType != null">
+                DEFECT_TYPE = #{defectType,jdbcType=TINYINT},
+            </if>
+            <if test="defectSource != null">
+                DEFECT_SOURCE = #{defectSource,jdbcType=TINYINT},
+            </if>
+            <if test="defectStatus != null">
+                DEFECT_STATUS = #{defectStatus,jdbcType=TINYINT},
+            </if>
+            <if test="severityLevel != null">
+                SEVERITY_LEVEL = #{severityLevel,jdbcType=TINYINT},
+            </if>
+            <if test="emergencyLevel != null">
+                EMERGENCY_LEVEL = #{emergencyLevel,jdbcType=TINYINT},
+            </if>
+            <if test="rejectReason != null">
+                REJECT_REASON = #{rejectReason,jdbcType=TINYINT},
+            </if>
+            <if test="solveStatus != null">
+                SOLVE_STATUS = #{solveStatus,jdbcType=TINYINT},
+            </if>
+            <if test="defectOverview != null">
+                DEFECT_OVERVIEW = #{defectOverview,jdbcType=VARCHAR},
+            </if>
+            <if test="assignUserId != null">
+                ASSIGN_USER_ID = #{assignUserId,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                STATUS = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="createBy != null">
+                CREATE_BY = #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+    
+    <!-- 更新缺陷 -->
+    <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblDefectInfo">
+    update tbl_defect_info
+    set TEST_TASK_ID = #{testTaskId,jdbcType=BIGINT},
+      SYSTEM_ID = #{systemId,jdbcType=BIGINT},
+      TEST_SET_CASE_EXECUTE_ID = #{testSetCaseExecuteId,jdbcType=BIGINT},
+      DEFECT_CODE = #{defectCode,jdbcType=VARCHAR},
+      DEFECT_SUMMARY = #{defectSummary,jdbcType=VARCHAR},
+      DEFECT_TYPE = #{defectType,jdbcType=TINYINT},
+      DEFECT_SOURCE = #{defectSource,jdbcType=TINYINT},
+      DEFECT_STATUS = #{defectStatus,jdbcType=TINYINT},
+      SEVERITY_LEVEL = #{severityLevel,jdbcType=TINYINT},
+      EMERGENCY_LEVEL = #{emergencyLevel,jdbcType=TINYINT},
+      REJECT_REASON = #{rejectReason,jdbcType=TINYINT},
+      SOLVE_STATUS = #{solveStatus,jdbcType=TINYINT},
+      DEFECT_OVERVIEW = #{defectOverview,jdbcType=VARCHAR},
+      ASSIGN_USER_ID = #{assignUserId,jdbcType=BIGINT},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+    <!--查询所有的需求-->
+    <select id="getAllRequirement" parameterType="hashmap" resultMap="TblRequirementInfoResultMap">
+        SELECT
+        <include refid="TblRequirementInfo_List"/>
+        FROM tbl_requirement_info
+        <where>
+            STATUS = 1
+            <if test="req.requirementName != null and req.requirementName != ''">
+                AND REQUIREMENT_NAME LIKE CONCAT(CONCAT('%',#{req.requirementName},'%'))
+            </if>
+            <if test="req.requirementCode != null and req.requirementCode != ''">
+                AND REQUIREMENT_CODE LIKE CONCAT(CONCAT('%',#{req.requirementCode},'%'))
+            </if>
+            <if test="req.requirementStatus != null and req.requirementStatus != ''">
+                AND REQUIREMENT_STATUS LIKE CONCAT(CONCAT('%',#{req.requirementStatus},'%'))
+            </if>
+        </where>
+        <if test="start != null and pageSize != null">
+            LIMIT #{start},#{pageSize}
+        </if>
+    </select>
+
+    <!--根据修复人查询缺陷-->
+    <select id="findDefectByAssignUserId" parameterType="cn.pioneeruniverse.dev.entity.TblDefectInfo"
+            resultMap="BaseResultMap">
+  	SELECT def.ID,def.DEV_TASK_ID, def.REQUIREMENT_FEATURE_ID,def.DEFECT_CODE,def.DEFECT_SUMMARY,def.DEFECT_STATUS,sys.SYSTEM_NAME AS "SYSTEM_NAME",
+	(SELECT tdd.VALUE_NAME from tbl_data_dic tdd where tdd.VALUE_CODE = def.DEFECT_STATUS
+		AND tdd.TERM_CODE='TBL_DEFECT_INFO_DEFECT_STATUS' AND tdd.STATUS=1) AS "STATUS_NAME"
+	FROM tbl_defect_info def
+	LEFT JOIN tbl_system_info sys on def.SYSTEM_ID = sys.ID AND sys.STATUS=1
+	WHERE def.STATUS = 1 AND def.ASSIGN_USER_ID=#{userId} AND (def.DEFECT_STATUS=2 OR DEFECT_STATUS=4)
+	ORDER BY def.ID DESC
+	LIMIT 0,5
+  </select>
+
+    <!-- 公共查询条件 -->
+    <sql id="listWhere">
+        <where>
+            def.`STATUS` = 1
+            AND (userIn.`STATUS` = 1 OR userIn.`STATUS` IS NULL)
+            AND (sys.`STATUS` = 1 OR sys.`STATUS` IS NULL)
+            AND (com.`STATUS` = 1 or com.`STATUS` is null)
+            AND (userIn1.`STATUS` = 1 or userIn1.`STATUS` is null)
+            AND (req.`STATUS` = 1 OR req.`STATUS` IS NULL)
+            AND (feature.`STATUS` = 1 OR feature.`STATUS` IS NULL)
+            <if test="defectCode != null and defectCode != ''">
+                and def.DEFECT_CODE LIKE CONCAT(CONCAT('%',#{defectCode},'%'))
+            </if>
+            <if test="defectSummary != null and defectSummary != ''">
+                and def.DEFECT_SUMMARY LIKE CONCAT(CONCAT('%',#{defectSummary},'%'))
+            </if>
+            <if test="submitUserIdList != null and submitUserIdList.length != 0 ">
+                and def.SUBMIT_USER_ID IN
+                <foreach item="submitUserId" index="index" collection="submitUserIdList" open="(" separator=","
+                         close=")">
+                    #{submitUserId}
+                </foreach>
+            </if>
+            <if test="submitDate != null">
+                and def.SUBMIT_DATE = #{submitDate}
+            </if>
+            <if test="defectStatus != null and defectStatus != 0 ">
+                and def.DEFECT_STATUS = #{defectStatus}
+            </if>
+            <if test="defectStatusForStr != null and defectStatusForStr.length != 0 ">
+                and def.DEFECT_STATUS in
+                <foreach item="defectStatusStr" index="index" collection="defectStatusForStr" open="(" separator=","
+                         close=")">
+                    #{defectStatusStr}
+                </foreach>
+            </if>
+            <if test="defectSource != null ">
+                and def.DEFECT_SOURCE = #{defectSource}
+            </if>
+            <if test="defectSourceStr != null and defectSourceStr != ''">
+                and def.DEFECT_SOURCE in
+                <foreach item="item" index="index" collection="defectSourceStr.split(',')" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="severityLevel != null">
+                and def.SEVERITY_LEVEL = #{severityLevel}
+            </if>
+            <if test="severityLevelStr != null and severityLevelStr != ''">
+                and def.SEVERITY_LEVEL in
+                <foreach item="item" index="index" collection="severityLevelStr.split(',')" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="emergencyLevel != null ">
+                and def.EMERGENCY_LEVEL = #{emergencyLevel}
+            </if>
+            <if test="emergencyLevelStr != null and emergencyLevelStr !=''">
+                and def.EMERGENCY_LEVEL in
+                <foreach item="item" index="index" collection="emergencyLevelStr.split(',')" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="defectType != null ">
+                and def.DEFECT_TYPE = #{defectType}
+            </if>
+            <if test="defectTypeStr != null and defectTypeStr !=''">
+                and def.DEFECT_TYPE in
+                <foreach item="item" index="index" collection="defectTypeStr.split(',')" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="assignUserIdList != null and assignUserIdList.length != 0">
+                and def.ASSIGN_USER_ID IN
+                <foreach item="assignUserId" index="index" collection="assignUserIdList" open="(" separator=","
+                         close=")">
+                    #{assignUserId}
+                </foreach>
+            </if>
+            <if test="assignUserName != null and assignUserName != ''">
+                and userIn1.USER_NAME LIKE CONCAT(CONCAT('%',#{assignUserName},'%'))
+            </if>
+            <if test="systemIdList != null and systemIdList.length != 0">
+                and def.SYSTEM_ID IN
+                <foreach item="systemId" index="index" collection="systemIdList" open="(" separator="," close=")">
+                    #{systemId}
+                </foreach>
+            </if>
+            <if test="requirementCodeList != null and requirementCodeList.length != 0">
+                and def.REQUIREMENT_CODE IN
+                <foreach item="requirementCodeStr" index="index" collection="requirementCodeList" open="(" separator=","
+                         close=")">
+                    #{requirementCodeStr}
+                </foreach>
+            </if>
+            <if test="requirementCode != null and requirementCode != ''">
+                and def.REQUIREMENT_CODE LIKE CONCAT(CONCAT('%',#{requirementCode},'%'))
+            </if>
+            <if test="commissioningWindowIdList != null and commissioningWindowIdList.length != 0">
+                and def.COMMISSIONING_WINDOW_ID IN
+                <foreach item="commissioningWindowId" index="index" collection="commissioningWindowIdList" open="("
+                         separator="," close=")">
+                    #{commissioningWindowId}
+                </foreach>
+            </if>
+            <if test="submitUserName != null and submitUserName != ''">
+                and userIn.USER_NAME LIKE CONCAT(CONCAT('%',#{submitUserName},'%'))
+            </if>
+            <if test="windowName != null and windowName != ''">
+                and com.WINDOW_NAME LIKE CONCAT(CONCAT('%',#{windowName},'%'))
+            </if>
+            <if test="systemName != null and systemName != ''">
+                and sys.SYSTEM_NAME LIKE CONCAT(CONCAT('%',#{systemName},'%'))
+            </if>
+            <if test="systemInfoList != null and systemInfoList.size() != 0">
+                and def.SYSTEM_ID in
+                <foreach collection="systemInfoList" item="system" separator="," open="(" close=")">
+                    #{system.id}
+                </foreach>
+            </if>
+        </where>
+    </sql>
+
+
+    <!--查询缺陷列表，同时返回与该缺陷关联的系统下面的所有项目管理岗人员：tp.manage_users-->
+    <select id="findDefectList" parameterType="cn.pioneeruniverse.dev.entity.DefectInfoVo" resultMap="BaseResultMap">
+        SELECT DISTINCT
+        def.ID, def.TEST_TASK_ID,def.TEST_SET_CASE_EXECUTE_ID,
+        def.SUBMIT_DATE, def.DEFECT_CODE,def.DEFECT_SUMMARY,
+        def.DEFECT_TYPE,def.DEFECT_SOURCE,def.DEFECT_STATUS,
+        def.REPAIR_ROUND,def.SEVERITY_LEVEL, def.EMERGENCY_LEVEL,
+        def.REJECT_REASON,def.SOLVE_STATUS,def.DEFECT_OVERVIEW,
+        def.STATUS,
+        def.REQUIREMENT_CODE,
+        def.SYSTEM_ID, sys.SYSTEM_NAME AS "SYSTEM_NAME",
+        def.COMMISSIONING_WINDOW_ID,com.WINDOW_NAME as "WINDOW_NAME",
+        def.SUBMIT_USER_ID,userIn.USER_NAME as "SUBMIT_USER_NAME",
+        def.ASSIGN_USER_ID,userIn1.USER_NAME as "ASSIGN_USER_NAME",
+        def.REQUIREMENT_FEATURE_ID,
+        feature.REQUIREMENT_FEATURE_STATUS,
+        def.DEV_TASK_ID,
+        tp.manage_users 
+        FROM
+        tbl_defect_info def
+        LEFT JOIN tbl_system_info sys on def.SYSTEM_ID = sys.ID
+        LEFT JOIN tbl_commissioning_window com on def.COMMISSIONING_WINDOW_ID = com.ID
+        LEFT JOIN tbl_user_info userIn on def.SUBMIT_USER_ID = userIn.ID
+        LEFT JOIN tbl_user_info userIn1 on def.ASSIGN_USER_ID = userIn1.ID
+        LEFT JOIN tbl_requirement_info req ON def.REQUIREMENT_CODE = req.REQUIREMENT_CODE
+        LEFT JOIN tbl_requirement_feature feature on def.REQUIREMENT_FEATURE_ID = feature.ID
+        LEFT JOIN (
+          select  tt.system_id ,group_concat(tt.user_id ) manage_users 
+            from (select  distinct tps.system_id , tpu.user_id   from tbl_project_system tps
+			left join tbl_project_group tpg on tps.project_id = tpg.project_id
+			left join tbl_project_group_user  tpu on tpu.project_group_id = tpg.id
+			where tpu.user_post = 1 and tps.relation_type = 1)  tt  group by tt.system_id
+        
+        ) tp on tp.system_id = def.system_id
+        <include refid="listWhere"/>
+        <!-- ORDER BY def.ID DESC -->
+
+        <include refid="sort_List"></include>
+        <!-- <if test="page != null and rows != null">
+          LIMIT #{page},#{rows}
+        </if> -->
+    </select>
+
+    <!--查询总数-->
+    <select id="countFindDefectList" parameterType="cn.pioneeruniverse.dev.entity.DefectInfoVo" resultType="int">
+        SELECT
+        COUNT( DISTINCT def.ID)
+        FROM
+        tbl_defect_info def
+        LEFT JOIN tbl_system_info sys on def.SYSTEM_ID = sys.ID
+        LEFT JOIN tbl_commissioning_window com on def.COMMISSIONING_WINDOW_ID = com.ID
+        LEFT JOIN tbl_user_info userIn on def.SUBMIT_USER_ID = userIn.ID
+        LEFT JOIN tbl_user_info userIn1 on def.ASSIGN_USER_ID = userIn1.ID
+        LEFT JOIN tbl_requirement_info req ON def.REQUIREMENT_CODE = req.REQUIREMENT_CODE
+        <include refid="listWhere"/>
+    </select>
+
+    <!-- 缺陷例表排序方式  sidx 字段名-->
+    <sql id="sort_List">
+        <if test="sidx != '' and sord != '' and sidx == 'id' and sord == 'desc'">
+            order by def.ID desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'id' and sord == 'asc'">
+            order by def.ID asc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'defectCode' and sord == 'desc'">
+            order by def.DEFECT_CODE desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'defectCode' and sord == 'asc'">
+            order by def.DEFECT_CODE asc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'defectSummary' and sord == 'desc'">
+            order by def.DEFECT_SUMMARY desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'defectSummary' and sord == 'asc'">
+            order by def.DEFECT_SUMMARY asc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'defectStatus' and sord == 'desc'">
+            order by def.DEFECT_STATUS desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'defectStatus' and sord == 'asc'">
+            order by def.DEFECT_STATUS asc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'requirementCode' and sord == 'desc'">
+            order by def.REQUIREMENT_CODE desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'requirementCode' and sord == 'asc'">
+            order by def.REQUIREMENT_CODE asc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'systemName' and sord == 'desc'">
+            order by sys.SYSTEM_NAME desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'systemName' and sord == 'asc'">
+            order by sys.SYSTEM_NAME asc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'windowName' and sord == 'desc'">
+            order by com.WINDOW_NAME desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'windowName' and sord == 'asc'">
+            order by com.WINDOW_NAME asc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'assignUserName' and sord == 'desc'">
+            order by userIn1.USER_NAME desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'assignUserName' and sord == 'asc'">
+            order by userIn1.USER_NAME asc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'submitUserName' and sord == 'desc'">
+            order by userIn.USER_NAME desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'submitUserName' and sord == 'asc'">
+            order by userIn.USER_NAME asc
+        </if>
+    </sql>
+
+    <!--新增缺陷，状态为1 新建状态 -->
+    <insert id="insertDefect" parameterType="cn.pioneeruniverse.dev.entity.TblDefectInfo" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO tbl_defect_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="testTaskId != null">
+                TEST_TASK_ID,
+            </if>
+            <if test="systemId != null">
+                SYSTEM_ID,
+            </if>
+            <if test="testSetCaseExecuteId != null">
+                TEST_SET_CASE_EXECUTE_ID,
+            </if>
+            <if test="defectCode != null">
+                DEFECT_CODE,
+            </if>
+            <if test="defectSummary != null">
+                DEFECT_SUMMARY,
+            </if>
+            <if test="defectType != null">
+                DEFECT_TYPE,
+            </if>
+            <if test="defectSource != null">
+                DEFECT_SOURCE,
+            </if>
+            <if test="repairRound != null">
+                REPAIR_ROUND,
+            </if>
+
+            <if test="defectStatus != null">
+                DEFECT_STATUS,
+            </if>
+            <if test="severityLevel != null">
+                SEVERITY_LEVEL,
+            </if>
+            <if test="emergencyLevel != null">
+                EMERGENCY_LEVEL,
+            </if>
+            <if test="rejectReason != null">
+                REJECT_REASON,
+            </if>
+            <if test="solveStatus != null">
+                SOLVE_STATUS,
+            </if>
+            <if test="defectOverview != null">
+                DEFECT_OVERVIEW,
+            </if>
+            <if test="assignUserId != null">
+                ASSIGN_USER_ID,
+            </if>
+            <if test=" submitUserId != null">
+                SUBMIT_USER_ID,
+            </if>
+            <if test=" submitDate != null">
+                SUBMIT_DATE,
+            </if>
+
+            <if test="requirementCode != null ">
+                REQUIREMENT_CODE,
+            </if>
+            <if test="commissioningWindowId != null">
+                COMMISSIONING_WINDOW_ID,
+            </if>
+
+            <if test="status != null">
+                STATUS,
+            </if>
+            <if test="createBy != null">
+                CREATE_BY,
+            </if>
+            <if test="createDate != null">
+                CREATE_DATE,
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY,
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE,
+            </if>
+            <if test="fieldTemplate != null">
+                FIELD_TEMPLATE,
+            </if>
+            <if test="projectGroupId != null">
+                PROJECT_GROUP_ID,
+            </if>
+            <if test="closeTime != null">
+                CLOSE_TIME,
+            </if>
+            <if test="assetSystemTreeId != null">
+                ASSET_SYSTEM_TREE_ID,
+            </if>
+            <if test="detectedSystemVersionId != null">
+                DETECTED_SYSTEM_VERSION_ID,
+            </if>
+            <if test="repairSystemVersionId != null">
+                REPAIR_SYSTEM_VERSION_ID,
+            </if>
+            <if test="expectRepairDate != null">
+                EXPECT_REPAIR_DATE,
+            </if>
+            <if test="estimateWorkload != null">
+                ESTIMATE_WORKLOAD,
+            </if>
+            <if test="rootCauseAnalysis != null and rootCauseAnalysis != ''">
+                ROOT_CAUSE_ANALYSIS,
+            </if>
+            <if test="discoveryEnvironment != null">
+                Discovery_environment
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="testTaskId != null">
+                #{testTaskId,jdbcType=BIGINT},
+            </if>
+            <if test="systemId != null">
+                #{systemId,jdbcType=BIGINT},
+            </if>
+            <if test="testSetCaseExecuteId != null">
+                #{testSetCaseExecuteId,jdbcType=BIGINT},
+            </if>
+            <if test="defectCode != null">
+                #{defectCode,jdbcType=VARCHAR},
+            </if>
+            <if test="defectSummary != null">
+                #{defectSummary,jdbcType=VARCHAR},
+            </if>
+            <if test="defectType != null">
+                #{defectType,jdbcType=TINYINT},
+            </if>
+            <if test="defectSource != null">
+                #{defectSource,jdbcType=TINYINT},
+            </if>
+            <if test="repairRound != null">
+                #{repairRound,jdbcType=INTEGER},
+            </if>
+
+            <if test="defectStatus != null">
+                #{defectStatus,jdbcType=TINYINT},
+            </if>
+            <if test="severityLevel != null">
+                #{severityLevel,jdbcType=TINYINT},
+            </if>
+            <if test="emergencyLevel != null">
+                #{emergencyLevel,jdbcType=TINYINT},
+            </if>
+            <if test="rejectReason != null">
+                #{rejectReason,jdbcType=TINYINT},
+            </if>
+            <if test="solveStatus != null">
+                #{solveStatus,jdbcType=TINYINT},
+            </if>
+            <if test="defectOverview != null">
+                #{defectOverview,jdbcType=VARCHAR},
+            </if>
+            <if test="assignUserId != null">
+                #{assignUserId,jdbcType=BIGINT},
+            </if>
+            <if test="submitUserId != null">
+                #{submitUserId,jdbcType=BIGINT},
+            </if>
+            <if test=" submitDate != null">
+                #{submitDate,jdbcType=DATE},
+            </if>
+
+            <if test="requirementCode != null ">
+                #{requirementCode,jdbcType=VARCHAR},
+            </if>
+            <if test="commissioningWindowId != null">
+                #{commissioningWindowId,jdbcType=BIGINT},
+            </if>
+
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdateBy != null">
+                #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="fieldTemplate != null">
+                #{fieldTemplate,jdbcType=VARCHAR},
+            </if>
+            <if test="projectGroupId != null ">
+                #{projectGroupId,jdbcType=BIGINT},
+            </if>
+            <if test="closeTime != null">
+                #{closeTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="assetSystemTreeId != null">
+                #{assetSystemTreeId,jdbcType=BIGINT},
+            </if>
+            <if test="detectedSystemVersionId != null">
+                #{detectedSystemVersionId,jdbcType=BIGINT},
+            </if>
+            <if test="repairSystemVersionId != null">
+                #{repairSystemVersionId,jdbcType=BIGINT},
+            </if>
+            <if test="expectRepairDate != null">
+                #{expectRepairDate,jdbcType=DATE},
+            </if>
+            <if test="estimateWorkload != null">
+                #{estimateWorkload,jdbcType=DOUBLE},
+            </if>
+            <if test="rootCauseAnalysis != null and rootCauseAnalysis != ''">
+                #{rootCauseAnalysis},
+            </if>
+            <if test="discoveryEnvironment != null">
+                #{discoveryEnvironment}
+            </if>
+        </trim>
+    </insert>
+
+    <!--查询最大的缺陷编号-->
+    <select id="selectMaxDefectCode" resultType="String">
+    SELECT
+	  MAX(DEFECT_CODE)
+    FROM
+	  tbl_defect_info
+  </select>
+
+    <!--根据缺陷状态做操作-->
+    <update id="updateDefect" parameterType="cn.pioneeruniverse.dev.entity.TblDefectInfo">
+        update tbl_defect_info
+        <set>
+            <if test="testTaskId != null">
+                TEST_TASK_ID = #{testTaskId,jdbcType=BIGINT},
+            </if>
+            <if test="systemId != null">
+                SYSTEM_ID = #{systemId,jdbcType=BIGINT},
+            </if>
+            <if test="testSetCaseExecuteId != null">
+                TEST_SET_CASE_EXECUTE_ID = #{testSetCaseExecuteId,jdbcType=BIGINT},
+            </if>
+            <if test="defectCode != null">
+                DEFECT_CODE = #{defectCode,jdbcType=VARCHAR},
+            </if>
+            <if test="defectSummary != null">
+                DEFECT_SUMMARY = #{defectSummary,jdbcType=VARCHAR},
+            </if>
+            <if test="defectType != null">
+                DEFECT_TYPE = #{defectType,jdbcType=TINYINT},
+            </if>
+            <if test="defectSource != null">
+                DEFECT_SOURCE = #{defectSource,jdbcType=TINYINT},
+            </if>
+            <if test="defectStatus != null">
+                DEFECT_STATUS = #{defectStatus,jdbcType=TINYINT},
+            </if>
+            <if test="repairRound != null">
+                REPAIR_ROUND = #{repairRound,jdbcType=INTEGER},
+            </if>
+            <if test="severityLevel != null">
+                SEVERITY_LEVEL = #{severityLevel,jdbcType=TINYINT},
+            </if>
+            <if test="emergencyLevel != null">
+                EMERGENCY_LEVEL = #{emergencyLevel,jdbcType=TINYINT},
+            </if>
+            <if test="rejectReason != null">
+                REJECT_REASON = #{rejectReason,jdbcType=TINYINT},
+            </if>
+            <if test="solveStatus != null">
+                SOLVE_STATUS = #{solveStatus,jdbcType=TINYINT},
+            </if>
+            <if test="defectOverview != null">
+                DEFECT_OVERVIEW = #{defectOverview,jdbcType=VARCHAR},
+            </if>
+            <if test="assignUserId != null">
+                ASSIGN_USER_ID = #{assignUserId,jdbcType=BIGINT},
+            </if>
+            <if test="requirementCode != null ">
+                REQUIREMENT_CODE = #{requirementCode,jdbcType=VARCHAR},
+            </if>
+            <if test="commissioningWindowId != null">
+                COMMISSIONING_WINDOW_ID = #{commissioningWindowId,jdbcType=VARCHAR},
+            </if>
+            <if test="devTaskId != null">
+                DEV_TASK_ID = #{devTaskId,jdbcType=BIGINT},
+            </if>
+            <if test="requirementFeatureId != null">
+                REQUIREMENT_FEATURE_ID = #{requirementFeatureId,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="fieldTemplate != null">
+                FIELD_TEMPLATE = #{fieldTemplate,jdbcType=VARCHAR},
+            </if>
+            Discovery_environment =#{discoveryEnvironment},
+            PROJECT_GROUP_ID = #{projectGroupId},
+            CLOSE_TIME = #{closeTime},
+            ASSET_SYSTEM_TREE_ID = #{assetSystemTreeId},
+            DETECTED_SYSTEM_VERSION_ID = #{detectedSystemVersionId},
+            REPAIR_SYSTEM_VERSION_ID = #{repairSystemVersionId},
+            EXPECT_REPAIR_DATE = #{expectRepairDate},
+            ESTIMATE_WORKLOAD = #{estimateWorkload},
+            <if test="rootCauseAnalysis != null">
+            ROOT_CAUSE_ANALYSIS = #{rootCauseAnalysis}
+            </if>
+        </set>
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+
+    <!--待确认状态:转交操作，只是修改指派人-->
+    <update id="updateDefectAssignUser" parameterType="cn.pioneeruniverse.dev.entity.TblDefectInfo">
+        update tbl_defect_info
+        <set>
+            <if test="assignUserId != null">
+                ASSIGN_USER_ID = #{assignUserId,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+
+    <!-- 待确认状态：驳回操作，状态变为拒绝 -->
+    <update id="updateDefectRejectReason" parameterType="cn.pioneeruniverse.dev.entity.TblDefectInfo">
+        update tbl_defect_info
+        <set>
+            <if test="defectStatus != null">
+                DEFECT_STATUS = #{defectStatus,jdbcType=TINYINT},
+            </if>
+            <if test="rejectReason != null">
+                REJECT_REASON = #{rejectReason,jdbcType=TINYINT},
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+
+    <!--修改缺陷状态-->
+    <update id="updateDefectStatus" parameterType="cn.pioneeruniverse.dev.entity.TblDefectInfo">
+        update tbl_defect_info
+        <set>
+            <if test="defectStatus != null">
+                DEFECT_STATUS = #{defectStatus,jdbcType=TINYINT},
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+
+    <!--保存解决信息-->
+    <update id="updateDefectSolveStatus" parameterType="cn.pioneeruniverse.dev.entity.TblDefectInfo">
+        update tbl_defect_info
+        <set>
+            <if test="defectStatus != null">
+                DEFECT_STATUS = #{defectStatus,jdbcType=TINYINT},
+            </if>
+            <if test="solveStatus != null">
+                SOLVE_STATUS = #{solveStatus,jdbcType=TINYINT},
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+
+    <!-- 获取用户名称 -->
+    <select id="getUserNameById" parameterType="java.lang.Long" resultType="java.lang.String">
+      SELECT  USER_NAME
+      FROM tbl_user_info
+      WHERE ID = #{id,jdbcType=BIGINT}
+      AND STATUS = 1
+  </select>
+
+    <!--移除缺陷-->
+    <update id="removeDefect" parameterType="java.lang.Long">
+        UPDATE tbl_defect_info
+        SET STATUS = 2
+        <where>
+            ID = #{id,jdbcType=BIGINT}
+        </where>
+    </update>
+
+    <!--修改开发管理平台的参数-->
+    <update id="updateDevDefect" parameterType="hashmap">
+        UPDATE tbl_defect_info
+        <set>
+            <if test="devTaskId != null and devTaskId != KONG">
+                DEV_TASK_ID = #{devTaskId,jdbcType=TINYINT},
+            </if>
+            <if test="reqFid != null">
+                REQUIREMENT_FEATURE_ID = #{reqFid,jdbcType=TINYINT},
+            </if>
+        </set>
+        <where>
+            ID = #{defectId,jdbcType=BIGINT}
+        </where>
+    </update>
+
+    <!-- 删除缺陷 -->
+    <delete id="deleteDefectById" parameterType="java.lang.Long">
+    DELETE FROM tbl_defect_info WHERE ID = #{id}
+  </delete>
+
+    <!-- 获取缺陷数据 -->
+    <select id="getDefectById" parameterType="java.lang.Long" resultMap="BaseResultDefectMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        tbl_defect_info
+        WHERE ID = #{id}
+        AND `STATUS` = 1
+    </select>
+
+    <!-- 根据缺陷code获取数据 -->
+    <select id="getDefectByCode" parameterType="java.lang.String"
+            resultType="cn.pioneeruniverse.dev.entity.TblDefectInfo">
+    SELECT
+      ID,
+      REQUIREMENT_CODE,
+      DEFECT_CODE,
+      DEFECT_SUMMARY,
+      DEFECT_TYPE,
+      DEFECT_SOURCE,
+      DEFECT_STATUS,
+      REPAIR_ROUND,
+      SEVERITY_LEVEL,
+      EMERGENCY_LEVEL,
+      ASSIGN_USER_ID
+    FROM
+      tbl_defect_info
+    WHERE DEFECT_CODE = #{code}
+    AND `STATUS` = 1
+  </select>
+
+
+    <!-- 根据缺陷id 获取所有关联信息 -->
+    <select id="getDefectEntity" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    SELECT DISTINCT
+      def.ID, def.TEST_TASK_ID,def.TEST_SET_CASE_EXECUTE_ID,
+      def.SUBMIT_DATE, def.DEFECT_CODE,def.DEFECT_SUMMARY,
+      def.DEFECT_TYPE,def.DEFECT_SOURCE,def.DEFECT_STATUS,
+      def.REPAIR_ROUND,def.SEVERITY_LEVEL, def.EMERGENCY_LEVEL,
+      def.REJECT_REASON,def.SOLVE_STATUS,def.DEFECT_OVERVIEW,
+      def.STATUS,
+      def.REQUIREMENT_CODE,
+      def.SYSTEM_ID, sys.SYSTEM_NAME AS "SYSTEM_NAME",
+      def.COMMISSIONING_WINDOW_ID,com.WINDOW_NAME as "WINDOW_NAME",
+      def.SUBMIT_USER_ID,userIn.USER_NAME as "SUBMIT_USER_NAME",
+      def.ASSIGN_USER_ID,userIn1.USER_NAME as "ASSIGN_USER_NAME",
+      def.REQUIREMENT_FEATURE_ID,
+      def.DEV_TASK_ID,
+      def.PROJECT_GROUP_ID,
+      def.CLOSE_TIME,
+      def.ASSET_SYSTEM_TREE_ID,
+      def.DETECTED_SYSTEM_VERSION_ID,
+      def.REPAIR_SYSTEM_VERSION_ID,
+      def.EXPECT_REPAIR_DATE,
+      def.ESTIMATE_WORKLOAD,
+      def.ROOT_CAUSE_ANALYSIS,
+      def.Discovery_environment
+    FROM
+      tbl_defect_info  def
+    LEFT JOIN tbl_system_info sys on def.SYSTEM_ID = sys.ID
+    LEFT JOIN tbl_commissioning_window com on def.COMMISSIONING_WINDOW_ID = com.ID
+    LEFT JOIN tbl_user_info userIn on def.SUBMIT_USER_ID = userIn.ID
+    LEFT JOIN tbl_user_info userIn1 on def.ASSIGN_USER_ID = userIn1.ID
+    LEFT JOIN tbl_requirement_info req ON def.REQUIREMENT_CODE = req.REQUIREMENT_CODE
+    where
+      def.`STATUS` = 1
+	AND  (userIn.`STATUS` = 1 OR userIn.`STATUS` IS NULL)
+	AND  (sys.`STATUS` = 1 OR sys.`STATUS` IS NULL)
+	AND (com.`STATUS` = 1 or com.`STATUS` is null)
+	AND (userIn1.`STATUS` = 1 or userIn1.`STATUS` is null)
+	AND (req.`STATUS` = 1 OR req.`STATUS` IS NULL)
+    AND def.ID = #{defectId}
+  </select>
+
+    <!-- 获取缺陷的自定义字段 -->
+    <select id="getDafectFieldTemplateById" resultType="String">
+    SELECT JSON_UNQUOTE(JSON_EXTRACT(FIELD_TEMPLATE,REPLACE(
+    JSON_UNQUOTE(JSON_SEARCH(FIELD_TEMPLATE ,'one',#{fieldName})),'fieldName','valueName')))
+    FROM tbl_defect_info tdi
+    WHERE tdi.ID=#{id} and  tdi.STATUS=1
+  </select>
+
+    <!-- 根据缺陷id 获取数据-->
+  <select id="findDefectById" parameterType="Long" resultType="cn.pioneeruniverse.dev.entity.TblDefectInfo">
+  	SELECT def.ID id, def.DEFECT_CODE defectCode, def.CREATE_TYPE createType
+	FROM tbl_defect_info def
+  	WHERE def.ID = #{id} AND def.STATUS = 1
+  </select>
+
+    <!--  获取开发任务系统id  -->
+    <select id="selectRequirementFeatureById" resultType="cn.pioneeruniverse.dev.entity.TblDevTask">
+        SELECT PROJECT_ID AS projectId FROM tbl_requirement_feature WHERE ID =#{id}
+    </select>
+
+    <!-- 根据缺陷id获取项目id -->
+    <select id="getDefectInfoById" resultType="Long">
+        SELECT DISTINCT
+            feature.PROJECT_ID
+        FROM
+        	tbl_defect_info defect
+        LEFT JOIN tbl_test_task task ON defect.TEST_TASK_ID = task.ID
+        LEFT JOIN tbl_requirement_feature feature ON task.REQUIREMENT_FEATURE_ID = feature.ID
+        WHERE defect.ID = #{id}
+    </select>
+
+    <!-- 关闭缺陷 -->
+    <update id="closeDefect" parameterType="Long">
+        update tbl_defect_info
+        SET DEFECT_STATUS = 7
+        where ID = #{id}
+    </update>
+</mapper>

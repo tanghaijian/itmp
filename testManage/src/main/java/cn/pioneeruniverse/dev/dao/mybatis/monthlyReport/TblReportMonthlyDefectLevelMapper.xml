@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.monthlyReport.TblReportMonthlyDefectLevelMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlyDefectLevel">
+        <id column="ID" jdbcType="BIGINT"  property="id" />
+        <result column="YEAR_MONTH" jdbcType="VARCHAR" property="yearMonth"/>
+        <result column="SYSTEM_TYPE" jdbcType="TINYINT" property="systemType"/>
+        <result column="LEVEL" jdbcType="TINYINT" property="level"/>
+        <result column="DEFECT_NUMBER" jdbcType="INTEGER" property="defectNumber"/>
+        <result column="PERCENTAGE" jdbcType="DOUBLE" property="percentage"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+    </resultMap>
+
+    <select id="findDefectLevel" resultType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlyDefectLevel">
+
+		SELECT (CASE WHEN system2.development_mode = 1 THEN	1	WHEN system2.SYSTEM_CLASS = 1 THEN 3 ELSE 2 END ) systemType,
+		defect2.SEVERITY_LEVEL level ,
+		count(defect2.ID) defectCount
+		FROM tbl_defect_info		defect2
+		LEFT JOIN tbl_system_info system2 ON defect2.SYSTEM_ID =		system2.ID
+		LEFT JOIN tbl_commissioning_window window2 ON window2.ID =		defect2.COMMISSIONING_WINDOW_ID
+		WHERE window2.`STATUS` = 1
+		AND	defect2.STATUS = 1
+		AND system2.status = 1
+		AND defect2.DEFECT_STATUS != 6
+		AND defect2.SEVERITY_LEVEL not in(6)
+		AND (defect2.DEFECT_SOURCE = 1 OR	defect2.DEFECT_SOURCE = 2)
+		AND window2.WINDOW_DATE between #{startDate} and #{endDate}
+		AND ((system2.development_mode =1 AND system2.SYSTEM_CLASS !=NULL)OR system2.SYSTEM_CLASS= 1 OR system2.SYSTEM_CLASS= 2)
+		GROUP BY systemType,level
+
+    </select>
+
+
+
+    <select id="findDefectLevelByYearMonth"
+            resultMap="BaseResultMap">
+        select * from tbl_report_monthly_defect_level defectLevel
+        where defectLevel.YEAR_MONTH =#{date}
+        and defectLevel.SYSTEM_TYPE =#{systemType}
+        and defectLevel.LEVEL =#{level}
+        and defectLevel.STATUS =1
+    </select>
+
+    <select id="findDefectLevelByLevel"
+            resultMap="BaseResultMap">
+        select * from tbl_report_monthly_defect_level defectLevel
+        where defectLevel.YEAR_MONTH =#{date}
+        and defectLevel.LEVEL =#{level}
+        and defectLevel.STATUS =1
+    </select>
+
+    <select id="findDefectLevelByYearMonthAndSystemType" resultMap="BaseResultMap">
+        select * from tbl_report_monthly_defect_level defectLevel
+        where defectLevel.YEAR_MONTH =#{date}
+        and defectLevel.SYSTEM_TYPE =#{systemType}
+        and defectLevel.STATUS =1
+    </select>
+
+
+    <update id="updateByYearMonthAndSystemTypeAndLevel">
+        update tbl_report_monthly_defect_level defectLevel
+        set
+        defectLevel.DEFECT_NUMBER = #{defectNumber} ,
+        defectLevel.PERCENTAGE = #{percentage} ,
+        defectLevel.LAST_UPDATE_BY = #{lastUpdateBy},
+        defectLevel.LAST_UPDATE_DATE = #{lastUpdateDate},
+        defectLevel.STATUS = #{status}
+        where
+        defectLevel.YEAR_MONTH =#{yearMonth} and
+        defectLevel.SYSTEM_TYPE =#{systemType} and
+        defectLevel.LEVEL =#{level}
+
+    </update>
+    <insert id="insertDefectLeve">
+
+
+    </insert>
+
+    <select id="findCountByByYearMonthAndSystemType"
+            resultType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlyDefectLevel">
+        SELECT defectLevel.SYSTEM_TYPE systemType,SUM(defectLevel.DEFECT_NUMBER) defectNumber
+        FROM  tbl_report_monthly_defect_level defectLevel
+        WHERE defectLevel.`YEAR_MONTH` = #{date}
+        GROUP BY defectLevel.SYSTEM_TYPE
+    </select>
+    <select id="findCountByByYearMonthAndLevel"
+            resultType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlyDefectLevel">
+        SELECT defectLevel.`LEVEL` level ,SUM(defectLevel.DEFECT_NUMBER) defectNumber
+        FROM tbl_report_monthly_defect_level defectLevel
+        WHERE defectLevel.`YEAR_MONTH` = #{date}
+        GROUP BY defectLevel.`LEVEL`
+
+
+    </select>
+
+
+</mapper>

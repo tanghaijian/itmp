@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TaskFeatuMapper">
+
+    <!-- 查询测试任务 -->
+    <select id="selectTaskFeatuByID" resultType="cn.pioneeruniverse.dev.dto.TaskFeatuDTO">
+         SELECT
+            f.ID AS id,
+            t.ACTUAL_START_DATE AS actualStartDate,
+            t.ACTUAL_END_DATE AS actualEndDate,
+            t.TEST_STAGE AS testStag
+         FROM
+            tbl_requirement_feature f
+            LEFT JOIN tbl_test_task t ON f.ID = t.REQUIREMENT_FEATURE_ID
+         WHERE
+            t.STATUS IS NOT NULL
+            AND f.ID = #{id};
+    </select>
+ 
+</mapper>

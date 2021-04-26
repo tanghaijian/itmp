@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblDataDicMapper">
+
+	<select id="findDploys" parameterType="map" resultType="Long">
+		select VALUE_CODE from tbl_data_dic where TERM_CODE = #{termCode}
+								 and VALUE_NAME like concat("%",(#{deployStatus}),"%")
+								 and STATUS = 1
+	</select>
+
+
+
+
+
+
+
+</mapper>

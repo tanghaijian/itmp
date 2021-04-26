@@ -1,0 +1,1890 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblRequirementFeatureMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblRequirementFeature">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="FEATURE_NAME" jdbcType="VARCHAR" property="featureName"/>
+        <result column="FEATURE_code" jdbcType="VARCHAR" property="featureCode"/>
+        <result column="FEATURE_OVERVIEW" jdbcType="VARCHAR" property="featureOverview"/>
+        <result column="SYSTEM_ID" jdbcType="BIGINT" property="systemId"/>
+        <result column="CREATE_TYPE" jdbcType="TINYINT" property="createType"/>
+        <result column="REQUIREMENT_FEATURE_SOURCE" jdbcType="BIGINT" property="requirementFeatureSource"/>
+        <result column="TASK_ID" jdbcType="BIGINT" property="taskId"/>
+        <result column="REQUIREMENT_ID" jdbcType="BIGINT" property="requirementId"/>
+        <result column="QUESTION_NUMBER" jdbcType="VARCHAR" property="questionNumber"/>
+        <result column="REQUIREMENT_FEATURE_STATUS" jdbcType="VARCHAR" property="requirementFeatureStatus"/>
+        <result column="DEPLOY_STATUS" jdbcType="VARCHAR" property="deployStatus"/>
+        <result column="MANAGE_USER_ID" jdbcType="BIGINT" property="manageUserId"/>
+        <result column="EXECUTE_USER_ID" jdbcType="BIGINT" property="executeUserId"/>
+        <result column="TEMPORARY_STATUS" jdbcType="TINYINT" property="temporaryStatus"/>
+        <result column="DEPT_ID" jdbcType="BIGINT" property="deptId"/>
+        <result column="HANDLE_SUGGESTION" jdbcType="VARCHAR" property="handleSuggestion"/>
+        <result column="PLAN_START_DATE" jdbcType="DATE" property="planStartDate"/>
+        <result column="PLAN_END_DATE" jdbcType="DATE" property="planEndDate"/>
+        <result column="ESTIMATE_WORKLOAD" jdbcType="DOUBLE" property="estimateWorkload"/>
+        <result column="ACTUAL_START_DATE" jdbcType="DATE" property="actualStartDate"/>
+        <result column="ACTUAL_END_DATE" jdbcType="DATE" property="actualEndDate"/>
+        <result column="ACTUAL_WORKLOAD" jdbcType="DOUBLE" property="actualWorkload"/>
+        <result column="SYSTEM_VERSION_ID" jdbcType="BIGINT" property="systemVersionId"/>
+        <result column="SYSTEM_SCM_BRANCH" jdbcType="VARCHAR" property="systemScmBranch"/>
+        <result column="COMMISSIONING_WINDOW_ID" jdbcType="BIGINT" property="commissioningWindowId"/>
+        <result column="SPRINT_ID" jdbcType="BIGINT" property="sprintId"/>
+        <result column="REQUIREMENT_FEATURE_PRIORITY" jdbcType="TINYINT" property="requirementFeaturePriority"/>
+        <result column="STORY_POINT" jdbcType="DOUBLE" property="storyPoint"/>
+        <result column="VERSION" jdbcType="VARCHAR" property="systemVersionName"/>
+        <result column="WINDOW_NAME" jdbcType="VARCHAR" property="commissioningWindowName"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+        <result column="EXECUTE_PROJECT_GROUP_ID" jdbcType="TIMESTAMP" property="executeProjectGroupId"/>
+        <result column="ASSET_SYSTEM_TREE_ID" jdbcType="BIGINT" property="assetSystemTreeId"/>
+        <result column="REPAIR_SYSTEM_VERSION_ID" jdbcType="BIGINT" property="repairSystemVersionId"/>
+        <result column="FIELD_TEMPLATE" jdbcType="VARCHAR" property="fieldTemplate"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    ID, FEATURE_NAME, FEATURE_code ,FEATURE_OVERVIEW, SYSTEM_ID, CREATE_TYPE, REQUIREMENT_FEATURE_SOURCE,QUESTION_NUMBER,REQUIREMENT_ID,REQUIREMENT_FEATURE_STATUS,MANAGE_USER_ID,
+    EXECUTE_USER_ID,TEMPORARY_STATUS,DEPT_ID,HANDLE_SUGGESTION,PLAN_START_DATE,PLAN_END_DATE,ESTIMATE_WORKLOAD,ACTUAL_START_DATE,SYSTEM_SCM_BRANCH,SPRINT_ID,SYSTEM_VERSION_ID,
+    ACTUAL_END_DATE,ACTUAL_WORKLOAD,COMMISSIONING_WINDOW_ID,STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE,TASK_ID,DEPLOY_STATUS,REQUIREMENT_FEATURE_PRIORITY,STORY_POINT,EXECUTE_PROJECT_GROUP_ID,ASSET_SYSTEM_TREE_ID,REPAIR_SYSTEM_VERSION_ID,FIELD_TEMPLATE
+  </sql>
+  
+  <!-- 更新开发任务的版本和执行小组 -->
+    <update id="updateGroupAndVersion">
+        update tbl_requirement_feature
+        set
+        <if test="systemVersionId != null and  systemVersionId!='' ">
+            SYSTEM_VERSION_ID = #{systemVersionId,jdbcType=BIGINT},
+        </if>
+
+        <if test="executeProjectGroupId != null and  executeProjectGroupId!='' ">
+            EXECUTE_PROJECT_GROUP_ID = #{executeProjectGroupId,jdbcType=BIGINT},
+        </if>
+        LAST_UPDATE_DATE= CURRENT_TIMESTAMP
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+
+
+    <!-- 批量修改开发任务所属冲刺 -->
+    <update id="updateSprints">
+        update tbl_requirement_feature
+        set
+        <if test="sprintId!=null and sprintId!=''">
+            <choose>
+                <when test="(requirementFeatureStatus==null or requirementFeatureStatus=='' ) and ( executeUserId==null or executeUserId=='')">
+                    SPRINT_ID = #{sprintId},
+                </when>
+                <otherwise>
+                    SPRINT_ID = #{sprintId},
+                </otherwise>
+            </choose>
+
+        </if>
+        <if test="requirementFeatureStatus!=null and requirementFeatureStatus!=''">
+            <choose>
+                <when test="executeUserId==null or executeUserId==''">
+                    REQUIREMENT_FEATURE_STATUS = #{requirementFeatureStatus},
+                </when>
+                <otherwise>
+                    REQUIREMENT_FEATURE_STATUS = #{requirementFeatureStatus},
+                </otherwise>
+            </choose>
+
+        </if>
+        <if test="executeUserId!=null and executeUserId!=''">
+            EXECUTE_USER_ID=#{executeUserId},
+        </if>
+        LAST_UPDATE_DATE= CURRENT_TIMESTAMP
+        where ID = #{id}
+
+    </update>
+    <!--获取开发任务数据字典状态-->
+    <select id="getReqFeatureStatus" resultType="cn.pioneeruniverse.dev.entity.TblDataDic">
+  	SELECT VALUE_NAME valueName, VALUE_CODE valueCode, VALUE_SEQ valueSeq
+	FROM tbl_data_dic
+	WHERE TERM_CODE = "TBL_REQUIREMENT_FEATURE_REQUIREMENT_FEATURE_STATUS" AND STATUS = 1
+  </select>
+
+    <!-- 编辑工作任务状态 -->
+    <select id="updateReFeatureStatus" >
+  	UPDATE tbl_requirement_feature
+	SET REQUIREMENT_FEATURE_STATUS = #{requirementFeatureStatus},
+	 LAST_UPDATE_DATE= CURRENT_TIMESTAMP
+	WHERE ID =#{id}
+  </select>
+
+    <!--根据冲刺id查询开发任务-->
+    <select id="getDevTaskBySprintIds" parameterType="Long" resultType="cn.pioneeruniverse.dev.entity.DevTaskVo">
+        SELECT reqFeature.ID id,reqFeature.FEATURE_NAME featureName,reqFeature.FEATURE_CODE featureCode,
+        reqFeature.ESTIMATE_WORKLOAD estimateWorkload,SYSTEM_ID systemId,userinfo.USER_NAME executeUserName,
+        reqFeature.REQUIREMENT_FEATURE_STATUS requirementFeatureStatus,reqFeature.REQUIREMENT_FEATURE_PRIORITY
+        requirementFeaturePriority,
+        reqFeature.EXECUTE_PROJECT_GROUP_ID executeProjectGroupId,reqFeature.CHECK_STATUS checkStatus
+        FROM tbl_requirement_feature reqFeature
+        LEFT JOIN tbl_user_info userinfo ON userinfo.ID = reqFeature.EXECUTE_USER_ID AND userinfo.STATUS =1
+        WHERE reqFeature.SPRINT_ID =#{sprintId}
+        <if test="devUserName != null and devUserName != ''">
+            AND userinfo.user_Name LIKE CONCAT('%',#{devUserName},'%')
+        </if>
+        AND reqFeature.STATUS =1
+    </select>
+
+<!-- 通过关联系统和需求获取同步的开发任务，同步合并使用 -->
+    <select id="selectBySystemIdAndReqId" parameterType="Long"
+            resultType="cn.pioneeruniverse.dev.entity.TblRequirementFeature">
+  	select ID,DEPLOY_STATUS deployStatus
+  	 from tbl_requirement_feature
+  	where REQUIREMENT_ID = #{requirementId} and SYSTEM_ID =#{systemId} and CREATE_TYPE = 2
+  </select>
+  <!-- 通过关联系统和需求获取开发任务 -->
+    <select id="selectBySystemIdAndReqId1" parameterType="Long"
+            resultType="cn.pioneeruniverse.dev.entity.TblRequirementFeature">
+  	select ID,DEPLOY_STATUS deployStatus
+  	 from tbl_requirement_feature
+  	where REQUIREMENT_ID = #{requirementId} and SYSTEM_ID =#{systemId}
+  </select>
+  
+  <!--通过关联的系统和需求 更新同步类型的开发任务部署状态 -->
+    <update id="synReqFeatureDeployStatus" parameterType="map">
+  	update tbl_requirement_feature
+  	set DEPLOY_STATUS = #{deployStatus}
+  	where REQUIREMENT_ID = #{requirementId} and SYSTEM_ID =#{systemId} and CREATE_TYPE = 2
+  </update>
+
+<!-- 获取开发任务的部署状态 -->
+    <select id="getDeployStatus" parameterType="Long" resultType="String">
+  	select DEPLOY_STATUS
+  	from tbl_requirement_feature
+  	where ID = #{id}
+  </select>
+  
+  <!-- 更新某个开发任务的部署状态 -->
+    <update id="updateDeployStatusOne">
+  	update tbl_requirement_feature
+  	set DEPLOY_STATUS = #{deployStatus},
+  	LAST_UPDATE_DATE= CURRENT_TIMESTAMP
+  	where ID =#{id}
+  </update>
+
+<!-- 更新某个开发任务的部署状态，多个状态以字符串形式连接表示 -->
+    <update id="updateDeployStatusOneAdd">
+  	update tbl_requirement_feature
+  	set DEPLOY_STATUS = CONCAT(DEPLOY_STATUS,#{deployStatus}),
+  	LAST_UPDATE_DATE= CURRENT_TIMESTAMP
+  	where ID =#{id}
+  </update>
+
+<!-- 通过多个ID获取开发任务列表 -->
+    <select id="findByReqFeatureIds" parameterType="map"
+            resultType="cn.pioneeruniverse.dev.entity.TblRequirementFeature">
+        select
+        <include refid="Base_Column_List"></include>
+        from tbl_requirement_feature
+        where ID in
+        <foreach collection="idsArr" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and STATUS = 1
+    </select>
+    
+    <!-- 更新某些开发任务的部署状态，多个状态以字符串形式连接表示 -->
+    <select id="updateDeployStatus" parameterType="map">
+        update tbl_requirement_feature
+        set DEPLOY_STATUS = CONCAT(DEPLOY_STATUS,#{status})
+        where ID in
+        <foreach collection="idsArr" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+
+    </select>
+
+<!-- 查询部署时关联的开发任务 -->
+    <select id="getDeplayReqFesture" parameterType="map" resultType="cn.pioneeruniverse.dev.entity.DevTaskVo">
+        SELECT DISTINCT reqFeature.ID id, reqFeature.FEATURE_NAME featureName,reqFeature.COMMISSIONING_WINDOW_ID
+        commissioningWindowId,reqFeature.SYSTEM_ID systemId,reqFeature.REQUIREMENT_ID requirementId,
+        reqFeature.FEATURE_code featureCode,reqFeature.DEPT_ID deptId,reqFeature.EXECUTE_USER_ID
+        excuteUserId,reqFeature.MANAGE_USER_ID manageUserId,reqFeature.REQUIREMENT_FEATURE_STATUS
+        requirementFeatureStatus,reqFeature.REQUIREMENT_FEATURE_STATUS statusName,reqFeature.CREATE_TYPE createType,
+        reqFeature.TEMPORARY_STATUS temporaryStatus,reqFeature.DEPLOY_STATUS deployStatus,
+        window.WINDOW_NAME windowName,systemVersion.VERSION systemVersionName,reqFeature.SPRINT_ID sprintId,reqFeature.ASSET_SYSTEM_TREE_ID assetSystemTreeId,reqFeature.REPAIR_SYSTEM_VERSION_ID repairSystemVersionId,reqFeature.FIELD_TEMPLATE fieldTemplate
+        <!--  reqInfo.REQUIREMENT_CODE requirementCode,
+         userinfo.USER_NAME manageUserName,userinfo2.USER_NAME executeUserName -->
+        FROM tbl_requirement_feature reqFeature
+        <!--  LEFT JOIN tbl_requirement_info reqInfo ON reqFeature.REQUIREMENT_ID = reqInfo.ID
+       LEFT JOIN tbl_user_info userinfo ON userinfo.ID = reqFeature.MANAGE_USER_ID
+        LEFT JOIN tbl_user_info userinfo2 ON userinfo2.ID = reqFeature.EXECUTE_USER_ID -->
+        LEFT JOIN tbl_system_version systemVersion ON systemVersion.ID = reqFeature.SYSTEM_VERSION_ID
+        LEFT JOIN tbl_commissioning_window window ON window.ID = reqFeature.COMMISSIONING_WINDOW_ID and window.STATUS =1
+        <where>
+            <if test="feature.systemId!=null and feature.systemId!=''">
+                and reqFeature.SYSTEM_ID = #{feature.systemId}
+            </if>
+
+            <if test="feature. sprintId!=null and feature.sprintId!=''">
+                and reqFeature.SPRINT_ID = #{feature.sprintId}
+            </if>
+
+            <if test="feature.commissioningWindowId!=null and feature.commissioningWindowId!=''">
+                and reqFeature.COMMISSIONING_WINDOW_ID = #{feature.commissioningWindowId}
+            </if>
+
+            <if test="feature.systemVersionId!=null and feature.systemVersionId!=''">
+                and reqFeature.SYSTEM_VERSION_ID = #{feature.systemVersionId}
+            </if>
+
+            <if test="feature.featureCode != null and feature.featureCode != ''">
+                and reqFeature.FEATURE_CODE LIKE CONCAT('%',LOWER(#{feature.featureCode}),'%')
+            </if>
+
+            <if test="feature.executeUserIds!=null and feature.executeUserIds!=''">
+                and reqFeature.EXECUTE_USER_ID in
+                <foreach collection="feature.executeUserIds.split(',')" index="index" item="item" open="(" separator="," close=")">
+		            #{item}
+		        </foreach>
+            </if>
+
+            <if test="statusArr!=null and statusArr!=''">
+                and reqFeature.REQUIREMENT_FEATURE_STATUS in
+                <foreach collection="statusArr" item="status" index="index" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+            </if>
+            and reqFeature.STATUS = 1
+        </where>
+        order by reqFeature.ID DESC
+        limit #{start},#{pageSize}
+    </select>
+<!-- 查询部署时关联的开发任务 -->
+    <select id="findDeployReqFeature" parameterType="cn.pioneeruniverse.dev.vo.task.DevTaskReq"
+            resultType="cn.pioneeruniverse.dev.entity.DevTaskVo">
+        SELECT DISTINCT RF.ID id,
+        RF.FEATURE_NAME featureName,
+        RF.COMMISSIONING_WINDOW_ID commissioningWindowId,
+        RF.SYSTEM_ID systemId,
+        RF.REQUIREMENT_ID requirementId,
+        RF.FEATURE_code featureCode,
+        RF.DEPT_ID deptId,
+        RF.EXECUTE_USER_ID excuteUserId,
+        RF.MANAGE_USER_ID manageUserId,
+        RF.REQUIREMENT_FEATURE_STATUS requirementFeatureStatus,
+        RF.REQUIREMENT_FEATURE_STATUS statusName,
+        RF.CREATE_TYPE createType,
+        RF.TEMPORARY_STATUS temporaryStatus,
+        RF.DEPLOY_STATUS deployStatus,
+        CW.WINDOW_NAME windowName,
+        SV.VERSION systemVersionName,
+        RF.SPRINT_ID sprintId,
+        RF.ASSET_SYSTEM_TREE_ID assetSystemTreeId,
+        RF.REPAIR_SYSTEM_VERSION_ID repairSystemVersionId,
+        RF.FIELD_TEMPLATE fieldTemplate
+        FROM TBL_REQUIREMENT_FEATURE RF
+        LEFT JOIN TBL_SYSTEM_VERSION SV ON SV.ID = RF.SYSTEM_VERSION_ID
+        LEFT JOIN TBL_COMMISSIONING_WINDOW CW ON CW.ID = RF.COMMISSIONING_WINDOW_ID AND CW.STATUS = 1
+        WHERE RF.REQUIREMENT_FEATURE_STATUS = '03'
+        <if test="systemId!=null and systemId!=''">
+            and RF.SYSTEM_ID = #{systemId}
+        </if>
+        <if test=" sprintId!=null and sprintId!=''">
+            and RF.SPRINT_ID = #{sprintId}
+        </if>
+        <if test="commissioningWindowId!=null and commissioningWindowId!=''">
+            and RF.COMMISSIONING_WINDOW_ID = #{commissioningWindowId}
+        </if>
+        <if test="systemVersionId!=null and systemVersionId!=''">
+            and RF.SYSTEM_VERSION_ID = #{systemVersionId}
+        </if>
+        <if test="featureCode != null and featureCode != ''">
+            and RF.FEATURE_CODE LIKE CONCAT('%',LOWER(#{featureCode}),'%')
+        </if>
+        <if test="executeUserIds!=null and executeUserIds!=''">
+            and RF.EXECUTE_USER_ID in
+            <foreach collection="executeUserIds.split(',')" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        and RF.STATUS = 1
+        order by RF.ID DESC
+    </select>
+
+<!-- 通过需求编码和关联系统获取开发任务 -->
+    <select id="getReqFeatureByReqCodeAndSystemId" resultType="cn.pioneeruniverse.dev.entity.TblRequirementFeature">
+        select reqFeature.ID id,reqFeature.COMMISSIONING_WINDOW_ID commissioningWindowId,
+        reqFeature.REQUIREMENT_FEATURE_STATUS requirementFeatureStatus, reqFeature.FEATURE_NAME featureName,
+        reqFeature.FEATURE_CODE featureCode,reqFeature.PLAN_START_DATE planStartDate,reqFeature.PLAN_END_DATE
+        planEndDate,
+        reqFeature.ESTIMATE_WORKLOAD estimateWorkload,reqFeature.SYSTEM_SCM_BRANCH systemScmBranch,
+        reqFeature.SYSTEM_VERSION_ID systemVeresionId,reqFeature.FIELD_TEMPLATE fieldTemplate
+        FROM tbl_requirement_feature reqFeature
+        <if test="requirementCode != null and requirementCode !=''">
+            LEFT JOIN tbl_requirement_info req ON req.ID = reqFeature.REQUIREMENT_ID
+        </if>
+        WHERE reqFeature.SYSTEM_ID = #{systemId} AND reqFeature.STATUS = 1
+        <if test="requirementCode != null and requirementCode !=''">
+            AND req.REQUIREMENT_CODE = #{requirementCode} AND req.STATUS = 1
+        </if>
+    </select>
+
+    <!-- 根据开发任务id 修改需求id 为null-->
+    <update id="updateReqNull" parameterType="Long">
+  	update tbl_requirement_feature
+  	set REQUIREMENT_ID = null,
+  	LAST_UPDATE_DATE= CURRENT_TIMESTAMP
+  	where ID = #{id}
+  </update>
+    <!--根据开发任务id 修改QUESTION_NUMBER 为null -->
+    <update id="updateReqNumberNull" parameterType="Long">
+  	update tbl_requirement_feature
+  	set QUESTION_NUMBER = null,
+  	LAST_UPDATE_DATE= CURRENT_TIMESTAMP
+  	where ID = #{id}
+  </update>
+
+    <!--  修改缺陷的 的 开发任务为null -->
+    <update id="updateDftReqFIdNull" parameterType="Long">
+  	update tbl_defect_info
+  	set REQUIREMENT_FEATURE_ID = NULL,
+  	LAST_UPDATE_DATE= CURRENT_TIMESTAMP
+  	where REQUIREMENT_FEATURE_ID = #{id}
+  </update>
+    <!-- 根据开发任务id查询缺陷 -->
+    <select id="findDftByReqFId" parameterType="Long" resultType="cn.pioneeruniverse.dev.entity.TblDefectInfo">
+  	SELECT def.ID id,def.DEFECT_CODE defectCode,def.REQUIREMENT_FEATURE_ID requirementFeatureId,
+  	def.CREATE_TYPE createType,trf.CHECK_STATUS checkStatus
+	FROM tbl_defect_info def
+	LEFT JOIN tbl_requirement_feature trf on def.REQUIREMENT_FEATURE_ID = trf.ID
+  	WHERE def.REQUIREMENT_FEATURE_ID = #{id} AND def.STATUS = 1 and trf.status = 1
+  </select>
+
+    <!-- 根据开发任务id查询缺陷 -->
+    <select id="findDftByReqFIds" parameterType="Long" resultType="cn.pioneeruniverse.dev.entity.TblDefectInfo">
+        SELECT def.ID id, def.DEFECT_CODE defectCode, def.REQUIREMENT_FEATURE_ID requirementFeatureId,
+        def.DEFECT_SUMMARY defectSummary, def.CREATE_TYPE createType
+        FROM tbl_defect_info def
+        WHERE def.STATUS = 1 AND def.CREATE_TYPE = 2 AND def.REQUIREMENT_FEATURE_ID IN
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        GROUP BY def.ID
+    </select>
+    <!-- 缺陷弹窗未关联开发任务的所有缺陷 -->
+    <select id="findDftNoReqFeature" parameterType="map" resultType="cn.pioneeruniverse.dev.entity.TblDefectInfo">
+        SELECT
+        def.ID id, def.SUBMIT_DATE submitDate,def.DEFECT_CODE defectCode,def.DEFECT_SUMMARY defectSummary,
+        def.DEFECT_TYPE defectType,def.DEFECT_SOURCE defectSource,def.DEFECT_STATUS defectStatus,
+        def.SEVERITY_LEVEL severity, def.EMERGENCY_LEVEL emergencyLevel,
+        def.SUBMIT_USER_ID,userIn.USER_NAME submitUserName,def.REQUIREMENT_FEATURE_ID reqFeatureId
+        FROM
+        (SELECT def1.ID, def1.SUBMIT_DATE,def1.DEFECT_CODE,def1.DEFECT_SUMMARY,
+        def1.DEFECT_TYPE,def1.DEFECT_SOURCE,def1.DEFECT_STATUS,def1.SEVERITY_LEVEL, def1.EMERGENCY_LEVEL,
+        def1.SUBMIT_USER_ID,def1.REQUIREMENT_FEATURE_ID from tbl_defect_info def1
+        where def1.CREATE_TYPE = #{createType} and def1.`STATUS` = 1) def
+        LEFT JOIN tbl_user_info userIn ON def.SUBMIT_USER_ID = userIn.ID
+        <where>
+            (def.REQUIREMENT_FEATURE_ID = '' OR REQUIREMENT_FEATURE_ID IS NULL)
+            <if test="defectInfo.defectCode != null and defectInfo.defectCode != ''">
+                and def.DEFECT_CODE LIKE CONCAT('%',LOWER(#{defectInfo.defectCode}),'%')
+            </if>
+            <if test="defectInfo.defectSummary != null and defectInfo.defectSummary != ''">
+                and def.DEFECT_SUMMARY LIKE CONCAT('%',LOWER(#{defectInfo.defectSummary}),'%')
+            </if>
+            <if test="defectInfo.defectStatus != null and defectInfo.defectStatus != ''">
+                and def.DEFECT_STATUS = #{defectInfo.defectStatus}
+            </if>
+            <if test="reqFeatureId!=null and reqFeatureId!=''">
+                or def.REQUIREMENT_FEATURE_ID = #{reqFeatureId}
+            </if>
+        </where>
+        ORDER BY def.ID DESC
+        limit #{start},#{pageSize}
+    </select>
+
+    <!-- 根据需求查询开发任务 -->
+    <select id="findByrequirementId" parameterType="Long"
+            resultType="cn.pioneeruniverse.dev.entity.TblRequirementFeature">
+  		select * from tbl_requirement_feature
+  		where REQUIREMENT_ID = #{requirementId}
+  	</select>
+    <!-- 根据需求 修改 开发任务状态 为 00 -->
+    <select id="changeCancelStatus" parameterType="Long">
+		update tbl_requirement_feature
+		set REQUIREMENT_FEATURE_STATUS ='00'
+		where REQUIREMENT_ID = #{requirementId}
+	</select>
+    <select id="getDeptName" parameterType="int" resultType="String">
+  	select DEPT_NAME
+  	from tbl_dept_info
+  	where ID = #{id} and STATUS =1
+  </select>
+    <select id="getUserName" parameterType="int" resultType="String">
+  	select USER_NAME
+  	from tbl_user_info
+  	where ID = #{id} and STATUS =1
+  </select>
+    <!-- 修改 开发任务状态为2 -->
+    <update id="updateSynStatus" parameterType="Long">
+  	update tbl_requirement_feature
+  	set STATUS = 2,
+  	LAST_UPDATE_DATE= CURRENT_TIMESTAMP
+  	where ID = #{id}
+
+  </update>
+    <!-- 根据 开发任务id 修改工作任务id, 开发任务编号，CREATE_TYPE = 2-->
+    <update id="updateTaskId" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeature">
+  	update tbl_requirement_feature
+  	set TASK_ID = #{taskId},FEATURE_CODE = #{featureCode},CREATE_TYPE = 2,
+  	LAST_UPDATE_DATE= CURRENT_TIMESTAMP
+  	where ID = #{id}
+  </update>
+    <!-- 查询与该自建任务同一需求下同一系统的同步任务 -->
+    <select id="findSynDevTask" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeature"
+            resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM tbl_requirement_feature
+        WHERE CREATE_TYPE = 2
+        AND REQUIREMENT_ID = (SELECT reqFeature.REQUIREMENT_ID
+        FROM tbl_requirement_feature reqFeature
+        WHERE ID = #{id} )
+        AND SYSTEM_ID = (SELECT reqFeature.SYSTEM_ID
+        FROM tbl_requirement_feature reqFeature
+        WHERE ID = #{id} ) and STATUS = 1
+
+    </select>
+    <!-- 根据开发任务id 修改执行人员 -->
+    <update id="updateTransfer" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeature">
+  	update tbl_requirement_feature
+  	set EXECUTE_USER_ID = #{executeUserId},
+  	 LAST_UPDATE_DATE = #{lastUpdateDate}
+  	where ID = #{id}
+  </update>
+    <!-- 查询最大的任务编号 -->
+    <select id="findMaxCode" parameterType="int" resultType="String">
+    	SELECT MAX(SUBSTRING(FEATURE_CODE,#{length}))
+		FROM tbl_requirement_feature
+    </select>
+    <!-- 根据id修改开发任务的状态为实施中 -->
+    <update id="updateStatus" parameterType="Long">
+		update tbl_requirement_feature
+		set REQUIREMENT_FEATURE_STATUS = '02',
+		LAST_UPDATE_DATE= CURRENT_TIMESTAMP
+		where ID = #{id}
+	</update>
+    <!-- 查询投产周期不同的兄弟任务   -->
+    <select id="findBrotherDiffWindow" parameterType="cn.pioneeruniverse.dev.entity.DevTaskVo" resultType="map">
+		SELECT reqFeature.ID id, reqFeature.FEATURE_NAME featureName,reqFeature.FEATURE_code featureCode,window.WINDOW_NAME windowName
+		FROM tbl_requirement_feature  reqFeature
+		LEFT JOIN tbl_commissioning_window window ON reqFeature.COMMISSIONING_WINDOW_ID = window.ID and window.STATUS = 1
+		WHERE reqFeature.REQUIREMENT_ID = #{requirementId} and reqFeature.ID!=#{id} and (reqFeature.COMMISSIONING_WINDOW_ID!=#{commissioningWindowId}
+		or reqFeature.COMMISSIONING_WINDOW_ID is null) and reqFeature.STATUS=1
+	</select>
+    <!-- 查询所有兄弟开发任务 -->
+    <select id="findBrother" parameterType="Long" resultType="map">
+	SELECT
+	reqFeature.ID id, reqFeature.FEATURE_NAME featureName,
+		reqFeature.FEATURE_code featureCode,reqFeature.REQUIREMENT_FEATURE_STATUS requirementFeatureStatus,
+		reqFeature.ACTUAL_START_DATE actualStartDate,reqFeature.ACTUAL_END_DATE actualEndDate,reqFeature.ACTUAL_WORKLOAD actualWorkload,
+		datadic.VALUE_NAME statusName,reqFeature.MANAGE_USER_ID manageUserId,reqFeature.EXECUTE_USER_ID executeUserId,
+		window.WINDOW_NAME windowName,userinfo.USER_NAME executeUserName
+	FROM tbl_requirement_feature  reqFeature
+	LEFT JOIN tbl_commissioning_window window ON reqFeature.COMMISSIONING_WINDOW_ID = window.ID  and window.STATUS = 1
+	LEFT JOIN tbl_data_dic datadic ON datadic.VALUE_CODE = reqFeature.REQUIREMENT_FEATURE_STATUS
+	LEFT JOIN tbl_user_info userinfo ON userinfo.ID = reqFeature.EXECUTE_USER_ID
+	WHERE reqFeature.REQUIREMENT_ID = #{arg0} and reqFeature.ID!=#{arg1}
+	 and datadic.TERM_CODE = 'TBL_REQUIREMENT_FEATURE_REQUIREMENT_FEATURE_STATUS'
+	 and reqFeature.STATUS=1
+
+	</select>
+    <!-- 根据name值查询 -->
+    <select id="findByName" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeature"
+            resultType="cn.pioneeruniverse.dev.entity.TblRequirementFeature">
+        SELECT *
+        FROM tbl_requirement_feature reqFeature
+        where reqFeature.FEATURE_NAME = #{featureName}
+        <if test="id!=null and id!=''">
+            and reqFeature.ID!=#{id}
+        </if>
+
+    </select>
+    <!-- 查询当前开发任务所属的系统（已知） 所属的项目 的项目组下的成员 -->
+    <select id="getSplitUser" parameterType="Long" resultType="map">
+	SELECT DISTINCT  userinfo.ID uid,userinfo.USER_NAME username
+	FROM tbl_user_info userinfo
+	LEFT JOIN  tbl_project_group_user pgUser ON userinfo.ID = pgUser.USER_ID
+	LEFT JOIN tbl_project_group projectGroup ON  pgUser.PROJECT_GROUP_ID = projectGroup.ID
+	LEFT JOIN tbl_project_system  ps ON ps.PROJECT_ID = projectGroup.PROJECT_ID and ps.status =1 and ps.RELATION_TYPE = 1
+	LEFT JOIN tbl_system_info system  ON system.ID = ps.SYSTEM_ID 
+	WHERE system.ID = #{systemId}
+
+  </select>
+
+    <!--   改  -->
+    <update id="updateDevTask" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeature">
+  	UPDATE tbl_requirement_feature reqFeature
+  	SET reqfeature.ACTUAL_START_DATE = #{actualStartDate},reqFeature.ACTUAL_END_DATE=#{actualEndDate},reqFeature.ACTUAL_WORKLOAD=#{actualWorkload},
+  	reqFeature.REQUIREMENT_FEATURE_STATUS = #{requirementFeatureStatus},reqFeature.ESTIMATE_REMAIN_WORKLOAD = 0,
+  	LAST_UPDATE_DATE= CURRENT_TIMESTAMP
+  	WHERE reqFeature.ID = #{id}
+  </update>
+
+<!-- 保存开发任务 -->
+    <insert id="insertReqFeature" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeature"
+            useGeneratedKeys="true" keyColumn="ID" keyProperty="id">
+ 	insert into tbl_requirement_feature ( FEATURE_NAME, FEATURE_OVERVIEW,CHECK_STATUS,
+      SYSTEM_ID,PROJECT_ID, REQUIREMENT_ID, FEATURE_code,CREATE_TYPE,REQUIREMENT_FEATURE_SOURCE,QUESTION_NUMBER,
+      DEPT_ID,EXECUTE_USER_ID,MANAGE_USER_ID,REQUIREMENT_FEATURE_STATUS,STORY_POINT,
+      PLAN_START_DATE,PLAN_END_DATE,ESTIMATE_WORKLOAD,ESTIMATE_REMAIN_WORKLOAD,REQUIREMENT_FEATURE_PRIORITY,
+      COMMISSIONING_WINDOW_ID, SYSTEM_VERSION_ID,SYSTEM_SCM_BRANCH,SPRINT_ID,CREATE_BY, CREATE_DATE,
+      EXECUTE_PROJECT_GROUP_ID,ASSET_SYSTEM_TREE_ID,REPAIR_SYSTEM_VERSION_ID,FIELD_TEMPLATE,PROJECT_PLAN_ID)
+    values ( #{featureName}, #{featureOverview},#{checkStatus},
+      #{systemId},#{projectId}, #{requirementId},#{featureCode},#{createType},#{requirementFeatureSource},#{questionNumber},
+      #{deptId},#{executeUserId},#{manageUserId},#{requirementFeatureStatus},#{storyPoint},
+      #{planStartDate},#{planEndDate},#{estimateWorkload},#{estimateWorkload},#{requirementFeaturePriority},
+      #{commissioningWindowId}, #{systemVersionId},#{systemScmBranch},#{sprintId},
+      #{createBy}, #{createDate},#{executeProjectGroupId},#{assetSystemTreeId},#{repairSystemVersionId},#{fieldTemplate},#{projectPlanId})
+  </insert>
+
+<!-- 获取开发任务信息，以及其关联的缺陷附件等信息-->
+    <select id="getOneDevTask" parameterType="Long" resultType="map">
+        SELECT reqFeature.ID id, reqFeature.DEPLOY_STATUS deployStatus, reqFeature.FEATURE_NAME
+        featureName,reqFeature.FEATURE_OVERVIEW featureOverview,reqFeature.SYSTEM_ID systemId,reqFeature.REQUIREMENT_ID
+        requirementId,reqFeature.DEPT_ID deptId,
+        reqFeature.PLAN_START_DATE planStartDate,reqFeature.PLAN_END_DATE planEndDate,reqFeature.ESTIMATE_WORKLOAD
+        planWorkload,reqFeature.ESTIMATE_REMAIN_WORKLOAD estimateRemainWorkload,reqFeature.HANDLE_SUGGESTION
+        handleSuggestion,reqFeature.COMMISSIONING_WINDOW_ID commissioningWindowId,
+        reqFeature.CREATE_TYPE createType,reqFeature.REQUIREMENT_FEATURE_SOURCE
+        requirementFeatureSource,reqFeature.QUESTION_NUMBER questionNumber,
+        reqFeature.TEMPORARY_STATUS temporaryStatus,reqFeature.FEATURE_code featureCode,reqFeature.HANDLE_SUGGESTION
+        handleSuggestion,reqFeature.REQUIREMENT_FEATURE_STATUS requirementFeatureStatus,
+        reqFeature.ACTUAL_START_DATE actualStartDate,reqFeature.ACTUAL_END_DATE actualEndDate,reqFeature.ACTUAL_WORKLOAD
+        actualWorkload,<!-- datadic.VALUE_NAME statusName, -->
+        reqFeature.MANAGE_USER_ID manageUserId,reqFeature.EXECUTE_USER_ID executeUserId,window.WINDOW_NAME
+        windowName,reqFeature.CHECK_STATUS checkStatus,
+        systemInfo.SYSTEM_NAME systemName,reqInfo.REQUIREMENT_CODE requirementCode,reqInfo.REQUIREMENT_NAME
+        requirementName,
+        dept.DEPT_NAME deptName,userinfo.USER_NAME manageUserName,userinfo2.USER_NAME executeUserName,sprint.SPRINT_NAME
+        sprintName,
+        reqFeature.SYSTEM_SCM_BRANCH systemScmBranch,reqFeature.SYSTEM_VERSION_ID systemVersionId,systemVersion.VERSION
+        versionName,systemVersionNew.VERSION repairVersionName,
+        reqInfo.ITCD_REQUIREMENT_ID itcdRequrementId,reqFeature.TASK_ID taskId,reqFeature.SPRINT_ID
+        sprintId,systemInfo.development_mode developmentMode,
+        reqFeature.REQUIREMENT_FEATURE_PRIORITY requirementFeaturePriority,reqFeature.STORY_POINT
+        storyPoint,reqFeature.EXECUTE_PROJECT_GROUP_ID executeProjectGroupId,
+        tpg.PROJECT_GROUP_NAME executeProjectGroupName,reqFeature.ASSET_SYSTEM_TREE_ID
+        assetSystemTreeId,reqFeature.REPAIR_SYSTEM_VERSION_ID repairSystemVersionId,reqFeature.PROJECT_PLAN_ID
+        projectPlanId,tpp.PLAN_NAME projectPlanName,
+        (SELECT MIN(ACTUAL_START_DATE) FROM tbl_dev_task WHERE REQUIREMENT_FEATURE_ID =#{id} AND `STATUS`=1)
+        minActStartDate,
+        (SELECT MAX(ACTUAL_END_DATE) FROM tbl_dev_task WHERE REQUIREMENT_FEATURE_ID =#{id} AND `STATUS`=1)
+        maxActEndDate,
+        (SELECT SUM(ACTUAL_WORKLOAD) FROM tbl_dev_task WHERE REQUIREMENT_FEATURE_ID =#{id} AND `STATUS`=1)
+        sumActWorkLoad
+        ,pro.ID projectId,pro.PROJECT_NAME AS projectName, systemInfo.CODE_REVIEW_STATUS systemCodeReviewStatus,
+        reqInfo.CREATE_DATE requirementCreateDate,reqInfo.ID requirementId,reqInfo.PARENT_ID requirementParentId,
+        CASE WHEN reqInfo.APPLY_USER_ID IS NOT NULL THEN (SELECT userI.USER_NAME FROM tbl_user_info userI WHERE userI.ID
+        = reqInfo.APPLY_USER_ID LIMIT 1) ELSE NULL END AS "requirementApplyName",
+        reqInfo.REQUIREMENT_PRIORITY requirementPriority,reqInfo.IMPORTANT_REQUIREMENT_STATUS imporiantRequirementStatus
+        FROM tbl_requirement_feature reqFeature
+        LEFT JOIN tbl_system_info systemInfo ON reqFeature.SYSTEM_ID = systemInfo.ID and systemInfo.status = 1
+        LEFT JOIN tbl_requirement_info reqInfo ON reqFeature.REQUIREMENT_ID = reqInfo.ID and reqInfo.status = 1
+        LEFT JOIN tbl_dept_info dept ON dept.ID = reqFeature.DEPT_ID and dept.status = 1
+        LEFT JOIN tbl_user_info userinfo ON userinfo.ID = reqFeature.MANAGE_USER_ID and userinfo.status = 1
+        LEFT JOIN tbl_user_info userinfo2 ON userinfo2.ID = reqFeature.EXECUTE_USER_ID and userinfo2.status=1
+        LEFT JOIN tbl_commissioning_window window ON window.ID = reqFeature.COMMISSIONING_WINDOW_ID and window.status =
+        1
+        LEFT JOIN tbl_system_version systemVersion ON systemVersion.ID = reqFeature.SYSTEM_VERSION_ID and
+        systemVersion.status = 1
+        LEFT JOIN tbl_system_version systemVersionNew ON systemVersionNew.ID = reqFeature.repair_SYSTEM_VERSION_ID and
+        systemVersionNew.status = 1
+        LEFT JOIN tbl_sprint_info sprint ON sprint.ID = reqFeature.SPRINT_ID and sprint.status = 1
+
+        LEFT JOIN tbl_project_group tpg ON tpg.ID = reqFeature.EXECUTE_PROJECT_GROUP_ID
+        LEFT JOIN tbl_project_plan tpp ON tpp.ID = reqFeature.PROJECT_PLAN_ID
+        LEFT JOIN tbl_project_info pro on reqFeature.PROJECT_ID = pro.ID AND pro.STATUS =1
+        <!-- LEFT JOIN tbl_data_dic datadic ON datadic.VALUE_CODE = reqFeature.REQUIREMENT_FEATURE_STATUS -->
+        WHERE reqFeature.ID = #{id}
+        <!-- and datadic.TERM_CODE = 'TBL_REQUIREMENT_FEATURE_REQUIREMENT_FEATURE_STATUS' -->
+
+    </select>
+    <!-- 当前登录用户是其他用户 -->
+    <select id="getAllCondition" parameterType="cn.pioneeruniverse.dev.entity.DevTaskVo"
+            resultType="cn.pioneeruniverse.dev.entity.DevTaskVo">
+        SELECT DISTINCT
+        reqFeature.ID id,
+        reqFeature.FEATURE_NAME featureName,
+        reqFeature.COMMISSIONING_WINDOW_ID commissioningWindowId,
+        reqFeature.SYSTEM_ID systemId,
+        reqFeature.REQUIREMENT_ID requirementId,
+        reqFeature.FEATURE_code featureCode,
+        reqFeature.DEPT_ID deptId,
+        reqFeature.EXECUTE_USER_ID excuteUserId,
+        reqFeature.MANAGE_USER_ID manageUserId,
+        reqFeature.REQUIREMENT_FEATURE_STATUS requirementFeatureStatus,
+        reqFeature.CREATE_TYPE createType,
+        reqFeature.REQUIREMENT_FEATURE_STATUS statusName,
+        reqFeature.HANDLE_SUGGESTION handleSuggestion,
+        reqFeature.PLAN_START_DATE planStartDate,
+        reqFeature.PLAN_END_DATE planEndDate,
+        reqFeature.ESTIMATE_WORKLOAD estimateWorkLoad,
+        reqFeature.ESTIMATE_REMAIN_WORKLOAD estimateRemainWorkload,
+        reqFeature.ACTUAL_START_DATE actualStartDate,
+        reqFeature.ACTUAL_END_DATE actualEndDate,
+        reqFeature.ACTUAL_WORKLOAD actualWorkload,
+        reqFeature.DEPLOY_STATUS deployStatus,
+        reqFeature.REQUIREMENT_FEATURE_PRIORITY requirementFeaturePriority,
+        reqFeature.TEMPORARY_STATUS temporaryStatus,
+        reqFeature.LAST_UPDATE_DATE lastModified,
+        reqFeature.CHECK_STATUS checkStatus,
+        window.WINDOW_NAME windowName,
+        window.WINDOW_DATE windowDate,
+        systemInfo.SYSTEM_NAME systemName,
+        systemInfo.CODE_REVIEW_STATUS systemCodeReviewStatus,
+        reqInfo.REQUIREMENT_CODE requirementCode,
+        dept.DEPT_NAME deptName,
+        systemInfo.development_mode developmentMode,
+        userinfo.USER_NAME manageUserName,
+        userinfo2.USER_NAME executeUserName,
+        sprint.SPRINT_NAME sprintName,
+        reqFeature.ASSET_SYSTEM_TREE_ID assetSystemTreeId,
+        reqFeature.REPAIR_SYSTEM_VERSION_ID repairSystemVersionId,
+        reqFeature.FEATURE_OVERVIEW featureOverview,
+        tast.SYSTEM_TREE_NAME systemTreeName,
+        reqFeature.REQUIREMENT_FEATURE_SOURCE requirementFeatureSourceName,
+        reqFeature.TASK_ID taskId,
+        reqFeature.QUESTION_NUMBER questionNumber,
+        reqFeature.REQUIREMENT_FEATURE_PRIORITY requirementFeaturePriorityName,
+        reqFeature.EXECUTE_PROJECT_GROUP_ID executeProjectGroupId,
+        reqFeature.CREATE_TYPE createTypeName,
+        reqFeature.DEVELOPMENT_DEPT_ID developmentDeptId,
+        tsv.VERSION version,
+        tsss.SCM_BRANCH scmBranch,
+        tsvre.VERSION repairVersion,
+        tcw.WINDOW_NAME,
+        reqFeature.STORY_POINT storyPoint,
+        JSON_UNQUOTE (reqFeature.FIELD_TEMPLATE) AS fieldTemplate
+        FROM
+        (select reqFeature2.* from
+        tbl_requirement_feature reqFeature2
+        LEFT JOIN tbl_system_info systemInfo ON reqFeature2.SYSTEM_ID = systemInfo.ID
+        LEFT JOIN tbl_project_system ps ON ps.SYSTEM_ID = systemInfo.ID and ps.status = 1 and ps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = ps.PROJECT_ID AND pgroup.STATUS=1
+
+        where
+        pgroup.id IN(
+        SELECT guser2.PROJECT_GROUP_ID FROM tbl_project_group_user guser2 WHERE guser2.USER_ID=#{userId} and
+        guser2.STATUS=1
+        )
+        or reqFeature2.MANAGE_USER_ID = #{userId} or reqFeature2.EXECUTE_USER_ID =#{userId} or
+        reqFeature2.CREATE_BY=#{userId}
+        ) reqFeature
+        LEFT JOIN tbl_system_info systemInfo ON reqFeature.SYSTEM_ID = systemInfo.ID and systemInfo.status=1
+        <!-- LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID =systemInfo.PROJECT_ID -->
+        LEFT JOIN tbl_requirement_info reqInfo ON reqFeature.REQUIREMENT_ID = reqInfo.ID and reqInfo.status=1
+        LEFT JOIN tbl_dept_info dept ON dept.ID = reqFeature.DEPT_ID and dept.status=1
+        LEFT JOIN tbl_user_info userinfo ON userinfo.ID = reqFeature.MANAGE_USER_ID and userinfo.status = 1
+        LEFT JOIN tbl_user_info userinfo2 ON userinfo2.ID = reqFeature.EXECUTE_USER_ID and userinfo2.status = 1
+        <!--   LEFT JOIN tbl_data_dic datadic ON datadic.VALUE_CODE = reqFeature.REQUIREMENT_FEATURE_STATUS -->
+        LEFT JOIN tbl_commissioning_window window ON window.ID = reqFeature.COMMISSIONING_WINDOW_ID and window.status=1
+        LEFT JOIN tbl_sprint_info sprint ON sprint.ID = reqFeature.SPRINT_ID and sprint.status = 1
+
+
+        LEFT JOIN tbl_asset_system_tree tast on tast.id=reqFeature.asset_system_tree_id
+        LEFT JOIN tbl_system_version tsv on tsv.id=reqFeature.SYSTEM_VERSION_ID
+        LEFT JOIN tbl_system_scm_submit tsss on tsss.id=reqFeature.SYSTEM_SCM_BRANCH
+        LEFT JOIN tbl_system_version tsvre on tsvre.id=reqFeature.repair_SYSTEM_VERSION_ID
+        LEFT JOIN tbl_commissioning_window tcw on tcw.id=reqFeature.COMMISSIONING_WINDOW_ID
+        <where>
+
+
+            <if test="manageUserName!=null and manageUserName!=''">
+                and userinfo.USER_NAME =#{manageUserName}
+            </if>
+            <if test="requirementName!=null and requirementName!=''">
+                and reqInfo.requirement_Name
+                like concat("%",#{requirementName},"%")
+
+            </if>
+            <if test="executeUserName!=null and executeUserName!=''">
+                and userinfo2.USER_NAME =#{executeUserName}
+            </if>
+
+            <if test="requirementCode!=null and requirementCode!=''">
+                and reqInfo.requirement_Code=#{requirementCode}
+            </if>
+
+
+            <if test="featureCode!=null and featureCode!=''">
+                and reqFeature.FEATURE_code like concat("%",LOWER(#{featureCode}),"%")
+            </if>
+            <if test="featureName!=null and featureName!=''">
+                and reqFeature.FEATURE_NAME like concat("%",#{featureName},"%")
+            </if>
+            <if test="manageUserIds!=null and manageUserIds!=''">
+                and reqFeature.MANAGE_USER_ID in
+                <foreach collection="manageUserIds.split(',')" index="index" item="item" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="requirementFeatureStatus!=null and requirementFeatureStatus!=''">
+                and reqFeature.REQUIREMENT_FEATURE_STATUS in
+                <foreach collection="requirementFeatureStatus.split(',')" item="item" index="index" open="("
+                         separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="commissioningWindowIds!=null and commissioningWindowIds!=''">
+                and reqFeature.COMMISSIONING_WINDOW_ID in
+                <foreach collection="commissioningWindowIds.split(',')" index="index" item="item" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="requirementIds!=null and requirementIds!=''">
+                and reqFeature.REQUIREMENT_ID in
+                <foreach collection="requirementIds.split(',')" index="index" item="item" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="systemIds!=null and systemIds!=''">
+                and reqFeature.SYSTEM_ID in
+                <foreach collection="systemIds.split(',')" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="reqFeaturePrioritys!=null and reqFeaturePrioritys!=''">
+                and reqFeature.REQUIREMENT_FEATURE_PRIORITY in
+                <foreach collection="reqFeaturePrioritys.split(',')" index="index" item="item" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="createType!=null and createType!=''">
+                and reqFeature.CREATE_TYPE = #{createType}
+            </if>
+            <if test="executeUserIds!=null and executeUserIds!=''">
+                and reqFeature.EXECUTE_USER_ID in
+                <foreach collection="executeUserIds.split(',')" index="index" item="item" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="sprints!=null and sprints!=''">
+                and reqFeature.SPRINT_ID in
+                <foreach collection="sprints.split(',')" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="createStartDate!=null and createEndDate!=null">
+                and reqFeature.CREATE_DATE BETWEEN #{createStartDate} AND #{createEndDate}
+            </if>
+            <if test="systemVersionName != null and systemVersionName !=''">
+                and tsv.VERSION like concat("%",#{systemVersionName},"%")
+            </if>
+            <!--  <if test="systemName!=null and systemName!=''">
+               and systemInfo.SYSTEM_NAME like concat("%",LOWER(#{systemName}),"%")
+           </if>
+          <if test="requirementCode!=null and requirementCode!=''">
+               and reqInfo.REQUIREMENT_CODE like concat("%",LOWER(#{requirementCode}),"%")
+           </if>
+           <if test="deptName!=null and deptName!=''">
+               and dept.DEPT_NAME like concat("%",LOWER(#{deptName}),"%")
+           </if>
+           <if test="manageUserName!=null and manageUserName!=''">
+               and userinfo.USER_NAME like concat("%",LOWER(#{manageUserName}),"%")
+           </if>
+           <if test="executeUserName!=null and executeUserName!=''">
+               and userinfo2.USER_NAME like concat("%",LOWER(#{executeUserName}),"%")
+           </if>
+           <if test="windowName!=null and windowName!=''">
+               and window.WINDOW_NAME like concat("%",LOWER(#{windowName}),"%")
+           </if> -->
+
+            and reqFeature.STATUS = 1
+            <!--  and datadic.TERM_CODE = 'TBL_REQUIREMENT_FEATURE_REQUIREMENT_FEATURE_STATUS' -->
+
+        </where>
+        <!-- order by reqFeature.ID DESC -->
+
+        <include refid="sort_List"></include>
+    </select>
+    <!-- 当前登录用户是系统管理员 -->
+    <select id="getAll" parameterType="cn.pioneeruniverse.dev.entity.DevTaskVo"
+            resultType="cn.pioneeruniverse.dev.entity.DevTaskVo">
+        SELECT DISTINCT
+        reqFeature.ID id,
+        reqFeature.FEATURE_NAME featureName,
+        reqFeature.COMMISSIONING_WINDOW_ID commissioningWindowId,
+        reqFeature.SYSTEM_ID systemId,
+        reqFeature.REQUIREMENT_ID requirementId,
+        reqFeature.FEATURE_code featureCode,
+        reqFeature.DEPT_ID deptId,
+        reqFeature.EXECUTE_USER_ID excuteUserId,
+        reqFeature.MANAGE_USER_ID manageUserId,
+        reqFeature.REQUIREMENT_FEATURE_STATUS requirementFeatureStatus,
+        reqFeature.CREATE_TYPE createType,
+        reqFeature.REQUIREMENT_FEATURE_STATUS statusName,
+        reqFeature.HANDLE_SUGGESTION handleSuggestion,
+        reqFeature.PLAN_START_DATE planStartDate,
+        reqFeature.PLAN_END_DATE planEndDate,
+        reqFeature.ESTIMATE_WORKLOAD estimateWorkLoad,
+        reqFeature.ESTIMATE_REMAIN_WORKLOAD estimateRemainWorkload,
+        reqFeature.ACTUAL_START_DATE actualStartDate,
+        reqFeature.ACTUAL_END_DATE actualEndDate,
+        reqFeature.ACTUAL_WORKLOAD actualWorkload,
+        reqFeature.DEPLOY_STATUS deployStatus,
+        reqFeature.REQUIREMENT_FEATURE_PRIORITY requirementFeaturePriority,
+        reqFeature.TEMPORARY_STATUS temporaryStatus,
+        reqFeature.LAST_UPDATE_DATE lastModified,
+        reqFeature.CHECK_STATUS checkStatus,
+        window.WINDOW_NAME windowName,
+        window.WINDOW_DATE windowDate,
+        systemInfo.SYSTEM_NAME systemName,
+        systemInfo.CODE_REVIEW_STATUS systemCodeReviewStatus,
+        reqInfo.REQUIREMENT_CODE requirementCode,
+        dept.DEPT_NAME deptName,
+        systemInfo.development_mode developmentMode,
+        userinfo.USER_NAME manageUserName,
+        userinfo2.USER_NAME executeUserName,
+        sprint.SPRINT_NAME sprintName,
+        reqFeature.ASSET_SYSTEM_TREE_ID assetSystemTreeId,
+        reqFeature.REPAIR_SYSTEM_VERSION_ID repairSystemVersionId,
+        reqFeature.FEATURE_OVERVIEW featureOverview,
+        tast.SYSTEM_TREE_NAME systemTreeName,
+        reqFeature.REQUIREMENT_FEATURE_SOURCE requirementFeatureSourceName,
+        reqFeature.TASK_ID taskId,
+        reqFeature.QUESTION_NUMBER questionNumber,
+        reqFeature.REQUIREMENT_FEATURE_PRIORITY requirementFeaturePriorityName,
+        reqFeature.EXECUTE_PROJECT_GROUP_ID executeProjectGroupId,
+        reqFeature.CREATE_TYPE createTypeName,
+        reqFeature.DEVELOPMENT_DEPT_ID developmentDeptId,
+        tsv.VERSION version,
+        tsss.SCM_BRANCH scmBranch,
+        tsvre.VERSION repairVersion,
+        tcw.WINDOW_NAME,
+        reqFeature.STORY_POINT storyPoint,
+        JSON_UNQUOTE (reqFeature.FIELD_TEMPLATE) AS fieldTemplate,
+        pro.ID projectId,
+        pro.PROJECT_NAME projectName
+        FROM
+        tbl_requirement_feature reqFeature
+        LEFT JOIN tbl_system_info systemInfo ON reqFeature.SYSTEM_ID = systemInfo.ID
+        AND systemInfo. STATUS = 1
+        LEFT JOIN tbl_requirement_info reqInfo ON reqFeature.REQUIREMENT_ID = reqInfo.ID
+        AND reqInfo. STATUS = 1
+        LEFT JOIN tbl_dept_info dept ON dept.ID = reqFeature.DEPT_ID
+        AND dept. STATUS = 1
+        LEFT JOIN tbl_user_info userinfo ON userinfo.ID = reqFeature.MANAGE_USER_ID
+        AND userinfo. STATUS = 1
+        LEFT JOIN tbl_user_info userinfo2 ON userinfo2.ID = reqFeature.EXECUTE_USER_ID
+        AND userinfo2. STATUS = 1
+        LEFT JOIN tbl_commissioning_window window ON window.ID = reqFeature.COMMISSIONING_WINDOW_ID
+        AND window. STATUS = 1
+        LEFT JOIN tbl_sprint_info sprint ON sprint.ID = reqFeature.SPRINT_ID
+        AND sprint. STATUS = 1
+        LEFT JOIN tbl_asset_system_tree tast ON tast.id = reqFeature.asset_system_tree_id
+        LEFT JOIN tbl_system_version tsv ON tsv.id = reqFeature.SYSTEM_VERSION_ID
+        LEFT JOIN tbl_system_scm_submit tsss ON tsss.id = reqFeature.SYSTEM_SCM_BRANCH
+        LEFT JOIN tbl_system_version tsvre ON tsvre.id = reqFeature.repair_SYSTEM_VERSION_ID
+        LEFT JOIN tbl_commissioning_window tcw ON tcw.id = reqFeature.COMMISSIONING_WINDOW_ID
+        LEFT JOIN tbl_project_info pro ON sprint.PROJECT_ID = pro.ID
+        AND pro. STATUS = 1
+        <where>
+
+            <if test="manageUserName!=null and manageUserName!=''">
+                and userinfo.USER_NAME =#{manageUserName}
+            </if>
+            <if test="requirementName!=null and requirementName!=''">
+                and reqInfo.requirement_Name
+                like concat("%",#{requirementName},"%")
+
+            </if>
+            <if test="executeUserName!=null and executeUserName!=''">
+                and userinfo2.USER_NAME =#{executeUserName}
+            </if>
+
+            <if test="requirementCode!=null and requirementCode!=''">
+                and reqInfo.requirement_Code=#{requirementCode}
+            </if>
+
+            <if test="featureCode!=null and featureCode!=''">
+                and reqFeature.FEATURE_code like concat("%",LOWER(#{featureCode}),"%")
+            </if>
+            <if test="featureName!=null and featureName!=''">
+                and reqFeature.FEATURE_NAME like concat("%",#{featureName},"%")
+            </if>
+            <if test="manageUserIds!=null and manageUserIds!=''">
+                and reqFeature.MANAGE_USER_ID in
+                <foreach collection="manageUserIds.split(',')" index="index" item="item" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="requirementFeatureStatus!=null and requirementFeatureStatus!=''">
+                and reqFeature.REQUIREMENT_FEATURE_STATUS in
+                <foreach collection="requirementFeatureStatus.split(',')" item="item" index="index" open="("
+                         separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="commissioningWindowIds!=null and commissioningWindowIds!=''">
+                and reqFeature.COMMISSIONING_WINDOW_ID in
+                <foreach collection="commissioningWindowIds.split(',')" index="index" item="item" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="requirementIds!=null and requirementIds!=''">
+                and reqFeature.REQUIREMENT_ID in
+                <foreach collection="requirementIds.split(',')" index="index" item="item" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="systemIds!=null and systemIds!=''">
+                and reqFeature.SYSTEM_ID in
+                <foreach collection="systemIds.split(',')" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="reqFeaturePrioritys!=null and reqFeaturePrioritys!=''">
+                and reqFeature.REQUIREMENT_FEATURE_PRIORITY in
+                <foreach collection="reqFeaturePrioritys.split(',')" index="index" item="item" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="createType!=null and createType!=''">
+                and reqFeature.CREATE_TYPE = #{createType}
+            </if>
+            <if test="executeUserIds!=null and executeUserIds!=''">
+                and reqFeature.EXECUTE_USER_ID in
+                <foreach collection="executeUserIds.split(',')" index="index" item="item" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="sprints!=null and sprints!=''">
+                and reqFeature.SPRINT_ID in
+                <foreach collection="sprints.split(',')" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="createStartDate!=null and createEndDate!=null">
+                and reqFeature.CREATE_DATE BETWEEN #{createStartDate} AND #{createEndDate}
+            </if>
+            <if test="systemVersionName != null and systemVersionName !=''">
+                and tsv.VERSION like concat("%",#{systemVersionName},"%")
+            </if>
+
+            <!--  <if test="systemName!=null and systemName!=''">
+               and systemInfo.SYSTEM_NAME like concat("%",LOWER(#{systemName}),"%")
+           </if>
+          <if test="requirementCode!=null and requirementCode!=''">
+               and reqInfo.REQUIREMENT_CODE like concat("%",LOWER(#{requirementCode}),"%")
+           </if>
+           <if test="deptName!=null and deptName!=''">
+               and dept.DEPT_NAME like concat("%",LOWER(#{deptName}),"%")
+           </if>
+           <if test="manageUserName!=null and manageUserName!=''">
+               and userinfo.USER_NAME like concat("%",LOWER(#{manageUserName}),"%")
+           </if>
+           <if test="executeUserName!=null and executeUserName!=''">
+               and userinfo2.USER_NAME like concat("%",LOWER(#{executeUserName}),"%")
+           </if>
+           <if test="windowName!=null and windowName!=''">
+               and window.WINDOW_NAME like concat("%",LOWER(#{windowName}),"%")
+           </if> -->
+
+            and reqFeature.STATUS = 1
+            <!--  and datadic.TERM_CODE = 'TBL_REQUIREMENT_FEATURE_REQUIREMENT_FEATURE_STATUS' -->
+
+        </where>
+        <!-- order by reqFeature.ID DESC -->
+
+        <include refid="sort_List"></include>
+    </select>
+
+    <sql id="sort_List">
+        <if test="sidx != '' and sord != '' and sidx == 'id' and sord == 'desc'">
+            order by reqFeature.ID desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'id' and sord == 'asc'">
+            order by reqFeature.ID asc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'featureCode' and sord == 'desc'">
+            order by reqFeature.FEATURE_CODE desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'featureCode' and sord == 'asc'">
+            order by reqFeature.FEATURE_CODE asc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'featureName' and sord == 'desc'">
+            order by reqFeature.FEATURE_NAME desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'featureName' and sord == 'asc'">
+            order by reqFeature.FEATURE_NAME asc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'requirementFeatureStatus' and sord == 'desc'">
+            order by reqFeature.REQUIREMENT_FEATURE_STATUS desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'requirementFeatureStatus' and sord == 'asc'">
+            order by reqFeature.REQUIREMENT_FEATURE_STATUS asc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'systemName' and sord == 'desc'">
+            order by systemInfo.SYSTEM_NAME desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'systemName' and sord == 'asc'">
+            order by systemInfo.SYSTEM_NAME asc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'requirementCode' and sord == 'desc'">
+            order by reqInfo.REQUIREMENT_CODE desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'requirementCode' and sord == 'asc'">
+            order by reqInfo.REQUIREMENT_CODE asc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'manageUserName' and sord == 'desc'">
+            order by userinfo.USER_NAME desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'manageUserName' and sord == 'asc'">
+            order by userinfo.USER_NAME asc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'executeUserName' and sord == 'desc'">
+            order by userinfo2.USER_NAME desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'executeUserName' and sord == 'asc'">
+            order by userinfo2.USER_NAME asc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'windowName' and sord == 'desc'">
+            order by window.WINDOW_NAME desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'windowName' and sord == 'asc'">
+            order by window.WINDOW_NAME asc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'sprintName' and sord == 'desc'">
+            order by sprint.SPRINT_NAME desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'sprintName' and sord == 'asc'">
+            order by sprint.SPRINT_NAME asc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'requirementFeaturePriority' and sord == 'desc'">
+            order by reqFeature.REQUIREMENT_FEATURE_PRIORITY desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'requirementFeaturePriority' and sord == 'asc'">
+            order by reqFeature.REQUIREMENT_FEATURE_PRIORITY asc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'deployStatus' and sord == 'desc'">
+            order by reqFeature.DEPLOY_STATUS desc
+        </if>
+        <if test="sidx != '' and sord != '' and sidx == 'deployStatus' and sord == 'asc'">
+            order by reqFeature.DEPLOY_STATUS asc
+        </if>
+    </sql>
+
+<!-- 查询开发任务条数 -->
+    <select id="getAllReqFeatureCount" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM (SELECT DISTINCT reqFeature.ID id
+        FROM
+        <choose>
+            <when test="uid!=null and uid!=1 ">
+                (select reqFeature2.* from
+                tbl_requirement_feature reqFeature2
+                LEFT JOIN tbl_system_info systemInfo ON reqFeature2.SYSTEM_ID = systemInfo.ID
+                LEFT JOIN tbl_project_system ps ON ps.SYSTEM_ID = systemInfo.ID and ps.status = 1 and ps.RELATION_TYPE =
+                1
+                LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = ps.PROJECT_ID AND pgroup.STATUS=1
+                where
+                pgroup.id IN(
+                SELECT guser2.PROJECT_GROUP_ID FROM tbl_project_group_user guser2 WHERE guser2.USER_ID=#{uid} and
+                guser2.STATUS=1
+                )
+                or reqFeature2.MANAGE_USER_ID = #{uid} or reqFeature2.EXECUTE_USER_ID =#{uid} or
+                reqFeature2.CREATE_BY=#{uid}
+                ) reqFeature
+            </when>
+            <otherwise>
+                tbl_requirement_feature reqFeature
+            </otherwise>
+        </choose>
+        LEFT JOIN tbl_system_info systemInfo ON reqFeature.SYSTEM_ID = systemInfo.ID
+        LEFT JOIN tbl_requirement_info reqInfo ON reqFeature.REQUIREMENT_ID = reqInfo.ID
+        LEFT JOIN tbl_dept_info dept ON dept.ID = reqFeature.DEPT_ID
+        LEFT JOIN tbl_user_info userinfo ON userinfo.ID = reqFeature.MANAGE_USER_ID
+        LEFT JOIN tbl_user_info userinfo2 ON userinfo2.ID = reqFeature.EXECUTE_USER_ID
+        LEFT JOIN tbl_data_dic datadic ON datadic.VALUE_CODE = reqFeature.REQUIREMENT_FEATURE_STATUS
+        LEFT JOIN tbl_commissioning_window window ON window.ID = reqFeature.COMMISSIONING_WINDOW_ID and window.STATUS =
+        1
+        <where>
+            <if test="reqFeature.featureCode!=null and reqFeature.featureCode!=''">
+                and reqFeature.FEATURE_code like concat("%",LOWER(#{reqFeature.featureCode}),"%")
+            </if>
+            <if test="reqFeature.featureName!=null and reqFeature.featureName!=''">
+                and reqFeature.FEATURE_NAME like concat("%",#{reqFeature.featureName},"%")
+            </if>
+            <if test="reqFeature.manageUserId!=null and reqFeature.manageUserId!=''">
+                and reqFeature.MANAGE_USER_ID = #{reqFeature.manageUserId}
+            </if>
+            <if test="reqFeature.requirementFeatureStatus!=null and reqFeature.requirementFeatureStatus!=''">
+                and reqFeature.REQUIREMENT_FEATURE_STATUS = #{reqFeature.requirementFeatureStatus}
+            </if>
+            <if test="reqFeature.commissioningWindowId!=null and reqFeature.commissioningWindowId!=''">
+                and reqFeature.COMMISSIONING_WINDOW_ID = #{reqFeature.commissioningWindowId}
+            </if>
+
+            <if test="reqFeature.requirementId!=null and reqFeature.requirementId!=''">
+                and reqFeature.REQUIREMENT_ID = #{reqFeature.requirementId}
+            </if>
+            <if test="reqFeature.systemId!=null and reqFeature.systemId!=''">
+                and reqFeature.SYSTEM_ID = #{reqFeature.systemId}
+            </if>
+            <if test="reqFeature.createType!=null and reqFeature.createType!=''">
+                and reqFeature.CREATE_TYPE = #{reqFeature.createType}
+            </if>
+            and reqFeature.STATUS = 1
+        </where>
+        ) table_count
+    </select>
+    
+    <!-- 获取所有的开发任务 -->
+    <select id="getAllReqFeature" parameterType="map" resultType="cn.pioneeruniverse.dev.entity.DevTaskVo">
+        SELECT DISTINCT reqFeature.ID id, reqFeature.FEATURE_NAME featureName,reqFeature.COMMISSIONING_WINDOW_ID
+        commissioningWindowId,reqFeature.SYSTEM_ID systemId,reqFeature.REQUIREMENT_ID requirementId,
+        reqFeature.FEATURE_code featureCode,reqFeature.DEPT_ID deptId,reqFeature.EXECUTE_USER_ID
+        excuteUserId,reqFeature.MANAGE_USER_ID manageUserId,reqFeature.REQUIREMENT_FEATURE_STATUS
+        requirementFeatureStatus,reqFeature.CREATE_TYPE createType,reqFeature.REQUIREMENT_FEATURE_STATUS statusName,
+        reqFeature.HANDLE_SUGGESTION handleSuggestion,reqFeature.PLAN_START_DATE planStartDate,reqFeature.PLAN_END_DATE
+        planEndDate,
+        reqFeature.ESTIMATE_WORKLOAD estimateWorkLoad,reqFeature.ACTUAL_START_DATE
+        actualStartDate,reqFeature.ACTUAL_END_DATE actualEndDate,
+        reqFeature.ACTUAL_WORKLOAD actualWorkload,reqFeature.DEPLOY_STATUS deployStatus,
+        reqFeature.TEMPORARY_STATUS temporaryStatus,<!-- datadic.VALUE_NAME statusName, -->window.WINDOW_NAME
+        windowName,window.WINDOW_DATE windowDate,
+        systemInfo.SYSTEM_NAME systemName,reqInfo.REQUIREMENT_CODE requirementCode,dept.DEPT_NAME
+        deptName,userinfo.USER_NAME manageUserName,userinfo2.USER_NAME executeUserName
+        from
+        <choose>
+            <when test="uid!=null and uid!=1 ">
+                (select reqFeature2.* from
+                tbl_requirement_feature reqFeature2
+                LEFT JOIN tbl_system_info systemInfo ON reqFeature2.SYSTEM_ID = systemInfo.ID
+                LEFT JOIN tbl_project_system ps ON ps.SYSTEM_ID = systemInfo.ID and ps.status = 1 and ps.RELATION_TYPE =
+                1
+                LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = ps.PROJECT_ID AND pgroup.STATUS=1
+                where
+                pgroup.id IN(
+                SELECT guser2.PROJECT_GROUP_ID FROM tbl_project_group_user guser2 WHERE guser2.USER_ID=#{uid} and
+                guser2.STATUS=1
+                )
+                or reqFeature2.MANAGE_USER_ID = #{uid} or reqFeature2.EXECUTE_USER_ID =#{uid} or
+                reqFeature2.CREATE_BY=#{uid}
+                ) reqFeature
+            </when>
+            <otherwise>
+                tbl_requirement_feature reqFeature
+            </otherwise>
+        </choose>
+        LEFT JOIN tbl_system_info systemInfo ON reqFeature.SYSTEM_ID = systemInfo.ID
+        <!-- LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID =systemInfo.PROJECT_ID -->
+        LEFT JOIN tbl_requirement_info reqInfo ON reqFeature.REQUIREMENT_ID = reqInfo.ID
+        LEFT JOIN tbl_dept_info dept ON dept.ID = reqFeature.DEPT_ID
+        LEFT JOIN tbl_user_info userinfo ON userinfo.ID = reqFeature.MANAGE_USER_ID
+        LEFT JOIN tbl_user_info userinfo2 ON userinfo2.ID = reqFeature.EXECUTE_USER_ID
+        <!--   LEFT JOIN tbl_data_dic datadic ON datadic.VALUE_CODE = reqFeature.REQUIREMENT_FEATURE_STATUS -->
+        LEFT JOIN tbl_commissioning_window window ON window.ID = reqFeature.COMMISSIONING_WINDOW_ID  and window.STATUS = 1
+        <where>
+            <if test="reqFeature.featureCode!=null and reqFeature.featureCode!=''">
+                and reqFeature.FEATURE_code like concat("%",LOWER(#{reqFeature.featureCode}),"%")
+            </if>
+            <if test="reqFeature.featureName!=null and reqFeature.featureName!=''">
+                and reqFeature.FEATURE_NAME like concat("%",#{reqFeature.featureName},"%")
+            </if>
+            <if test="reqFeature.manageUserId!=null and reqFeature.manageUserId!=''">
+                and reqFeature.MANAGE_USER_ID = #{reqFeature.manageUserId}
+            </if>
+            <if test="reqFeature.requirementFeatureStatus!=null and reqFeature.requirementFeatureStatus!=''">
+                and reqFeature.REQUIREMENT_FEATURE_STATUS = #{reqFeature.requirementFeatureStatus}
+            </if>
+            <if test="reqFeature.commissioningWindowId!=null and reqFeature.commissioningWindowId!=''">
+                and reqFeature.COMMISSIONING_WINDOW_ID = #{reqFeature.commissioningWindowId}
+            </if>
+
+            <if test="reqFeature.requirementId!=null and reqFeature.requirementId!=''">
+                and reqFeature.REQUIREMENT_ID = #{reqFeature.requirementId}
+            </if>
+            <if test="reqFeature.systemId!=null and reqFeature.systemId!=''">
+                and reqFeature.SYSTEM_ID = #{reqFeature.systemId}
+            </if>
+            <if test="reqFeature.createType!=null and reqFeature.createType!=''">
+                and reqFeature.CREATE_TYPE = #{reqFeature.createType}
+            </if>
+            <if test="reqFeature.executeUserId!=null and reqFeature.executeUserId!=''">
+                and reqFeature.EXECUTE_USER_ID = #{reqFeature.executeUserId}
+            </if>
+            <!-- <if test="systemName!=null and systemName!=''">
+                and systemInfo.SYSTEM_NAME like concat("%",LOWER(#{systemName}),"%")
+            </if>
+            <if test="requirementCode!=null and requirementCode!=''">
+                and reqInfo.REQUIREMENT_CODE like concat("%",LOWER(#{requirementCode}),"%")
+            </if>
+            <if test="deptName!=null and deptName!=''">
+                and dept.DEPT_NAME like concat("%",LOWER(#{deptName}),"%")
+            </if>
+            <if test="manageUserName!=null and manageUserName!=''">
+                and userinfo.USER_NAME like concat("%",LOWER(#{manageUserName}),"%")
+            </if>
+            <if test="executeUserName!=null and executeUserName!=''">
+                and userinfo2.USER_NAME like concat("%",LOWER(#{executeUserName}),"%")
+            </if>
+            <if test="windowName!=null and windowName!=''">
+                and window.WINDOW_NAME like concat("%",LOWER(#{windowName}),"%")
+            </if> -->
+
+            and reqFeature.STATUS = 1
+        </where>
+        order by reqFeature.ID DESC
+        limit #{start},#{pageSize}
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_requirement_feature
+        where ID = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="countTaskBySystemId" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    select
+    count(*)
+    from tbl_requirement_feature
+    where SYSTEM_ID = #{systemId,jdbcType=BIGINT} and status=1
+  </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_requirement_feature
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 保存 -->
+    <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeature">
+    insert into tbl_requirement_feature (ID, FEATURE_NAME, FEATURE_OVERVIEW,
+       SYSTEM_ID, REQUIREMENT_ID,
+      COMMISSIONING_WINDOW_ID, STATUS,
+      CREATE_BY, CREATE_DATE, LAST_UPDATE_BY,
+      LAST_UPDATE_DATE)
+    values (#{id,jdbcType=BIGINT}, #{featureName,jdbcType=VARCHAR}, #{featureOverview,jdbcType=VARCHAR},
+      #{systemId,jdbcType=BIGINT}, #{requirementId,jdbcType=BIGINT},
+      #{commissioningWindowId,jdbcType=BIGINT}, #{status,jdbcType=TINYINT},
+      #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT},
+      #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeature">
+        insert into tbl_requirement_feature
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="featureName != null">
+                FEATURE_NAME,
+            </if>
+            <if test="featureOverview != null">
+                FEATURE_OVERVIEW,
+            </if>
+            <!--  <if test="projectId != null">
+               PROJECT_ID,
+             </if> -->
+            <if test="systemId != null">
+                SYSTEM_ID,
+            </if>
+            <if test="requirementId != null">
+                REQUIREMENT_ID,
+            </if>
+            <if test="commissioningWindowId != null">
+                COMMISSIONING_WINDOW_ID,
+            </if>
+            <if test="status != null">
+                STATUS,
+            </if>
+            <if test="createBy != null">
+                CREATE_BY,
+            </if>
+            <if test="createDate != null">
+                CREATE_DATE,
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY,
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="featureName != null">
+                #{featureName,jdbcType=VARCHAR},
+            </if>
+            <if test="featureOverview != null">
+                #{featureOverview,jdbcType=VARCHAR},
+            </if>
+            <!--  <if test="projectId != null">
+               #{projectId,jdbcType=BIGINT},
+             </if> -->
+            <if test="systemId != null">
+                #{systemId,jdbcType=BIGINT},
+            </if>
+            <if test="requirementId != null">
+                #{requirementId,jdbcType=BIGINT},
+            </if>
+            <if test="commissioningWindowId != null">
+                #{commissioningWindowId,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdateBy != null">
+                #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeature">
+        update tbl_requirement_feature
+        <set>
+            <if test="featureName != null">
+                FEATURE_NAME = #{featureName,jdbcType=VARCHAR},
+            </if>
+            <if test="featureOverview != null">
+                FEATURE_OVERVIEW = #{featureOverview,jdbcType=VARCHAR},
+            </if>
+            <!--  <if test="projectId != null">
+               PROJECT_ID = #{projectId,jdbcType=BIGINT},
+             </if> -->
+            <if test="systemId != null">
+                SYSTEM_ID = #{systemId,jdbcType=BIGINT},
+            </if>
+            <if test="requirementId != null">
+                REQUIREMENT_ID = #{requirementId,jdbcType=BIGINT},
+            </if>
+            <if test="commissioningWindowId != null">
+                COMMISSIONING_WINDOW_ID = #{commissioningWindowId,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                STATUS = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="createBy != null">
+                CREATE_BY = #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+
+        </set>
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+
+    <!-- 改 -->
+    <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeature">
+        update tbl_requirement_feature
+        set FEATURE_NAME = #{featureName},
+        FEATURE_OVERVIEW = #{featureOverview},
+        SYSTEM_ID = #{systemId},
+        PROJECT_ID = #{projectId},
+        EXECUTE_USER_ID =#{executeUserId},
+        DEPT_ID = #{deptId},
+        <!--QUESTION_NUMBER = #{questionNumber},-->
+        ACTUAL_START_DATE = #{actualStartDate},
+        ACTUAL_END_DATE = #{actualEndDate},
+        ACTUAL_WORKLOAD = #{actualWorkload},
+        ESTIMATE_REMAIN_WORKLOAD = #{estimateRemainWorkload},
+        MANAGE_USER_ID = #{manageUserId},
+        PLAN_START_DATE = #{planStartDate},
+        PLAN_END_DATE = #{planEndDate},
+        ESTIMATE_WORKLOAD = #{estimateWorkload},
+        REQUIREMENT_ID = #{requirementId},
+        COMMISSIONING_WINDOW_ID = #{commissioningWindowId},
+        REQUIREMENT_FEATURE_STATUS = #{requirementFeatureStatus},
+        SYSTEM_SCM_BRANCH = #{systemScmBranch},
+        SYSTEM_VERSION_ID = #{systemVersionId},
+        SPRINT_ID = #{sprintId},
+        REQUIREMENT_FEATURE_PRIORITY = #{requirementFeaturePriority},
+        STORY_POINT = #{storyPoint},
+        <!-- STATUS = #{status},
+        CREATE_BY = #{createBy},
+        CREATE_DATE = #{createDate},-->
+        LAST_UPDATE_BY = #{lastUpdateBy},
+        LAST_UPDATE_DATE = #{lastUpdateDate},
+        EXECUTE_PROJECT_GROUP_ID=#{executeProjectGroupId},
+        FIELD_TEMPLATE=#{fieldTemplate},
+        REPAIR_SYSTEM_VERSION_ID=#{repairSystemVersionId},
+        ASSET_SYSTEM_TREE_ID=#{assetSystemTreeId},
+        PROJECT_PLAN_ID = #{projectPlanId}
+        where ID = #{id}
+    </update>
+    <!--  包件管理弹窗查询 -->
+    <select id="findFrature" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeature"
+            resultMap="BaseResultMap">
+        SELECT feature.ID, FEATURE_NAME, FEATURE_code ,feature.REQUIREMENT_FEATURE_STATUS
+        from tbl_requirement_feature feature
+        LEFT JOIN tbl_system_info system
+        on system.id=feature.SYSTEM_ID
+        <where>
+            system.`STATUS`=1 and feature.REQUIREMENT_FEATURE_STATUS=03
+            AND feature.SYSTEM_ID = #{systemId}
+            AND NOT EXISTS(SELECT 1 FROM tbl_artifact_requirement_feature artifact
+            WHERE artifact.ARTIFACT_ID = #{requirementId} AND artifact.STATUS = 1
+            AND artifact.REQUIREMENT_FEATURE_ID = feature.ID)
+            <if test="featureCode != null and featureCode != ''">
+                AND feature.FEATURE_CODE LIKE CONCAT('%',#{featureCode},'%')
+            </if>
+            <if test="featureName != null and featureName != ''">
+                AND feature.FEATURE_NAME LIKE CONCAT('%',#{featureName},'%')
+            </if>
+
+            <if test="sprintId!= null and sprintId!= ''">
+                AND feature.SPRINT_ID =#{sprintId}
+            </if>
+
+            <if test="commissioningWindowId != null and commissioningWindowId != ''">
+                AND feature.COMMISSIONING_WINDOW_ID =#{commissioningWindowId}
+            </if>
+
+
+        </where>
+    </select>
+
+
+    <!--  查询投产窗口关联开发任务状态 -->
+    <select id="findFratureStatusByWindow" resultMap="BaseResultMap">
+  	SELECT trf.REQUIREMENT_FEATURE_STATUS,COUNT(trf.REQUIREMENT_FEATURE_STATUS) countStatus
+	FROM tbl_requirement_feature trf
+	WHERE trf.STATUS=1 AND trf.COMMISSIONING_WINDOW_ID=#{windowId} AND trf.SYSTEM_ID=#{systemId}
+	GROUP BY trf.REQUIREMENT_FEATURE_STATUS
+	union all
+	select "10",count(*)
+	FROM tbl_requirement_feature trf
+    WHERE trf.STATUS=1 AND trf.COMMISSIONING_WINDOW_ID=#{windowId} AND trf.SYSTEM_ID=#{systemId}
+    AND  trf.REQUIREMENT_FEATURE_STATUS <![CDATA[ <> ]]> '00'
+  </select>
+
+    <!--  查询系统关联冲刺关联开发任务状态 -->
+    <select id="findFratureStatusBySystemId" resultMap="BaseResultMap">
+    SELECT trf.REQUIREMENT_FEATURE_STATUS,COUNT(trf.REQUIREMENT_FEATURE_STATUS) countStatus
+    FROM tbl_requirement_feature trf
+    WHERE trf.STATUS=1 AND trf.SPRINT_ID IN(
+      SELECT ID FROM tbl_sprint_info tpi WHERE tpi.SYSTEM_ID =#{systemId} AND tpi.`STATUS`=1
+      AND tpi.valid_STATUS = 1 AND curdate() &lt;= SPRINT_END_DATE AND curdate() &gt;= SPRINT_START_DATE
+    )
+    GROUP BY trf.REQUIREMENT_FEATURE_STATUS
+    union all
+    select "10",count(*)
+    FROM tbl_requirement_feature trf
+    WHERE trf.SPRINT_ID IN(
+      SELECT ID FROM tbl_sprint_info tpi WHERE tpi.SYSTEM_ID =#{systemId} AND tpi.`STATUS`=1
+      AND curdate() &lt;= SPRINT_END_DATE AND curdate() &gt;= SPRINT_START_DATE
+    ) AND trf.STATUS=1 AND trf.REQUIREMENT_FEATURE_STATUS <![CDATA[ <> ]]> '00'
+  </select>
+
+
+    <!-- 根据开发管理岗查询开发任务 -->
+    <select id="findFeatureByManageUserId" parameterType="java.lang.Long"
+            resultType="cn.pioneeruniverse.dev.entity.DevTaskVo">
+  	SELECT trf.ID id,trf.FEATURE_code featureCode,trf.FEATURE_NAME featureName,trf.REQUIREMENT_FEATURE_STATUS requirementFeatureStatus,
+		(select tsi.SYSTEM_NAME from tbl_system_info tsi where tsi.ID = SYSTEM_ID AND tsi.STATUS=1) systemName,
+		(select tdd.VALUE_NAME from tbl_data_dic tdd where tdd.VALUE_CODE = REQUIREMENT_FEATURE_STATUS
+			AND tdd.TERM_CODE='TBL_REQUIREMENT_FEATURE_REQUIREMENT_FEATURE_STATUS' AND tdd.STATUS=1) statusName,
+		(select tcw.WINDOW_NAME from tbl_commissioning_window tcw where tcw.ID = COMMISSIONING_WINDOW_ID AND tcw.STATUS=1) windowName
+	FROM tbl_requirement_feature trf
+	WHERE trf.STATUS=1 AND trf.MANAGE_USER_ID=#{userId} AND (trf.REQUIREMENT_FEATURE_STATUS ="01" OR REQUIREMENT_FEATURE_STATUS ="02")
+	ORDER BY trf.ID DESC
+	LIMIT 0,5
+  </select>
+    <!-- 根据执行人查询开发任务 -->
+    <select id="findFeatureByExcuteUserId" parameterType="java.lang.Long"
+            resultType="cn.pioneeruniverse.dev.entity.DevTaskVo">
+  	SELECT trf.ID id,trf.FEATURE_code featureCode,trf.FEATURE_NAME featureName,trf.REQUIREMENT_FEATURE_STATUS requirementFeatureStatus,
+		(select tsi.SYSTEM_NAME from tbl_system_info tsi where tsi.ID = SYSTEM_ID AND tsi.STATUS=1) systemName,
+		(select tdd.VALUE_NAME from tbl_data_dic tdd where tdd.VALUE_CODE = REQUIREMENT_FEATURE_STATUS
+			AND tdd.TERM_CODE='TBL_REQUIREMENT_FEATURE_REQUIREMENT_FEATURE_STATUS' AND tdd.STATUS=1) statusName,
+		(select tcw.WINDOW_NAME from tbl_commissioning_window tcw where tcw.ID = COMMISSIONING_WINDOW_ID AND tcw.STATUS=1) windowName
+	FROM tbl_requirement_feature trf
+	WHERE trf.STATUS=1 AND trf.EXECUTE_USER_ID=#{userId} AND (trf.REQUIREMENT_FEATURE_STATUS ="01" OR REQUIREMENT_FEATURE_STATUS ="02")
+	ORDER BY trf.ID DESC
+	LIMIT 0,5
+  </select>
+
+    <!-- 根据开发工任务编号 查询开发任务所有信息-->
+    <select id="getRequirementFeatureByDevTaskCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+        trf.*,
+        tsv.VERSION,
+        tcw.WINDOW_NAME
+        FROM TBL_DEV_TASK tdt
+        LEFT JOIN TBL_REQUIREMENT_FEATURE trf ON trf.ID = tdt.REQUIREMENT_FEATURE_ID
+        LEFT JOIN tbl_system_version tsv ON tsv.ID = trf.SYSTEM_VERSION_ID AND tsv.STATUS = 1
+        LEFT JOIN tbl_commissioning_window tcw ON tcw.ID = trf.COMMISSIONING_WINDOW_ID AND tcw.STATUS = 1
+        WHERE
+        tdt.DEV_TASK_CODE = #{devTaskCode} AND tdt.STATUS = 1 AND trf.STATUS = 1
+        LIMIT 1
+    </select>
+
+    <!-- 根据 开发工作任务 查询 开发任务id -->
+    <select id="getRequirementFeatureIdByDevTaskId" parameterType="java.lang.Long" resultType="java.lang.Long">
+        SELECT
+        trf.ID
+        FROM TBL_DEV_TASK tdt
+        LEFT JOIN TBL_REQUIREMENT_FEATURE trf ON trf.ID = tdt.REQUIREMENT_FEATURE_ID
+        WHERE
+        tdt.ID = #{devTaskId} AND tdt.STATUS = 1 AND trf.STATUS = 1
+        LIMIT 1
+    </select>
+
+<!--查询所有的开发任务-->
+    <select id="getAllFeature" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeature" resultType="map">
+        SELECT trf.ID id,FEATURE_code,FEATURE_NAME,REQUIREMENT_FEATURE_STATUS
+        FROM TBL_REQUIREMENT_FEATURE trf
+        <where>
+            <if test="feature.featureCode != null and feature.featureCode != ''">
+                AND trf.FEATURE_code LIKE CONCAT('%',#{feature.featureCode},'%')
+            </if>
+            <if test="feature.featureName != null and feature.featureName != ''">
+                AND trf.FEATURE_NAME LIKE CONCAT('%',#{feature.featureName},'%')
+            </if>
+            <if test="feature.requirementFeatureStatus != null and feature.requirementFeatureStatus != ''">
+                AND trf.REQUIREMENT_FEATURE_STATUS= #{feature.requirementFeatureStatus}
+            </if>
+            and STATUS=1
+        </where>
+        limit #{start},#{pageSize}
+    </select>
+
+    <!--根据需求编号，创建方式：2 同步，来源：1 业务需求 ,查询当前的开发任务  刘珊-->
+    <select id="getFeatureByREQCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        tbl_requirement_feature
+        WHERE
+        `STATUS` = 1
+        AND CREATE_TYPE = 2
+        AND REQUIREMENT_FEATURE_SOURCE = 1
+        AND REQUIREMENT_ID = (
+        SELECT
+        ID
+        FROM
+        tbl_requirement_info
+        WHERE
+        REQUIREMENT_CODE = #{requirementCode}
+        )
+        ORDER BY ID DESC
+    </select>
+
+    <!-- 工作任务在用 勿删  查询开发任务 实施中和待实施-->
+    <select id="getAllRequirementFeature" parameterType="map" resultType="map">
+        SELECT DISTINCT reqFeature.id
+        ID,reqFeature.ESTIMATE_WORKLOAD,reqFeature.FEATURE_CODE,reqFeature.FEATURE_NAME,reqFeature.COMMISSIONING_WINDOW_ID,reqFeature.REQUIREMENT_FEATURE_STATUS,reqFeature.PLAN_START_DATE,reqFeature.PLAN_END_DATE,
+        reqFeature.SYSTEM_ID systemId,systemInfo.development_mode developmentMode, reqFeature.SPRINT_ID
+        sprintId,sprintInfo.SPRINT_NAME sprintName
+        FROM tbl_requirement_feature reqFeature
+        LEFT JOIN tbl_system_info systemInfo ON reqFeature.SYSTEM_ID = systemInfo.ID
+        LEFT JOIN tbl_sprint_info sprintInfo ON reqFeature.SPRINT_ID = sprintInfo.ID
+        <where>
+            reqFeature.STATUS=1 and reqFeature.REQUIREMENT_FEATURE_STATUS in('02','01')
+            <if test=" tblDevTask.systemId != null">
+                AND reqFeature.SYSTEM_ID = #{tblDevTask.systemId}
+            </if>
+            <if test=" tblDevTask.requirementId!= null">
+                AND reqFeature.REQUIREMENT_ID = #{tblDevTask.requirementId}
+            </if>
+            <if test=" tblDevTask.featureCode!= null and tblDevTask.featureCode != ''">
+                AND reqFeature.FEATURE_CODE LIKE CONCAT('%',#{tblDevTask.featureCode},'%')
+            </if>
+            <if test=" tblDevTask.featureName!= null and tblDevTask.featureName!= ''">
+                AND reqFeature.FEATURE_NAME LIKE CONCAT('%',#{tblDevTask.featureName},'%')
+            </if>
+            <if test="tblDevTask.FeatureStatus != null and (tblDevTask.FeatureStatus).size()>0">
+                AND reqFeature.REQUIREMENT_FEATURE_STATUS in
+                <foreach item="item" index="index" collection="tblDevTask.FeatureStatus" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by reqFeature.id DESC
+        <if test="start != null and pageSize != null">
+            limit #{start},#{pageSize}
+        </if>
+    </select>
+
+    <!--根据条件查询工作任务-->
+    <select id="getAllRequirementFeatureCondition" parameterType="map" resultType="map">
+        SELECT DISTINCT reqFeature.id ID,reqFeature.ESTIMATE_WORKLOAD,reqFeature.FEATURE_CODE,reqFeature.FEATURE_NAME,reqFeature.COMMISSIONING_WINDOW_ID,reqFeature.REQUIREMENT_FEATURE_STATUS,reqFeature.PLAN_START_DATE,reqFeature.PLAN_END_DATE,
+        reqFeature.SYSTEM_ID systemId,systemInfo.development_mode developmentMode, reqFeature.SPRINT_ID sprintId,sprintInfo.SPRINT_NAME sprintName
+        FROM
+        (select reqFeature2.* from
+        tbl_requirement_feature reqFeature2
+        LEFT JOIN tbl_system_info systemInfo ON reqFeature2.SYSTEM_ID = systemInfo.ID
+        LEFT JOIN tbl_project_system ps ON ps.SYSTEM_ID = systemInfo.ID and ps.status = 1 and ps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = ps.PROJECT_ID AND pgroup.STATUS=1
+        where
+        pgroup.id IN(
+        SELECT guser2.PROJECT_GROUP_ID FROM tbl_project_group_user guser2 WHERE guser2.USER_ID=#{userId} and
+        guser2.STATUS=1
+        )
+        or reqFeature2.MANAGE_USER_ID = #{userId} or reqFeature2.EXECUTE_USER_ID =#{userId} or
+        reqFeature2.CREATE_BY=#{userId}
+        ) reqFeature
+
+        LEFT JOIN tbl_system_info systemInfo ON reqFeature.SYSTEM_ID = systemInfo.ID
+        LEFT JOIN tbl_sprint_info sprintInfo ON reqFeature.SPRINT_ID = sprintInfo.ID
+        <where>
+            reqFeature.STATUS=1 and reqFeature.REQUIREMENT_FEATURE_STATUS in('02','01')
+            <if test=" tblDevTask.systemId != null">
+                AND reqFeature.SYSTEM_ID = #{tblDevTask.systemId}
+            </if>
+            <if test=" tblDevTask.requirementId!= null">
+                AND reqFeature.REQUIREMENT_ID = #{tblDevTask.requirementId}
+            </if>
+            <if test=" tblDevTask.featureCode!= null and tblDevTask.featureCode != ''">
+                AND reqFeature.FEATURE_CODE LIKE CONCAT('%',#{tblDevTask.featureCode},'%')
+            </if>
+            <if test=" tblDevTask.featureName!= null and tblDevTask.featureName!= ''">
+                AND reqFeature.FEATURE_NAME LIKE CONCAT('%',#{tblDevTask.featureName},'%')
+            </if>
+
+            <if test="tblDevTask.FeatureStatus != null and (tblDevTask.FeatureStatus).size()>0">
+                AND reqFeature.REQUIREMENT_FEATURE_STATUS in
+                <foreach item="item" index="index" collection="tblDevTask.FeatureStatus" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by reqFeature.id DESC
+        <if test="start != null and pageSize != null">
+            limit #{start},#{pageSize}
+        </if>
+    </select>
+
+    <!--shan - 根据code查询信息-->
+    <select id="getFeatureByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        tbl_requirement_feature
+        where FEATURE_code = #{code}
+        AND `STATUS` = 1
+    </select>
+
+
+    <!--shan 获取开发任务名-->
+    <select id="getFeatureName" parameterType="java.lang.Long" resultType="java.lang.String">
+      SELECT
+        FEATURE_NAME
+	  FROM
+		tbl_requirement_feature
+	  WHERE
+		ID = #{requirementFeatureId}
+	  AND `STATUS` = 1
+    </select>
+
+    <!--shan-->
+    <select id="getFeatureById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        tbl_requirement_feature
+        where ID = #{requirementFeatureId}
+        AND `STATUS` = 1
+    </select>
+    
+    <!-- 查询部署时关联的开发任务 -->
+    <select id="getPrdDeplayReqFesture" parameterType="map" resultType="cn.pioneeruniverse.dev.entity.DevTaskVo">
+        SELECT DISTINCT reqFeature.ID id, reqFeature.FEATURE_NAME featureName,reqFeature.COMMISSIONING_WINDOW_ID
+        commissioningWindowId,reqFeature.SYSTEM_ID systemId,reqFeature.REQUIREMENT_ID requirementId,
+        reqFeature.FEATURE_code featureCode,reqFeature.DEPT_ID deptId,reqFeature.EXECUTE_USER_ID
+        excuteUserId,reqFeature.MANAGE_USER_ID manageUserId,reqFeature.REQUIREMENT_FEATURE_STATUS
+        requirementFeatureStatus,reqFeature.REQUIREMENT_FEATURE_STATUS statusName,reqFeature.CREATE_TYPE createType,
+        reqFeature.TEMPORARY_STATUS temporaryStatus,reqFeature.DEPLOY_STATUS deployStatus,
+        window.WINDOW_NAME windowName,systemVersion.VERSION systemVersionName
+        <!--  reqInfo.REQUIREMENT_CODE requirementCode,
+         userinfo.USER_NAME manageUserName,userinfo2.USER_NAME executeUserName -->
+        FROM tbl_requirement_feature reqFeature
+        <!--  LEFT JOIN tbl_requirement_info reqInfo ON reqFeature.REQUIREMENT_ID = reqInfo.ID
+       LEFT JOIN tbl_user_info userinfo ON userinfo.ID = reqFeature.MANAGE_USER_ID
+        LEFT JOIN tbl_user_info userinfo2 ON userinfo2.ID = reqFeature.EXECUTE_USER_ID -->
+        LEFT JOIN tbl_system_version systemVersion ON systemVersion.ID = reqFeature.SYSTEM_VERSION_ID
+        LEFT JOIN tbl_commissioning_window window ON window.ID = reqFeature.COMMISSIONING_WINDOW_ID  and window.STATUS = 1
+        <where>
+            <if test="feature.systemId!=null and feature.systemId!=''">
+                and reqFeature.SYSTEM_ID = #{feature.systemId}
+            </if>
+            <if test="feature.commissioningWindowId!=null and feature.commissioningWindowId!=''">
+                and reqFeature.COMMISSIONING_WINDOW_ID = #{feature.commissioningWindowId}
+            </if>
+
+            <if test="feature.sprintId!=null and feature.sprintId!=''">
+                and reqFeature.SPRINT_ID = #{feature.sprintId}
+            </if>
+
+
+            <if test="statusArr!=null and statusArr!=''">
+                and reqFeature.REQUIREMENT_FEATURE_STATUS in
+                <foreach collection="statusArr" item="status" index="index" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+            </if>
+            and reqFeature.STATUS = 1
+        </where>
+        order by reqFeature.ID DESC
+        limit #{start},#{pageSize}
+    </select>
+
+    <!-- 查询制品关联的开发任务 -->
+    <select id="getReqFeaByartId" parameterType="map" resultType="cn.pioneeruniverse.dev.entity.DevTaskVo">
+        SELECT DISTINCT reqFeature.ID id, reqFeature.FEATURE_NAME featureName,reqFeature.COMMISSIONING_WINDOW_ID
+        commissioningWindowId,reqFeature.SYSTEM_ID systemId,reqFeature.REQUIREMENT_ID requirementId,
+        reqFeature.FEATURE_code featureCode,reqFeature.DEPT_ID deptId,reqFeature.EXECUTE_USER_ID
+        excuteUserId,reqFeature.MANAGE_USER_ID manageUserId,reqFeature.REQUIREMENT_FEATURE_STATUS
+        requirementFeatureStatus,reqFeature.REQUIREMENT_FEATURE_STATUS statusName,reqFeature.CREATE_TYPE createType,
+        reqFeature.TEMPORARY_STATUS temporaryStatus,reqFeature.DEPLOY_STATUS deployStatus,
+        window.WINDOW_NAME windowName,systemVersion.VERSION systemVersionName
+        <!--  reqInfo.REQUIREMENT_CODE requirementCode,
+         userinfo.USER_NAME manageUserName,userinfo2.USER_NAME executeUserName -->
+        FROM tbl_requirement_feature reqFeature
+        <!--  LEFT JOIN tbl_requirement_info reqInfo ON reqFeature.REQUIREMENT_ID = reqInfo.ID
+       LEFT JOIN tbl_user_info userinfo ON userinfo.ID = reqFeature.MANAGE_USER_ID
+        LEFT JOIN tbl_user_info userinfo2 ON userinfo2.ID = reqFeature.EXECUTE_USER_ID -->
+        LEFT JOIN tbl_system_version systemVersion ON systemVersion.ID = reqFeature.SYSTEM_VERSION_ID
+        LEFT JOIN tbl_commissioning_window window ON window.ID = reqFeature.COMMISSIONING_WINDOW_ID  and window.STATUS = 1
+        <where>
+
+            and reqFeature.STATUS = 1 and reqFeature.id in (
+
+
+            select trf.id
+            from tbl_requirement_feature trf where trf.id in (
+            select
+            tarf.REQUIREMENT_FEATURE_ID id from tbl_artifact_requirement_feature tarf where tarf.status=1
+            and tarf.ARTIFACT_ID in
+            <if test="artIds.size() > 0">
+                <foreach item="artId" index="index" collection="artIds" open="(" separator="," close=")">
+                    #{artId}
+                </foreach>
+            </if>
+            )
+
+            )
+        </where>
+        order by reqFeature.ID DESC
+
+    </select>
+
+<!-- 获取实施完成的开发任务 -->
+    <select id="findFestureByWindowDate" resultMap="BaseResultMap">
+        SELECT trf.ID,trf.FEATURE_code FROM tbl_requirement_feature trf
+        LEFT JOIN tbl_commissioning_window tcw ON trf.COMMISSIONING_WINDOW_ID=tcw.ID AND tcw.STATUS=1
+        WHERE tcw.WINDOW_DATE=#{windowDate} AND trf.SYSTEM_ID =#{systemId}
+        AND trf.REQUIREMENT_FEATURE_STATUS='03' AND trf.`STATUS`=1
+ </select>
+
+<!-- 更新开发任务的投产窗口 -->
+    <update id="synReqFeaturewindow" parameterType="map">
+  	update tbl_requirement_feature
+  	set COMMISSIONING_WINDOW_ID = #{commissioningWindowId}
+  	where REQUIREMENT_ID = #{requirementId} and SYSTEM_ID =#{systemId} and CREATE_TYPE = 2,
+  	LAST_UPDATE_DATE= CURRENT_TIMESTAMP
+  </update>
+
+<!-- 更新开发任务的所属部门 -->
+    <update id="synReqFeatureDept" parameterType="map">
+  	update tbl_requirement_feature
+  	set DEPT_ID = #{deptId},LAST_UPDATE_DATE= CURRENT_TIMESTAMP
+  	where REQUIREMENT_ID = #{requirementId} and SYSTEM_ID =#{systemId} and CREATE_TYPE = 2
+  </update>
+
+<!-- 通过系统和需求获取开发工作任务 -->
+    <select id="getDevTaskBySystemAndRequirement" parameterType="map" resultType="map">
+  	select feature.ID id, feature.FEATURE_CODE featureCode, feature.FEATURE_NAME featureName, feature.REQUIREMENT_FEATURE_STATUS requirementFeatureStatus,
+  			user.USER_NAME userName
+  		from tbl_requirement_feature feature
+  		left join tbl_user_info user on feature.MANAGE_USER_ID = user.ID and user.STATUS = 1
+  		where feature.SYSTEM_ID = #{systemId} and feature.REQUIREMENT_ID = #{requirementId} and feature.STATUS = 1
+  </select>
+
+<!-- 获取需求 -->
+    <select id="getRequirementByCode" parameterType="map" resultType="map">
+        SELECT requirement.id,REQUIREMENT_NAME,REQUIREMENT_CODE,REQUIREMENT_TYPE from tbl_requirement_info requirement where status=1
+
+                and REQUIREMENT_CODE= #{requirementCode,jdbcType=VARCHAR}
+
+    </select>
+
+    <select id="getDeptByName" parameterType="map" resultType="map">
+        SELECT tdi.id from tbl_dept_info tdi where status=1
+
+                and DEPT_NAME= #{deptName,jdbcType=VARCHAR}
+
+    </select>
+
+<!-- 获取开发任务自定义扩展字段 -->
+    <select id="getFeatureFieldTemplateById" resultType="String">
+		SELECT JSON_UNQUOTE(JSON_EXTRACT(FIELD_TEMPLATE,REPLACE(
+		JSON_UNQUOTE(JSON_SEARCH(FIELD_TEMPLATE ,'one',#{fieldName})),'fieldName','valueName')))
+		FROM tbl_requirement_feature feature
+    	WHERE feature.ID=#{id} and  feature.STATUS=1
+    </select>
+
+    <select id="getTreeName" parameterType="map" resultType="map">
+        SELECT tast.id,tast.SYSTEM_TREE_NAME as systemTreeName from tbl_asset_system_tree tast where tast.status=1
+
+                and tast.ID=#{id}
+
+    </select>
+    <select id="selectModelName" resultType="map">
+        SELECT tast.id,tast.SYSTEM_TREE_NAME as systemTreeName,tast.PARENT_ID parentId 
+        from tbl_asset_system_tree tast where tast.status=1
+                and tast.ID=#{systemTreeId}
+    </select>
+    <select id="findWindowByReqId" parameterType="java.lang.Long" resultType="long">
+    	select COMMISSIONING_WINDOW_ID from tbl_requirement_feature where REQUIREMENT_ID = #{requirementId} and STATUS = 1
+    </select>
+
+
+    <update id="updateCheckStatus" parameterType="Long">
+    update tbl_requirement_feature
+    set CHECK_STATUS = 3,
+    LAST_UPDATE_DATE= CURRENT_TIMESTAMP
+    where ID = #{id}
+</update>
+    <insert id="insertTestReqFeature" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeature">
+    insert into tbl_requirement_feature ( FEATURE_code,FEATURE_NAME, FEATURE_OVERVIEW,
+    SYSTEM_ID,PROJECT_ID,CREATE_TYPE,QUESTION_NUMBER,
+    REQUIREMENT_FEATURE_STATUS,CREATE_BY, CREATE_DATE)
+    values (#{featureCode}, #{featureName}, #{featureOverview},
+    #{systemId},#{projectId},#{createType},#{questionNumber},
+    #{requirementFeatureStatus},#{createBy},#{createDate})
+</insert>
+
+    <select id="getFeatureBySystemAndRequirement" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM tbl_requirement_feature
+        WHERE SYSTEM_ID=#{systemId} AND REQUIREMENT_ID=#{requirementId}
+        AND `STATUS`=1
+    </select>
+</mapper>

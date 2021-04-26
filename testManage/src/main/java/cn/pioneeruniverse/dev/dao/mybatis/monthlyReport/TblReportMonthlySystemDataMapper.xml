@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.monthlyReport.TblReportMonthlySystemDataMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlySystemData">
+        <id column="ID" jdbcType="BIGINT"  property="id" />
+        <result column="YEAR_MONTH" jdbcType="VARCHAR" property="yearMonth"/>
+        <result column="SYSTEM_ID" jdbcType="BIGINT" property="systemId"/>
+        <result column="SYSTEM_NAME" jdbcType="VARCHAR" property="systemName"/>
+        <result column="SYSTEM_TYPE" jdbcType="TINYINT" property="systemType"/>
+        <result column="TASK_NUMBER" jdbcType="INTEGER" property="taskNumber"/>
+        <result column="DEFECT_NUMBER" jdbcType="INTEGER" property="defectNumber"/>
+        <result column="REPAIRED_DEFECT_NUMBER" jdbcType="INTEGER" property="repairedDefectNumber"/>
+        <result column="UNREPAIRED_DEFECT_NUMBER" jdbcType="INTEGER" property="unrepairedDefectNumber"/>
+        <result column="DESIGN_CASE_NUMBER" jdbcType="INTEGER" property="designCaseNumber"/>
+        <result column="DEFECT_PERCENT" jdbcType="DOUBLE" property="defectPercent"/>
+        <result column="TOTAL_REPAIR_ROUND" jdbcType="INTEGER" property="totalRepairRound"/>
+        <result column="AVG_REPAIR_ROUND" jdbcType="DOUBLE" property="avgRepairRound"/>
+        <result column="LASTMONTH_UNDEFECTED_NUMBER" jdbcType="INTEGER" property="lastmonthUndefectedNumber"/>
+        <result column="LASTMONTH_UNDEFECTED_BELONGER" jdbcType="VARCHAR" property="lastmonthUndefectedBelonger"/>
+        <result column="TYPE" jdbcType="TINYINT" property="type"/>
+        <result column="AUTIT_STATUS" jdbcType="TINYINT" property="auditStatus"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+        <result column="AUDIT_STATUS" jdbcType="TINYINT" property="auditStatus"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        monthlySystemData.ID id,
+        monthlySystemData.YEAR_MONTH yearMonth,
+        monthlySystemData.SYSTEM_ID systemId,
+        monthlySystemData.SYSTEM_NAME systemName,
+        monthlySystemData.SYSTEM_TYPE systemType,
+        monthlySystemData.TASK_NUMBER taskNumber,
+        monthlySystemData.DEFECT_NUMBER defectNumber,
+        monthlySystemData.REPAIRED_DEFECT_NUMBER repairedDefectNumber,
+        monthlySystemData.UNREPAIRED_DEFECT_NUMBER unrepairedDefectNumber,
+        monthlySystemData.DESIGN_CASE_NUMBER designCaseNumber,
+        ifnull(monthlySystemData.DEFECT_PERCENT,0) defectPercent,
+        monthlySystemData.TOTAL_REPAIR_ROUND totalRepairRound,
+        monthlySystemData.AVG_REPAIR_ROUND avgRepairRound,
+        ifnull(monthlySystemData.LASTMONTH_UNDEFECTED_NUMBER,0) lastmonthUndefectedNumber,
+        ifnull(monthlySystemData.LASTMONTH_UNDEFECTED_BELONGER,0) lastmonthUndefectedBelonger,
+        monthlySystemData.TYPE type,
+        monthlySystemData.AUDIT_STATUS auditStatus,
+        monthlySystemData.CREATE_BY createBy,
+        monthlySystemData.CREATE_DATE createDate,
+        monthlySystemData.LAST_UPDATE_BY lastUpdateBy,
+        monthlySystemData.LAST_UPDATE_DATE lastUpdateDate,
+        monthlySystemData.STATUS status
+  </sql>
+
+
+    <select id="findByYearMonth" resultType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlySystemData">
+        select <include refid="Base_Column_List" /> , userInfo.USER_NAME userName
+        FROM tbl_report_monthly_system_data monthlySystemData
+        LEFT  JOIN  tbl_report_monthly_config config ON monthlySystemData.SYSTEM_ID = config.SYSTEM_ID
+		LEFT JOIN tbl_user_info  userInfo ON userInfo.ID =  config.USER_ID
+        WHERE monthlySystemData.YEAR_MONTH = #{date} and monthlySystemData.TYPE = 0
+    </select>
+
+    <update id="updateByYearMothAndSystemId" parameterType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlySystemData">
+        update tbl_report_monthly_system_data monthSystemData
+        <set>
+            <if test="systemType !=null">
+                system_type = #{systemType,jdbcType=VARCHAR},
+            </if>
+            <if test="taskNumber !=null">
+                task_number = #{taskNumber,jdbcType=INTEGER},
+            </if>
+            <if test="defectNumber !=null">
+                defect_number = #{defectNumber,jdbcType=INTEGER},
+            </if>
+            <if test="repairedDefectNumber !=null">
+                repaired_defect_number = #{repairedDefectNumber,jdbcType=INTEGER},
+            </if>
+            <if test="unrepairedDefectNumber !=null">
+                unrepaired_defect_number = #{unrepairedDefectNumber,jdbcType=INTEGER},
+            </if>
+            <if test="designCaseNumber !=null">
+                design_case_number = #{designCaseNumber,jdbcType=INTEGER},
+            </if>
+            <if test="defectPercent !=null">
+                defect_percent = #{defectPercent,jdbcType=DOUBLE},
+            </if>
+            <if test="totalRepairRound !=null">
+                total_repair_round = #{totalRepairRound,jdbcType=INTEGER},
+            </if>
+            <if test="avgRepairRound !=null">
+                avg_repair_round = #{avgRepairRound,jdbcType=INTEGER},
+            </if>
+            <if test="lastUpdateBy !=null">
+                last_update_by = #{lastUpdateBy,jdbcType=INTEGER},
+            </if>
+            <if test="lastUpdateDate !=null">
+                last_update_date = #{lastUpdateDate,jdbcType=INTEGER},
+            </if>
+            <if test="status !=null">
+                status = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="lastmonthUndefectedNumber !=null">
+                LASTMONTH_UNDEFECTED_NUMBER = #{lastmonthUndefectedNumber,jdbcType=INTEGER},
+            </if>
+            <if test="lastmonthUndefectedBelonger !=null">
+                LASTMONTH_UNDEFECTED_BELONGER = #{lastmonthUndefectedBelonger,jdbcType=INTEGER}
+            </if>
+        </set>
+        where monthSystemData.SYSTEM_ID = #{systemId,jdbcType=INTEGER}
+        and monthSystemData.year_month = #{yearMonth,jdbcType=VARCHAR}
+        and monthSystemData.TYPE = #{type}
+    </update>
+
+    <select id="jugeHis" resultType="java.lang.Integer">
+        select count(id) from tbl_report_monthly_system_data
+		where `YEAR_MONTH` = #{yearMonth} AND TYPE = 0
+    </select>
+
+    <update id="updateMonthlySystemDate">
+        update tbl_report_monthly_system_data systemData
+        <set>
+            <if test=" lastmonthUndefectedNumber !=null">
+                systemData.LASTMONTH_UNDEFECTED_NUMBER = #{lastmonthUndefectedNumber},
+            </if>
+            <if test="lastmonthUndefectedBelonger !=null">
+                systemData.LASTMONTH_UNDEFECTED_BELONGER = #{lastmonthUndefectedBelonger},
+            </if>
+            <if test="auditStatus !=null">
+                systemData.AUDIT_STATUS = #{auditStatus},
+            </if>
+            <if test="lastUpdateBy != null">
+                systemData.LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                systemData.LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+            </if>
+        </set>
+        where systemData.SYSTEM_ID= #{systemId} AND `YEAR_MONTH` = #{yearMonth}
+    </update>
+
+    <select id="findByYearMonthAndUserId" resultMap="BaseResultMap"            >
+        select <include refid="Base_Column_List" /> , userInfo.USER_NAME userName
+        FROM tbl_report_monthly_system_data monthlySystemData
+        LEFT  JOIN  tbl_report_monthly_config config ON monthlySystemData.SYSTEM_ID = config.SYSTEM_ID
+        LEFT JOIN tbl_user_info  userInfo ON userInfo.ID =  config.USER_ID
+        WHERE monthlySystemData.YEAR_MONTH = #{date} and config.USER_ID = #{userId} and monthlySystemData.TYPE = 0
+    </select>
+    <select id="findTaskTypeByDate" resultMap="BaseResultMap" >
+        SELECT systemData.`YEAR_MONTH` ,
+         systemData.SYSTEM_NAME  ,
+         systemData.TASK_NUMBER ,
+         IFNULL(systemData.DESIGN_CASE_NUMBER,0) DESIGN_CASE_NUMBER,
+         systemData.DEFECT_NUMBER ,
+         IFNULL(systemData.DEFECT_PERCENT,0) DEFECT_PERCENT
+        FROM tbl_report_monthly_system_data systemData
+        WHERE  systemData.SYSTEM_TYPE = #{taskType}
+        AND systemData.`YEAR_MONTH`  = #{date}
+        AND systemData.TASK_NUMBER is NOT NULL
+        AND systemData.TYPE = 0
+        ORDER BY systemData.DEFECT_PERCENT desc
+    </select>
+    <select id="findTotalDataByDate" resultType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlySystemData">
+        SELECT systemData.`YEAR_MONTH` yearMonth ,
+        SUM(systemData.TASK_NUMBER) taskNumber ,
+        IFNULL(SUM(systemData.DESIGN_CASE_NUMBER),0) designCaseNumber,
+        SUM(systemData.DEFECT_NUMBER) defectNumber
+        FROM tbl_report_monthly_system_data systemData
+        WHERE systemData.SYSTEM_TYPE = #{systemType}
+        AND `YEAR_MONTH`
+ 		BETWEEN #{startYearMonth} AND #{endtYearMonth}
+ 		AND TYPE = 0
+		GROUP BY systemData.`YEAR_MONTH`
+		ORDER BY `YEAR_MONTH`
+
+    </select>
+    <select id="findAvgRepaitRound"  resultType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlySystemData">
+         SELECT systemDate.`YEAR_MONTH`yearMonth,
+         IFNULL(SUM(systemDate.TOTAL_REPAIR_ROUND)/SUM(systemDate.REPAIRED_DEFECT_NUMBER),0) avgRepairRound
+         FROM tbl_report_monthly_system_data systemDate
+         where `YEAR_MONTH`
+		 BETWEEN #{startYearMonth} AND #{endYearMonth}
+		 AND TYPE = 0
+		 GROUP BY systemDate.`YEAR_MONTH`
+         ORDER BY `YEAR_MONTH`
+    </select>
+    <select id="findAvgRepaitRoundByTime"    resultMap="BaseResultMap">
+		SELECT * FROM tbl_report_monthly_system_data systemData
+		WHERE systemData.AVG_REPAIR_ROUND >1
+		AND systemData.`YEAR_MONTH` = #{date}
+		AND systemData.TYPE = 0
+    </select>
+    <select id="findDefectPercentByDateAndType"
+            resultType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlySystemData">
+        SELECT systemData.ID id,systemData.DEFECT_PERCENT defectPercent ,systemData.SYSTEM_NAME systemName
+        from tbl_report_monthly_system_data systemData
+        WHERE systemData.`YEAR_MONTH` = #{date}
+        ANd SYSTEM_TYPE = #{systemType}
+        AND DEFECT_PERCENT is not null
+        AND DEFECT_PERCENT !=0
+        AND TYPE = 0
+        ORDER BY defectPercent
+    </select>
+
+    <select id="findDevDefectPercentByDate"
+            resultType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlySystemData">
+        SELECT systemData.ID id,systemData.DEFECT_PERCENT defectPercent ,systemData.SYSTEM_NAME systemName
+        from tbl_report_monthly_system_data systemData
+        WHERE systemData.`YEAR_MONTH` = #{date}
+        AND systemData.SYSTEM_TYPE = 2
+        AND systemData.TYPE = 0
+        ORDER BY defectPercent
+    </select>
+
+    <select id="findDefectRateSortByTimeAndTypeASC"  resultType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlySystemData" >
+		SELECT systemData.SYSTEM_NAME systemName,IFNULL(systemData.DEFECT_PERCENT,0) defectPercent
+		FROM tbl_report_monthly_system_data systemData
+		WHERE systemData.`YEAR_MONTH`  = #{date}
+		AND systemData.SYSTEM_TYPE= #{type}
+		AND systemData.TYPE = 0
+		ORDER BY systemData.DEFECT_PERCENT ASC
+		LIMIT #{number}
+    </select>
+    <select id="findDefectRateSortByTimeAndTypeDESC"  resultType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlySystemData" >
+		SELECT systemData.SYSTEM_NAME systemName,IFNULL(systemData.DEFECT_PERCENT,0) defectPercent
+		FROM tbl_report_monthly_system_data systemData
+		WHERE systemData.`YEAR_MONTH`  = #{date}
+		AND systemData.SYSTEM_TYPE= #{type}
+		AND systemData.TYPE = 0
+		ORDER BY systemData.DEFECT_PERCENT DESC
+		LIMIT #{number}
+    </select>
+    <select id="getSystemDataUserIdAndSystemName"
+            resultType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlySystemData">
+        SELECT
+        monthlyData.SYSTEM_NAME systemName,
+        monthlyConfig.USER_NAME userName,
+        monthlyConfig.USER_ID userId
+        FROM tbl_report_monthly_system_data monthlyData
+        INNER JOIN tbl_report_monthly_config monthlyConfig ON monthlyConfig.SYSTEM_ID = monthlyData.SYSTEM_ID
+        WHERE monthlyData.`YEAR_MONTH` = #{date}
+        AND monthlyData.TYPE = 0 AND monthlyConfig.`STATUS` = 1
+    </select>
+    <select id="findByYearMonthlyAndSystemType" resultMap="BaseResultMap">
+        select * from  tbl_report_monthly_system_data monthlyData
+        where monthlyData.`YEAR_MONTH` = #{date}
+        AND monthlyData.SYSTEM_TYPE = #{systemType}
+        AND monthlyData.TYPE = 0
+    </select>
+
+    <select id="findByYearMonthAndSystemId" resultMap="BaseResultMap"  >
+        select  * from  tbl_report_monthly_system_data systemData
+        where systemData.`YEAR_MONTH` = #{yearMonth}
+        AND systemData.SYSTEM_ID = #{systemId}
+        AND systemData.TYPE = 0
+    </select>
+    <select id="findByYearMonthAndTypeAndSystemId" resultMap="BaseResultMap"    >
+        select  * from  tbl_report_monthly_system_data systemData
+        where systemData.`YEAR_MONTH` = #{yearMonth}
+        AND systemData.SYSTEM_ID = #{systemId}
+        and systemData.Type = #{type}
+    </select>
+
+
+</mapper>

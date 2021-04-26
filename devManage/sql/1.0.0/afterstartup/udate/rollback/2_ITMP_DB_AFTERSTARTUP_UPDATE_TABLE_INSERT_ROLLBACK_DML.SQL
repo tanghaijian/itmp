@@ -1,0 +1,1 @@
+delete from AFTERSTARTUP_UPDATE where ID=1;

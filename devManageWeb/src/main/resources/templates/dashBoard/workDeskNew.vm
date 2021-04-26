@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>个人工作台</title>
+<link rel="stylesheet" href="#springUrl('')/devManageui/static/css/frame/font-awesome.min.css ">
+<link rel="stylesheet" href="#springUrl('')/devManageui/static/css/frame/bootstrap.min.css" />
+<link rel="stylesheet" href="#springUrl('')/devManageui/static/css/frame/bootstrap-theme.min.css" />
+<link rel="stylesheet" href="#springUrl('')/devManageui/static/css/frame/bootstrap-table.min.css" />
+<link rel="stylesheet" href="#springUrl('')/devManageui/static/css/frame/bootstrap-select.min.css" />
+<link rel="stylesheet" href="#springUrl('')/devManageui/static/css/frame/bootstrap-datetimepicker.min.css" />
+<link rel="stylesheet" href="#springUrl('')/devManageui/static/jqgrid/jqgrid/css/jqGridDefined.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+<link rel="stylesheet" href="#springUrl('')/devManageui/static/css/frame/component.css" />
+<link rel="stylesheet" href="#springUrl('')/devManageui/static/css/frame/jquery.editable-select.min.css" />
+<link rel="stylesheet" href="#springUrl('')/devManageui/static/css/frame/bootstrapValidator.css" /> 
+<link rel="stylesheet" href="#springUrl('')/devManageui/static/css/devtask/devtask.css" />
+<link rel="stylesheet" href="#springUrl('')/devManageui/static/css/workTask/workTask.css" />
+<link rel="stylesheet" href="#springUrl('')/devManageui/static/css/defect/defect.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/jquery.editable-select.min.css" />
+<link rel="stylesheet" href="#springUrl('')/devManageui/static/css/dashBoard/workDesk.css" />
+<script>
+
+	/* var devkurl= '$system.getMenuByCode("devManageui:devtask:toDevTask").url';
+	devkurl+="?requirementFeatureStatus=1,2"; */
+	/* $( "#devTask_a" ).attr( "url", devurl ); */
+	/*  var workurl=$worktaskMenu.url;
+	 workurl+="?devTaskStatus=2,3";
+	 $( "#myworkjob_a" ).attr( "url", workurl );
+	 var defecturl=$defect.url;
+	 defecturl+="?defectStatusList=2,4";
+	 $( "#detect_a" ).attr( "url", defecturl ); */
+	 
+		
+	//开发
+	var devTaskMenuUrl = '$system.getMenuByCode("devManageui:devtask:toDevTask").url';
+	var devTaskMenuId = '$system.getMenuByCode("devManageui:devtask:toDevTask").id';
+	var devTaskMenuName = '$system.getMenuByCode("devManageui:devtask:toDevTask").menuButtonName';
+   //开发工作任务
+	var worktaskMenuUrl = '$system.getMenuByCode("devManageui:worktask:toWorktask").url';
+	var worktaskMenuId = '$system.getMenuByCode("devManageui:worktask:toWorktask").id';
+	var worktaskMenuName = '$system.getMenuByCode("devManageui:worktask:toWorktask").menuButtonName';
+   //缺陷
+	var defectUrl = '$system.getMenuByCode("devManageui:defect:toDefect").url';
+	var detectId = '$system.getMenuByCode("devManageui:defect:toDefect").id';
+	var defectName = '$system.getMenuByCode("devManageui:defect:toDefect").menuButtonName';
+	
+	//测试
+	var testTaskMenuUrl = '$system.getMenuByCode("testManageui:testtask:toTestTask").url';
+	var testTaskMenuId = '$system.getMenuByCode("testManageui:testtask:toTestTask").id';
+	var testTaskMenuName = '$system.getMenuByCode("testManageui:testtask:toTestTask").menuButtonName';
+   //测试工作任务
+	var testWorktaskMenuUrl = '$system.getMenuByCode("testManageui:workTask:toWorktask").url';
+	var testWorktaskMenuId = '$system.getMenuByCode("testManageui:workTask:toWorktask").id';
+	var testWorktaskMenuName = '$system.getMenuByCode("testManageui:workTask:toWorktask").menuButtonName';
+   //测试缺陷
+	var testDefectUrl = '$system.getMenuByCode("testManageui:defect:toDefect").url';
+	var testDetectId = '$system.getMenuByCode("testManageui:defect:toDefect").id';
+	var testDefectName = '$system.getMenuByCode("testManageui:defect:toDefect").menuButtonName'; 
+	var reqAttUrl = '$reqAttUrl';
+	
+	var testTaskStatusList = [];//测试工作任务状态
+    #foreach($dictMap in ${dict.getDictMap("TBL_TEST_TASK_TEST_TASK_STATUS").entrySet()})
+    testTaskStatusList.push(["${dictMap.key}", "${dictMap.value}"]);
+    #end
+    var reqFeatureStatusList = [];//测试任务状态
+    #foreach($dictMap in ${dict.getDictMap("TBL_REQUIREMENT_FEATURE_REQUIREMENT_FEATURE_STATUS_2").entrySet()})
+    reqFeatureStatusList.push(["${dictMap.key}", "${dictMap.value}"]);
+    #end 
+    var testDefectStatusList = [];//测试缺陷状态
+    #foreach($dictMap in ${dict.getDictMap("TBL_DEFECT_INFO_DEFECT_STATUS").entrySet()})
+    testDefectStatusList.push(["${dictMap.key}", "${dictMap.value}"]);
+    #end
+</script>
+	<script type="text/javascript" src="#springUrl('')/devManageui/static/js/frame/jquery.min.js"></script>
+	<script type="text/javascript" src="#springUrl('')/devManageui/static/js/echarts/echarts.min.js"></script>
+	<script type="text/javascript" src="#springUrl('')/devManageui/static/js/echarts/echarts-gl.min.js"></script>
+	<script type="text/javascript" src="#springUrl('')/devManageui/static/js/echarts/ecStat.min.js"></script>
+	<script type="text/javascript" src="#springUrl('')/devManageui/static/js/echarts/dataTool.min.js"></script>
+	<script type="text/javascript" src="#springUrl('')/devManageui/static/js/echarts/china.js"></script>
+	<script type="text/javascript" src="#springUrl('')/devManageui/static/js/echarts/world.js"></script>
+	<!-- <script type="text/javascript" src="#springUrl('')/devManageui/static/js/echarts/api.js"></script> --> 
+ 	<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+	<script type="text/javascript" src="#springUrl('')/devManageui/static/js/frame/bootstrap.min.js"></script>
+	<script type="text/javascript" src="#springUrl('')/devManageui/static/js/frame/bootstrap-table.min.js"></script>
+	<script type="text/javascript" src="#springUrl('')/devManageui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+	<script type="text/javascript" src="#springUrl('')/devManageui/static/js/frame/bootstrap-select.min.js"></script>
+	<script type="text/javascript" src="#springUrl('')/devManageui/static/js/frame/defaults-zh_CN.min.js"></script>
+	<script type="text/javascript" src="#springUrl('')/devManageui/static/js/frame/bootstrap-datetimepicker.js"></script>
+	<script type="text/javascript" src="#springUrl('')/devManageui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+	<script type="text/ecmascript" src="#springUrl('')/devManageui/static/jqgrid/js/jquery-ui.min.js"></script>  
+	<script type="text/javascript" src="#springUrl('')/devManageui/static/js/frame/bootstrapValidator.js"></script>
+	<script type="text/javascript" src="#springUrl('')/devManageui/static/js/dashBoard/workDeskNew.js"></script>
+	<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common.js"></script>
+	<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+	<script type="text/javascript" src="#springUrl('')/systemui/static/js/clipboard/clipboard.min.js"></script>
+	<!-- <script>
+	/* $.jgrid.defaults.responsive = true;
+	$.jgrid.defaults.styleUI = 'Bootstrap4';
+	$.jgrid.defaults.iconSet = "fontAwesome";
+	var ctxStatic = "${ctxStatic}";
+	$(function() {
+		$("[data-toggle='tooltip']").tooltip();
+	}); */
+	
+	</script> -->
+</head>
+<body>
+
+##个人待办任务
+	<div class="block1" id="details">
+		<div class="left_block">
+            <div class="myDiv">
+				<div class="myTitDiv">
+					<div class="myTitFont p_l_0">
+                        <img id="" style="width: 18px;height: 18px;" src="#springUrl('')/devManageui/static/images/dashBoard/u5171.png">
+                        我的待处理流程
+                    </div>
+					<!-- #set( $defect = $system.getMenuByCode("devManageui:defect:toDefect")) -->
+					## <div class="more">
+					## 	<div class="moreTitle" id="processing_flow">
+					## 		<!-- $defect.menuButtonName -->
+					## 	</div>
+					## 	<a class="a_style"> >>more </a>
+					## </div>
+				</div>
+				<div class="myContDiv" id="processing_flow_List"></div>
+			</div>
+			<div class="myDiv">
+				<div class="myTitDiv">
+					<div class="myTitFont myDevelopTasks">我的开发任务</div>
+					<!--  #set( $devTaskMenu = $system.getMenuByCode("devManageui:devtask:toDevTask")) --> 
+				</div>
+				<div class="myContDiv">
+					 <div class="">
+					 	<div class="twoLevelTit">
+					 		<span style="font-weight: bold;">开发管理岗代办</span>
+					 		<a class="twoLevelMore"  onclick="toDevTask()"> >>more </a>
+					 	</div>
+					 	<div id="featureList">
+					 	</div>
+					 </div>
+					 <br />
+					 <div class="">
+					 	<div class="twoLevelTit">
+					 		<span style="font-weight: bold;">执行人代办</span>
+					 		<a class="twoLevelMore"  onclick="toDevTask()"> >>more </a>
+					 	</div>
+					 	<div id="excuteFeatureList">
+					 	</div>
+					 </div>
+				</div>
+			</div>
+			<div class="myDiv">
+				<div class="myTitDiv">
+					<div class="myTitFont myWorkTasks">我的开发工作任务</div>
+
+					<!-- #set( $worktaskMenu = $system.getMenuByCode("devManageui:worktask:toWorktask")) -->
+					<div class="more">
+						<div class="moreTitle" id='myworkjob_a' onclick="toWorkTask()">
+							<!-- $worktaskMenu.menuButtonName -->
+						</div>
+						<a class="a_style"> >>more </a>
+					</div>
+
+				</div>
+				<div class="myContDiv" id="taskList"></div>
+			</div>
+
+			<div class="myDiv">
+				<div class="myTitDiv">
+					<div class="myTitFont myDefect">我的开发缺陷</div>
+					<!-- #set( $defect = $system.getMenuByCode("devManageui:defect:toDefect")) -->
+					<div class="more">
+						<div class="moreTitle" onclick="toDefect()">
+							<!-- $defect.menuButtonName -->
+						</div>
+						<a class="a_style"> >>more </a>
+					</div>
+				</div>
+				<div class="myContDiv" id="defectList"></div>
+			</div>
+			
+			<div class="myDiv">
+				<div class="myTitDiv">
+					<div class="myTitFont myDevelopTasks">我的测试任务</div> 
+				</div>
+				<div class="myContDiv">
+					<div class="">
+					 	<div class="twoLevelTit">
+					 		<span style="font-weight: bold;">开发管理岗代办</span>
+					 		<a class="twoLevelMore"  onclick="toTestTask()"> >>more </a>
+					 	</div>
+					 	<div id="testList">
+					 	</div>
+					 </div>
+					 <br />
+					 <div class="">
+					 	<div class="twoLevelTit">
+					 		<span style="font-weight: bold;">执行人代办</span>
+					 		<a class="twoLevelMore"  onclick="toTestTask()"> >>more </a>
+					 	</div>
+					 	<div id="testExcuteFeatureList">
+					 	</div>
+					 </div>
+				</div>
+			</div>
+			<div class="myDiv">
+				<div class="myTitDiv">
+					<div class="myTitFont myWorkTasks">我的测试工作任务</div>
+					<!-- #set( $defect = $system.getMenuByCode("devManageui:defect:toDefect")) -->
+					<div class="more">
+						<div class="moreTitle" onclick="toTestWorkTask()"></div>
+						<a class="a_style"> >>more </a>
+					</div>
+				</div>
+				<div class="myContDiv" id="testWorkList"></div>
+			</div>
+			<div class="myDiv">
+				<div class="myTitDiv">
+					<div class="myTitFont myDefect">我的测试缺陷</div>
+					<!-- #set( $defect = $system.getMenuByCode("devManageui:defect:toDefect")) -->
+					<div class="more">
+						<div class="moreTitle" onclick="toTestDefect()"></div>
+						<a class="a_style"> >>more </a>
+					</div>
+				</div>
+				<div class="myContDiv" id="testDefectList"></div>
+			</div>
+		</div>
+		<div class="right_block shrink">
+			<div class="smallTitle"><span class="fa fa-bell-o"></span> <span>消息提醒</span></div>
+			<div class="rightBlock2" id="rightBlock3"></div>
+		</div>
+
+	</div>
+
+    ## 变更审批
+    <div class="modal fade bs-example-modal-lg" id="approve_Modal" tabindex="-1" role="dialog" aria-labelledby="">
+        <div class="modal-dialog modal-biggest" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="modal-title"><span id="add_tit"></span>：项目计划变更审批</h4>
+            <input type="hidden" id="project_id" value="" />
+            <input type="hidden" id="approveRequestId" />
+            <input type="hidden" id="approve_detail_id" />
+            <input type="hidden" id="approve_user_id" />
+            <input type="hidden" id="current_userId" />
+            </div>
+            <div class="modal-body">
+                <div class="defectInfos def_col_24">
+                    <div class="allInfo bor_no" id="defectBaseInfo">
+                        <div class="def_title">
+                        <h5 class="blue fontWeihgt lab_tit">申请单详情：</h5>
+                        </div>
+                        <div class="def_content down_content">
+                        <div class="rowdiv">
+                            <div class="def_col_6 font_right fontWeihgt">流程状态：</div>
+                            <div class="def_col_12 l_h_30" id="check_status"></div>
+                        </div>
+                        <div class="rowdiv">
+                            <div class="def_col_6 font_right fontWeihgt">申请人：</div>
+                            <div class="def_col_12 l_h_30" id="check_user"></div>
+                            <div class="def_col_6 font_right fontWeihgt">申请时间：</div>
+                            <div class="def_col_12 l_h_30" id="check_date"></div>
+                        </div>
+                        <div class="rowdiv">
+                            <div class="def_col_6 font_right fontWeihgt">申请事由：</div>
+                            <div class="def_col_28 l_h_30" id="check_Workload"></div>
+                        </div>
+                        </div>
+
+                        <div class="def_title">
+                        <h5 class="blue fontWeihgt lab_tit">变更前项目计划：</h5>
+                        </div>
+                        <table class="table table-bordered">
+                        <thead>
+                            <tr class="rowdiv">
+                            <th style="width: 8.333333%;">序号</th>
+                            <th style="width: 16.666666%;">项目计划编号</th>
+                            <th style="width: 21.444444%;">项目计划名称</th>
+                            <th style="width: 14.222222%;">周期</th>
+                            <th style="width: 11.111111%;">负责人</th>
+                            <th style="width: 28.222224%;">成果物</th>
+                            </tr>
+                        </thead>
+                        <tbody id="up_before_tbody"></tbody>
+                        </table>
+
+                        <div class="def_title">
+                        <h5 class="blue fontWeihgt lab_tit">变更后项目计划：</h5>
+                        </div>
+                        <table class="table table-bordered">
+                        <thead>
+                            <tr class="rowdiv">
+                            <th style="width: 8.333333%;">序号</th>
+                            <th style="width: 16.666666%;">项目计划编号</th>
+                            <th style="width: 21.444444%;">项目计划名称</th>
+                            <th style="width: 14.222222%;">周期</th>
+                            <th style="width: 11.111111%;">负责人</th>
+                            <th style="width: 28.222224%;">成果物</th>
+                            </tr>
+                        </thead>
+                        <tbody id="up_after_tbody"></tbody>
+                        </table>
+                        <div class="def_title">
+                        <h5 class="blue fontWeihgt lab_tit">审批意见：</h5>
+                        </div>
+                        <div class="rowdiv">
+                        <div class="def_col_2"></div>
+                        <div class="def_col_31">
+                            <textarea type="text" id="remark" class="form-control" placeholder="请输入审批意见"></textarea>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="def_col_12">
+                    <div class="allInfo bor_no" id="approve_Log">
+                        <div class="def_title" id="titleOfwork">
+                        <span class="def_controlTit def_changeTit">流程处理情况</span>
+                        </div>
+                        <div class="def_content">
+                        <div class="p_l_20" id="logs_body"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+            <button type="button" class="btn btn-primary _hide approve_btn1" data-dismiss="modal" onclick="approve_flow(1)">同意并提交下级审批人</button>
+            <button type="button" class="btn btn-primary _hide approve_btn2" data-dismiss="modal" onclick="approve_flow(2)">同意并办结</button>
+            <button type="button" class="btn btn-primary _hide approve_btn1" data-dismiss="modal" onclick="approve_flow(3)">驳&nbsp;&nbsp;回</button>
+            <button type="button" class="btn btn-default btn_close" data-dismiss="modal">关&nbsp;&nbsp;闭</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+	<!-- 查看开发任务 -->
+	<div class="modal fade bs-example-modal-biggest" id="checkDevTask" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+		<div class="modal-dialog modal-biggest" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<span class="modal-title" id="checkdevTaskTitle"></span>
+				</div>
+				<div class="modal-body">
+					<form id="checkForm" type="post" enctype="multipart/form-data">
+						##<input type="reset" id="reset" style="display: none;" />
+						<div class="def_col_24">
+							<div class="allInfo">
+								<div class="def_title">
+									<span>开发任务内容</span> <span class="fa fa-angle-double-up"
+										onclick="down(this)"></span>
+								</div>
+								<div class="def_content">
+									<input id="checkfiles" type="hidden" name="attachFiles" /> <input
+										id="checkReqFeatureId" type="hidden" /> <input
+										id="checkItcdReqId" type="hidden" /> <input id="checktaskId"
+										type="hidden" />
+									<div class="rowdiv">
+										<textarea id="checkdevTaskOverview" readonly class="noBorder nobg" style="resize:none" > </textarea>
+									</div>
+									<div class="rowdiv">
+										<div class="form-group col-md-4">
+											<label class="control-label fontWeihgt">任务状态：</label> <label
+												class="control-label font_left" id="checkdevTaskStatus">
+											</label>
+										</div>
+										<div class="form-group col-md-4">
+											<label class="control-label fontWeihgt">管理岗：</label> <label
+												class="control-label font_left" id="checkdevManPost">
+											</label>
+										</div>
+										<div class="form-group col-md-4">
+											<label class="control-label fontWeihgt">执行人：</label> <label
+												class="control-label font_left" id="checkexecutor">
+											</label>
+										</div>
+									</div>
+									<div class="rowdiv">
+										<div class="form-group col-md-12">
+											<label class="control-label fontWeihgt">关联子系统：</label> <label
+												class="control-label font_left" id="checksystemName">
+											</label>
+										</div>
+									</div>
+									<div class="rowdiv" id="checkoutrequirementDiv">
+										<div class="form-group col-md-12">
+											<label class="control-label fontWeihgt">关联需求：</label> <label
+												class="control-label font_left" id="checkoutrequirement">
+											</label>
+										</div>
+									</div>
+									<div class="rowdiv" id="checkDefectDiv">
+										<div class="form-group col-md-12">
+											<label class="control-label fontWeihgt">关联缺陷：</label>
+											<div class="control-label font_left" id="checkDefect">
+											</div>
+										</div>
+									</div>
+									<div class="rowdiv" id="checkRequstNumberDiv">
+										<div class="form-group col-md-12">
+											<label class="control-label fontWeihgt">生产问题单号：</label> <label
+												class="control-label font_left" id="checkRequstNumber">
+											</label>
+										</div>
+									</div>
+									<div class="rowdiv">
+                            			<div class="form-group col-md-4">
+                                    		<label class="control-label fontWeihgt">冲刺：</label>
+                                    		<label class="control-label font_left" id="checkSprintName"> </label>
+                                	</div>
+	                                	<div class="form-group col-md-4">
+		                                    <label class="control-label fontWeihgt">故事点：</label>
+		                                    <label class="control-label font_left" id="checkStoryPoint"> </label>
+	                                	</div>
+                            		</div>
+									<div class="rowdiv">
+										<div class="form-group col-md-4">
+											<label class="control-label fontWeihgt">投产窗口：</label> <label
+												class="control-label font_left" id="checkWindowName">
+											</label>
+										</div>
+										<div class="form-group col-md-4">
+											<label class="control-label fontWeihgt">子系统版本：</label> <label
+												class="control-label font_left" id="checkSystemVersion">
+											</label>
+										</div>
+										<div class="form-group col-md-4">
+											<label class="control-label fontWeihgt">优先级：</label> <label
+												class="control-label font_left" id="checkreqFeaturePriority">
+											</label>
+										</div>
+
+									</div>
+
+									<div class="rowdiv">
+										<div class="form-group col-md-4">
+											<label class="control-label fontWeihgt">所属处室：</label> <label
+												class="control-label font_left" id="checkdeptName">
+											</label>
+										</div>
+										<div class="form-group col-md-4">
+											<label class="control-label fontWeihgt">临时任务：</label> <label
+												class="control-label font_left" id="checktemporaryTask">
+											</label>
+										</div>
+										<div class="form-group col-md-4">
+											<label class="control-label fontWeihgt">创建方式：</label> <label
+												class="control-label font_left" id="checkcreateType">
+											</label>
+										</div>
+									</div>
+									<div class="rowdiv">
+										<div class="form-group col-md-4">
+											<label class="control-label fontWeihgt">预计开始时间：</label> <label
+												class="control-label font_left" id="checkpreStartDate">
+											</label>
+										</div>
+										<div class="form-group col-md-4">
+											<label class="control-label fontWeihgt">预计结束时间：</label> <label
+												class="control-label font_left" id="checkpreEndDate">
+											</label>
+										</div>
+										<div class="form-group col-md-4">
+											<label class="control-label fontWeihgt">预计工作量(人天)：</label> <label
+												class="control-label font_left" id="checkpreWorkload">
+											</label>
+										</div>
+									</div>
+									<div class="rowdiv">
+										<div class="form-group col-md-4">
+											<label class="control-label fontWeihgt">实际开始时间：</label> <label
+												class="control-label font_left" id="checkactStartDate">
+											</label>
+										</div>
+										<div class="form-group col-md-4">
+											<label class="control-label fontWeihgt">实际结束时间：</label> <label
+												class="control-label font_left" id="checkactEndDate">
+											</label>
+										</div>
+										<div class="form-group col-md-4">
+											<label class="control-label fontWeihgt">任务工作量(人天)：</label> <label
+												class="control-label font_left" id="checkactWorkload">
+											</label>
+										</div>
+									</div>
+									<div class="rowdiv">
+										<div class="form-group col-md-12">
+											<label class="control-label fontWeihgt">任务处理意见：</label> <label
+												class="control-label font_left" id="checkhandSug"> </label>
+										</div>
+									</div>
+
+									<div class="rowdiv">
+										<div class="form-group col-md-12">
+											<label class="control-label fontWeihgt">相关附件：</label>
+											<div id="synfiles" style="display: none">
+												<a class="a_style" onclick="showFile()">查看附件</a>
+											</div>
+											<div id="createfiles" style="display: none"
+												class="file-upload-list">
+												<table class="file-upload-tb" id="checkFileTable">
+
+												</table>
+											</div>
+										</div>
+										<div class="form-group col-md-12">
+											<label class="control-label fontWeihgt">关联需求附件：</label> <a
+												class="a_style" onclick="showReqFile()">查看需求附件</a>
+
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="allInfo">
+								<div class="def_title" id="titleOfwork">
+									<span class="def_controlTit" onclick="showThisDiv(this,1)">工作备注</span><span
+										class="def_changeTitIcon"> 丨 </span><span
+										onclick="showThisDiv(this,2)"
+										class="def_controlTit def_changeTit">处理日志</span> <span
+										class="fa fa-angle-double-up" onclick="down(this)"></span>
+								</div>
+								<div class="def_content">
+									<div class="workRemarks">
+										<div class="new_workRemarks">
+											<textarea class="def_textarea" placeholder="请输入工作备注内容"
+												id="remarkDetail"></textarea>
+											<div class="rowdiv">
+												<div class="form-group col-md-12">
+													<label class="control-label fontWeihgt">相关附件：</label>
+													<div class="file-upload-select">
+														<input type="file" name="files" class="upload-files"
+															multiple="multiple" id="checkuploadFile" />
+													</div>
+													<div class="file-upload-list">
+														<table class="file-upload-tb" id="checkAttTable">
+
+														</table>
+													</div>
+												</div>
+											</div>
+											<div class="new_workRomarksBtn">
+												<button type="button" class="btn btn-primary"
+													onclick="saveRemark()">保存工作备注</button>
+											</div>
+										</div>
+										<div class="old_workRemarks" id="remarkBody"></div>
+									</div>
+
+									<div class="dealLog" id="handleLogs"></div>
+
+								</div>
+							</div>
+						</div>
+						<div class="def_col_12">
+							<div class="allInfo">
+								<div class="def_title">
+									<span>相关开发任务</span> <span class="fa fa-angle-double-up"
+										onclick="down(this)"></span>
+								</div>
+								<div class="connect_div" id="brother_div"></div>
+							</div>
+							<div class="allInfo">
+								<div class="def_title">
+									<span>下属工作任务</span> <span class="fa fa-angle-double-up"
+										onclick="down(this)"></span>
+								</div>
+								<div class="connect_div" id="connectDiv"></div>
+							</div>
+
+						</div>
+
+					</form>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	
+<!-- 工作任务查看弹出框 -->
+<div class="modal fade bs-example-modal-lg" id="selectdetail" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content ">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">
+                    <span id="SdevCode"></span>
+                    &nbsp;
+                    <span>
+							<button id="copyWordCode" class="btn btn-primary"  data-clipboard-action="copy" data-clipboard-target="#SdevCode" >复制单号</button>
+						</span>
+                </h4>
+            </div>
+
+            <div class="modal-body">
+                <p class="titStyle">工作任务内容</p>
+                <hr/>
+                <div class="modal_titleFont">
+                    <textarea id="SdevOverview" readonly class="noBorder nobg" style="resize:none" ></textarea>
+                </div>
+
+                <div class="rowdiv">
+                    <div class="form-group col-md-4">
+                        <label class="col-sm-4 control-label font_left fontWeihgt">任务状态：</label>
+                        <label class="col-sm-8 select-label" id="SStatus"></label>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="col-sm-4 control-label font_left fontWeihgt">执行人：</label>
+                        <label class="col-sm-8 select-label" id="devuserID"></label>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="col-sm-4 control-label font_left fontWeihgt">任务创建人：</label>
+                        <label class="col-sm-8 select-label" ><span id="createBy"></span>|<span id="createDate"></span></label>
+                    </div>
+                </div>
+                <div class="rowdiv">
+                    <div class="form-group col-md-4">
+                        <label class="col-sm-4 control-label font_left fontWeihgt">预计开始时间：</label>
+                        <label class="col-sm-8 select-label" id="planStartDate"></label>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="col-sm-4 control-label font_left fontWeihgt">预计结束时间：</label>
+                        <label class="col-sm-8 select-label" id="planEndDate"></label>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="col-sm-5 control-label font_left fontWeihgt">预计工作量(人天)：</label>
+                        <label class="col-sm-7 select-label" id="SplanWorkload"></label>
+                    </div>
+                </div>
+                <div class="rowdiv">
+                    <div class="form-group col-md-4">
+                        <label class="col-sm-4 control-label font_left fontWeihgt">实际开始时间：</label>
+                        <label class="col-sm-8 select-label" id="actualStartDate"></label>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="col-sm-4 control-label font_left fontWeihgt">实际结束时间：</label>
+                        <label class="col-sm-8 select-label" id="actualEndDate"></label>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="col-sm-5 control-label font_left fontWeihgt">实际工作量(人天)：</label>
+                        <label class="col-sm-7 select-label" id="actualWorkload"></label>
+                    </div>
+                </div>
+                <div class="rowdiv">
+                    <div class="form-group col-md-4" id="sprintNameDiv">
+                        <label class="col-sm-2 control-label font_left fontWeihgt">冲刺：</label>
+                        <label class="col-sm-8 select-label" id="sprintName"></label>
+                    </div>
+                   
+                </div>
+                <div class="rowdiv">
+                    <div class="form-group">
+                        <label class="def_col_4 control-label font_left fontWeihgt">相关附件：</label>
+                        <div class="col-md-10">
+
+                            <div class="file-upload-list">
+                                <table class="file-upload-tb" id="SeeFileTable">
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>	</div>
+
+                <div class="allInfo">
+                    <div class="def_title">
+                        <span>关联开发任务信息</span>
+                    </div>
+                    <div class="def_content">
+                        <div class="rowdiv">
+                            <div class="form-group def_col_36">
+                                <label class="def_col_6 control-label font_right fontWeihgt">任务名称：</label>
+                                <label class="def_col_30 select-label" id="featureName"></label>
+                            </div>
+                        </div>
+                        <div class="rowdiv">
+                            <div class="form-group def_col_36">
+                                <label class="def_col_6 control-label font_right fontWeihgt">任务描述：</label>
+                                <textarea  class="def_col_30 select-label noBorder" readonly  style="resize:none;background-color: inherit;" id="featureOverview"></textarea>
+                            </div>
+                        </div>
+                        <div class="rowdiv">
+                            <div class="form-group def_col_12">
+                                <label class="def_col_18 control-label font_right fontWeihgt">任务状态：</label>
+                                <label class="def_col_18 select-label" id="requirementFeatureStatus"></label>
+                            </div>
+                            <div class="form-group def_col_12">
+                                <label class="def_col_18 control-label font_right fontWeihgt">管理岗：</label>
+                                <label class="def_col_18 select-label" id="manageUserId"></label>
+                            </div>
+                            <div class="form-group def_col_12">
+                                <label class="def_col_18 control-label font_right fontWeihgt">执行人：</label>
+                                <label class="def_col_18 select-label" id="executeUserId"></label>
+                            </div>
+                        </div>
+                        <div class="rowdiv">
+                            <div class="form-group def_col_12">
+                                <label class="def_col_18 control-label font_right fontWeihgt">关联子系统：</label>
+                                <label class="def_col_18 select-label" id="systemId"></label>
+                            </div>
+                            <div class="form-group def_col_12">
+                                <label class="def_col_18 control-label font_right fontWeihgt">子系统版本：</label>
+                                <label class="def_col_18 select-label" id="systemVersion"></label>
+                            </div>
+                            <div class="form-group def_col_12">
+                                <label class="def_col_18 control-label font_right fontWeihgt">投产窗口：</label>
+                                <label class="def_col_18 select-label" id="windowProduction"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="allInfo">
+                    <div class="def_title">
+                        <span>关联需求信息</span>
+                    </div>
+                    <div class="def_content">
+                        <div class="rowdiv">
+                            <div class="form-group def_col_36">
+                                <label class="def_col_6 control-label font_right fontWeihgt">需求名称：</label>
+                                <label class="def_col_30 select-label" id="requirementName"></label>
+                            </div>
+                        </div>
+                        <div class="rowdiv">
+                            <div class="form-group def_col_12">
+                                <label class="def_col_18 control-label font_right fontWeihgt">需求来源：</label>
+                                <label class="def_col_18 select-label" id="requirementSource"></label>
+                            </div>
+                            <div class="form-group def_col_12">
+                                <label class="def_col_18 control-label font_right fontWeihgt">需求类型：</label>
+                                <label class="def_col_18 select-label" id="requirementType"></label>
+                            </div>
+                            <div class="form-group def_col_12">
+                                <label class="def_col_18 control-label font_right fontWeihgt">优先级：</label>
+                                <label class="def_col_18 select-label" id="requirementPriority"> </label>
+                            </div>
+                        </div>
+                        <div class="rowdiv">
+                            <div class="form-group def_col_12">
+                                <label class="def_col_18 control-label font_right fontWeihgt">需求计划：</label>
+                                <label class="def_col_18 select-label" id="requirementPanl"></label>
+                            </div>
+                            <div class="form-group def_col_12">
+                                <label class="def_col_18 control-label font_right fontWeihgt">需求状态：</label>
+                                <label class="def_col_18 select-label" id="requirementStatus"> </label>
+                            </div>
+                            <div class="form-group def_col_12">
+                                <label class="def_col_18 control-label font_right fontWeihgt">提出人：</label>
+                                <label class="def_col_18 select-label" ><span  id="applyUserId"></span>|<span  id="applyDeptId"></span></label>
+                            </div>
+                        </div>
+						<div class="rowdiv">
+                            <div class="form-group def_col_36">
+                                <label class="def_col_6 control-label font_right fontWeihgt">需求描述：</label>
+                                <textarea  class="def_col_30 select-label noBorder" readonly  style="resize:none;background-color: inherit;" id="requirmentOverview"></textarea>
+                            </div>
+                        </div>
+                        <div class="rowdiv">
+                            <div class="form-group def_col_12">
+                                <label class="def_col_18 control-label font_right fontWeihgt">期望上线：</label>
+                                <label class="def_col_18 select-label" id="expectOnlineDate"></label>
+                            </div>
+                            <div class="form-group def_col_12">
+                                <label class="def_col_18 control-label font_right fontWeihgt">计划上线：</label>
+                                <label class="def_col_18 select-label" id="planOnlineDate"> </label>
+                            </div>
+                        </div>
+                        <div class="rowdiv">
+                            <div class="form-group def_col_12">
+                                <label class="def_col_18 control-label font_right fontWeihgt">创建日期：</label>
+                                <label class="def_col_18 select-label" id="createDate3"> </label>
+                            </div>
+                            <div class="form-group def_col_12">
+                                <label class="def_col_18 control-label font_right fontWeihgt">更新日期：</label>
+                                <label class="def_col_18 select-label" id="lastUpdateDate3"> </label>
+                            </div>
+                            <div class="form-group def_col_12">
+                                <label class="def_col_18 control-label font_right fontWeihgt">开启日期：</label>
+                                <label class="def_col_18 select-label" id="openDate"> </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="allInfo">
+                    <div class="def_title" id="titleOfwork2">
+                        <span class="def_controlTit" onclick="showThisDiv2(this,1)">工作备注</span><span class="def_changeTitIcon"> 丨 </span><span onclick="showThisDiv2(this,2)" class="def_controlTit def_changeTit">处理日志</span>
+                        <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+                    </div>
+                    <div class="def_content">
+                        <input id="checkfiles2" type="hidden" name="attachFiles" />
+                        <div class="workRemarks" id="remarks">
+                            <div class="new_workRemarks">
+                                <textarea id="tyaskRemark" class="def_textarea" rows="3" cols="102" placeholder="请输入工作备注内容"></textarea>
+                                <input type="hidden" id="DevTaskID" />
+                                <input type="hidden" id="requirementFeatureId" />
+
+                                <div class="rowdiv">
+                                    <div class="form-group col-md-12">
+                                        <label class="control-label fontWeihgt">相关附件：</label>
+                                        <div class="file-upload-select">
+                                            <input type="file" name="files" class="upload-files" multiple="multiple"
+                                                   id="checkuploadFile2"/>
+                                        </div>
+                                        <div class="file-upload-list">
+                                            <table class="file-upload-tb" id="checkAttTable2">
+
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="new_workRomarksBtn">
+                                    <input type="button" class="btn btn-primary" onclick="addDevRemark()"  value="保存工作备注" />
+                                </div>
+                            </div>
+                            <div class="old_workRemarks" id="taskRemark">
+
+                            </div>
+                        </div>
+                        <div class="dealLog" id="handleLogs2">
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- #*查看缺陷详情*# -->
+<div class="modal fade bs-example-modal-lg" id="checkDefectModel" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <span class="modal-title" id="check_defectSummary"></span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="checkDefectID" value="" />
+                <div class="defectGroup">
+                    <span class="defectStatus1">缺陷状态：<span class="spanDefectStatus" id="check_defectStatus"></span></span>
+                    <span class="defectStatus2" id="check_rejectReason_span">驳回理由：<span class="spanDefectStatus" id="check_rejectReason"></span></span>
+                    <span class="defectStatus3" id="check_solveStatus_span">解决状态：<span class="spanDefectStatus" id="check_solveStatus"></span></span>
+                </div>
+                <div class="defectDescribe">
+
+                </div>
+                <div class="allInfo" id="defectBaseInfo">
+                    <div class="def_title">
+                        <span >基本信息</span>
+                        <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+                    </div>
+                    <div class="def_content down_content">
+                        <div class="rowdiv">
+                            <div class="def_col_6 font_right fontWeihgt">开发任务编号：</div>
+                            <div class="def_col_12" id="check_reqFetureCode"></div>
+                            <div class="def_col_6 font_right fontWeihgt">开发任务名称：</div>
+                            <div class="def_col_12" id="check_reqFetureName"></div>
+                        </div>
+                        <div class="rowdiv">
+                            <div class="def_col_6 font_right fontWeihgt">工作任务编号：</div>
+                            <div class="def_col_12" id="check_devTaskCode"></div>
+                            <div class="def_col_6 font_right fontWeihgt">工作任务名称：</div>
+                            <div class="def_col_12" id="check_devTaskName"></div>
+                        </div>
+                        <div class="rowdiv">
+                            <div class="def_col_6 font_right fontWeihgt">所属子系统：</div>
+                            <div class="def_col_12" id="check_systemName"></div>
+                            <div class="def_col_6 font_right fontWeihgt">缺陷编号：</div>
+                            <div class="def_col_12" id="check_defectCode"></div>
+                        </div>
+                        <div class="rowdiv">
+                            <div class="def_col_6 font_right fontWeihgt">缺陷类型：</div>
+                            <div class="def_col_12" id="check_defectType"></div>
+                            <div class="def_col_6 font_right fontWeihgt">缺陷来源：</div>
+                            <div class="def_col_12" id="check_defectSource"></div>
+                        </div>
+                        <div class="rowdiv">
+                            <div class="def_col_6 font_right fontWeihgt">严重级别：</div>
+                            <div class="def_col_12" id="check_severityLevel">
+
+                            </div>
+                            <div class="def_col_6 font_right fontWeihgt">紧急程度：</div>
+                            <div class="def_col_12" id="check_emergencyLevel">
+
+                            </div>
+                        </div>
+                        <div class="rowdiv">
+                            <div class="def_col_6 font_right fontWeihgt">缺陷提交人：</div>
+                            <div class="def_col_12" id="check_submitUserName"></div>
+                            <div class="def_col_6 font_right fontWeihgt">主修复人：</div>
+                            <div class="def_col_12" id="check_assignUserName"></div>
+                        </div>
+                        <div class="attachmentDetails">
+                            <div class="attachmentFont" id="check_defectOverview">
+
+                            </div>
+                            <div class="file-upload-list">
+                                <table id="check_table">
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="allInfo defectHandlingLog">
+                    <div class="def_title">
+                        <span >缺陷处理日志</span>
+                        <span class="fa fa-angle-double-down" onclick="down2(this)"></span>
+                    </div>
+                    <div class="def_content">
+                        <div class="dealLog" id="dealLogDiv">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+	<div class="block1" id="details" style="display:none;">
+		<div class="hideblock" style="display:none;">
+		<select class="selectpicker" id="devTaskStatus" multiple
+			name="requirementFeatureStatus">
+			 #foreach($dictMap in${dict.getDictMap(
+			 "TBL_REQUIREMENT_FEATURE_REQUIREMENT_FEATURE_STATUS").entrySet()})
+			<option value="${dictMap.key}">${dictMap.value}</option>
+			 #end
+		</select>
+		</div>
+
+	 	<div class="col-md-3">
+                <div class="search_font"><label class="control-label">缺陷状态：</label></div>
+                <div class="search_input">
+                    <select class="selectpicker" multiple id="defectStatus" title="请选择">
+                        #foreach($dictMap in ${dict.getDictMap(
+                            "TBL_DEFECT_INFO_DEFECT_STATUS").entrySet()})
+                            <option value="${dictMap.key}">${dictMap.value}</option>
+                        #end
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3" style="display:none;">
+                <div class="search_font"><label class="control-label">缺陷来源：</label></div>
+                <div class="search_input">
+                    <select class="selectpicker" id="defectSource">
+                        <option value="">请选择</option>
+                        #foreach($dictMap in ${dict.getDictMap(
+                            "TBL_DEFECT_INFO_DEFECT_SOURCE").entrySet()})
+                            <option value="${dictMap.key}">${dictMap.value}</option>
+                        #end
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3" style="display:none;">
+                <div class="search_font"><label class="control-label">严重级别：</label></div>
+                <div class="search_input">
+                    <select class="selectpicker" id="severityLevel">
+                        <option value="">请选择</option>
+                        #foreach($dictMap in ${dict.getDictMap(
+                            "TBL_DEFECT_INFO_SEVERITY_LEVEL").entrySet()})
+                            <option value="${dictMap.key}">${dictMap.value}</option>
+                        #end
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3" style="display:none;">
+                <div class="search_font"><label class="control-label">紧急程度：</label></div>
+                <div class="search_input">
+                    <select class="selectpicker" id="emergencyLevel">
+                        <option value="">请选择</option>
+                        #foreach($dictMap in ${dict.getDictMap(
+                            "TBL_DEFECT_INFO_EMERGENCY_LEVEL").entrySet()})
+                            <option value="${dictMap.key}">${dictMap.value}</option>
+                        #end
+                    </select>
+                </div>
+            </div>
+        
+			<div class="col-md-3" style="display:none;">
+                <div class="search_font"><label class="control-label">缺陷类型：</label></div>
+                <div class="search_input">
+                    <select class="selectpicker" id="defectType">
+                        <option value="">请选择</option>
+                        #foreach($dictMap in ${dict.getDictMap(
+                            "TBL_DEFECT_INFO_DEFECT_TYPE").entrySet()})
+                            <option value="${dictMap.key}">${dictMap.value}</option>
+                        #end
+                    </select>
+                </div>
+            </div>
+     </div>
+<div id="loading">
+    <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+</div>
+</body>
+
+
+</html>

@@ -1,0 +1,796 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblRequirementInfoMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblRequirementInfo">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="REQUIREMENT_NAME" jdbcType="VARCHAR" property="requirementName" />
+    <result column="REQUIREMENT_CODE" jdbcType="VARCHAR" property="requirementCode" />
+    <result column="REQUIREMENT_STATUS" jdbcType="VARCHAR" property="requirementStatus" />
+    <result column="REQUIREMENT_SOURCE" jdbcType="VARCHAR" property="requirementSource" />
+    <result column="REQUIREMENT_TYPE" jdbcType="VARCHAR" property="requirementType" />
+    <result column="APPLY_USER_ID" jdbcType="BIGINT" property="applyUserId" />
+    <result column="APPLY_DEPT_ID" jdbcType="BIGINT" property="applyDeptId" />
+    <result column="DEVELOPMENT_MANAGE_USER_ID" jdbcType="BIGINT" property="developmentManageUserId" />
+    <result column="DEVELOPMENT_DEPT_ID" jdbcType="BIGINT" property="developmentDeptId" />
+    <result column="REQUIREMENT_MANAGE_USER_ID" jdbcType="BIGINT" property="requirementManageUserId" />
+    <result column="REQUIREMENT_ACCEPTANCE_USER_ID" jdbcType="BIGINT" property="requirementAcceptanceUserId" />
+    <result column="REQUIREMENT_OVERVIEW" jdbcType="VARCHAR" property="requirementOverview" />
+    <result column="REQUIREMENT_PRIORITY" jdbcType="VARCHAR" property="requirementPriority" />
+    <result column="REQUIREMENT_PLAN" jdbcType="VARCHAR" property="requirementPlan" />
+    <result column="EXPECT_ONLINE_DATE" jdbcType="DATE" property="expectOnlineDate" />
+    <result column="PLAN_ONLINE_DATE" jdbcType="DATE" property="planOnlineDate" />
+    <result column="ACTUAL_ONLINE_DATE" jdbcType="DATE" property="actualOnlineDate" />
+    <result column="PLAN_INTEGRATION_TEST_DATE" jdbcType="DATE" property="planIntegrationTestDate" />
+    <result column="ACTUAL_INTEGRATION_TEST_DATE" jdbcType="DATE" property="actualIntegrationTestDate" />
+    <result column="OPEN_DATE" jdbcType="DATE" property="openDate" />
+    <result column="IMPORTANT_REQUIREMENT_STATUS" jdbcType="VARCHAR" property="importantRequirementStatus" />
+    <result column="IMPORTANT_REQUIREMENT_DELAY_STATUS" jdbcType="VARCHAR" property="importantRequirementDelayStatus" />
+    <result column="IMPORTANT_REQUIREMENT_TYPE" jdbcType="VARCHAR" property="importantRequirementType" />
+    <result column="IMPORTANT_REQUIREMENT_ONLINE_QUARTER" jdbcType="VARCHAR" property="importantRequirementOnlineQuarter" />
+    <result column="IMPORTANT_REQUIREMENT_DELAY_REASON" jdbcType="VARCHAR" property="importantRequirementDelayReason" />
+    <result column="DIRECT_INCOME" jdbcType="TINYINT" property="directIncome" />
+    <result column="FORWARD_INCOME" jdbcType="TINYINT" property="forwardIncome" />
+    <result column="RECESSIVE_INCOME" jdbcType="TINYINT" property="recessiveIncome" />
+    <result column="DIRECT_COST_REDUCTION" jdbcType="TINYINT" property="directCostReduction" />
+    <result column="FORWARD_COST_REDUCTION" jdbcType="TINYINT" property="forwardCostReduction" />
+    <result column="ANTICIPATED_INCOME" jdbcType="VARCHAR" property="anticipatedIncome" />
+    <result column="ESTIMATE_COST" jdbcType="VARCHAR" property="estimateCost" />
+    <result column="HANGUP_STATUS" jdbcType="VARCHAR" property="hangupStatus" />
+    <result column="HANGUP_DATE" jdbcType="DATE" property="hangupDate" />
+    <result column="CHANGE_COUNT" jdbcType="TINYINT" property="changeCount" />
+    <result column="REQUIREMENT_PROPERTY" jdbcType="VARCHAR" property="requirementProperty" />
+    <result column="REQUIREMENT_CLASSIFY" jdbcType="VARCHAR" property="requirementClassify" />
+    <result column="REQUIREMENT_SUBDIVISION" jdbcType="VARCHAR" property="requirementSubdivision" />
+    <result column="ACCEPTANCE_DESCRIPTION" jdbcType="VARCHAR" property="acceptanceDescription" />
+    <result column="ACCEPTANCE_TIMELINESS" jdbcType="VARCHAR" property="acceptanceTimeliness" />
+    <result column="DATA_MIGRATION_STATUS" jdbcType="VARCHAR" property="dataMigrationStatus" />
+    <result column="WORKLOAD" jdbcType="DOUBLE" property="workload" />
+    <result column="PARENT_ID" jdbcType="BIGINT" property="parentId" />
+    <result column="PARENT_IDS" jdbcType="VARCHAR" property="parentIds" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, REQUIREMENT_NAME, REQUIREMENT_CODE, REQUIREMENT_STATUS, REQUIREMENT_SOURCE, REQUIREMENT_TYPE, 
+    APPLY_USER_ID, APPLY_DEPT_ID, DEVELOPMENT_MANAGE_USER_ID, DEVELOPMENT_DEPT_ID, REQUIREMENT_MANAGE_USER_ID, 
+    REQUIREMENT_ACCEPTANCE_USER_ID, REQUIREMENT_OVERVIEW, REQUIREMENT_PRIORITY, REQUIREMENT_PLAN, 
+    EXPECT_ONLINE_DATE, PLAN_ONLINE_DATE, ACTUAL_ONLINE_DATE, PLAN_INTEGRATION_TEST_DATE, 
+    ACTUAL_INTEGRATION_TEST_DATE, OPEN_DATE, IMPORTANT_REQUIREMENT_STATUS, IMPORTANT_REQUIREMENT_DELAY_STATUS, 
+    IMPORTANT_REQUIREMENT_TYPE, IMPORTANT_REQUIREMENT_ONLINE_QUARTER, IMPORTANT_REQUIREMENT_DELAY_REASON, 
+    DIRECT_INCOME, FORWARD_INCOME, RECESSIVE_INCOME, DIRECT_COST_REDUCTION, FORWARD_COST_REDUCTION, 
+    ANTICIPATED_INCOME, ESTIMATE_COST, HANGUP_STATUS, HANGUP_DATE, CHANGE_COUNT, REQUIREMENT_PROPERTY, 
+    REQUIREMENT_CLASSIFY, REQUIREMENT_SUBDIVISION, ACCEPTANCE_DESCRIPTION, ACCEPTANCE_TIMELINESS, 
+    DATA_MIGRATION_STATUS, WORKLOAD, PARENT_ID, PARENT_IDS, STATUS, CREATE_BY, CREATE_DATE, 
+    LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  <select id="getAllRequirementCount" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementInfo" resultType="int">
+  	select count(*) from(SELECT  ID id
+		FROM tbl_requirement_info tris	
+		<where>
+			<if test="requirementStatus != null and requirementStatus != ''">
+				AND tris.REQUIREMENT_STATUS = #{requirementStatus}
+			</if>			
+			<if test="requirementCode != null and requirementCode != ''">
+				AND tris.REQUIREMENT_CODE LIKE CONCAT('%',#{requirementCode},'%')
+			</if>	
+			<if test="requirementName != null and requirementName != ''">
+				AND tris.REQUIREMENT_NAME LIKE CONCAT('%',#{requirementName},'%')
+			</if>
+			and STATUS=1	
+		</where>) count
+  </select>
+  <select id="getAllReq2" parameterType="map" resultType="map">
+  	SELECT 
+			(select tdd.VALUE_NAME from tbl_data_dic tdd where tdd.VALUE_CODE=REQUIREMENT_STATUS
+				AND tdd.TERM_CODE = "TBL_REQUIREMENT_INFO_REQUIREMENT_STATUS") reqStatusName,
+			(select tdd.VALUE_NAME from tbl_data_dic tdd where tdd.VALUE_CODE=REQUIREMENT_SOURCE
+				AND tdd.TERM_CODE = "TBL_REQUIREMENT_INFO_REQUIREMENT_SOURCE") reqSourceName,
+			(select tdd.VALUE_NAME from tbl_data_dic tdd where tdd.VALUE_CODE=REQUIREMENT_TYPE 
+				AND tdd.TERM_CODE = "TBL_REQUIREMENT_INFO_REQUIREMENT_TYPE") reqTypeName,			
+			 ID id,REQUIREMENT_NAME,REQUIREMENT_CODE
+		FROM tbl_requirement_info tris	
+		<where>
+			<if test="requirement.requirementStatus != null and requirement.requirementStatus != ''">
+				AND tris.REQUIREMENT_STATUS = #{requirement.requirementStatus}
+			</if>			
+			<if test="requirement.requirementCode != null and requirement.requirementCode != ''">
+				AND tris.REQUIREMENT_CODE LIKE CONCAT('%',#{requirement.requirementCode},'%')
+			</if>	
+			<if test="requirement.requirementName != null and requirement.requirementName != ''">
+				AND tris.REQUIREMENT_NAME LIKE CONCAT('%',#{requirement.requirementName},'%')
+			</if>
+			and STATUS=1	
+		</where>
+		limit #{start},#{pageSize}
+  
+  </select>
+  
+  <select id="getReqCode" parameterType="Long" resultType="String">
+  	select REQUIREMENT_CODE
+  	from tbl_requirement_info
+  	where ID =#{id}
+  </select>
+  <select id="getAllReq" resultType="cn.pioneeruniverse.dev.entity.TblRequirementInfo">
+  SELECT reqinfo.ID id,reqinfo.REQUIREMENT_NAME requirementName,reqinfo.REQUIREMENT_CODE requirementCode
+  FROM tbl_requirement_info reqinfo
+  WHERE STATUS=1
+  </select>
+  <select id="getAllRequirement" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementInfo" resultMap="BaseResultMap">
+		SELECT * FROM(
+			SELECT 
+				(select tdi.DEPT_NAME from TBL_DEPT_INFO tdi where tdi.ID= APPLY_DEPT_ID) deptName,
+				(select tui.USER_NAME from tbl_user_info tui where tui.ID=APPLY_USER_ID) userName,			
+				(select tdd.VALUE_NAME from tbl_data_dic tdd where tdd.VALUE_CODE=REQUIREMENT_STATUS
+					AND tdd.TERM_CODE = "TBL_REQUIREMENT_INFO_REQUIREMENT_STATUS") reqStatusName,
+				(select tdd.VALUE_NAME from tbl_data_dic tdd where tdd.VALUE_CODE=REQUIREMENT_SOURCE
+					AND tdd.TERM_CODE = "TBL_REQUIREMENT_INFO_REQUIREMENT_SOURCE") reqSourceName,
+				(select tdd.VALUE_NAME from tbl_data_dic tdd where tdd.VALUE_CODE=REQUIREMENT_TYPE 
+					AND tdd.TERM_CODE = "TBL_REQUIREMENT_INFO_REQUIREMENT_TYPE") reqTypeName,
+				<include refid="Base_Column_List" />
+			FROM tbl_requirement_info tri	
+						
+			<where>	
+				<if test="requirementCode != null and requirementCode != ''">
+					AND REQUIREMENT_CODE LIKE CONCAT('%',#{requirementCode},'%')
+				</if>	
+				<if test="requirementName != null and requirementName != ''">
+					AND REQUIREMENT_NAME LIKE CONCAT('%',#{requirementName},'%')
+				</if>	
+				<if test="applyUserId != null and applyUserId != ''">
+					AND tri.APPLY_USER_ID LIKE CONCAT('%',#{applyUserId},'%')
+				</if>
+				<if test="applyDeptId != null and applyDeptId != ''">
+					AND tri.APPLY_DEPT_ID LIKE CONCAT('%',#{applyDeptId},'%')
+				</if>	
+						
+			</where>
+		) tris
+		<where>
+			<if test="requirementStatus != null and requirementStatus != ''">
+				AND tris.REQUIREMENT_STATUS = #{requirementStatus}
+			</if>			
+			<if test="requirementSource != null and requirementSource != ''">
+				AND tris.REQUIREMENT_SOURCE = #{requirementSource}
+			</if>
+			<if test="requirementType != null and requirementType != ''">
+				AND tris.REQUIREMENT_type = #{requirementType}
+			</if>
+		</where>
+  </select>
+  <select id="getCountRequirement"  resultType="int">		
+  SELECT count(*)from(
+		SELECT 
+			<include refid="Base_Column_List" /> 
+		FROM tbl_requirement_info tri 
+		<!-- <if test="systemId != null and systemId != ''" >
+			INNER JOIN tbl_requirement_feature trf ON tri.ID=trf.REQUIREMENT_ID 				
+			INNER JOIN tbl_system_info tsi ON trf.SYSTEM_ID=tsi.ID				
+		</if>	 -->		
+		<!-- <if test="featureName != null and featureName != '' and (systemId == null or systemId == '') " >
+			INNER JOIN tbl_requirement_feature trf ON tri.ID=trf.REQUIREMENT_ID 				
+		</if> -->									
+		<where>	
+			<if test="requirementCode != null and requirementCode != ''">
+				AND REQUIREMENT_CODE LIKE CONCAT('%',#{requirementCode},'%')
+			</if>	
+			<if test="requirementName != null and requirementName != ''">
+				AND REQUIREMENT_NAME LIKE CONCAT('%',#{requirementName},'%')
+			</if>	
+			<if test="applyUserId != null and applyUserId != ''">
+				AND APPLY_USER_ID LIKE CONCAT('%',#{applyUserId},'%')
+			</if>
+			<if test="applyDeptId != null and applyDeptId != ''">
+				AND APPLY_DEPT_ID LIKE CONCAT('%',#{applyDeptId},'%')
+			</if>					
+			<if test="requirementStatus != null and requirementStatus != ''">
+				AND REQUIREMENT_STATUS = #{requirementStatus}
+			</if>			
+			<if test="requirementSource != null and requirementSource != ''">
+				AND REQUIREMENT_SOURCE = #{requirementSource}
+			</if>
+			<if test="requirementType != null and requirementType != ''">
+				AND REQUIREMENT_type = #{requirementType}
+			</if>
+		<!-- 	<if test="systemId != null and systemId != ''">
+				AND tsi.ID = #{systemId}
+			</if>
+			<if test="featureName != null and featureName != ''">
+				AND FEATURE_NAME = #{featureName}
+			</if> -->
+		</where>
+		GROUP BY tri.ID
+		) tris
+  </select>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_requirement_info
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_requirement_info
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementInfo">
+    insert into tbl_requirement_info (ID, REQUIREMENT_NAME, REQUIREMENT_CODE, 
+      REQUIREMENT_STATUS, REQUIREMENT_SOURCE, REQUIREMENT_TYPE, 
+      APPLY_USER_ID, APPLY_DEPT_ID, DEVELOPMENT_MANAGE_USER_ID, 
+      DEVELOPMENT_DEPT_ID, REQUIREMENT_MANAGE_USER_ID, 
+      REQUIREMENT_ACCEPTANCE_USER_ID, REQUIREMENT_OVERVIEW, 
+      REQUIREMENT_PRIORITY, REQUIREMENT_PLAN, EXPECT_ONLINE_DATE, 
+      PLAN_ONLINE_DATE, ACTUAL_ONLINE_DATE, PLAN_INTEGRATION_TEST_DATE, 
+      ACTUAL_INTEGRATION_TEST_DATE, OPEN_DATE, IMPORTANT_REQUIREMENT_STATUS, 
+      IMPORTANT_REQUIREMENT_DELAY_STATUS, IMPORTANT_REQUIREMENT_TYPE, 
+      IMPORTANT_REQUIREMENT_ONLINE_QUARTER, IMPORTANT_REQUIREMENT_DELAY_REASON, 
+      DIRECT_INCOME, FORWARD_INCOME, RECESSIVE_INCOME, 
+      DIRECT_COST_REDUCTION, FORWARD_COST_REDUCTION, 
+      ANTICIPATED_INCOME, ESTIMATE_COST, HANGUP_STATUS, 
+      HANGUP_DATE, CHANGE_COUNT, REQUIREMENT_PROPERTY, 
+      REQUIREMENT_CLASSIFY, REQUIREMENT_SUBDIVISION, 
+      ACCEPTANCE_DESCRIPTION, ACCEPTANCE_TIMELINESS, 
+      DATA_MIGRATION_STATUS, WORKLOAD, PARENT_ID, 
+      PARENT_IDS, STATUS, CREATE_BY, 
+      CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+      )
+    values (#{id,jdbcType=BIGINT}, #{requirementName,jdbcType=VARCHAR}, #{requirementCode,jdbcType=VARCHAR}, 
+      #{requirementStatus,jdbcType=VARCHAR}, #{requirementSource,jdbcType=VARCHAR}, #{requirementType,jdbcType=VARCHAR}, 
+      #{applyUserId,jdbcType=BIGINT}, #{applyDeptId,jdbcType=BIGINT}, #{developmentManageUserId,jdbcType=BIGINT}, 
+      #{developmentDeptId,jdbcType=BIGINT}, #{requirementManageUserId,jdbcType=BIGINT}, 
+      #{requirementAcceptanceUserId,jdbcType=BIGINT}, #{requirementOverview,jdbcType=VARCHAR}, 
+      #{requirementPriority,jdbcType=VARCHAR}, #{requirementPlan,jdbcType=VARCHAR}, #{expectOnlineDate,jdbcType=DATE}, 
+      #{planOnlineDate,jdbcType=DATE}, #{actualOnlineDate,jdbcType=DATE}, #{planIntegrationTestDate,jdbcType=DATE}, 
+      #{actualIntegrationTestDate,jdbcType=DATE}, #{openDate,jdbcType=DATE}, #{importantRequirementStatus,jdbcType=VARCHAR}, 
+      #{importantRequirementDelayStatus,jdbcType=VARCHAR}, #{importantRequirementType,jdbcType=VARCHAR}, 
+      #{importantRequirementOnlineQuarter,jdbcType=VARCHAR}, #{importantRequirementDelayReason,jdbcType=VARCHAR}, 
+      #{directIncome,jdbcType=TINYINT}, #{forwardIncome,jdbcType=TINYINT}, #{recessiveIncome,jdbcType=TINYINT}, 
+      #{directCostReduction,jdbcType=TINYINT}, #{forwardCostReduction,jdbcType=TINYINT}, 
+      #{anticipatedIncome,jdbcType=VARCHAR}, #{estimateCost,jdbcType=VARCHAR}, #{hangupStatus,jdbcType=VARCHAR}, 
+      #{hangupDate,jdbcType=DATE}, #{changeCount,jdbcType=TINYINT}, #{requirementProperty,jdbcType=VARCHAR}, 
+      #{requirementClassify,jdbcType=VARCHAR}, #{requirementSubdivision,jdbcType=VARCHAR}, 
+      #{acceptanceDescription,jdbcType=VARCHAR}, #{acceptanceTimeliness,jdbcType=VARCHAR}, 
+      #{dataMigrationStatus,jdbcType=VARCHAR}, #{workload,jdbcType=DOUBLE}, #{parentId,jdbcType=BIGINT}, 
+      #{parentIds,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementInfo">
+    insert into tbl_requirement_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="requirementName != null">
+        REQUIREMENT_NAME,
+      </if>
+      <if test="requirementCode != null">
+        REQUIREMENT_CODE,
+      </if>
+      <if test="requirementStatus != null">
+        REQUIREMENT_STATUS,
+      </if>
+      <if test="requirementSource != null">
+        REQUIREMENT_SOURCE,
+      </if>
+      <if test="requirementType != null">
+        REQUIREMENT_TYPE,
+      </if>
+      <if test="applyUserId != null">
+        APPLY_USER_ID,
+      </if>
+      <if test="applyDeptId != null">
+        APPLY_DEPT_ID,
+      </if>
+      <if test="developmentManageUserId != null">
+        DEVELOPMENT_MANAGE_USER_ID,
+      </if>
+      <if test="developmentDeptId != null">
+        DEVELOPMENT_DEPT_ID,
+      </if>
+      <if test="requirementManageUserId != null">
+        REQUIREMENT_MANAGE_USER_ID,
+      </if>
+      <if test="requirementAcceptanceUserId != null">
+        REQUIREMENT_ACCEPTANCE_USER_ID,
+      </if>
+      <if test="requirementOverview != null">
+        REQUIREMENT_OVERVIEW,
+      </if>
+      <if test="requirementPriority != null">
+        REQUIREMENT_PRIORITY,
+      </if>
+      <if test="requirementPlan != null">
+        REQUIREMENT_PLAN,
+      </if>
+      <if test="expectOnlineDate != null">
+        EXPECT_ONLINE_DATE,
+      </if>
+      <if test="planOnlineDate != null">
+        PLAN_ONLINE_DATE,
+      </if>
+      <if test="actualOnlineDate != null">
+        ACTUAL_ONLINE_DATE,
+      </if>
+      <if test="planIntegrationTestDate != null">
+        PLAN_INTEGRATION_TEST_DATE,
+      </if>
+      <if test="actualIntegrationTestDate != null">
+        ACTUAL_INTEGRATION_TEST_DATE,
+      </if>
+      <if test="openDate != null">
+        OPEN_DATE,
+      </if>
+      <if test="importantRequirementStatus != null">
+        IMPORTANT_REQUIREMENT_STATUS,
+      </if>
+      <if test="importantRequirementDelayStatus != null">
+        IMPORTANT_REQUIREMENT_DELAY_STATUS,
+      </if>
+      <if test="importantRequirementType != null">
+        IMPORTANT_REQUIREMENT_TYPE,
+      </if>
+      <if test="importantRequirementOnlineQuarter != null">
+        IMPORTANT_REQUIREMENT_ONLINE_QUARTER,
+      </if>
+      <if test="importantRequirementDelayReason != null">
+        IMPORTANT_REQUIREMENT_DELAY_REASON,
+      </if>
+      <if test="directIncome != null">
+        DIRECT_INCOME,
+      </if>
+      <if test="forwardIncome != null">
+        FORWARD_INCOME,
+      </if>
+      <if test="recessiveIncome != null">
+        RECESSIVE_INCOME,
+      </if>
+      <if test="directCostReduction != null">
+        DIRECT_COST_REDUCTION,
+      </if>
+      <if test="forwardCostReduction != null">
+        FORWARD_COST_REDUCTION,
+      </if>
+      <if test="anticipatedIncome != null">
+        ANTICIPATED_INCOME,
+      </if>
+      <if test="estimateCost != null">
+        ESTIMATE_COST,
+      </if>
+      <if test="hangupStatus != null">
+        HANGUP_STATUS,
+      </if>
+      <if test="hangupDate != null">
+        HANGUP_DATE,
+      </if>
+      <if test="changeCount != null">
+        CHANGE_COUNT,
+      </if>
+      <if test="requirementProperty != null">
+        REQUIREMENT_PROPERTY,
+      </if>
+      <if test="requirementClassify != null">
+        REQUIREMENT_CLASSIFY,
+      </if>
+      <if test="requirementSubdivision != null">
+        REQUIREMENT_SUBDIVISION,
+      </if>
+      <if test="acceptanceDescription != null">
+        ACCEPTANCE_DESCRIPTION,
+      </if>
+      <if test="acceptanceTimeliness != null">
+        ACCEPTANCE_TIMELINESS,
+      </if>
+      <if test="dataMigrationStatus != null">
+        DATA_MIGRATION_STATUS,
+      </if>
+      <if test="workload != null">
+        WORKLOAD,
+      </if>
+      <if test="parentId != null">
+        PARENT_ID,
+      </if>
+      <if test="parentIds != null">
+        PARENT_IDS,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="requirementName != null">
+        #{requirementName,jdbcType=VARCHAR},
+      </if>
+      <if test="requirementCode != null">
+        #{requirementCode,jdbcType=VARCHAR},
+      </if>
+      <if test="requirementStatus != null">
+        #{requirementStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="requirementSource != null">
+        #{requirementSource,jdbcType=VARCHAR},
+      </if>
+      <if test="requirementType != null">
+        #{requirementType,jdbcType=VARCHAR},
+      </if>
+      <if test="applyUserId != null">
+        #{applyUserId,jdbcType=BIGINT},
+      </if>
+      <if test="applyDeptId != null">
+        #{applyDeptId,jdbcType=BIGINT},
+      </if>
+      <if test="developmentManageUserId != null">
+        #{developmentManageUserId,jdbcType=BIGINT},
+      </if>
+      <if test="developmentDeptId != null">
+        #{developmentDeptId,jdbcType=BIGINT},
+      </if>
+      <if test="requirementManageUserId != null">
+        #{requirementManageUserId,jdbcType=BIGINT},
+      </if>
+      <if test="requirementAcceptanceUserId != null">
+        #{requirementAcceptanceUserId,jdbcType=BIGINT},
+      </if>
+      <if test="requirementOverview != null">
+        #{requirementOverview,jdbcType=VARCHAR},
+      </if>
+      <if test="requirementPriority != null">
+        #{requirementPriority,jdbcType=VARCHAR},
+      </if>
+      <if test="requirementPlan != null">
+        #{requirementPlan,jdbcType=VARCHAR},
+      </if>
+      <if test="expectOnlineDate != null">
+        #{expectOnlineDate,jdbcType=DATE},
+      </if>
+      <if test="planOnlineDate != null">
+        #{planOnlineDate,jdbcType=DATE},
+      </if>
+      <if test="actualOnlineDate != null">
+        #{actualOnlineDate,jdbcType=DATE},
+      </if>
+      <if test="planIntegrationTestDate != null">
+        #{planIntegrationTestDate,jdbcType=DATE},
+      </if>
+      <if test="actualIntegrationTestDate != null">
+        #{actualIntegrationTestDate,jdbcType=DATE},
+      </if>
+      <if test="openDate != null">
+        #{openDate,jdbcType=DATE},
+      </if>
+      <if test="importantRequirementStatus != null">
+        #{importantRequirementStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="importantRequirementDelayStatus != null">
+        #{importantRequirementDelayStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="importantRequirementType != null">
+        #{importantRequirementType,jdbcType=VARCHAR},
+      </if>
+      <if test="importantRequirementOnlineQuarter != null">
+        #{importantRequirementOnlineQuarter,jdbcType=VARCHAR},
+      </if>
+      <if test="importantRequirementDelayReason != null">
+        #{importantRequirementDelayReason,jdbcType=VARCHAR},
+      </if>
+      <if test="directIncome != null">
+        #{directIncome,jdbcType=TINYINT},
+      </if>
+      <if test="forwardIncome != null">
+        #{forwardIncome,jdbcType=TINYINT},
+      </if>
+      <if test="recessiveIncome != null">
+        #{recessiveIncome,jdbcType=TINYINT},
+      </if>
+      <if test="directCostReduction != null">
+        #{directCostReduction,jdbcType=TINYINT},
+      </if>
+      <if test="forwardCostReduction != null">
+        #{forwardCostReduction,jdbcType=TINYINT},
+      </if>
+      <if test="anticipatedIncome != null">
+        #{anticipatedIncome,jdbcType=VARCHAR},
+      </if>
+      <if test="estimateCost != null">
+        #{estimateCost,jdbcType=VARCHAR},
+      </if>
+      <if test="hangupStatus != null">
+        #{hangupStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="hangupDate != null">
+        #{hangupDate,jdbcType=DATE},
+      </if>
+      <if test="changeCount != null">
+        #{changeCount,jdbcType=TINYINT},
+      </if>
+      <if test="requirementProperty != null">
+        #{requirementProperty,jdbcType=VARCHAR},
+      </if>
+      <if test="requirementClassify != null">
+        #{requirementClassify,jdbcType=VARCHAR},
+      </if>
+      <if test="requirementSubdivision != null">
+        #{requirementSubdivision,jdbcType=VARCHAR},
+      </if>
+      <if test="acceptanceDescription != null">
+        #{acceptanceDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="acceptanceTimeliness != null">
+        #{acceptanceTimeliness,jdbcType=VARCHAR},
+      </if>
+      <if test="dataMigrationStatus != null">
+        #{dataMigrationStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="workload != null">
+        #{workload,jdbcType=DOUBLE},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="parentIds != null">
+        #{parentIds,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementInfo">
+    update tbl_requirement_info
+    <set>
+      <if test="requirementName != null">
+        REQUIREMENT_NAME = #{requirementName,jdbcType=VARCHAR},
+      </if>
+      <if test="requirementCode != null">
+        REQUIREMENT_CODE = #{requirementCode,jdbcType=VARCHAR},
+      </if>
+      <if test="requirementStatus != null">
+        REQUIREMENT_STATUS = #{requirementStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="requirementSource != null">
+        REQUIREMENT_SOURCE = #{requirementSource,jdbcType=VARCHAR},
+      </if>
+      <if test="requirementType != null">
+        REQUIREMENT_TYPE = #{requirementType,jdbcType=VARCHAR},
+      </if>
+      <if test="applyUserId != null">
+        APPLY_USER_ID = #{applyUserId,jdbcType=BIGINT},
+      </if>
+      <if test="applyDeptId != null">
+        APPLY_DEPT_ID = #{applyDeptId,jdbcType=BIGINT},
+      </if>
+      <if test="developmentManageUserId != null">
+        DEVELOPMENT_MANAGE_USER_ID = #{developmentManageUserId,jdbcType=BIGINT},
+      </if>
+      <if test="developmentDeptId != null">
+        DEVELOPMENT_DEPT_ID = #{developmentDeptId,jdbcType=BIGINT},
+      </if>
+      <if test="requirementManageUserId != null">
+        REQUIREMENT_MANAGE_USER_ID = #{requirementManageUserId,jdbcType=BIGINT},
+      </if>
+      <if test="requirementAcceptanceUserId != null">
+        REQUIREMENT_ACCEPTANCE_USER_ID = #{requirementAcceptanceUserId,jdbcType=BIGINT},
+      </if>
+      <if test="requirementOverview != null">
+        REQUIREMENT_OVERVIEW = #{requirementOverview,jdbcType=VARCHAR},
+      </if>
+      <if test="requirementPriority != null">
+        REQUIREMENT_PRIORITY = #{requirementPriority,jdbcType=VARCHAR},
+      </if>
+      <if test="requirementPlan != null">
+        REQUIREMENT_PLAN = #{requirementPlan,jdbcType=VARCHAR},
+      </if>
+      <if test="expectOnlineDate != null">
+        EXPECT_ONLINE_DATE = #{expectOnlineDate,jdbcType=DATE},
+      </if>
+      <if test="planOnlineDate != null">
+        PLAN_ONLINE_DATE = #{planOnlineDate,jdbcType=DATE},
+      </if>
+      <if test="actualOnlineDate != null">
+        ACTUAL_ONLINE_DATE = #{actualOnlineDate,jdbcType=DATE},
+      </if>
+      <if test="planIntegrationTestDate != null">
+        PLAN_INTEGRATION_TEST_DATE = #{planIntegrationTestDate,jdbcType=DATE},
+      </if>
+      <if test="actualIntegrationTestDate != null">
+        ACTUAL_INTEGRATION_TEST_DATE = #{actualIntegrationTestDate,jdbcType=DATE},
+      </if>
+      <if test="openDate != null">
+        OPEN_DATE = #{openDate,jdbcType=DATE},
+      </if>
+      <if test="importantRequirementStatus != null">
+        IMPORTANT_REQUIREMENT_STATUS = #{importantRequirementStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="importantRequirementDelayStatus != null">
+        IMPORTANT_REQUIREMENT_DELAY_STATUS = #{importantRequirementDelayStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="importantRequirementType != null">
+        IMPORTANT_REQUIREMENT_TYPE = #{importantRequirementType,jdbcType=VARCHAR},
+      </if>
+      <if test="importantRequirementOnlineQuarter != null">
+        IMPORTANT_REQUIREMENT_ONLINE_QUARTER = #{importantRequirementOnlineQuarter,jdbcType=VARCHAR},
+      </if>
+      <if test="importantRequirementDelayReason != null">
+        IMPORTANT_REQUIREMENT_DELAY_REASON = #{importantRequirementDelayReason,jdbcType=VARCHAR},
+      </if>
+      <if test="directIncome != null">
+        DIRECT_INCOME = #{directIncome,jdbcType=TINYINT},
+      </if>
+      <if test="forwardIncome != null">
+        FORWARD_INCOME = #{forwardIncome,jdbcType=TINYINT},
+      </if>
+      <if test="recessiveIncome != null">
+        RECESSIVE_INCOME = #{recessiveIncome,jdbcType=TINYINT},
+      </if>
+      <if test="directCostReduction != null">
+        DIRECT_COST_REDUCTION = #{directCostReduction,jdbcType=TINYINT},
+      </if>
+      <if test="forwardCostReduction != null">
+        FORWARD_COST_REDUCTION = #{forwardCostReduction,jdbcType=TINYINT},
+      </if>
+      <if test="anticipatedIncome != null">
+        ANTICIPATED_INCOME = #{anticipatedIncome,jdbcType=VARCHAR},
+      </if>
+      <if test="estimateCost != null">
+        ESTIMATE_COST = #{estimateCost,jdbcType=VARCHAR},
+      </if>
+      <if test="hangupStatus != null">
+        HANGUP_STATUS = #{hangupStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="hangupDate != null">
+        HANGUP_DATE = #{hangupDate,jdbcType=DATE},
+      </if>
+      <if test="changeCount != null">
+        CHANGE_COUNT = #{changeCount,jdbcType=TINYINT},
+      </if>
+      <if test="requirementProperty != null">
+        REQUIREMENT_PROPERTY = #{requirementProperty,jdbcType=VARCHAR},
+      </if>
+      <if test="requirementClassify != null">
+        REQUIREMENT_CLASSIFY = #{requirementClassify,jdbcType=VARCHAR},
+      </if>
+      <if test="requirementSubdivision != null">
+        REQUIREMENT_SUBDIVISION = #{requirementSubdivision,jdbcType=VARCHAR},
+      </if>
+      <if test="acceptanceDescription != null">
+        ACCEPTANCE_DESCRIPTION = #{acceptanceDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="acceptanceTimeliness != null">
+        ACCEPTANCE_TIMELINESS = #{acceptanceTimeliness,jdbcType=VARCHAR},
+      </if>
+      <if test="dataMigrationStatus != null">
+        DATA_MIGRATION_STATUS = #{dataMigrationStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="workload != null">
+        WORKLOAD = #{workload,jdbcType=DOUBLE},
+      </if>
+      <if test="parentId != null">
+        PARENT_ID = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="parentIds != null">
+        PARENT_IDS = #{parentIds,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementInfo">
+    update tbl_requirement_info
+    set REQUIREMENT_NAME = #{requirementName,jdbcType=VARCHAR},
+      REQUIREMENT_CODE = #{requirementCode,jdbcType=VARCHAR},
+      REQUIREMENT_STATUS = #{requirementStatus,jdbcType=VARCHAR},
+      REQUIREMENT_SOURCE = #{requirementSource,jdbcType=VARCHAR},
+      REQUIREMENT_TYPE = #{requirementType,jdbcType=VARCHAR},
+      APPLY_USER_ID = #{applyUserId,jdbcType=BIGINT},
+      APPLY_DEPT_ID = #{applyDeptId,jdbcType=BIGINT},
+      DEVELOPMENT_MANAGE_USER_ID = #{developmentManageUserId,jdbcType=BIGINT},
+      DEVELOPMENT_DEPT_ID = #{developmentDeptId,jdbcType=BIGINT},
+      REQUIREMENT_MANAGE_USER_ID = #{requirementManageUserId,jdbcType=BIGINT},
+      REQUIREMENT_ACCEPTANCE_USER_ID = #{requirementAcceptanceUserId,jdbcType=BIGINT},
+      REQUIREMENT_OVERVIEW = #{requirementOverview,jdbcType=VARCHAR},
+      REQUIREMENT_PRIORITY = #{requirementPriority,jdbcType=VARCHAR},
+      REQUIREMENT_PLAN = #{requirementPlan,jdbcType=VARCHAR},
+      EXPECT_ONLINE_DATE = #{expectOnlineDate,jdbcType=DATE},
+      PLAN_ONLINE_DATE = #{planOnlineDate,jdbcType=DATE},
+      ACTUAL_ONLINE_DATE = #{actualOnlineDate,jdbcType=DATE},
+      PLAN_INTEGRATION_TEST_DATE = #{planIntegrationTestDate,jdbcType=DATE},
+      ACTUAL_INTEGRATION_TEST_DATE = #{actualIntegrationTestDate,jdbcType=DATE},
+      OPEN_DATE = #{openDate,jdbcType=DATE},
+      IMPORTANT_REQUIREMENT_STATUS = #{importantRequirementStatus,jdbcType=VARCHAR},
+      IMPORTANT_REQUIREMENT_DELAY_STATUS = #{importantRequirementDelayStatus,jdbcType=VARCHAR},
+      IMPORTANT_REQUIREMENT_TYPE = #{importantRequirementType,jdbcType=VARCHAR},
+      IMPORTANT_REQUIREMENT_ONLINE_QUARTER = #{importantRequirementOnlineQuarter,jdbcType=VARCHAR},
+      IMPORTANT_REQUIREMENT_DELAY_REASON = #{importantRequirementDelayReason,jdbcType=VARCHAR},
+      DIRECT_INCOME = #{directIncome,jdbcType=TINYINT},
+      FORWARD_INCOME = #{forwardIncome,jdbcType=TINYINT},
+      RECESSIVE_INCOME = #{recessiveIncome,jdbcType=TINYINT},
+      DIRECT_COST_REDUCTION = #{directCostReduction,jdbcType=TINYINT},
+      FORWARD_COST_REDUCTION = #{forwardCostReduction,jdbcType=TINYINT},
+      ANTICIPATED_INCOME = #{anticipatedIncome,jdbcType=VARCHAR},
+      ESTIMATE_COST = #{estimateCost,jdbcType=VARCHAR},
+      HANGUP_STATUS = #{hangupStatus,jdbcType=VARCHAR},
+      HANGUP_DATE = #{hangupDate,jdbcType=DATE},
+      CHANGE_COUNT = #{changeCount,jdbcType=TINYINT},
+      REQUIREMENT_PROPERTY = #{requirementProperty,jdbcType=VARCHAR},
+      REQUIREMENT_CLASSIFY = #{requirementClassify,jdbcType=VARCHAR},
+      REQUIREMENT_SUBDIVISION = #{requirementSubdivision,jdbcType=VARCHAR},
+      ACCEPTANCE_DESCRIPTION = #{acceptanceDescription,jdbcType=VARCHAR},
+      ACCEPTANCE_TIMELINESS = #{acceptanceTimeliness,jdbcType=VARCHAR},
+      DATA_MIGRATION_STATUS = #{dataMigrationStatus,jdbcType=VARCHAR},
+      WORKLOAD = #{workload,jdbcType=DOUBLE},
+      PARENT_ID = #{parentId,jdbcType=BIGINT},
+      PARENT_IDS = #{parentIds,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="getRequirement" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementInfo" resultMap="BaseResultMap">
+  SELECT requirement.id,REQUIREMENT_NAME,REQUIREMENT_CODE,REQUIREMENT_TYPE from tbl_requirement_info requirement
+	<where>
+	<if test="requirementName != null and requirementName!=''">
+        and REQUIREMENT_NAME LIKE CONCAT('%',#{requirementName},'%')
+     </if>
+     <if test="requirementCode != null and requirementCode!=''">
+        and REQUIREMENT_CODE LIKE CONCAT('%',#{requirementCode},'%')
+     </if>
+      <if test="requirementType != null">
+		AND REQUIREMENT_TYPE in
+		<foreach item="item" index="index" collection="requirementTypeList" open="(" separator="," close=")">
+				#{item}
+			 </foreach> 
+				 
+		</if>
+	</where> 
+  </select>
+  
+  <select id="selectReqIdByReqCodeSql" resultType="long">
+  	select ID from tbl_requirement_info
+  	where (status = 1 or `STATUS` IS NULL) and ${requirementCodeSql}
+  </select>
+</mapper>

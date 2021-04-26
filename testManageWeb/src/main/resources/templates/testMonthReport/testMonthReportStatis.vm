@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>测试月报</title>
+    <link rel="stylesheet"
+          href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet"
+          href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+    <link rel="stylesheet"
+          href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css"/>
+    <link rel="stylesheet"
+          href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css"/>
+    <link rel="stylesheet"
+          href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css"/>
+    <link rel="stylesheet"
+          href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet"
+          href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css"/>
+    <link rel="stylesheet" type="text/css" media="screen"
+          href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css"/>
+    <link rel="stylesheet"
+          href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css"/>
+    <link rel="stylesheet"
+          href="#springUrl('')/systemui/static/css/frame/jquery.editable-select.min.css"/>
+    <link rel="stylesheet"
+          href="#springUrl('')/systemui/static/css/frame/component.css"/>
+    <link rel="stylesheet"
+          href="#springUrl('')/systemui/static/css/frame/daterangepicker-bs3.css"/>
+    <link rel="stylesheet"
+          href="#springUrl('')/systemui/static/css/common/common.css"/>
+    <link rel="stylesheet"
+          href="#springUrl('')/testManageui/static/css/testReport/testReport.css"/>
+    <style>
+        .chanceMyself .btn_clear {
+            right: 150px !important;
+        }
+
+        .miss-title{
+            font-size: 14px;
+            font-weight: bold;
+        }
+        #content-2{
+            width: 100%;
+            height: 100%;
+            background: white;
+            padding-top: 50px;
+        }
+        #content-2 .miss-header{
+            width: 100%;
+            height: 50px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: white;
+            z-index: 100;
+            line-height: 50px;
+            border-bottom: 1px solid #f3f3f3;
+        }
+        #content-2 .control-label{
+            padding-top: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="content-1" style="display: block">
+    <div class="color1">
+        <div class="container-fluid" id="search_div_test">
+            <div class="row control-row">
+                <div class="col-md-4"></div>
+                <div class="col-md-3">
+                    <div class="search_font">
+                        <label class="control-label">时间：</label>
+                    </div>
+                    <div class="search_input">
+                        <input type="text" class="form-control" placeholder="请选择时间"
+                               id="startDate" name="startDate" value=""/>
+                    </div>
+                </div>
+            </div>
+            <div class="row control-row search_btn">
+                <button type="button" class="btn btn-primary" onclick="queryData()">实时查询</button>
+                <button type="button" class="btn btn-primary" onclick="queryHisByTime()">历史查询</button>
+                <button type="button" onclick="clearSearch()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                <button id="configSystemBtn" type="button" style="display: none" class="btn btn-primary"
+                        onclick="showConfigModal()">配置系统
+                </button>
+                <button id="initiateReviewBtn" style="display: none" type="button" class="btn btn-primary"
+                        onclick="startAudit()">发起评审
+                </button>
+                <button id="missExperienceBtn" style="display: none" type="button" class="btn btn-primary" onclick="showMissExperienceList(true)">漏检经验</button>
+                <button type="button" class="btn btn-primary" onclick="toMonthlyDetail()">查看月报</button>
+            </div>
+        </div>
+        <div id="downBtn" class="downBtn">
+            <span class="fa fa-caret-up"></span>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="content-table">
+            <table id="devVertionTable"></table>
+        </div>
+        <div class="content-table">
+            <table id="devSystemTable"></table>
+        </div>
+        <div class="row control-row search_btn" id="saveHis" style="display: none">
+            <button id="saveHisBtn" style="display: none" type="button" class="btn btn-primary" onclick="saveHis()">保存历史
+            </button>
+        </div>
+    </div>
+
+    ##配置系统弹框
+    <div class="modal fade bs-example-modal-lg" id="configModal"
+         tabindex="-1" role="dialog" aria-labelledby="configModal">
+        <div class="modal-dialog modal-lg modal-user" role="document">
+            <div class="modal-content" style="min-height: 350px;height: 60%">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <span class="modal-title" id="myModalLabel">系统分配</span>
+                </div>
+                <div class="modal-body">
+                    <div class="systemTitle">运维期系统：</div>
+                    <div class="assignTableGroup">
+                        <div class="oneAssign">
+                            <div class="assignBtnGroup">
+                                <button type="button" class="btn btn-primary" onclick="showSystem(2)">增加系统</button>
+                                <button type="button" class="btn btn-default" onclick="batchDelete('oamSystemTable')"
+                                >移除系统
+                                </button>
+                            </div>
+                            <div class="oamSystemDiv">
+                                <table id="oamSystemTable"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="systemTitle">新建期系统：</div>
+                    <div class="assignTableGroup">
+                        <div class="oneAssign">
+                            <div class="assignBtnGroup">
+                                <button type="button" class="btn btn-primary" onclick="showSystem(1)">增加系统</button>
+                                <button type="button" class="btn btn-default" onclick="batchDelete('newSystemTable')"
+                                >移除系统
+                                </button>
+                            </div>
+                            <div class="newSystemDiv">
+                                <table id="newSystemTable"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="systemTitle">敏捷类系统：</div>
+                    <div class="assignTableGroup">
+                        <div class="oneAssign">
+                            <div class="assignBtnGroup">
+                                <button type="button" class="btn btn-primary" onclick="showSystem(3)">增加系统</button>
+                                <button type="button" class="btn btn-default" onclick="batchDelete('agileSystemTable',-1)"
+                                >移除系统
+                                </button>
+                            </div>
+                            <div class="newSystemDiv">
+                                <table id="agileSystemTable"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    ##涉及系统弹框
+    <div class="modal fade bs-example-modal-lg" id="selSys" tabindex="-1"
+         role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-lg modal-user" role="document">
+            <div class="modal-content modalStyle">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <span class="modal-title" id="">选择系统</span>
+                </div>
+                <div class="modal-body">
+
+                    <div class="color1">
+                        <div class="container-fluid" id="">
+                            <div class="rowdiv control-row">
+                                <div class="col-md-2"></div>
+
+                                <div class="col-md-4">
+                                    <div class="search_font">
+                                        <label class="control-label">系统编码：</label>
+                                    </div>
+                                    <div class="search_input">
+                                        <input type="text" class="form-control" placeholder="请输入"
+                                               id="SCsystemCode" name="systemCode" value=""/>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="search_font">
+                                        <label class="control-label">系统名称：</label>
+                                    </div>
+                                    <div class="search_input">
+                                        <input type="text" class="form-control" placeholder="请输入"
+                                               id="SCsystemName" name="systemName" value=""/>
+                                    </div>
+                                </div>
+                                <div class="col-md-2"></div>
+                            </div>
+                            <div class="rowdiv control-row search_btn">
+                                <button type="button" class="btn btn-primary" onclick="systemTableShowAll()"
+                                        id="systemSearch">搜&nbsp;&nbsp;&nbsp;索
+                                </button>
+                                <button type="button" onclick="clearSearchSys()"
+                                        class="btn btn-default">重&nbsp;&nbsp;&nbsp;置
+                                </button>
+                            </div>
+
+                        </div>
+                        <div id="downBtn" class="downBtn">
+                            <span class="fa fa-caret-up"></span>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="content-table">
+                        <div class="wode">
+                            <table id="systemTable"></table>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="sysbutton" class="btn btn-primary"
+                            data-sys="default" onclick="commitSys()">确定
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    ##修改负责人
+    <div class="modal fade bs-example-modal-biggst" id="change_people"
+         tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <span class="modal-title">修改负责人</span>
+                </div>
+
+                <div class="modal-body">
+                    <form id="newform" method="post" enctype="multipart/form-data">
+                        <div class="rowdiv">
+                            <div class="form-group def_col_36">
+                                <label class="def_col_8 control-label font_right">当前负责人：</label>
+                                <div class="def_col_26">
+                                    <input class="form-control" disabled placeholder="请输入" id="currentChartPeople"
+                                           name="featureOverview"> </input>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rowdiv">
+                            <div class="form-group def_col_36">
+                                <label class="def_col_8 control-label font_right">负责人：</label>
+                                <div class="def_col_26 chanceMyself">
+                                    <input type="hidden" id="newtestManageUser"/> <input
+                                        type="text"
+                                        class="form-control  def_col_20"
+                                        placeholder="请输入关键字搜索" id="newtestManageUserName"
+                                        name="newtestManageUserName"/>
+                                    <div class="def_col_16">
+                                        <button type="button"
+                                                class="btn  btn-primary chanceMyselfBtm"
+                                                onclick="selectMyself(this)">选自己
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary bg_108EE9"
+                            onclick="addChangePeopleCommit()">提交
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    ##	漏检经验总结
+<div id="content-2" style="display: none">
+    <div class="miss-header">
+        <span class="headReturn" onclick="showMissExperienceList(false)"></span>
+        <span class="miss-title" style="margin-left: 80px"><span>漏检经验总结</span></span>
+    </div>
+    <div class="miss-body" style="margin: 20px">
+        <div style="text-align: right;">
+            <button type="button" class="btn btn-primary" style="margin-bottom: 10px" onclick="addMissExperience()">新增</button>
+        </div>
+        <table id="missExperienceListTable"></table>
+    </div>
+
+    ##    漏检经验编辑
+    <div id="missExperienceEdit" class="modal fade bs-example-modal-biggest in " tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" style="width: 700px" role="document">
+            <div class="modal-content" style="min-height: 350px;height: 60%">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title">漏检经验编辑</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="missExperienceEditForm" class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Mantis/ITSM编号:</label>
+                            <div class="col-sm-9">
+                                <input data-id="itmsCode" class="miss-data form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">项目名称:</label>
+                            <div class="col-sm-9">
+                                <input data-id="systemName" class="form-control miss-data" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">严重性：</label>
+                            <div class="col-sm-9">
+                                <input data-id="seriousLevel" class="form-control miss-data" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">报告日期：</label>
+                            <div class="col-sm-9">
+                                <input id="reportDate" data-id="reportDate" class="form-control miss-data" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">需求编号：</label>
+                            <div class="col-sm-9">
+                                <input data-id="requirementCode" class="form-control miss-data" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">摘要：</label>
+                            <div class="col-sm-9">
+                                <textarea data-id="summary" class="form-control miss-data" style="width: 100%"
+                                          rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">原因分析：</label>
+                            <div class="col-sm-9">
+                                <textarea data-id="reasonAnalysis" class="form-control miss-data" style="width: 100%"
+                                          rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">漏检原因：</label>
+                            <div class="col-sm-9">
+                                <textarea data-id="missedReason" class="form-control miss-data" style="width: 100%"
+                                          rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">测试经验总结：</label>
+                            <div class="col-sm-9">
+                                <textarea data-id="experienceSummary" class="form-control miss-data" style="width: 100%"
+                                          rows="3"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button onclick="submitMissExperience()" type="button" class="btn btn-primary">提交</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+</div>
+<div id="loading">
+    <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif"/>
+</div>
+
+</body>
+
+
+<script>
+
+    var uid = $uid;
+    var username = '$username';
+
+    /**
+     * 选自己
+     * add by ztt
+     * */
+    function selectMyself(that) {
+        $($(that).parent().parent().children()[0]).val(uid);
+        $($(that).parent().parent().children()[1]).val(username);
+    }
+</script>
+<script type="text/javascript"
+        src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+<script type="text/javascript"
+        src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+<script type="text/javascript"
+        src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+<script type="text/javascript"
+        src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+<script type="text/javascript"
+        src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript"
+        src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+<script type="text/javascript"
+        src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+<script type="text/javascript"
+        src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript"
+        src="#springUrl('')/testManageui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript"
+        src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+<script type="text/ecmascript"
+        src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+<script type="text/ecmascript"
+        src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+<script type="text/ecmascript"
+        src="#springUrl('')/systemui/static/js/frame/laydate.js"></script>
+<script type="text/ecmascript"
+        src="#springUrl('')/systemui/static/js/common.js"></script>
+<script type="text/ecmascript"
+        src="#springUrl('')/systemui/static/js/common/common.js"></script>
+<script type="text/javascript"
+        src="#springUrl('')/systemui/static/js/frame/daterangepicker.js"></script>
+<script type="text/ecmascript"
+        src="#springUrl('')/systemui/static/js/common/fuzzy_serach.js"></script>
+<script type="text/ecmascript"
+        src="#springUrl('')/testManageui/static/js/common/fuzzy_serach_test.js"></script>
+<script type="text/ecmascript"
+        src="#springUrl('')/testManageui/static/js/testtask/testtaskOther.js"></script>
+<script type="text/ecmascript"
+        src="#springUrl('')/testManageui/static/js/exportTestExcel/exportModal.js"></script>
+<script type="text/ecmascript"
+        src="#springUrl('')/testManageui/static/js/testMonthReport/testMonthReportStatis.js"></script>
+</html>

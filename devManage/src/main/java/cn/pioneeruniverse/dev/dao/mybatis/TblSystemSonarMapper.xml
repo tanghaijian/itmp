@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblSystemSonarMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblSystemSonar">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="system_ID" jdbcType="BIGINT" property="systemId" />
+    <result column="system_scm_id" jdbcType="BIGINT" property="systemScmId" />
+    <result column="TOOL_ID" jdbcType="BIGINT" property="toolId" />
+    <result column="system_module_id" jdbcType="BIGINT" property="systemModuleId" />
+    <result column="sonar_project_Key" jdbcType="VARCHAR" property="sonarProjectKey" />
+    <result column="sonar_project_Name" jdbcType="VARCHAR" property="sonarProjectName" />
+    <result column="sonar_sources" jdbcType="VARCHAR" property="sonarSources" />
+    <result column="sonar_java_binaries" jdbcType="VARCHAR" property="sonarJavaBinaries" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+    <result column="SYSTEM_JENKINS_ID" jdbcType="BIGINT" property="systemJenkinsId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, system_ID, system_scm_id, system_module_id, sonar_project_Key, sonar_project_Name, sonar_sources, TOOL_ID,
+    sonar_java_binaries, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE,SYSTEM_JENKINS_ID
+  </sql>
+<!--  查询-->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_system_sonar
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+ <!--  <select id="selectById" parameterType="java.lang.Long" resultType="cn.pioneeruniverse.dev.entity.TblSystemSonar">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_system_sonar
+    where ID = #{id,jdbcType=BIGINT}
+  </select> -->
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_system_sonar
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+<!--  查询-->
+   <select id="selectBySystemId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_system_sonar
+    where SYSTEM_ID = #{id,jdbcType=BIGINT}
+  </select>
+<!--条件查询  -->
+ <select id="selectByMapLimit" parameterType="map"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tbl_system_sonar
+		where system_id=#{systemId,jdbcType=BIGINT} and SYSTEM_SCM_ID=#{systemScmId,jdbcType=BIGINT} 
+		  <if test="systemJenkinsId != null">
+        and  SYSTEM_JENKINS_ID=#{systemJenkinsId,jdbcType=BIGINT}
+      </if>
+		 
+		 <if test="systemModuleId != null">
+		 
+        and  SYSTEM_MODULE_ID=#{systemModuleId,jdbcType=BIGINT}
+      </if>
+      <if test="systemModuleId == null">
+        and  SYSTEM_MODULE_ID is null 
+      </if>
+		
+		
+	</select> 
+  <!--  keyProperty="id" useGeneratedKeys="true" -->
+<!--  插入-->
+  <insert id="insertNew"  keyProperty="id" useGeneratedKeys="true"  parameterType="cn.pioneeruniverse.dev.entity.TblSystemSonar">
+    insert into tbl_system_sonar (system_ID, system_scm_id, system_module_id,
+      sonar_project_Key, sonar_project_Name, sonar_sources, 
+      sonar_java_binaries, STATUS, CREATE_BY, 
+      CREATE_DATE, LAST_UPDATE_BY, TOOL_ID,LAST_UPDATE_DATE,SYSTEM_JENKINS_ID
+      )
+    values ( #{systemId,jdbcType=BIGINT}, #{systemScmId,jdbcType=BIGINT}, #{systemModuleId,jdbcType=BIGINT}, 
+      #{sonarProjectKey,jdbcType=VARCHAR}, #{sonarProjectName,jdbcType=VARCHAR}, #{sonarSources,jdbcType=VARCHAR}, 
+      #{sonarJavaBinaries,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT},#{toolId,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP}
+      , #{systemJenkinsId,jdbcType=BIGINT}
+      )
+  </insert>
+<!--  新增-->
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.dev.entity.TblSystemSonar">
+    insert into tbl_system_sonar
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="systemId != null">
+        system_ID,
+      </if>
+      <if test="systemScmId != null">
+        system_scm_id,
+      </if>
+      <if test="systemModuleId != null">
+        system_module_id,
+      </if>
+      <if test="sonarProjectKey != null">
+        sonar_project_Key,
+      </if>
+      <if test="sonarProjectName != null">
+        sonar_project_Name,
+      </if>
+      <if test="sonarSources != null">
+        sonar_sources,
+      </if>
+      <if test="sonarJavaBinaries != null">
+        sonar_java_binaries,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="systemId != null">
+        #{systemId,jdbcType=BIGINT},
+      </if>
+      <if test="systemScmId != null">
+        #{systemScmId,jdbcType=BIGINT},
+      </if>
+      <if test="systemModuleId != null">
+        #{systemModuleId,jdbcType=BIGINT},
+      </if>
+      <if test="sonarProjectKey != null">
+        #{sonarProjectKey,jdbcType=VARCHAR},
+      </if>
+      <if test="sonarProjectName != null">
+        #{sonarProjectName,jdbcType=VARCHAR},
+      </if>
+      <if test="sonarSources != null">
+        #{sonarSources,jdbcType=VARCHAR},
+      </if>
+      <if test="sonarJavaBinaries != null">
+        #{sonarJavaBinaries,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+<!--  更新-->
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblSystemSonar">
+    update tbl_system_sonar
+    <set>
+      <if test="systemId != null">
+        system_ID = #{systemId,jdbcType=BIGINT},
+      </if>
+      <if test="systemScmId != null">
+        system_scm_id = #{systemScmId,jdbcType=BIGINT},
+      </if>
+      <if test="systemModuleId != null">
+        system_module_id = #{systemModuleId,jdbcType=BIGINT},
+      </if>
+      <if test="sonarProjectKey != null">
+        sonar_project_Key = #{sonarProjectKey,jdbcType=VARCHAR},
+      </if>
+      <if test="sonarProjectName != null">
+        sonar_project_Name = #{sonarProjectName,jdbcType=VARCHAR},
+      </if>
+      <if test="sonarSources != null">
+        sonar_sources = #{sonarSources,jdbcType=VARCHAR},
+      </if>
+      <if test="sonarJavaBinaries != null">
+        sonar_java_binaries = #{sonarJavaBinaries,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+<!--  更新-->
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblSystemSonar">
+    update tbl_system_sonar
+    set system_ID = #{systemId,jdbcType=BIGINT},
+      system_scm_id = #{systemScmId,jdbcType=BIGINT},
+      system_module_id = #{systemModuleId,jdbcType=BIGINT},
+      sonar_project_Key = #{sonarProjectKey,jdbcType=VARCHAR},
+      sonar_project_Name = #{sonarProjectName,jdbcType=VARCHAR},
+      sonar_sources = #{sonarSources,jdbcType=VARCHAR},
+      sonar_java_binaries = #{sonarJavaBinaries,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

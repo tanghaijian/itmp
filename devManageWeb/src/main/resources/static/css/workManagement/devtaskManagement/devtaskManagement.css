@@ -1,0 +1,50 @@
+
+
+
+#DevTaskID{display:none;}
+#HdevID{display:none;}
+#DHdevID{display:none;}
+#oldName{display:none;}
+#OleDveName{display:none;}
+#taskID{display:none;}
+#assigDevID{display:none;}
+#TransferDevID{display:none;}
+#CodeDevID{display:none;} 
+#CodeY{
+	background:#009966;
+}
+#CodeN{
+	background:#FF6666;
+}
+
+
+.doing6{border-radius: 30px ; background:#FD5723 ;display: inline-block;padding:2px 12px;color:#ffffff;margin-bottom: 10px;}
+.doing4{border-radius: 30px ; background:#4E85EA ;display: inline-block;padding:2px 12px;color:#ffffff;margin-bottom: 10px;}
+.doing3{border-radius: 30px ; background:#33CC99 ;display: inline-block;padding:2px 12px;color:#ffffff;margin-bottom: 10px;}
+.doing5{border-radius: 30px ; background:#FD5723 ;display: inline-block;padding:2px 12px;color:#ffffff;margin-bottom: 10px;}
+
+.doing2{border-radius: 30px ; background:#108EE9 ;display: inline-block;padding:2px 12px;color:#ffffff;margin-bottom: 10px;}
+
+.doing1{
+	border-radius: 30px ; background:#FF6699 ;display: inline-block;padding:2px 12px;color:#ffffff;margin-bottom: 10px;}
+ li{list-style-type:none} 
+
+
+.red{
+   color:red;
+}
+#tb{
+    width: 100%;
+    font-size: 12px;
+}
+#tb thead{
+    font-weight: bold;
+    background-color: #F4F4F4;
+}
+#tb tbody tr td{
+    background: none;
+}
+
+
+
+

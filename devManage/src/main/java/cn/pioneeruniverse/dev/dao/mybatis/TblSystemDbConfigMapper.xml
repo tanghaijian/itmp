@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblSystemDbConfigMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblSystemDbConfig">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="SYSTEM_ID" jdbcType="BIGINT" property="systemId" />
+    <result column="SYSTEM_MODULE_ID" jdbcType="BIGINT" property="systemModuleId" />
+    <result column="ENVIRONMENT_TYPE" jdbcType="TINYINT" property="environmentType" />
+    <result column="DRIVER_VERSION" jdbcType="TINYINT" property="driverVersion" />
+    <result column="DRIVER_CLASS_NAME" jdbcType="VARCHAR" property="driverClassName" />
+    <result column="URL" jdbcType="VARCHAR" property="url" />
+    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+    <result column="PASSWORD" jdbcType="VARCHAR" property="password" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, SYSTEM_ID, SYSTEM_MODULE_ID, ENVIRONMENT_TYPE, DRIVER_VERSION, DRIVER_CLASS_NAME, URL, USER_NAME, 
+    PASSWORD, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_system_db_config
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+
+
+
+<!-- 数据库管理查询-->
+
+  <select id="findDbConfigListPage" parameterType="cn.pioneeruniverse.dev.entity.TblSystemDbConfigVo" resultType="cn.pioneeruniverse.dev.entity.TblSystemDbConfigVo">
+
+  select tsdc.system_id as systemId,tsdc.id  as id ,tsdc.url as url ,tsdc.passWord as passWord,
+  tsdc.SYSTEM_MODULE_ID systemModuleId,tsdc.ENVIRONMENT_TYPE as environmentType,tsdc.DRIVER_VERSION as driverVersion,tsdc.DRIVER_CLASS_NAME as driverClassName
+  ,tsdc.USER_NAME as userName,
+  tsi.SYSTEM_NAME as systemName,tsmi.MODULE_NAME as moduleName
+
+  from tbl_system_db_config  tsdc
+  left  join tbl_system_info tsi on tsi.id=tsdc.system_id
+  left join tbl_system_module tsmi on tsmi.id=tsdc.system_module_id
+    <where>
+   and  tsdc.status=1
+      <if test="systemId != null and systemId != ''">
+      and tsdc.system_id=#{systemId}
+      </if>
+      <if test="systemModuleId != null and systemModuleId != ''">
+        and tsdc.system_module_id=#{systemModuleId}
+      </if>
+      <if test="environmentType != null and environmentType != ''">
+        and tsdc.ENVIRONMENT_TYPE=#{environmentType}
+      </if>
+
+    </where>
+    order by tsdc.system_id
+
+
+  </select>
+
+
+
+<!-- 根据用户获取数据库管理数据-->
+  <select id="findDbConfigListPageByUserId" parameterType="cn.pioneeruniverse.dev.entity.TblSystemDbConfigVo" resultType="cn.pioneeruniverse.dev.entity.TblSystemDbConfigVo">
+
+    <!--select tsdc.system_id as systemId,tsdc.id  as id ,tsdc.url as url ,tsdc.passWord as passWord,
+    tsdc.SYSTEM_MODULE_ID systemModuleId,tsdc.ENVIRONMENT_TYPE as environmentType,tsdc.DRIVER_VERSION as driverVersion,tsdc.DRIVER_CLASS_NAME as driverClassName
+    ,tsdc.USER_NAME as userName,
+    tsi.SYSTEM_NAME as systemName,tsmi.MODULE_NAME as moduleName
+
+    from tbl_system_db_config  tsdc
+    left  join tbl_system_info tsi on tsi.id=tsdc.system_id
+    left join tbl_system_module tsmi on tsmi.id=tsdc.system_module_id
+
+    LEFT JOIN
+    tbl_project_info project ON
+    project.ID = tsi.PROJECT_ID
+    LEFT JOIN
+    tbl_project_group groups ON
+    groups.PROJECT_ID = project.ID
+    LEFT JOIN
+    tbl_project_group_user groupuser ON
+    groupuser.PROJECT_GROUP_ID =
+    groups.ID
+    WHERE groupuser.USER_ID = #{userId}
+    AND groupuser.STATUS = 1
+    AND groups.STATUS = 1
+    AND tsi.STATUS = 1
+    and  tsdc.status=1-->
+
+    <!-- 改造项目和系统关系 liushan -->
+    SELECT DISTINCT
+    tsdc.system_id AS systemId,
+    tsdc.id AS id,
+    tsdc.url AS url,
+    tsdc. PASSWORD AS PASSWORD,
+    tsdc.SYSTEM_MODULE_ID systemModuleId,
+    tsdc.ENVIRONMENT_TYPE AS environmentType,
+    tsdc.DRIVER_VERSION AS driverVersion,
+    tsdc.DRIVER_CLASS_NAME AS driverClassName,
+    tsdc.USER_NAME AS userName,
+    tsi.SYSTEM_NAME AS systemName,
+    tsmi.MODULE_NAME AS moduleName
+    FROM
+    tbl_system_db_config tsdc
+    LEFT JOIN tbl_system_info tsi ON tsi.id = tsdc.system_id
+    LEFT JOIN tbl_system_module tsmi ON tsmi.id = tsdc.system_module_id
+    LEFT JOIN tbl_project_system tps ON tsi.ID = tps.SYSTEM_ID and tps.RELATION_TYPE = 1
+    LEFT JOIN tbl_project_info project ON project.ID = tps.PROJECT_ID
+    LEFT JOIN tbl_project_group groups ON groups.PROJECT_ID = project.ID
+    LEFT JOIN tbl_project_group_user groupuser ON groupuser.PROJECT_GROUP_ID = groups.ID
+    WHERE
+    groupuser.USER_ID = 1
+    AND groupuser. STATUS = 1
+    AND tps.`STATUS` = 1
+    AND groups. STATUS = 1
+    AND tsi. STATUS = 1
+    AND tsdc. STATUS = 1
+    <if test="systemId != null and systemId != ''">
+      and tsdc.system_id=#{systemId}
+    </if>
+    <if test="systemModuleId != null and systemModuleId != ''">
+      and tsdc.system_module_id=#{systemModuleId}
+    </if>
+    <if test="environmentType != null and environmentType != ''">
+      and tsdc.ENVIRONMENT_TYPE=#{environmentType}
+    </if>
+    order by tsdc.system_id
+
+
+  </select>
+<!-- 删除-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_system_db_config
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblSystemDbConfig">
+    insert into tbl_system_db_config (ID, SYSTEM_ID, SYSTEM_MODULE_ID, 
+      ENVIRONMENT_TYPE, DRIVER_VERSION, DRIVER_CLASS_NAME, URL, 
+      USER_NAME, PASSWORD, STATUS, 
+      CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, 
+      LAST_UPDATE_DATE)
+    values (#{id,jdbcType=BIGINT}, #{systemId,jdbcType=BIGINT}, #{systemModuleId,jdbcType=BIGINT}, 
+      #{environmentType,jdbcType=TINYINT}, #{driverVersion,jdbcType=TINYINT}, #{driverClassName,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, 
+      #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
+      #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, 
+      #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+<!--  插入-->
+  <insert id="insertSelective" keyProperty="id" useGeneratedKeys="true" parameterType="cn.pioneeruniverse.dev.entity.TblSystemDbConfig">
+    insert into tbl_system_db_config
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+
+      <if test="systemId != null">
+        SYSTEM_ID,
+      </if>
+      <if test="systemModuleId != null">
+        SYSTEM_MODULE_ID,
+      </if>
+      <if test="environmentType != null">
+        ENVIRONMENT_TYPE,
+      </if>
+      <if test="driverClassName != null">
+        DRIVER_VERSION,
+      </if>
+      <if test="driverClassName != null">
+        DRIVER_CLASS_NAME,
+      </if>
+      <if test="url != null">
+        URL,
+      </if>
+      <if test="userName != null">
+        USER_NAME,
+      </if>
+      <if test="password != null">
+        PASSWORD,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="systemId != null">
+        #{systemId,jdbcType=BIGINT},
+      </if>
+      <if test="systemModuleId != null">
+        #{systemModuleId,jdbcType=BIGINT},
+      </if>
+      <if test="environmentType != null">
+        #{environmentType,jdbcType=TINYINT},
+      </if>
+      <if test="driverClassName != null">
+        #{driverVersion,jdbcType=TINYINT},
+      </if>
+      <if test="driverClassName != null">
+        #{driverClassName,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+<!--  更新-->
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblSystemDbConfig">
+    update tbl_system_db_config
+    <set>
+      <if test="systemId != null">
+        SYSTEM_ID = #{systemId,jdbcType=BIGINT},
+      </if>
+      <if test="systemModuleId != null">
+        SYSTEM_MODULE_ID = #{systemModuleId,jdbcType=BIGINT},
+      </if>
+      <if test="environmentType != null">
+        ENVIRONMENT_TYPE = #{environmentType,jdbcType=TINYINT},
+      </if>
+      <if test="driverVersion != null">
+        DRIVER_VERSION = #{driverVersion,jdbcType=TINYINT},
+      </if>
+      <if test="driverClassName != null">
+        DRIVER_CLASS_NAME = #{driverClassName,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        URL = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        USER_NAME = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        PASSWORD = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+<!--  更新-->
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblSystemDbConfig">
+    update tbl_system_db_config
+    set SYSTEM_ID = #{systemId,jdbcType=BIGINT},
+      SYSTEM_MODULE_ID = #{systemModuleId,jdbcType=BIGINT},
+      ENVIRONMENT_TYPE = #{environmentType,jdbcType=TINYINT},
+      DRIVER_VERSION = #{driverVersion,jdbcType=TINYINT},
+      DRIVER_CLASS_NAME = #{driverClassName,jdbcType=VARCHAR},
+      URL = #{url,jdbcType=VARCHAR},
+      USER_NAME = #{userName,jdbcType=VARCHAR},
+      PASSWORD = #{password,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

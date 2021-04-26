@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>投产窗口</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" /> 
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/daterangepicker-bs3.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" /> 
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css"/>  
+	
+    <link rel="stylesheet"  type="text/css"  media="screen" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css" />
+     
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css" />
+
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/jquery.ba-resize.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/moment.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/daterangepicker.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/projectManageui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/projectManageui/static/jqgrid/js/jquery.jqGrid.js"></script> 
+    <script type="text/ecmascript" src="#springUrl('')/projectManageui/static/js/project/commissioningWindow/commissioningWindow.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/laydate.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    <script>
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap4';
+        $.jgrid.defaults.iconSet = "fontAwesome";
+        var ctxStatic="${ctxStatic}";
+        
+        var windowEdit = $auth.hasPermission("$token","projectManage:window:edit"); 
+        var windowDelete = $auth.hasPermission("$token","projectManage:window:delete");
+        var windowRelation = $auth.hasPermission("$token","projectManage:window:relation");
+        var windowExport = $auth.hasPermission("$token","projectManage:window:export");
+    </script>
+    <style>
+     .allInfo{
+            width: auto;
+            border: 1px solid #D9D9D9;
+            border-radius: 4px;
+            margin: 10px 0 15px;
+            padding-right:15px;
+            background-color: #F4F4FB;
+        }
+        .def_title{
+            padding: 10px 20px 10px;
+            position: relative;
+            font-size: 13px;
+            font-weight: bold;
+            line-height: 16px;
+        }
+        .rowdiv{
+            margin: 8px 0;
+            padding: 0;
+        }
+        .rowdiv:before, .rowdiv:after {
+            display: table;
+            content: " ";
+        }
+        .rowdiv:after {
+            clear: both;
+        }
+        .rowdiv .form-group{
+            margin-bottom: 0;
+        } 
+         
+        .textAreaStyle{
+        	  border: 1px solid #ccc;
+        	  border-radius: 4px;
+        	  width: 100%;
+        } 
+    	.pjNameType1,.pjNameType2{
+    		line-height:32px;
+    		padding:2px 8px; 
+    	}
+    	.pjNameType1{
+    		background-color: #108EE9;
+    	}
+    	.pjNameType2{
+    		background-color: CC66FF;
+    	}
+    	#select_Correlation .modal-body{
+    		padding: 0;
+    	}
+    	#select_Correlation .rowdiv{
+    		margin:0;
+    	}
+    	#select_Correlation .search_btn{
+    		margin-bottom:10px;
+    	}
+    	.form-horizontal .control-label{
+    		padding: 0;
+    	}
+    	#add_preject .modal-header{
+    		padding: 10px 15px;
+    	}
+    	#relevanceSys input[type*="text"]{
+    		position: absolute;
+    		top: 0;
+    		left: 0;
+    		z-index: 1;
+    	}
+    	.addSysNames{ 
+    	 	position: relative;
+    		display: inline-block; 
+    		margin: 6px 0px 6px 10px; 
+    		border-radius: 4px;
+    		padding: 0 7px;
+    		line-height: 20px;
+    		background-color: #D8D8EF;
+    		z-index: 10;
+    	}
+    	.close_x{
+    		margin-left: 3px;
+    		cursor: pointer;
+    	}
+    	#confirmModel .modal-body{
+    		padding: 40px 35px 0;
+    	}
+    	.footerBtn{
+    		padding:18px 0;
+    		text-align: center;
+    	} 
+    	.footerBtn .btn{
+    		padding: 6px 18px;
+    	}
+    	.fa-circle{
+    		color: #FFBF00;
+    	}
+    	.marginR{
+    		margin-left: 35px; 
+    		margin-right: 15px; 
+    		font-size: 12px;
+    		margin-top: -5px;
+    	}
+    	.colorW{
+    		color: white;
+    		font-size: 14px; 
+    	}
+    	.titleFontS{
+    		font-size: 14px; 
+    	}
+    	.jobArea{
+    		margin-top: 10px;
+    		border: 1px solid #D9D9D9; 
+    		border-radius: 5px;
+    		padding: 10px 30px 0;
+    		background: #F4F4FB;
+    	} 
+    	.oneJob{
+    		margin-bottom: 10px;
+    	}
+    	.proText{ 
+    		padding: 15px 160px 25px;
+    	}
+    	.proText p{
+    		margin-top: 3px;
+    		color: #F04134;
+    	}
+    	#select_Correlation .fixed-table-pagination{
+			display:none !important;
+		}
+    </style>
+</head>
+<body>
+<div class="color1">
+<!-- 搜索区 -->
+    <div class="container-fluid search_div" id="search_div"> 
+        <div class="row control-row">
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">窗口名称：</label></div>
+                <div class="search_input">
+                  	  <input type="text" class="form-control" placeholder="请输入" id="windowName" name="windowName" value="" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">投产日期：</label></div>
+                <div class="search_input" onmouseover="this.style.cursor='hand'">
+                     <input size="16"  type="text"  onfocus="this.blur()" class="form-control form_datetime pointStyle" placeholder="yyyymmdd-yyyymmdd" id="windowDate" name="windowDate" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">窗口类型：</label></div>
+                <div class="search_input">
+                    <select class="selectpicker" id="windowType" name="windowType">
+                        <option value="">请选择</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">年份：</label></div>
+                <div class="search_input">
+                	<input size="16"  type="text"  onfocus="this.blur()" class="form-control form_datetime pointStyle" id="year" name="year" />
+                </div>
+            </div>
+        </div>
+        <div class="row control-row">
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">窗口状态：</label></div>
+                <div class="search_input">
+                    <select class="selectpicker" id="status" name="status">
+                        <option value="">请选择</option>
+                        <option value="1">有效</option>
+                        <option value="2">无效</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row control-row search_btn">
+            <button type="button" class="btn btn-primary" onclick="searchInfo()">搜&nbsp;&nbsp;&nbsp;索</button>
+            <button type="button" onclick="clearSearch()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+        </div>
+    </div>
+    <div id="downBtn">
+        <span class="fa fa-caret-up"></span>
+    </div>
+</div>
+<div class="main-content">
+    <div class="content-btn">
+    	#if($auth.hasPermission("$token","projectManage:window:add"))
+        <button type="button" onclick="addWindow('urgent')" class="btn btn-primary">新增紧急窗口</button>
+        #end
+        #if($auth.hasPermission("$token","projectManage:window:add1"))
+        <button type="button" onclick="addWindow('routine')" class="btn btn-primary">新增常规窗口</button>
+        #end
+    </div>
+    <div class="content-table">
+        <div class="wode">
+           <table id="list2"></table>
+            <div id="pager2"></div> 
+        </div>
+    </div>
+</div>
+
+##新增投产窗口弹框
+<div class="modal fade bs-example-modal-lg" id="add_window" tabindex="-1" role="dialog" aria-labelledby="add_wiondow">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">新增投产窗口</h4>
+            </div> 
+            <div class="modal-body">
+            <form id="newform">
+               <div class="allInfo">
+                    <div class="def_title">
+                         <span>窗口基本信息</span> 
+                    </div>
+                    <div class="def_content">
+                        <div class="rowdiv">
+                            <div class="form-group def_col_20">
+               					 <div class="def_col_9"><label class="control-label"><span class="redStar" style="color:red;">*</span>窗口名称：</label></div>
+                				 <div class="def_col_27">
+                   					  <input type="text" class="form-control" placeholder="请输入" id="add_windowName" name="add_windowName" value="" />
+                				 </div>
+            				</div>
+                        </div> 
+                        <input type="hidden" id="add_windowType" />
+                        <!-- <div class="rowdiv">
+                            <div class="form-group def_col_15">
+               					 <div class="def_col_12"><label class="control-label"><span class="redStar" style="color:red;">*</span>窗口类型：</label></div>
+                				 <div class="def_col_24">
+                   					 <input type="text" class="form-control" placeholder="" id="add_windowType" name="windowType" value=""/>
+                   					 <select class="selectpicker" id="add_windowType" name="add_windowType">
+                        					<option value="">请选择</option>
+                        			 </select>
+								 </div>
+            				</div>
+                        </div>  -->
+                        <div class="rowdiv">
+                            <div class="form-group def_col_20">
+               					 <div class="def_col_9"><label class="control-label"><span class="redStar" style="color:red;">*</span>窗口日期：</label></div>
+                				 <div class="def_col_27">
+                   					 <input type="text" class="form-control" onfocus="this.blur()" placeholder="yyyymmdd" id="add_windowDate" name="add_windowDate" value="" />
+								 </div>
+            				</div>
+                        </div>  
+                        
+                    </div>
+                </div> 
+                </form> 
+       		</div>
+       		<div class="modal-footer">
+       			<button type="button" onclick="addCommissioningWindow()" class="btn btn-primary">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+       </div>
+   </div>
+</div>  
+
+##编辑投产窗口弹框
+<div class="modal fade bs-example-modal-lg" id="edit_window" tabindex="-1" role="dialog" aria-labelledby="edit_window">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">编辑投产窗口</h4>
+            </div> 
+            <div class="modal-body">
+            <form id="newform2">
+               <div class="allInfo">
+                    <div class="def_title">
+                         <span>窗口详细信息</span> 
+                    </div>
+                    <div class="def_content">
+                        <div class="rowdiv">
+                        	<div class="def_col_15 hide">
+                   					 <label class="control-label" id="id"></label>
+                				 </div>
+                            <div class="form-group def_col_20">
+               					 <div class="def_col_9"><label class="control-label"><span class="redStar" style="color:red;">*</span>窗口名称：</label></div>
+                				 <div class="def_col_27">
+                   					  <input type="text" class="form-control" id="edit_windowName" name="edit_windowName" value="" />
+                				 </div>
+            				</div>
+                        </div> 
+                        <div class="rowdiv">
+                            <div class="form-group def_col_15">
+               					 <div class="def_col_12"><label class="control-label">窗口类型：</label></div>
+                				 <div class="def_col_24">
+                   					 <!-- <input type="text" class="form-control" placeholder="" id="add_windowType" name="windowType" value=""/> -->
+                   					 <select class="selectpicker" id="edit_windowType" name="edit_windowType">
+                        			 </select>
+								 </div>
+            				</div>
+                        </div> 
+                        <div class="rowdiv">
+                            <div class="form-group def_col_20">
+               					 <div class="def_col_9"><label class="control-label">窗口日期：</label></div>
+                				 <div class="def_col_27">
+                   					 <input type="text" class="form-control" onfocus="this.blur()" id="edit_windowDate" name="edit_windowDate" value="" />
+								 </div>
+            				</div>
+                        </div>  
+                        
+                    </div>
+                </div> 
+                </form>
+       		</div>
+       		<div class="modal-footer">
+       			<button type="button" onclick="editCommissioningWindow()" class="btn btn-primary">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+       </div>
+   </div>
+</div>  
+
+
+##关联开发任务弹框
+  <div class="modal fade bs-example-modal-lg" id="featureModal" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-lg modal-user" role="document">
+            <div class="modal-content modalStyle">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <span class="modal-title">选择纳入<span id="na" ></span>投产版本的开发任务</span>
+                </div>
+                <div class="modal-body">
+                    <div class="color1">
+                        <div class="container-fluid" id="search_div">
+                            <div class="row control-row">
+                            	<div class="col-md-4">
+                                    <div class="search_font"><label class="control-label">需求编号：</label></div>
+                                    <div class="search_input">
+                                        <input type="text" class="form-control " placeholder="请输入" id="requirementCode" name="requirementCode" value="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="search_font"><label class="control-label">需求名称：</label></div>
+                                    <div class="search_input">
+                                        <input type="text" class="form-control " placeholder="请输入" id="requirementName" name="requirementName" value="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="search_font"><label class="control-label">任务名称：</label></div>
+                                    <div class="search_input">
+                                        <input type="text" class="form-control" placeholder="请输入" id="featureName" name="featureName" value="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="search_font"><label class="control-label">任务状态：</label></div>
+                                    <div class="search_input">
+                                        <select class="selectpicker" id="requirementFeatureStatus" name="requirementFeatureStatus">
+                                       		<!-- <option value="">请选择</option> -->
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row control-row search_btn">
+                                <button type="button" class="btn btn-primary" onclick="searchFeature()">搜&nbsp;&nbsp;&nbsp;索</button>
+                                <button type="button" onclick="clearSearch2()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                            </div>
+
+                        </div>
+                        <div id="downBtn2">
+                            <span class="fa fa-caret-up"></span>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="content-table">
+                         <table id="featureTable"></table>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="relatedFeature()">确&nbsp;&nbsp;&nbsp;定</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取&nbsp;&nbsp;&nbsp;消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+##关联开发任务确认弹框
+<div class="modal fade" id="confirmModel" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+	<div class="modal-dialog" role="document">
+    	<div class="modal-content">
+        	<div class="modal-body">  
+        		<span>
+        			<span class="fa-stack marginR">
+        			 	 <i class="fa fa-circle fa-stack-2x"></i>
+        				 <span class="fa-stack-1x colorW">!</span>
+        			</span>
+        			<span class="titleFontS">以下任务已纳入其他窗口，确定需要调整到本窗口吗？</span> 
+        		</span>
+        		<div class="jobArea">
+        			<div class="oneJob">TSK20180001 | 开发任务名称开发任务名称开发任务名称开发任务…  20180930投产</div>
+        			<div class="oneJob">TSK20180001 | 开发任务名称开发任务名称开发任务名称开发任务…  20180930投产</div> 
+        		</div> 
+        		<div class="proText">
+        			<p>点击【确定】，保存修改内容</p>
+					<p>点击【取消】，取消操作</p>
+        		</div> 
+        		<div class="footerBtn">
+	            	<button type="button" class="btn btn-primary" onclick="confirmCommission()">确&nbsp;&nbsp;定</button>&nbsp;&nbsp;&nbsp;&nbsp;
+	            	<button type="button" class="btn btn-default" data-dismiss="modal">取&nbsp;&nbsp;消</button>
+            	</div>
+            </div>  
+     	</div>
+	</div>         
+</div>
+
+##子系统选择弹框
+<div class="modal fade bs-example-modal-lg" id="select_Correlation" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-lg modal-user" role="document">
+            <div class="modal-content modalStyle">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <span class="modal-title" id="myModalLabel">选择关联子系统</span>
+           	 </div>  
+                <div class="modal-body">
+	                 <br>
+	                 <div class="content-table">
+	                     <div class="wode">
+	                         <table id="presonTable"></table> 
+	                     </div>
+	                 </div> 
+                </div> 
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="_export()">导出</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div> 
+            </div>
+        </div>
+    </div>
+
+<div id="loading"> 
+		<img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+   </div> 
+</body>
+</html>
+ 

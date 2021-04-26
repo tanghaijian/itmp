@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="cn.pioneeruniverse.project.dao.mybatis.TblProjectChangeInfoMapper">
+	<resultMap id="BaseResultMap"
+		type="cn.pioneeruniverse.project.entity.TblProjectChangeInfo">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="PROJECT_ID" jdbcType="BIGINT" property="projectId" />
+		<result column="PROGRAM_ID" jdbcType="BIGINT" property="programId" />
+		<result column="RESPONSIBLE_USER_ID" jdbcType="BIGINT" property="responsibleUserId" />
+		<result column="CHANGE_ITEM" jdbcType="VARCHAR" property="changeItem" />
+		<result column="CHANGE_STATUS" jdbcType="TINYINT" property="changeStatus" />
+		<result column="SUBMIT_DATE" jdbcType="DATE" property="submitDate" />
+		<result column="APPROVE_DATE" jdbcType="DATE" property="approveDate" />
+		<result column="ANALYSE_SUMMARY" jdbcType="VARCHAR" property="analyseSummary" />
+		<result column="RESULT_EXPLAIN" jdbcType="VARCHAR" property="resultExplain" />
+		<result column="REMARK" jdbcType="VARCHAR" property="remark" />
+		<result column="STATUS" jdbcType="TINYINT" property="status" />
+		<result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+		<result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+		<result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+		<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+
+	</resultMap>
+	
+	<select id="getChanges" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select proChange.ID,proChange.CHANGE_ITEM, proChange.RESPONSIBLE_USER_ID, proChange.CHANGE_STATUS, proChange.SUBMIT_DATE,
+			proChange.APPROVE_DATE, proChange.ANALYSE_SUMMARY, proChange.RESULT_EXPLAIN, proChange.REMARK, user.USER_NAME responsibleUser
+			from tbl_project_change_info proChange
+			left join tbl_user_info user on user.ID = proChange.RESPONSIBLE_USER_ID
+			where proChange.PROJECT_ID = #{projectId} and proChange.STATUS = 1
+	</select>
+	
+	<update id="deleteProjectChange" parameterType="cn.pioneeruniverse.project.entity.TblProjectChangeInfo">
+		update tbl_project_change_info set STATUS = 2, LAST_UPDATE_BY = #{lastUpdateBy}, LAST_UPDATE_DATE = #{lastUpdateDate}
+			where ID = #{id}
+	</update>
+	
+	<insert id="insertProjectChange" useGeneratedKeys="true" keyProperty="id" parameterType="cn.pioneeruniverse.project.entity.TblProjectChangeInfo">
+		insert into tbl_project_change_info (PROJECT_ID, PROGRAM_ID, RESPONSIBLE_USER_ID, CHANGE_ITEM, CHANGE_STATUS, SUBMIT_DATE, 
+			APPROVE_DATE, ANALYSE_SUMMARY, RESULT_EXPLAIN, REMARK, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY,
+			LAST_UPDATE_DATE)
+			values
+			(#{projectId}, #{programId}, #{responsibleUserId}, #{changeItem}, #{changeStatus}, #{submitDate}, #{approveDate}, #{analyseSummary},
+			#{resultExplain}, #{remark}, #{status}, #{createBy}, #{createDate}, #{lastUpdateBy}, #{lastUpdateDate})
+	</insert>
+	
+	<select id="getProjectChangeById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select proChange.*, user.USER_NAME responsibleUser
+			from tbl_project_change_info proChange
+			left join tbl_user_info user on user.ID = proChange.RESPONSIBLE_USER_ID
+			where proChange.ID = #{id}
+	</select>
+	
+	<update id="updateProjectChange" parameterType="cn.pioneeruniverse.project.entity.TblProjectChangeInfo">
+		update tbl_project_change_info set CHANGE_ITEM = #{changeItem}, RESPONSIBLE_USER_ID = #{responsibleUserId},
+			CHANGE_STATUS = #{changeStatus}, SUBMIT_DATE = #{submitDate}, APPROVE_DATE = #{approveDate}, ANALYSE_SUMMARY = #{analyseSummary},
+			RESULT_EXPLAIN = #{resultExplain}, REMARK = #{remark}, LAST_UPDATE_BY = #{lastUpdateBy}, LAST_UPDATE_DATE = #{lastUpdateDate}
+			where ID = #{id}
+	</update>
+	
+	<select id="getChangesByProgram" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select proChange.ID,proChange.CHANGE_ITEM, proChange.RESPONSIBLE_USER_ID, proChange.CHANGE_STATUS, proChange.SUBMIT_DATE,
+			proChange.APPROVE_DATE, proChange.ANALYSE_SUMMARY, proChange.RESULT_EXPLAIN, proChange.REMARK, user.USER_NAME responsibleUser
+			from tbl_project_change_info proChange
+			left join tbl_user_info user on user.ID = proChange.RESPONSIBLE_USER_ID
+			where proChange.PROGRAM_ID = #{programId} and proChange.STATUS = 1
+	</select>
+	
+</mapper>

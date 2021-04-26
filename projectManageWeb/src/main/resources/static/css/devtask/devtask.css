@@ -1,0 +1,119 @@
+.doing3{border-radius: 30px ; background:#33CC99 ;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing2{border-radius: 30px ; background:#108EE9 ;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing1{border-radius: 30px ; background:#FF6699 ;display: inline-block;padding:2px 12px;color:#ffffff;}
+	/*input.es-input {
+				background-color:#fff;
+			}*/
+.transferDiv{
+	height: 250px;
+	padding-top: 30px;
+}
+.file-url{
+	display:none;
+}
+.tooltip{ 
+	max-width: auto !important;
+	overflow:visible !important;
+	
+} 
+.tooltip .tooltip-inner{  
+	max-width: 400px !important;
+	text-align:left !important;
+	overflow:visible !important;
+}
+.tooltip span{ 
+	color: white; 
+}
+.table-responsive,.ui-jqgrid-bdiv div,.ui-jqgrid .ui-jqgrid-bdiv{
+	overflow:visible !important;	
+}
+.modal-title{
+	font-size:14px;
+	font-weight:bold;
+}
+.modal-body{
+	padding-top:10px;
+}
+.allInfo{
+	padding-bottom:0;
+	margin-bottom: 8px;
+}
+
+.def_content {
+	padding: 0 20px 10px 50px;
+}
+
+.def_content .form-group {
+	text-align: left;
+}
+
+.def_content .control-label {
+	display: inline-block;
+	line-height: 28px; 
+}  
+.modal-body {
+	padding-left: 30px;
+    padding-right: 30px;
+}
+#newDevTask [class*="def_col_"],#handleDevTask [class*="def_col_"],#editDevTask [class*="def_col_"]{
+	padding-left: 0px; 
+	text-align: right;
+}
+#newDevTask .form-group,#handleDevTask .form-group,#editDevTask .form-group{
+	padding-right: 10px; 
+}
+#newDevTask .rowdiv,#editDevTask .rowdiv{
+	margin-bottom:8px;
+}
+ 
+#splitDevTask .fontWeihgt{
+	text-align: right;
+}
+.fileTb{
+	width: 400px;	
+}
+.fileTb img{
+	padding-bottom: 3px;
+	width: 20px;
+	height: 20px;
+}
+ .fa-exclamation-circle{
+   color: yellow;
+  }
+ .logDiv{ 
+ 	margin-bottom: 4px;
+ }
+ .logDiv_title{
+ 	margin-bottom: 2px;
+ }
+.orderNum{
+	display: inline-block;
+	width: 9px;
+	height: 9px; 
+	border-radius: 50%;   
+	margin-right: 8px;
+	background: #9933CC;
+}
+.logDiv_cont{  
+	padding-left: 4px; 
+}
+.logDiv_contBorder{
+	padding: 4px 22px;
+	border-left: 1px solid #108EE9;  
+}
+.logDiv_contRemark{
+	padding:5px;
+	border: 1px solid #999999; 
+	border-radius: 4px;
+	background: #fff;
+}  
+.lastLog .logDiv_contBorder{
+	border: none;
+} 
+.connect_div>div{
+	margin-bottom: 15px;
+}
+.connect_div>div>div{
+	margin-bottom: 4px;
+}
+  

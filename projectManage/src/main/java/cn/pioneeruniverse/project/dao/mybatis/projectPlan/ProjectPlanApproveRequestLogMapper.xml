@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.projectPlan.ProjectPlanApproveRequestLogMapper">
+	<resultMap id="BaseResultMap"
+			   type="cn.pioneeruniverse.project.entity.TblProjectPlanApproveRequestLog">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="PROJECT_PLAN_APPROVE_REQUEST_ID" jdbcType="BIGINT" property="projectPlanApproveRequestId" />
+		<result column="LOG_TYPE" jdbcType="VARCHAR" property="logType" />
+		<result column="LOG_DETAIL" jdbcType="VARCHAR" property="logDetail" />
+		<result column="USER_ID" jdbcType="BIGINT" property="userId" />
+		<result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+		<result column="USER_ACCOUNT" jdbcType="VARCHAR" property="userAccount" />
+		<result column="STATUS" jdbcType="TINYINT" property="status" />
+		<result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+		<result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+		<result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+		<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+	</resultMap>
+	<!--新增项目计划审批日志-->
+	<insert id="insertPlanApproveRequestLog" parameterType = "cn.pioneeruniverse.project.entity.TblProjectPlanApproveRequestLog">
+		insert into tbl_project_plan_approve_request_log(
+			PROJECT_PLAN_APPROVE_REQUEST_ID,
+			LOG_TYPE,
+			LOG_DETAIL,
+			USER_ID,
+			USER_NAME,
+			USER_ACCOUNT,
+			STATUS,
+			CREATE_BY,
+			CREATE_DATE,
+			LAST_UPDATE_BY,
+			LAST_UPDATE_DATE
+		)values(
+			#{projectPlanApproveRequestId},
+			#{logType},
+			#{logDetail},
+			#{userId},
+			#{userName},
+			#{userAccount},
+			#{status},
+			#{createBy},
+			#{createDate},
+			#{lastUpdateBy},
+			#{lastUpdateDate})
+	</insert>
+	<!--查询项目计划审批日志-->
+	<select id="getApproveRequestLog" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select log.ID,log.LOG_TYPE,log.LOG_DETAIL,log.USER_ID,log.USER_NAME,
+		log.USER_ACCOUNT,log.STATUS,log.CREATE_BY,log.CREATE_BY,log.CREATE_DATE
+		from tbl_project_plan_approve_request_log log
+		where log.STATUS = 1 and log.PROJECT_PLAN_APPROVE_REQUEST_ID = #{approveRequestId}
+	</select>
+	<!--删除项目计划审批日志-->
+	<delete id="deleteApproveRequestLogByRequestId" parameterType="java.lang.Long">
+		delete from tbl_project_plan_approve_request_log
+		where PROJECT_PLAN_APPROVE_REQUEST_ID = #{approveRequestId}
+	</delete>
+
+</mapper>

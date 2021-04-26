@@ -1,0 +1,14 @@
+.widget-body .row{margin-top:4px;}
+.chosen-container>.chosen-single, [class*="chosen-container"]>.chosen-single {
+    line-height: 28px;
+    height: 30px;
+    box-shadow: none;
+    background: #fafafa;
+}
+
+#companyTree{position:absolute;z-index:100;width:313px;background:#ddd;border:1px solid #3f96d4}
+.btn-active{
+    box-shadow: 0 0 7px 7px #ccc !important;
+    border: 2px solid #ddd  !important;
+    color: #000  !important;
+   }

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.report.dao.mybatis.report.defectReportDao.DefectReportMapper">
+
+<!-- 新增收藏方案 -->
+    <insert id="addDefectReport" parameterType="cn.pioneeruniverse.report.entity.ReportUiFavorite">
+        INSERT INTO tbl_ui_favorite (
+            USER_ID,
+            FILTER_NAME,
+            MENU_URL,
+            FAVORITE_CONTENT,
+            STATUS,
+            CREATE_BY,
+            CREATE_DATE
+        )
+        VALUES(
+         #{userId}, #{filterName}, #{menuUrl}, #{favoriteContent}, #{status}, #{createBy}, #{createDate}
+        )
+    </insert>
+   <!-- 获取本人在该页面的收藏方案 -->
+    <select id="selectDefectReportList" resultType="cn.pioneeruniverse.report.entity.ReportUiFavorite">
+        SELECT DISTINCT
+            ID AS id,
+            FILTER_NAME AS filterName,
+            MENU_URL AS menuUrl,
+            LAST_USE_FLAG AS lastUseFlag,
+            FAVORITE_CONTENT AS favoriteContent
+        FROM
+            tbl_ui_favorite
+        WHERE
+            STATUS = 1
+            AND MENU_URL = #{menuUrl}
+            AND CREATE_BY = #{createBy}
+    </select>
+
+<!-- 根据ID将该收藏方案置为无效 -->
+    <update id="updateDefectReport" parameterType="java.lang.Long">
+        UPDATE tbl_ui_favorite
+            SET STATUS = 2
+        WHERE
+            ID = #{id}
+    </update>
+
+<!-- 根据ID获取收藏方案 -->
+    <select id="selectDefectReportById" resultType="cn.pioneeruniverse.report.entity.ReportUiFavorite">
+        SELECT DISTINCT
+            ID AS id,
+            FILTER_NAME AS filterName,
+            MENU_URL AS menuUrl,
+            LAST_USE_FLAG AS lastUseFlag,
+            FAVORITE_CONTENT AS favoriteContent
+        FROM
+            tbl_ui_favorite
+        WHERE
+            ID = #{id}
+    </select>
+
+<!-- 根据ID更新收藏方案 -->
+    <update id="updateInfoById" parameterType="cn.pioneeruniverse.report.entity.ReportUiFavorite">
+      UPDATE tbl_ui_favorite
+            SET FAVORITE_CONTENT = #{favoriteContent}, FILTER_NAME = #{filterName}
+        WHERE
+            ID = #{id}
+    </update>
+    <!-- 根据ID将该次收藏方案置为最近收藏方案 -->
+    <update id="updateSelectById" >
+      UPDATE tbl_ui_favorite 
+            SET LAST_USE_FLAG = 1
+        WHERE
+            ID = #{id} 
+    </update>
+    
+    <!-- 根据url将历次收藏方案置为非最近收藏方案 -->
+	<update id="updateSelectByUrl" >
+      UPDATE tbl_ui_favorite 
+            SET LAST_USE_FLAG = 2
+        WHERE
+            MENU_URL = #{menuUrl} and STATUS = 1
+    </update>
+</mapper>

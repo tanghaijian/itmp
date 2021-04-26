@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>任务管理</title>
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/frame/bootstrap-datetimepicker.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/jqgrid/jqgrid/css/jqGridDefined.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/frame/component.css" />
+ 	<link rel="stylesheet" href="#springUrl('')/devManageui/static/css/frame/jquery.editable-select.min.css" />
+	<link rel="stylesheet" href="#springUrl('')/devManageui/static/css/frame/bootstrapValidator.css" /> 
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/dashBoard/workDesk.css" />   
+</head>
+<body>     
+       
+    
+<div id="loading"> 
+  <img class="loadingImg" src="#springUrl('')/devManageui/static/images/loadingPic.gif" />
+</div>
+ 
+<div class="block1" id="details">
+	<div class="left_block">
+		<div class="topBlock2">
+			<div class="smallTitle">
+				我的任务
+			</div>	
+			<div class="contentBlock2">
+				<div class="taskDiv">
+					<div class="taskSmallBlock"> 
+						<p class="taskNumber">总任务数</p>
+						<p class="taskCount" id="taskCount"></p>
+					</div>
+					<div class="taskSmallBlock"> 
+						<p class="taskNumber">待实施</p>
+						<p class="waitImp" id="waitImp"></p>
+					</div>
+					<div class="taskSmallBlock"> 
+						<p class="taskNumber">实施中</p>
+						<p class="develop" id="develop"></p>
+					</div>  
+					<div class="taskSmallBlock2">
+						<div id="container" class="container"></div>
+					</div>	
+				</div>
+				<!-- <div class="taskDiv noBorder">
+					<div class="taskSmallBlock"> 
+						<p class="taskNumber">总缺陷数</p>
+						<p class="taskCount" id="taskCount"></p>
+					</div>
+					<div class="taskSmallBlock"> 
+						<p class="taskNumber">待确认</p>
+						<p class="waitImp" id="waitConfirm"></p>
+					</div>
+					<div class="taskSmallBlock"> 
+						<p class="taskNumber">修复中</p>
+						<p class="develop" id="inRepair"></p>
+					</div>  
+					 <div class="taskSmallBlock2">
+						<div id="container1" class="container"></div>
+					</div>
+				</div> --> 
+			</div>	 	
+		</div> 
+		<div class="myWorkArea">
+			<div>
+				<div>
+					<div class="smallTitle">我的项目</div>				
+					<div class="contentBlock3">
+						<div class="contentBlock4"> 
+							<div class="contentBlock5"> 
+								<img class="imgArea" src="/devManageui/static/images/myProject.png"/>	
+							</div>
+							<div class="contentBlock5 noBorder">
+								 <div class="myPreject">
+								 	<span class="fontWeihgt">已结束：</span><span class="numStyle" id="complete"></span>
+								 </div>
+								 <div class="myPreject">
+								 	<span class="fontWeihgt">进行中：</span><span class="numStyle" id="toWork"></span>
+								 </div>
+								 <div class="myPreject">
+								 	<span class="fontWeihgt">新建类：</span><span class="numStyle" id="itNew"></span>
+								 </div>
+								 <div class="myPreject">
+								 	<span class="fontWeihgt">运维类：</span><span class="numStyle" id="itOperation"></span>
+								 </div>
+							</div>
+						</div>  
+					</div> 		
+				</div>
+			</div>
+			<div>
+				<div>
+					<div class="smallTitle">我的需求</div>				
+					<div class="contentBlock3">
+						<div class="contentBlock4"> 
+							<div class="contentBlock5"> 
+								<img class="imgArea" src="/devManageui/static/images/myRequirement.png"/>	
+							</div>
+							<div class="contentBlock5 noBorder">
+								 <div class="myPreject">
+								 	<span class="fontWeihgt">实施中：</span><span class="numStyle" id="inImplementation"></span>
+								 </div>
+								 <div class="myPreject">
+								 	<span class="fontWeihgt">已完成：</span><span class="numStyle" id="implementationComplete"></span>
+								 </div>
+								 <div class="myPreject">
+								 	<span class="fontWeihgt">已上线：</span><span class="numStyle" id="onLine"></span>
+								 </div>
+								 <div class="myPreject">
+								 	<span class="fontWeihgt">待发布：</span><span class="numStyle" id="waitRelease"></span>
+								 </div>
+							</div>
+						</div>  
+					</div> 		
+				</div>
+			</div>
+		</div> 
+	</div>
+	<div class="right_block"> 
+		<div class="smallTitle">事件日志</div>					
+		<div class="rightBlock2" id="rightBlock3">	
+			 		
+		</div> 
+	</div> 
+	 	
+</div>
+
+	<script type="text/javascript" src="#springUrl('')/devManageui/static/js/frame/jquery.min.js"></script>
+	<script type="text/javascript" src="#springUrl('')/devManageui/static/js/echarts/echarts.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/echarts/echarts-gl.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/echarts/ecStat.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/echarts/dataTool.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/echarts/china.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/echarts/world.js"></script>
+    <!-- <script type="text/javascript" src="#springUrl('')/devManageui/static/js/echarts/api.js"></script> -->
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/echarts/bmap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/echarts/simplex.js"></script>
+    
+     
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/frame/jquery.ba-resize.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/devManageui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/devManageui/static/jqgrid/js/jquery.jqGrid.js"></script>    
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/frame/bootstrapValidator.js"></script>    
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/dashBoard/workDesk.js"></script>
+    <script>
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap4';
+        $.jgrid.defaults.iconSet = "fontAwesome";
+        var ctxStatic="${ctxStatic}";
+   		$(function(){
+			$("[data-toggle='tooltip']").tooltip();
+		});
+    </script> 
+</body>
+	
+
+</html>
+ 

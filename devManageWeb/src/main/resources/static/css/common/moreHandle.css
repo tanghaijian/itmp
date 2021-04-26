@@ -1,0 +1,69 @@
+
+/**�б����������***/
+._select_box_show {
+	position:relative;
+}
+#dropdown_menu{
+    position: absolute;
+    top: 20px;
+    left: 0;
+	min-width:200px !important;
+	overflow:auto;
+    z-index: 1000;
+    display: none;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    list-style: none;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+    background-clip: padding-box;
+}
+#dropdown_menu a{
+	color: #0e90d2;
+	display: inline-block;
+}
+#dropdown_menu .btn_clear{
+	display: none !important;
+}
+
+#dropdown_menu .node_name:hover{
+	color: #fff!important;
+	background: #0e90d2;
+}
+.main-content{
+	/*padding-bottom: 100px;*/
+}
+.open>#dropdown-menu {
+    display: block;
+}
+
+.treeSearch{
+	margin: 0 5px;
+}
+.treeSearchInput{
+    width: 100%;
+    line-height: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid #CCC;
+    padding: 1px 26px 1px 8px;
+}
+.treeSearchInput:focus{
+    outline: none;
+}
+.treeSearch .fa{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+}
+
+.lastBuildTime{
+	white-space: unset !important;
+}

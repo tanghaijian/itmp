@@ -1,0 +1,63 @@
+/* {
+	font-size: 12px;
+} */
+body{
+	padding:8px;
+}
+.codeMenu{ 
+	width: 25%;
+	float: left;
+}
+.codeMenu_tit,.contTit{
+	height: 34px;    
+	font-size: 13px !important;
+	font-weight: bold;
+}
+.codeMenu_tit{ 
+	background: #F2F2F2;
+	border: 1px solid #D9D9D9;
+	border-radius: 4px 4px 0 0;
+	padding: 0 10px; 
+}
+.codeMenu_tit img{  
+	margin-bottom: 3px;
+	margin-right: 5px;
+}
+.codeMenu_tit span{  
+	line-height: 34px;
+}
+.codeMenu_cont{
+	height: 100%;
+	border: 1px solid #D9D9D9;
+	border-top: none;
+}
+.codeContent{
+	padding-left: 30px;
+}
+.contTit{
+	line-height: 35px;
+	border-bottom: 1px solid #D9D9D9;
+}
+.content-btngroup{
+	padding: 10px 0;	
+}
+.saveChange{
+	display: none; 
+}
+
+
+
+
+
+
+
+
+
+
+/* ztree */
+.level0>.node_name{
+	font-weight: bold;
+}
+
+
+

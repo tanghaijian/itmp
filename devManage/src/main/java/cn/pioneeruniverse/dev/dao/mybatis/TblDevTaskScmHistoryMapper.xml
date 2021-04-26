@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblDevTaskScmHistoryMapper">
+    <resultMap id="BaseResultMapHistory" type="cn.pioneeruniverse.dev.entity.TblDevTaskScmHistory">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="DEV_TASK_ID" jdbcType="BIGINT" property="devTaskId"/>
+        <result column="DEV_USER_ID" jdbcType="BIGINT" property="devUserId"/>
+        <result column="SCM_TYPE" jdbcType="TINYINT" property="scmType"/>
+        <result column="COMMIT_NUMBER" jdbcType="VARCHAR" property="commitNumber"/>
+        <result column="COMMIT_MASSAGE" jdbcType="VARCHAR" property="commitMassage"/>
+        <result column="countScm" property="countScm"/>
+        <result column="countScmPeople" property="countScmPeople"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+    </resultMap>
+
+    <!--添加工作任务代码关联历史信息-->
+    <insert id="insertDevTaskScmHistory" parameterType="cn.pioneeruniverse.dev.entity.TblDevTaskScmHistory"
+            useGeneratedKeys="true" keyColumn="ID" keyProperty="id">
+        INSERT INTO tbl_dev_task_scm_history
+        (
+          DEV_TASK_ID,
+          DEV_USER_ID,
+          SCM_TYPE,
+          COMMIT_NUMBER,
+          COMMIT_MASSAGE,
+          STATUS,
+          CREATE_BY,
+          CREATE_DATE,
+          LAST_UPDATE_BY,
+          LAST_UPDATE_DATE
+        ) VALUES (
+          #{devTaskId,jdbcType=BIGINT},
+          #{devUserId,jdbcType=BIGINT},
+          #{scmType,jdbcType=TINYINT},
+          #{commitNumber,jdbcType=VARCHAR},
+          #{commitMassage,jdbcType=VARCHAR},
+          #{status,jdbcType=TINYINT},
+          #{createBy,jdbcType=BIGINT},
+          #{createDate,jdbcType=TIMESTAMP},
+          #{lastUpdateBy,jdbcType=BIGINT},
+          #{lastUpdateDate,jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <!-- 查询最近N天的代码提交总览 -->
+    <select id="findScmCountBySystemId" parameterType="java.lang.Long" resultMap="BaseResultMapHistory">
+        SELECT COUNT(tdts.ID) countScm,COUNT(DISTINCT tdts.CREATE_BY) countScmPeople
+        FROM tbl_dev_task_scm_history tdts
+        LEFT JOIN tbl_dev_task tdt ON tdts.DEV_TASK_ID=tdt.ID AND tdt.STATUS=1
+        LEFT JOIN tbl_requirement_feature trf ON tdt.REQUIREMENT_FEATURE_ID = trf.ID AND trf.STATUS=1
+        LEFT JOIN tbl_system_info tsi ON trf.SYSTEM_ID = tsi.ID AND tsi.STATUS=1
+        WHERE tdts.STATUS=1 AND tsi.ID=#{systemId} AND datediff(now(),tdts.CREATE_DATE)&lt;=#{day}
+    </select>
+
+    <!-- 查询最近7天的代码提交总览 -->
+    <select id="find7DayScmCountBySystemId" parameterType="java.lang.Long" resultMap="BaseResultMapHistory">
+        select a.click_date CREATE_DATE,ifnull(b.countCommit,0) countScm from
+        (
+        SELECT curdate() as click_date union all
+        SELECT date_sub(curdate(), interval 1 day) as click_date union all
+        SELECT date_sub(curdate(), interval 2 day) as click_date union all
+        SELECT date_sub(curdate(), interval 3 day) as click_date union all
+        SELECT date_sub(curdate(), interval 4 day) as click_date union all
+        SELECT date_sub(curdate(), interval 5 day) as click_date union all
+        SELECT date_sub(curdate(), interval 6 day) as click_date
+        ) a
+        LEFT JOIN
+        (
+        select count(*) countCommit,DATE_FORMAT(tdts.CREATE_DATE,'%Y-%m-%d') createTime
+        from tbl_dev_task_scm_history tdts
+        LEFT JOIN tbl_dev_task tdt ON tdts.DEV_TASK_ID=tdt.ID AND tdt.STATUS=1
+        LEFT JOIN tbl_requirement_feature trf ON tdt.REQUIREMENT_FEATURE_ID = trf.ID AND trf.STATUS=1
+        LEFT JOIN tbl_system_info tsi ON trf.SYSTEM_ID = tsi.ID AND tsi.STATUS=1
+        WHERE tdts.STATUS=1 AND tsi.ID=#{systemId}
+        group by createTime
+        ) b
+        on a.click_date = b.createTime
+        ORDER BY CREATE_DATE
+    </select>
+</mapper>

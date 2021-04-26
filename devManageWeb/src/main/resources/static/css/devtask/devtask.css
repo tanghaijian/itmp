@@ -1,0 +1,452 @@
+.doing3{border-radius: 30px ; background:#33CC99 ;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing2{border-radius: 30px ; background:#108EE9 ;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing1{border-radius: 30px ; background:#FF6699 ;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing5{border-radius: 30px ; background:#FD5723 ;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing6{border-radius: 30px ; background:#6c83b0 ;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing7{border-radius: 30px ; background:#ff8000 ;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing4{border-radius: 30px ; background:rgb(253, 87, 35) ;display: inline-block;padding:2px 12px;color:#ffffff;}
+	/*input.es-input {
+				background-color:#fff;
+			}*/
+.transferDiv{
+	height: 250px;
+	padding-top: 30px;
+}
+.file-url{
+	display:none;
+}
+.file-bucket{
+	display:none;
+}
+.file-s3Key{
+	display:none;
+}
+.tooltip{ 
+	max-width: auto !important;
+	overflow:visible !important;
+	
+} 
+.tooltip .tooltip-inner{  
+	max-width: 400px !important;
+	text-align:left !important;
+	overflow:visible !important;
+}
+.tooltip span{ 
+	color: white; 
+} 
+.modal-title{
+	font-size:14px;
+	font-weight:bold;
+}
+.modal-body{
+	padding-top:10px;
+}
+.allInfo{
+	padding-bottom:0;
+	margin-bottom: 8px;
+}
+
+.def_content {
+	padding: 0 20px 10px 50px;
+}
+
+.def_content .form-group {
+	text-align: left;
+}
+
+.def_content .control-label {
+	display: inline-block;
+	line-height: 28px; 
+}  
+  
+.modal-body {
+	padding-left: 30px;
+    padding-right: 30px;
+}
+#newDevTask [class*="def_col_"],#handleDevTask [class*="def_col_"],#editDevTask [class*="def_col_"]{
+	padding-left: 0px; 
+	text-align: right;
+}
+#newDevTask .form-group,#handleDevTask .form-group,#editDevTask .form-group{
+	padding-right: 10px; 
+}
+#newDevTask .rowdiv,#editDevTask .rowdiv{
+	margin-bottom:8px;
+}
+ 
+#splitDevTask .fontWeihgt{
+	text-align: right;
+}
+.fileTb{
+	width: 400px;	
+}
+.fileTb img{
+	padding-bottom: 3px;
+	width: 20px;
+	height: 20px;
+}
+ .fa-exclamation-circle{
+   color: #F39C12;
+  }
+ .logDiv{ 
+ 	margin-bottom: 4px;
+ }
+ .logDiv_title{
+ 	margin-bottom: 2px;
+ }
+.orderNum{
+	display: inline-block;
+	width: 9px;
+	height: 9px; 
+	border-radius: 50%;   
+	margin-right: 8px;
+	background: #9933CC;
+}
+.logDiv_cont{  
+	padding-left: 4px; 
+}
+.logDiv_contBorder{
+	padding: 4px 22px;
+	border-left: 1px solid #108EE9;  
+}
+.logDiv_contRemark{
+	padding:5px;
+	border: 1px solid #999999; 
+	border-radius: 4px;
+	background: #fff;
+}  
+.lastLog .logDiv_contBorder{
+	border: none;
+} 
+.connect_div>div{
+	margin-bottom: 15px;
+}
+.connect_div>div>div{
+	margin-bottom: 4px;
+}  
+.def_changeTit{
+	font-weight: 500;
+	color: #999999;
+	cursor:pointer ;
+}
+.def_changeTitIcon{
+	font-weight: 500;
+	color: #666666;
+} 
+.new_workRemarks{
+	padding-right: 22px;
+	padding-bottom: 15px; 
+	text-align: center;
+}
+.new_workRomarksBtn{
+	padding-bottom: 15px; 
+	border-bottom: 1px solid #CCCCCC;
+}
+.new_delFile{
+	color: #FF6699;
+}
+.redStar{
+	color:red;
+}  
+
+.modal_titleFont{
+	padding: 8px 0; 
+}
+
+.titStyle{
+	font-size: 13px;
+    font-weight: bold; 
+    padding: 8px 0;
+}
+[class^="classColor"]{
+	border-radius: 4px;
+	margin-right: 6px;
+	padding: 2px 5px;
+	color: white; 
+}
+.classColor1{
+	background: #33CC99;
+}
+.classColor2{
+	background: #3399FF;
+}
+.classColor3{
+	background: #FF9933;
+}
+.classColor4{
+	background: #FF6699;
+}
+.classColor5{
+	background: #FF0000;
+}
+.defectStatus1{
+	background: #108EE9;
+}
+.defectStatus2{
+	background: #FF6666;
+}
+.defectStatus3{
+	background: #33CC99;
+} 
+.spanDefectStatus {
+	color: white;
+}
+#rejectDiv .rowdiv{
+	margin-bottom: 20px;
+} 
+#rejectDiv textarea{
+	height: 133px;
+} 
+[class^="solutionSituation"]{
+	line-height: 30px;
+	padding: 6px 30px;
+	border-radius: 15px;
+	color: white;
+} 
+.solutionSituation1{
+	background: #33CC99;
+}
+.solutionSituation2{
+	background: #FF9933;
+}
+[class^="rejectionSituation"]{
+	line-height: 30px;
+	padding: 6px 30px;
+	border-radius: 15px;
+	color: white;
+}
+.rejectionSituation1{
+	background: #33CC99;
+}
+.rejectionSituation2{
+	background: #FF9933;
+}
+.rejectionSituation3{
+    background: #FF3E3E;
+}
+[class^="defectStatus"]{ 
+	line-height: 28px;
+	padding: 6px 14px;
+	border-radius: 14px;
+	color: white;
+}
+.defectStatus1{
+	background: #108EE9;
+}
+.defectStatus2{
+	background: #FF6666;
+}
+.defectStatus3{
+	background: #33CC99;
+} 
+.defectDescribe{
+	margin-top: 10px;
+}
+.defectDescribe span{
+	word-wrap:break-word;
+} 
+ .attachmentDetails{
+	padding: 0 50px 10px; 
+}
+.attachmentFont{
+	margin-bottom: 10px;
+	word-wrap:break-word;
+}
+.defectDescribe .file-upload-list{
+	display: none;
+}
+.file-upload-list *{
+	border: none!important;
+}
+#dealLogDiv .file-upload-tb>tbody>tr>td:first-child {
+	width: 70px;
+}
+.defectDescribe .file-upload-tb>tbody>tr>td:first-child {
+	width: 70px;
+}
+.file-upload-tb a{
+	color: #428bca;
+}
+.span_a_style {
+	cursor:pointer;
+}
+.selectBox {
+	position: absolute;
+	left: 0;
+	top: 33px;
+	z-index: 10;
+	width: 100%; 
+	border: 1px solid #ccc;
+	overflow: auto;
+	display: none;
+	background: #fff;
+	border-radius: 4px;
+}
+
+.selectBox .selectUl {
+	width: 100%;
+	margin-bottom: 0;
+}
+
+.selectBox .selectUl .selectItem {
+	 
+	height: 26px;
+	width: 100%;
+	line-height: 26px;
+	overflow: hidden;
+	padding: 0 5px;
+	cursor: pointer;
+	text-align: left;
+}
+ .dealLog{
+	display: none; 
+} 
+#dealLogDiv{
+	display: block; 
+}
+.span_font-weight{
+	font-weight: bold
+}
+.nobg{
+	background-color: inherit;
+	width: 100%;
+}
+
+/* 寮�鍙戜换鍔¤鎯呴〉闈㈠脊鍑虹己闄疯鎯呮墍闇�css 浣嗘槸涓庡紑鍙戜换鍔ss鏈夊啿绐� 閬傛敞閲婃帀*/
+/*.allInfo .def_content{
+	border-top: 1px solid #D9D9D9; 
+	background: white; 
+	padding: 10px 0;
+	border-radius: 0 0 4px 4px;
+} */ 
+.menuContent{
+	position: absolute; 
+    z-index: 100000;
+    display: none;
+    float: left;
+    width: 182px;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    list-style: none;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    max-height: 400px;
+    overflow: auto;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+    background-clip: padding-box;
+}
+
+
+.batchMenuContent{
+	position: absolute;
+	z-index: 100000;
+	display: none;
+	float: left;
+	width: 410px;
+	min-width: 160px;
+	padding: 5px 0;
+	margin: 2px 0 0;
+	font-size: 14px;
+	list-style: none;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	max-height: 400px;
+	overflow: auto;
+	border: 1px solid rgba(0,0,0,0.15);
+	border-radius: 4px;
+	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+	box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+	background-clip: padding-box;
+}
+.menuContent .ztree{
+	display: block;
+	border: none;
+}
+
+
+.batchMenuContent .ztree{
+	display: block;
+	border: none;
+}
+
+.ztree li span.button.ico_docu,.ztree li span.button.ico_open,.ztree li span.button.ico_close{
+	background-position: 0 0;
+	background: url( "../../images/devtask/preGroup.png" ) no-repeat;
+}
+.ztree li a.curSelectedNode{
+	background-color: #E6E6E6;
+	height:100%; 
+}
+.onedatas{
+	padding:0 15px 10px 15px;   
+}
+.font_left{
+	text-align: right;
+}
+.sWorkOverView{
+	resize: none;
+} 
+#works{
+	margin-bottom: 10px;
+} 
+.canEdit{
+	margin-top: -2px;
+	padding-top: 30px; 
+	border: 2px solid #108EE9; 
+	position:relative;
+} 
+.del_icon{
+	position: absolute;
+	top: 0px;
+	right: 5px;
+	line-right: 20px;
+	font-size: 20px;
+}
+
+#canEditField .font_right,#editFieldDiv .font_right{
+	line-height: 30px;
+}
+#canEditField [class*="def_col_"],#editFieldDiv [class*="def_col_"]{
+	margin-bottom: 2px; 
+}
+
+#modalOwn li span.button.ico_docu, #modalOwn li span.button.ico_open, #modalOwn li span.button.ico_close{
+	background-position: 0 0;
+    background: url(../../images/devtask/preject.png) no-repeat;
+}
+
+.layui-layer-title .focusInfo{
+	float: left;  
+	margin-top: 7px;
+	margin-right: 8px; 	
+	width: 28px;
+	height: 28px;
+	background: url("../../../../systemui/static/images/concern.png") no-repeat;
+	background-position: 0 0;
+	cursor:pointer; 
+}  
+.layui-layer-title .noheart{
+	background-position: -28px 0;
+}
+
+.show-calendar {
+	position: absolute !important;
+}
+.collection2 {
+    position: static;
+    display: inline-block;
+    padding-right: 50px;
+    padding-left: 20px;
+}
+
+.search_btn .bootstrap-select{ 
+		width: auto !important;
+		}
+.search_btn .bootstrap-select .btn{
+	width: 100%;
+}

@@ -1,0 +1,350 @@
+.doing1{border-radius: 30px ; background: #FF6699;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing2{border-radius: 30px ; background: #108EE9;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing3{border-radius: 30px ; background: #33CC99;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing4{border-radius: 30px ; background: #FD5723;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing5{border-radius: 30px ; background: #91bdfd;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing6{border-radius: 30px ; background: #6c83b0;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing7{border-radius: 30px ; background: #ffb61e;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing8{border-radius: 30px ; background: #ffb3b3;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing9{border-radius: 30px ; background: #950cff;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing10{border-radius: 30px ; background:#e4b4ff;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing11{border-radius: 30px ; background:#59ff53;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing12{border-radius: 30px ; background:#25639e;display: inline-block;padding:2px 12px;color:#ffffff;}
+.flex_align_c{ 
+	align-items: center;
+	overflow: hidden;
+	text-overflow:ellipsis;
+	white-space: nowrap;
+}
+.color_256{
+	color: #25639e;
+}
+.bg_108EE9{
+	
+}
+#checktestTask  .modal-content{
+	background: #F2F2F2;
+}
+#checkForm .def_col_24,#checkForm .allInfo,#checktestTask .modal-footer{
+	background:#fff;
+}
+#checkForm .allInfo:first-child{
+	margin-top:0;
+}
+.transferDiv{
+	height: 250px;
+	padding-top: 30px;
+}
+.file-url{
+	display:none;
+}
+.file-bucket{
+	display:none;
+}
+.file-s3Key{
+	display:none;
+}
+.tooltip{ 
+	max-width: auto !important;
+	overflow:visible !important;
+	
+} 
+.tooltip .tooltip-inner{  
+	max-width: 400px !important;
+	text-align:left !important;
+	overflow:visible !important;
+}
+.tooltip span{ 
+	color: white; 
+} 
+.modal-title{
+	font-size:14px;
+	font-weight:bold;
+}
+.modal-body{
+	padding-top:10px;
+}
+.allInfo{
+	padding-bottom:0;
+	margin-bottom: 8px;
+}
+
+.def_content {
+	padding: 0 20px 10px 0px;
+}
+
+.def_content .form-group {
+	text-align: left;
+}
+
+.def_content .control-label {
+	display: inline-block;
+	line-height: 28px; 
+}  
+.modal-body {
+	padding-left: 30px;
+    padding-right: 30px;
+}
+#newDevTask [class*="def_col_"],#handleDevTask [class*="def_col_"],#editDevTask [class*="def_col_"]{
+	padding-left: 0px; 
+	text-align: right;
+}
+#newDevTask .form-group,#handleDevTask .form-group,#editDevTask .form-group{
+	padding-right: 10px; 
+}
+#newDevTask .rowdiv,#editDevTask .rowdiv{
+	margin-bottom:8px;
+}
+ 
+#splitDevTask .fontWeihgt{
+	text-align: right;
+}
+.fileTb{
+	width: 400px;	
+}
+.fileTb img{
+	padding-bottom: 3px;
+	width: 20px;
+	height: 20px;
+}
+ .fa-exclamation-circle{
+   color: #F39C12;
+  }
+ .logDiv{ 
+ 	margin-bottom: 4px;
+ }
+ .logDiv_title{
+ 	margin-bottom: 2px;
+ }
+.orderNum{
+	display: inline-block;
+	width: 9px;
+	height: 9px; 
+	border-radius: 50%;   
+	margin-right: 8px;
+	background: #9933CC;
+}
+.logDiv_cont{  
+	padding-left: 4px; 
+}
+.logDiv_contBorder{
+	padding: 4px 0px 4px 15px;
+	border-left: 1px solid #108EE9;  
+}
+.logDiv_contRemark{
+	padding:5px;
+	border: 1px solid #999999; 
+	border-radius: 4px;
+	background: #fff;
+}  
+.lastLog .logDiv_contBorder{
+	border: none;
+} 
+.connect_div>div{
+	margin-bottom: 15px;
+}
+.connect_div>div>div{
+	margin-bottom: 4px;
+} 
+.def_changeTit{
+	font-weight: 500;
+	color: #999999;
+	cursor:pointer ;
+}
+.def_changeTitIcon{
+	font-weight: 500;
+	color: #666666;
+} 
+.workRemarks{
+	padding: 0 15px;
+}
+.new_workRemarks{ 
+	padding-bottom: 15px; 
+	text-align: center;
+}
+.new_workRomarksBtn{
+	padding-bottom: 15px; 
+	border-bottom: 1px solid #CCCCCC;
+}
+.new_delFile{
+	color: #FF6699;
+}
+.dealLog{
+	display: none;
+}
+.fontColor1{
+	  color: #108EE9;
+}
+.fontColor2{
+	 color: #FF6699;
+}
+.redStar{
+	color:red;
+}
+
+.micSup {
+    background-color: #CC66FF;
+    line-height: 12px;
+    padding: 2px 6px;
+    color: white;
+    border-radius: 10px;
+}
+.selectBox {
+	position: absolute;
+	left: 10px;
+	right: 0;
+	top: 30px;
+	z-index: 10; 
+	border: 1px solid #ccc;
+	overflow: auto;
+	display: none;
+	background: #fff;
+	border-radius: 4px;
+}
+
+.selectBox .selectUl { 
+	margin-bottom: 0;
+}
+
+.selectBox .selectUl .selectItem { 
+	height: 26px; 
+	line-height: 26px;
+	overflow: hidden;
+	padding: 0 5px;
+	cursor: pointer;
+	text-align: left;
+}
+
+.modalSmall{
+	width: 500px !important;
+} 
+.border_bot_1{
+	padding-right: 10px;  
+}
+.border_bot_1>.def_title{
+	border-bottom:1px solid #d1d1d1;
+}
+.padding_top_10{
+	padding-top: 10px;
+}
+.border_top_10{
+	padding-top: 10px;
+	border-top:1px solid #d1d1d1;
+}
+.extension_field_style{
+	border-top:1px solid #d1d1d1;
+	padding:15px 0 0 0;
+	color:#666666;
+}
+.height_50{
+	height: 50px !important;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+.padding_10{
+	padding:0 20px !important;
+}
+#checktestTask .modal-body{
+	top: 50px;
+}
+#connectDiv,#brother_div{
+	display: none;
+}
+.headReturn {
+    width: 55px;
+    height: 36px;
+    background: url(../../images/defect/return.png) no-repeat 8px 0;
+    border-right: 2px solid #E8E8E8;
+	cursor: pointer;
+	display: inline-block;
+}
+#handleLogs{
+	padding:0 15px;
+}
+.file-upload-tb{
+	width: 100% !important;
+}
+.file-upload-tb > tbody > tr > td:first-child {
+	width: auto ;
+}
+.fileTb{
+	width: auto ;
+}
+
+#canEditField,#editFieldDiv,#checkEditField{
+	margin: 10px 0;
+	padding: 15px 0 5px;
+	border: 1px solid #CCCCCC;
+	border-left: none;
+	border-right: none; 
+}
+#canEditField>div,#editFieldDiv>div{
+	margin-bottom: 5px;
+	padding: 0;
+}
+#checkEditField>div{
+	margin-bottom: 5px;
+	line-height: 30px; 
+}
+#canEditField .font_right,#editFieldDiv .font_right{
+	line-height: 30px;
+}
+.chanceMyself .btn_clear{
+	right: 72px;
+}
+#newform .chanceMyself .btn_clear,
+#editForm .chanceMyself .btn_clear{
+	right: 192px;
+}
+#condition{
+	font-size:14px;
+	margin-bottom:0;
+}
+.fieldTable{
+	padding:10px 0;
+}
+.boldFont{
+	font-weight:bold;
+}
+.glyphicon {
+	top:7px;
+}
+#configFilterModal{
+	overflow-y:auto !important;
+}
+
+
+#new_plan_tree,#edit_plan_tree{
+	display:block;
+	border: none;
+}
+
+#new_plan_body,#edit_plan_body{
+	position: absolute;
+    top: 29px;
+    left: 10px;
+    z-index: 666;
+    background: #fff;
+    width: 97%;
+    max-width: 350px;
+    border-radius: 4px;
+    display:none;
+    border: 1px solid rgb(204,204,204);
+}
+
+#new_plan_treeSearchInput,#edit_plan_treeSearchInput{
+	border: none;
+    border-bottom: 1px solid;
+    padding: 5px;
+    margin-left: 10px;
+    width: 80%;
+}
+
+
+
+
+
+
+
+

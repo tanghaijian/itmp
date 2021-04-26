@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblSprintInfoMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblSprintInfo">
+        <id column="ID" jdbcType="BIGINT" property="id" />
+        <result column="SYSTEM_ID" jdbcType="BIGINT" property="systemId" />
+        <result column="PROJECT_ID" jdbcType="BIGINT" property="projectId" />
+        <result column="PROJECT_PLAN_ID" jdbcType="BIGINT" property="projectPlanId" />
+        <result column="SPRINT_NAME" jdbcType="VARCHAR" property="sprintName" />
+        <result column="SPRINT_START_DATE" jdbcType="DATE" property="sprintStartDate" />
+        <result column="SPRINT_END_DATE" jdbcType="DATE" property="sprintEndDate" />
+        <result column="valid_STATUS" jdbcType="TINYINT" property="validStatus" />
+        <result column="STATUS" jdbcType="TINYINT" property="status" />
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+        <result column="ESTIMATE_WORKLOAD" jdbcType="DOUBLE" property="estimteWorkload" />
+        <result column="DEV_ESTIMATE_WORKLOAD" jdbcType="DOUBLE" property="devEstimteWorkload" />
+        <result column="TEST_ESTIMATE_WORKLOAD" jdbcType="DOUBLE" property="testEstimteWorkload" />
+
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID, SYSTEM_ID, SPRINT_NAME, SPRINT_START_DATE, SPRINT_END_DATE, valid_STATUS, STATUS, CREATE_BY, 
+    CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+    <select id="getSprintBySystemId" parameterType="Long" resultType="cn.pioneeruniverse.dev.entity.TblSprintInfo">
+  	SELECT DISTINCT sprint.ID id,sprint.SPRINT_NAME sprintName,sprint.SPRINT_START_DATE sprintStartDate,sprint.SPRINT_END_DATE sprintEndDate
+	FROM tbl_sprint_info sprint
+	WHERE sprint.STATUS = 1 AND sprint.SYSTEM_ID = #{systemId} and sprint.valid_STATUS = 1
+  </select>
+
+    <select id="getSprintInfoListBySystemIdAndProjectId" parameterType="Long" resultType="cn.pioneeruniverse.dev.entity.TblSprintInfo">
+        SELECT DISTINCT sprint.ID id,sprint.SPRINT_NAME sprintName,sprint.SPRINT_START_DATE sprintStartDate,sprint.SPRINT_END_DATE sprintEndDate
+        FROM tbl_sprint_info sprint
+        WHERE sprint.STATUS = 1 AND sprint.SYSTEM_ID = #{systemId} AND sprint.PROJECT_ID=#{projectId} AND sprint.valid_STATUS = 1
+    </select>
+
+
+    <!-- 子系统id 、名称 查询 -->
+    <select id="getSprintBySystemIdAndName" parameterType="cn.pioneeruniverse.dev.entity.TblSprintInfo" resultType="cn.pioneeruniverse.dev.entity.TblSprintInfo">
+  	SELECT DISTINCT sprint.ID id,sprint.SPRINT_NAME sprintName,sprint.SPRINT_START_DATE sprintStartDate,sprint.SPRINT_END_DATE sprintEndDate
+	FROM tbl_sprint_info sprint
+	WHERE sprint.STATUS = 1 AND sprint.SYSTEM_ID = #{systemId} and sprint.valid_STATUS = 1 and sprint.SPRINT_NAME=#{sprintName}
+  </select>
+
+    <!--当前日期之前的-->
+    <select id="getSprintBySystemIdBefor" parameterType="Long" resultType="cn.pioneeruniverse.dev.entity.TblSprintInfo">
+  	SELECT DISTINCT sprint.ID id,sprint.SPRINT_NAME sprintName,sprint.SPRINT_START_DATE sprintStartDate,sprint.SPRINT_END_DATE sprintEndDate
+	FROM tbl_sprint_info sprint
+	WHERE sprint.STATUS = 1 AND sprint.SYSTEM_ID = #{systemId} and sprint.valid_STATUS = 1  and  sprint.SPRINT_END_DATE &lt; curdate() ORDER BY sprint.SPRINT_END_DATE DESC
+	LIMIT 0,1
+  </select>
+
+    <!-- 当前日期之后的 -->
+    <select id="getSprintBySystemIdAfter" parameterType="Long" resultType="cn.pioneeruniverse.dev.entity.TblSprintInfo">
+  	SELECT DISTINCT sprint.ID id,sprint.SPRINT_NAME sprintName,sprint.SPRINT_START_DATE sprintStartDate,sprint.SPRINT_END_DATE sprintEndDate
+	FROM tbl_sprint_info sprint
+	WHERE sprint.STATUS = 1 AND sprint.SYSTEM_ID = #{systemId} and sprint.valid_STATUS = 1  and sprint.SPRINT_END_DATE >=curdate() ORDER BY sprint.SPRINT_END_DATE
+  </select>
+
+
+    <!-- 所有的冲刺 -->
+    <select id="getAllSprint" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from tbl_sprint_info
+        where STATUS=1
+    </select>
+
+    <!-- 根据id查询 -->
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultType="cn.pioneeruniverse.dev.entity.TblSprintInfo">
+    select sprintInfo.ID id, sprintInfo.SPRINT_NAME sprintName, sprintInfo.SYSTEM_ID systemId,sprintInfo.ESTIMATE_WORKLOAD estimteWorkload,sprintInfo.DEV_ESTIMATE_WORKLOAD devEstimteWorkload,
+    sprintInfo.TEST_ESTIMATE_WORKLOAD testEstimteWorkload,
+    sprintInfo.SPRINT_START_DATE sprintStartDate, sprintInfo.SPRINT_END_DATE sprintEndDate,
+    system.SYSTEM_NAME systemName,tpp.ID projectPlanId,tpp.PLAN_NAME projectPlanName
+    from tbl_sprint_info sprintInfo
+    LEFT JOIN tbl_system_info system ON system.ID = sprintInfo.SYSTEM_ID
+    LEFT JOIN tbl_project_plan tpp ON tpp.ID = sprintInfo.PROJECT_PLAN_ID AND tpp.STATUS =1
+    where sprintInfo.ID = #{id,jdbcType=BIGINT} AND system.STATUS =1
+  </select>
+
+
+    <!-- 根据冲刺id获取该冲刺相关信息 -->
+    <select id="selectSprintInfoById" resultType="cn.pioneeruniverse.dev.entity.TblSprintInfo">
+        SELECT DISTINCT
+        GROUP_CONCAT(sprintInfo.ID) sprintIdList,
+        sprintInfo.SPRINT_NAME  AS sprintName,
+        sprintInfo.PROJECT_ID AS projectIds,
+        GROUP_CONCAT(sprintInfo.SYSTEM_ID) AS systemId,
+        GROUP_CONCAT(si.SYSTEM_NAME) systemName,
+        sprintInfo.SPRINT_START_DATE sprintStartDate,
+        sprintInfo.SPRINT_END_DATE sprintEndDate,
+        sprintInfo.CREATE_DATE createDate,
+        sprintInfo.valid_STATUS  AS validStatus,
+        sprintInfo.PROJECT_PLAN_ID AS projectPlanId,
+        tpp.PLAN_NAME AS projectPlanName,
+        tpi.PROJECT_NAME AS projectName
+        FROM tbl_sprint_info  sprintInfo
+        LEFT JOIN tbl_system_info si  ON si.ID = sprintInfo.SYSTEM_ID AND si.STATUS =1
+        LEFT JOIN tbl_project_plan tpp ON tpp.ID = sprintInfo.PROJECT_PLAN_ID AND tpp.STATUS =1
+        LEFT JOIN tbl_project_info tpi  ON tpi.ID = sprintInfo.PROJECT_ID AND tpi.STATUS =1
+        <where>
+            sprintInfo.ID  IN
+            <foreach collection="sprintIdLists" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </where>
+        AND	sprintInfo.STATUS = 1
+        GROUP BY sprintInfo.SPRINT_NAME,sprintInfo.PROJECT_ID,sprintInfo.SPRINT_START_DATE,sprintInfo.SPRINT_END_DATE,sprintInfo.CREATE_DATE,sprintInfo.valid_STATUS,sprintInfo.PROJECT_PLAN_ID
+        ORDER BY sprintInfo.CREATE_DATE desc
+    </select>
+
+
+    <!-- 删除冲刺 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_sprint_info
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblSprintInfo">
+    insert into tbl_sprint_info (ID, SYSTEM_ID, SPRINT_NAME, 
+      SPRINT_START_DATE, SPRINT_END_DATE, STATUS, 
+      CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, 
+      LAST_UPDATE_DATE)
+    values (#{id,jdbcType=BIGINT}, #{systemId,jdbcType=BIGINT}, #{sprintName,jdbcType=VARCHAR}, 
+      #{sprintStartDate,jdbcType=DATE}, #{sprintEndDate,jdbcType=DATE}, #{status,jdbcType=TINYINT}, 
+      #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, 
+      #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="cn.pioneeruniverse.dev.entity.TblSprintInfo">
+        insert into tbl_sprint_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="systemId != null">
+                SYSTEM_ID,
+            </if>
+            <if test="sprintName != null">
+                SPRINT_NAME,
+            </if>
+            <if test="sprintStartDate != null">
+                SPRINT_START_DATE,
+            </if>
+            <if test="sprintEndDate != null">
+                SPRINT_END_DATE,
+            </if>
+            <if test="status != null">
+                STATUS,
+            </if>
+            <if test="createBy != null">
+                CREATE_BY,
+            </if>
+            <if test="createDate != null">
+                CREATE_DATE,
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY,
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="systemId != null">
+                #{systemId,jdbcType=BIGINT},
+            </if>
+            <if test="sprintName != null">
+                #{sprintName,jdbcType=VARCHAR},
+            </if>
+            <if test="sprintStartDate != null">
+                #{sprintStartDate,jdbcType=DATE},
+            </if>
+            <if test="sprintEndDate != null">
+                #{sprintEndDate,jdbcType=DATE},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdateBy != null">
+                #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblSprintInfo">
+        update tbl_sprint_info
+        <set>
+            <if test="systemId != null">
+                SYSTEM_ID = #{systemId,jdbcType=BIGINT},
+            </if>
+            <if test="projectIds != null">
+                PROJECT_ID = #{projectIds,jdbcType=BIGINT},
+            </if>
+            <if test="sprintName != null">
+                SPRINT_NAME = #{sprintName,jdbcType=VARCHAR},
+            </if>
+            <if test="projectPlanId != null">
+                PROJECT_PLAN_ID = #{projectPlanId,jdbcType=BIGINT},
+            </if>
+            <if test="sprintStartDate != null">
+                SPRINT_START_DATE = #{sprintStartDate,jdbcType=DATE},
+            </if>
+            <if test="sprintEndDate != null">
+                SPRINT_END_DATE = #{sprintEndDate,jdbcType=DATE},
+            </if>
+            <if test="validStatus != null">
+                valid_STATUS = #{validStatus,jdbcType=TINYINT}
+            </if>
+            <if test="status != null">
+                STATUS = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="estimteWorkload != null">
+                ESTIMATE_WORKLOAD = #{estimteWorkload,jdbcType=DOUBLE},
+            </if>
+            <if test="devEstimteWorkload != null">
+                DEV_ESTIMATE_WORKLOAD = #{devEstimteWorkload,jdbcType=DOUBLE},
+            </if>
+            <if test="testEstimteWorkload != null">
+                TEST_ESTIMATE_WORKLOAD = #{testEstimteWorkload,jdbcType=DOUBLE},
+            </if>
+
+
+        </set>
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblSprintInfo">
+    update tbl_sprint_info
+    set SYSTEM_ID = #{systemId,jdbcType=BIGINT},
+      SPRINT_NAME = #{sprintName,jdbcType=VARCHAR},
+      SPRINT_START_DATE = #{sprintStartDate,jdbcType=DATE},
+      SPRINT_END_DATE = #{sprintEndDate,jdbcType=DATE},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+    <!-- 分页总数 -->
+    <select id="getSprintInfosCountCondition" parameterType="map" resultType="int">
+      SELECT COUNT(*) FROM(
+        SELECT DISTINCT sprintInfo.SPRINT_NAME  AS sprintName,
+        sprintInfo.PROJECT_ID AS projectIds,
+        GROUP_CONCAT(sprintInfo.SYSTEM_ID) AS systemId,
+        GROUP_CONCAT(system.SYSTEM_NAME) systemName,
+        sprintInfo.SPRINT_START_DATE sprintStartDate,
+        sprintInfo.SPRINT_END_DATE sprintEndDate,
+        sprintInfo.CREATE_DATE createDate,
+        sprintInfo.valid_STATUS  AS validStatus
+        FROM
+        (SELECT DISTINCT sprintInfo2.*
+        FROM tbl_sprint_info sprintInfo2
+        LEFT JOIN tbl_system_info systemInfo ON sprintInfo2.SYSTEM_ID = systemInfo.ID
+        LEFT JOIN tbl_project_system ps ON ps.SYSTEM_ID = systemInfo.ID AND ps.status = 1 AND ps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = ps.PROJECT_ID AND pgroup.STATUS=1
+        WHERE
+        pgroup.id IN(
+        SELECT guser2.PROJECT_GROUP_ID FROM tbl_project_group_user guser2 WHERE guser2.USER_ID=#{uid} AND guser2.STATUS=1
+        )) sprintInfo
+        LEFT JOIN tbl_system_info system ON system.ID = sprintInfo.SYSTEM_ID AND system.STATUS =1
+        <where>
+            <if test="sprintName != null and sprintName!=''">
+                AND sprintInfo.SPRINT_NAME LIKE concat("%",#{sprintName,jdbcType=VARCHAR},"%")
+            </if>
+            <if test="systemIds != null and systemIds !=''">
+                AND sprintInfo.SYSTEM_ID IN
+                <foreach collection="systemIds.split(',')"  item="item" index="index"  open="(" separator="," close=")" >
+                    #{item}
+                </foreach>
+            </if>
+            <if test="systemName != null and systemName !=''">
+                AND system.SYSTEM_NAME LIKE concat("%",#{systemName,jdbcType=VARCHAR},"%")
+            </if>
+            <if test="validStatus != null and validStatus!=''">
+                AND sprintInfo.valid_STATUS = #{validStatus,jdbcType=TINYINT}
+            </if>
+            AND sprintInfo.STATUS = 1
+            GROUP BY sprintInfo.SPRINT_NAME,sprintInfo.PROJECT_ID,sprintInfo.SPRINT_START_DATE,sprintInfo.SPRINT_END_DATE,sprintInfo.CREATE_DATE,sprintInfo.valid_STATUS
+            ORDER BY sprintInfo.CREATE_DATE DESC
+        </where>
+        ) count
+
+        <!-- select count(*) from(select DISTINCT sprintInfo.ID id , sprintInfo.SPRINT_NAME sprintName, sprintInfo.SYSTEM_ID systemId,sprintInfo.SPRINT_START_DATE sprintStartDate,
+        sprintInfo.SPRINT_END_DATE sprintEndDate,system.SYSTEM_NAME systemName,sprintInfo.valid_STATUS validStatus
+        from
+        (select sprintInfo2.* from
+        tbl_sprint_info sprintInfo2
+        LEFT JOIN tbl_system_info systemInfo ON sprintInfo2.SYSTEM_ID = systemInfo.ID
+         LEFT JOIN tbl_project_system ps on ps.SYSTEM_ID = systemInfo.ID and ps.status = 1 and ps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = ps.PROJECT_ID AND pgroup.STATUS=1
+        where
+        pgroup.id IN(
+        SELECT guser2.PROJECT_GROUP_ID FROM tbl_project_group_user guser2 WHERE guser2.USER_ID=#{uid} and guser2.STATUS=1
+        ) ) sprintInfo
+
+        LEFT JOIN tbl_system_info system ON system.ID = sprintInfo.SYSTEM_ID AND system.STATUS =1
+        <where>
+            <if test="sprintName != null and sprintName !=''">
+                and sprintInfo.SPRINT_NAME like concat("%",#{sprintName,jdbcType=VARCHAR},"%")
+            </if>
+            <if test="systemIds != null and systemIds !=''">
+                and sprintInfo.SYSTEM_ID in
+                <foreach collection="systemIds.split(',')"  item="item" index="index"  open="(" separator="," close=")" >
+                    #{item}
+                </foreach>
+            </if>
+            <if test="systemName != null and systemName !=''">
+                and system.SYSTEM_NAME like concat("%",#{systemName,jdbcType=VARCHAR},"%")
+            </if>
+            <if test="validStatus != null and validStatus!=''">
+                and sprintInfo.valid_STATUS = #{validStatus,jdbcType=TINYINT}
+            </if>
+            and sprintInfo.STATUS = 1
+        </where>) count   -->
+
+    </select>
+    <select id="getSprintInfosCount" parameterType="map" resultType="int">
+        select count(*) from(SELECT DISTINCT
+        sprintInfo.SPRINT_NAME  AS sprintName,
+        sprintInfo.PROJECT_ID AS projectIds,
+        GROUP_CONCAT(sprintInfo.SYSTEM_ID) AS systemIdList,
+        GROUP_CONCAT(si.SYSTEM_NAME) AS systemName,
+        sprintInfo.SPRINT_START_DATE AS sprintStartDate,
+        sprintInfo.SPRINT_END_DATE AS sprintEndDate,
+        sprintInfo.CREATE_DATE AS createDate,
+        sprintInfo.valid_STATUS  AS validStatus
+        FROM tbl_sprint_info  sprintInfo
+        LEFT JOIN tbl_system_info si  ON si.ID = sprintInfo.SYSTEM_ID AND si.STATUS =1
+        <where>
+            <if test="sprintName != null and sprintName !=''">
+                and sprintInfo.SPRINT_NAME like concat("%",#{sprintName,jdbcType=VARCHAR},"%")
+            </if>
+            <if test="systemIds != null and systemIds !=''">
+                and sprintInfo.SYSTEM_ID in
+                <foreach collection="systemIds.split(',')"  item="item" index="index"  open="(" separator="," close=")" >
+                    #{item}
+                </foreach>
+            </if>
+            <if test="systemName != null and systemName !=''">
+                and si.SYSTEM_NAME like concat("%",#{systemName,jdbcType=VARCHAR},"%")
+            </if>
+            <if test="validStatus != null and validStatus!=''">
+                and sprintInfo.valid_STATUS = #{validStatus,jdbcType=TINYINT}
+            </if>
+            and sprintInfo.STATUS = 1
+            GROUP BY sprintInfo.SPRINT_NAME,sprintInfo.PROJECT_ID,sprintInfo.SPRINT_START_DATE,sprintInfo.SPRINT_END_DATE,sprintInfo.CREATE_DATE,sprintInfo.valid_STATUS
+        </where>) count
+
+    </select>
+   <!-- 根据条件获取冲刺数据 -->
+    <select id="getSprintInfoCondition" parameterType="map" resultType="cn.pioneeruniverse.dev.entity.TblSprintInfo">
+        SELECT DISTINCT
+        GROUP_CONCAT(sprintInfo.ID) AS sprintIdList,
+        sprintInfo.SPRINT_NAME  AS sprintName,
+        sprintInfo.PROJECT_ID AS projectIds,
+        GROUP_CONCAT(sprintInfo.SYSTEM_ID) AS systemIdList,
+        GROUP_CONCAT(system.SYSTEM_NAME) systemName,
+        sprintInfo.SPRINT_START_DATE sprintStartDate,
+        sprintInfo.SPRINT_END_DATE sprintEndDate,
+        sprintInfo.CREATE_DATE createDate,
+        sprintInfo.valid_STATUS  AS validStatus
+        FROM
+        (SELECT DISTINCT sprintInfo2.*
+        FROM tbl_sprint_info sprintInfo2
+        LEFT JOIN tbl_system_info systemInfo ON sprintInfo2.SYSTEM_ID = systemInfo.ID
+        LEFT JOIN tbl_project_system ps ON ps.SYSTEM_ID = systemInfo.ID AND ps.status = 1 AND ps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = ps.PROJECT_ID AND pgroup.STATUS=1
+        WHERE
+        pgroup.id IN(
+        SELECT guser2.PROJECT_GROUP_ID FROM tbl_project_group_user guser2 WHERE guser2.USER_ID= #{uid} AND guser2.STATUS=1
+        )) sprintInfo
+        LEFT JOIN tbl_system_info system ON system.ID = sprintInfo.SYSTEM_ID AND system.STATUS =1
+        <where>
+            <if test="sprintName != null and sprintName!=''">
+                AND sprintInfo.SPRINT_NAME LIKE concat("%",#{sprintName,jdbcType=VARCHAR},"%")
+            </if>
+            <if test="systemIds != null and systemIds !=''">
+                AND sprintInfo.SYSTEM_ID IN
+                <foreach collection="systemIds.split(',')"  item="item" index="index"  open="(" separator="," close=")" >
+                    #{item}
+                </foreach>
+            </if>
+            <if test="systemName != null and systemName !=''">
+                AND system.SYSTEM_NAME LIKE concat("%",#{systemName,jdbcType=VARCHAR},"%")
+            </if>
+            <if test="validStatus != null and validStatus!=''">
+                AND sprintInfo.valid_STATUS = #{validStatus,jdbcType=TINYINT}
+            </if>
+            AND sprintInfo.STATUS = 1
+            GROUP BY sprintInfo.SPRINT_NAME,sprintInfo.PROJECT_ID,sprintInfo.SPRINT_START_DATE,sprintInfo.SPRINT_END_DATE,sprintInfo.CREATE_DATE,sprintInfo.valid_STATUS
+            ORDER BY sprintInfo.CREATE_DATE DESC
+        </where>
+        limit #{start},#{rows}
+
+     <!--   select DISTINCT sprintInfo.PROJECT_ID AS projectIds,sprintInfo.ID id , sprintInfo.SPRINT_NAME sprintName, sprintInfo.SYSTEM_ID systemId,sprintInfo.SPRINT_START_DATE sprintStartDate,
+        sprintInfo.SPRINT_END_DATE sprintEndDate,system.SYSTEM_NAME systemName,sprintInfo.valid_STATUS validStatus
+        from
+        (select sprintInfo2.* from
+        tbl_sprint_info sprintInfo2
+        LEFT JOIN tbl_system_info systemInfo ON sprintInfo2.SYSTEM_ID = systemInfo.ID
+        LEFT JOIN tbl_project_system ps on ps.SYSTEM_ID = systemInfo.ID and ps.status = 1 and ps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = ps.PROJECT_ID AND pgroup.STATUS=1
+        where
+        pgroup.id IN(
+        SELECT guser2.PROJECT_GROUP_ID FROM tbl_project_group_user guser2 WHERE guser2.USER_ID=#{uid} and guser2.STATUS=1
+        ) ) sprintInfo
+        LEFT JOIN tbl_system_info system ON system.ID = sprintInfo.SYSTEM_ID AND system.STATUS =1
+        <where>
+            <if test="sprintName != null and sprintName!=''">
+                and sprintInfo.SPRINT_NAME like concat("%",#{sprintName,jdbcType=VARCHAR},"%")
+            </if>
+            <if test="systemIds != null and systemIds !=''">
+                and sprintInfo.SYSTEM_ID in
+                <foreach collection="systemIds.split(',')"  item="item" index="index"  open="(" separator="," close=")" >
+                    #{item}
+                </foreach>
+            </if>
+            <if test="systemName != null and systemName !=''">
+                and system.SYSTEM_NAME like concat("%",#{systemName,jdbcType=VARCHAR},"%")
+            </if>
+            <if test="validStatus != null and validStatus!=''">
+                and sprintInfo.valid_STATUS = #{validStatus,jdbcType=TINYINT}
+            </if>
+            and sprintInfo.STATUS = 1
+            order by ID desc
+        </where>
+        limit #{start},#{rows} -->
+    </select>
+
+    <!--根据条件获取冲刺数据-->
+    <select id="getSprintInfos" parameterType="map" resultType="cn.pioneeruniverse.dev.entity.TblSprintInfo">
+        SELECT DISTINCT
+        GROUP_CONCAT(sprintInfo.ID) AS sprintIdList,
+        sprintInfo.SPRINT_NAME  AS sprintName,
+        sprintInfo.PROJECT_ID AS projectIds,
+        GROUP_CONCAT(sprintInfo.SYSTEM_ID) AS systemIdList,
+        GROUP_CONCAT(si.SYSTEM_NAME) AS systemName,
+        sprintInfo.SPRINT_START_DATE AS sprintStartDate,
+        sprintInfo.SPRINT_END_DATE AS sprintEndDate,
+        sprintInfo.CREATE_DATE AS createDate,
+        sprintInfo.valid_STATUS  AS validStatus
+        FROM tbl_sprint_info  sprintInfo
+        LEFT JOIN tbl_system_info si  ON si.ID = sprintInfo.SYSTEM_ID AND si.STATUS =1
+        <where>
+            <if test="sprintName != null and sprintName!=''">
+                AND sprintInfo.SPRINT_NAME LIKE concat("%",#{sprintName,jdbcType=VARCHAR},"%")
+            </if>
+            <if test="systemIds != null and systemIds !=''">
+                AND sprintInfo.SYSTEM_ID IN
+                <foreach collection="systemIds.split(',')"  item="item" index="index"  open="(" separator="," close=")" >
+                    #{item}
+                </foreach>
+            </if>
+            <if test="systemName != null and systemName !=''">
+                AND si.SYSTEM_NAME LIKE concat("%",#{systemName,jdbcType=VARCHAR},"%")
+            </if>
+            <if test="validStatus != null and validStatus!=''">
+                AND sprintInfo.valid_STATUS = #{validStatus,jdbcType=TINYINT}
+            </if>
+            AND sprintInfo.STATUS = 1
+            GROUP BY sprintInfo.SPRINT_NAME,sprintInfo.PROJECT_ID,sprintInfo.SPRINT_START_DATE,sprintInfo.SPRINT_END_DATE,sprintInfo.CREATE_DATE,sprintInfo.valid_STATUS
+            ORDER BY sprintInfo.CREATE_DATE DESC
+        </where>
+        limit #{start},#{rows}
+    </select>
+
+    <!-- 删除冲刺 -->
+    <update id="deleteSprintInfo" parameterType="map">
+  	update tbl_sprint_info set STATUS = 2, LAST_UPDATE_BY = #{updateUser,jdbcType=BIGINT}, LAST_UPDATE_DATE = #{updateTime,jdbcType=TIMESTAMP}
+  		where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+    <!-- 添加冲刺 -->
+    <insert id="addSprintInfo" parameterType="cn.pioneeruniverse.dev.entity.TblSprintInfo">
+  	insert into tbl_sprint_info (SYSTEM_ID, SPRINT_NAME, PROJECT_PLAN_ID,
+      SPRINT_START_DATE, SPRINT_END_DATE, valid_STATUS, STATUS, 
+      CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, 
+      LAST_UPDATE_DATE,PROJECT_ID)
+    values (#{systemId,jdbcType=BIGINT}, #{sprintName,jdbcType=VARCHAR},#{projectPlanId,jdbcType=BIGINT},
+      #{sprintStartDate,jdbcType=DATE}, #{sprintEndDate,jdbcType=DATE}, #{validStatus,jdbcType=TINYINT}, #{status,jdbcType=TINYINT}, 
+      #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, 
+      #{lastUpdateDate,jdbcType=TIMESTAMP}, #{projectIds,jdbcType=BIGINT})
+  </insert>
+
+    <!-- 关闭冲刺 -->
+    <update id="closeSprint" parameterType="map">
+  	update tbl_sprint_info set valid_STATUS = 2, LAST_UPDATE_BY = #{updateUser,jdbcType=BIGINT}, LAST_UPDATE_DATE = #{updateTime,jdbcType=TIMESTAMP}
+  		where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+    <!-- 打开冲刺 -->
+    <update id="openSprint" parameterType="map">
+  	update tbl_sprint_info set valid_STATUS = 1, LAST_UPDATE_BY = #{updateUser,jdbcType=BIGINT}, LAST_UPDATE_DATE = #{updateTime,jdbcType=TIMESTAMP}
+  		where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+    <!-- 根据子系统条件获取冲刺 -->
+    <select id="findSprintBySystemIdDate" parameterType="Long" resultType="cn.pioneeruniverse.dev.entity.TblSprintInfo">
+  	SELECT tsi.ID id,tsi.SPRINT_NAME sprintName FROM tbl_sprint_info tsi
+	WHERE tsi.SYSTEM_ID = #{systemId} AND tsi.STATUS = 1  AND tsi.valid_STATUS = 1
+	AND curdate() &lt;= tsi.SPRINT_END_DATE AND curdate() &gt;= tsi.SPRINT_START_DATE
+  </select>
+
+</mapper>

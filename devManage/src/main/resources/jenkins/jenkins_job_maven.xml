@@ -1,0 +1,118 @@
+<maven2-moduleset plugin="maven-plugin@3.1.2">
+	<actions />
+	<description>自动构建Maven项目</description>
+	<keepDependencies>false</keepDependencies>
+	<properties>
+		<com.gitee.jenkins.connection.GiteeConnectionProperty
+			plugin="gitee@1.1.3">
+			<giteeConnection />
+		</com.gitee.jenkins.connection.GiteeConnectionProperty>
+		<jenkins.model.BuildDiscarderProperty>
+			<strategy class="hudson.tasks.LogRotator">
+				<daysToKeep>-1</daysToKeep>
+				<numToKeep>-1</numToKeep>
+				<artifactDaysToKeep>-1</artifactDaysToKeep>
+				<artifactNumToKeep>-1</artifactNumToKeep>
+			</strategy>
+		</jenkins.model.BuildDiscarderProperty>
+	</properties>
+	<scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.1">
+		<configVersion>2</configVersion>
+		<userRemoteConfigs>
+			<hudson.plugins.git.UserRemoteConfig>
+				<url>http://218.17.169.171:18091/zhoudu/itmp.git</url>
+				<credentialsId>fa7b0b01-5a4e-4148-8c2e-a03c2c6fd17c</credentialsId>
+			</hudson.plugins.git.UserRemoteConfig>
+		</userRemoteConfigs>
+		<branches>
+			<hudson.plugins.git.BranchSpec>
+				<name>*/master</name>
+			</hudson.plugins.git.BranchSpec>
+		</branches>
+		<doGenerateSubmoduleConfigurations>false
+		</doGenerateSubmoduleConfigurations>
+		<submoduleCfg class="list" />
+		<extensions />
+	</scm>
+	<canRoam>true</canRoam>
+	<disabled>false</disabled>
+	<blockBuildWhenDownstreamBuilding>false
+	</blockBuildWhenDownstreamBuilding>
+	<blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+	<triggers />
+	<concurrentBuild>false</concurrentBuild>
+	<rootModule>
+		<groupId>cn.pioneerservice</groupId>
+		<artifactId>itmp</artifactId>
+	</rootModule>
+	<goals>clean install -Dmaven.test.skip=true</goals>
+	<aggregatorStyleBuild>true</aggregatorStyleBuild>
+	<incrementalBuild>false</incrementalBuild>
+	<ignoreUpstremChanges>false</ignoreUpstremChanges>
+	<ignoreUnsuccessfulUpstreams>false</ignoreUnsuccessfulUpstreams>
+	<archivingDisabled>false</archivingDisabled>
+	<siteArchivingDisabled>false</siteArchivingDisabled>
+	<fingerprintingDisabled>false</fingerprintingDisabled>
+	<resolveDependencies>false</resolveDependencies>
+	<processPlugins>false</processPlugins>
+	<mavenValidationLevel>-1</mavenValidationLevel>
+	<runHeadless>false</runHeadless>
+	<disableTriggerDownstreamProjects>false
+	</disableTriggerDownstreamProjects>
+	<blockTriggerWhenBuilding>true</blockTriggerWhenBuilding>
+	<settings class="jenkins.mvn.DefaultSettingsProvider" />
+	<globalSettings
+		class="jenkins.mvn.DefaultGlobalSettingsProvider" />
+	<reporters />
+	<buildWrappers>
+		<hudson.plugins.timestamper.TimestamperBuildWrapper
+			plugin="timestamper@1.8.10" />
+	</buildWrappers>
+	<prebuilders />
+	<postbuilders>
+		<hudson.plugins.sonar.SonarRunnerBuilder plugin="sonar@2.8">
+			<installationName>sonar-test</installationName>
+			<project />
+			<properties>
+
+			</properties>
+			<javaOpts />
+			<additionalArguments />
+			<jdk>jdk1.8</jdk>
+			<task />
+		</hudson.plugins.sonar.SonarRunnerBuilder>
+	</postbuilders>
+	<publishers>
+	<hudson.plugins.postbuildtask.PostbuildTask plugin="postbuild-task@1.8">
+		<tasks>
+			<hudson.plugins.postbuildtask.TaskProperties>
+				<logTexts>
+					<hudson.plugins.postbuildtask.LogProperties>
+						<logText>SUCCESS</logText>
+						<operator>OR</operator>
+					</hudson.plugins.postbuildtask.LogProperties>
+					<hudson.plugins.postbuildtask.LogProperties>
+						<logText>FAILURE</logText>
+						<operator>OR</operator>
+					</hudson.plugins.postbuildtask.LogProperties>
+					<hudson.plugins.postbuildtask.LogProperties>
+						<logText>INFO</logText>
+						<operator>AND</operator>
+					</hudson.plugins.postbuildtask.LogProperties>
+				</logTexts>
+				<EscalateStatus>false</EscalateStatus>
+				<RunIfJobSuccessful>false</RunIfJobSuccessful>
+				<script>
+
+				</script>
+			</hudson.plugins.postbuildtask.TaskProperties>
+		</tasks>
+	</hudson.plugins.postbuildtask.PostbuildTask>
+	</publishers>
+	<runPostStepsIfResult>
+		<name>SUCCESS</name>
+		<ordinal>0</ordinal>
+		<color>BLUE</color>
+		<completeBuild>true</completeBuild>
+	</runPostStepsIfResult>
+</maven2-moduleset>

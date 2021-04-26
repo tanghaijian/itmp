@@ -1,0 +1,42 @@
+.bigBox{
+    display: flex;
+}
+.left-box{
+    height: 500px;
+}
+.right-box{
+    flex: 1;
+    padding: 0 18px;
+}
+.main-content {
+    padding: 20px 0;
+}
+#toolbar{
+    margin-bottom:10px;
+}
+.btn-group>.btn{
+    margin-right:10px !important;
+}
+
+.file-upload-tb a{
+    color: #428bca;
+}
+.file-upload-tb>tbody>tr>td:first-child {
+    width: 500px !important;
+}
+.fileTb img{
+    padding-bottom: 3px;
+    height: 20px;
+}
+#importModal table{
+    width: 100% !important;
+}
+#tree{
+    max-height: 570px;
+    max-width: 300px;
+    min-width: 150px;
+    overflow:auto;
+}
+.sp_red{
+    color:red;
+}

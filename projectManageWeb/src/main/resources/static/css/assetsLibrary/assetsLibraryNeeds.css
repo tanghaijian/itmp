@@ -1,0 +1,80 @@
+ 
+::-webkit-input-placeholder { /* WebKit browsers */
+    color: #aab2bd;
+    font-size: 12px;
+}
+
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color: #aab2bd;
+    font-size: 12px;
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+    color: #aab2bd;
+    font-size: 12px;
+}
+.btn-primary{
+	background-color: #108EE9 !important;
+}
+.search .btn{
+    height: 28px !important;
+    margin:1px 0 1px 8px; 
+    padding: 6px 16px !important;
+}
+#searchBtn{
+	margin-left: 20px;
+}
+.notRequirement{
+    flex: 1;
+    background-color: #FFF;
+    border-radius: 4px;
+}
+.notRequirement>.title{
+    padding: 15px 17px;
+    border-bottom: 1px solid #E4E4E4;
+}
+.notRequirement>.tableArea{
+    padding: 24px 17px;
+}
+.treeSearch{
+    margin: 10px 10px 0 10px;
+}
+.treeSearchInput{
+    width: 100%;
+    line-height: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid #CCC;
+    padding: 1px 26px 1px 8px;
+}
+.treeSearchInput:focus{
+    outline: none;
+}
+.changeView{
+    padding: 0 0 0 20px;
+}
+.changeView>div>.btn{
+    display: block !important;
+    width: 100%;
+    text-align: center;
+    background-color: #108EE9 !important;
+}
+.treeSearch .fa{
+    position: absolute;
+    right: 5px;
+    top: 9px;
+}
+.headr{
+	height: 55px;
+	font-size: 14px;
+	font-weight: bold;
+	line-height: 55px;
+	padding: 0 12px;
+	border-bottom: 1px solid #E4E4E4;
+}
+.search{
+	border: none;
+	padding: 0;
+	padding-top: 13px;
+}

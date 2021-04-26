@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.monthlyReport.TblReportMonthlyTaskTypeMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlyTaskType">
+        <id column="ID" jdbcType="BIGINT"  property="id" />
+        <result column="YEAR_MONTH" jdbcType="VARCHAR" property="yearMonth"/>
+        <result column="SYSTEM_TYPE" jdbcType="TINYINT" property="systemType"/>
+        <result column="TYPE" jdbcType="INTEGER" property="type"/>
+        <result column="TASK_NUMBER" jdbcType="INTEGER" property="taskNumber"/>
+        <result column="PERCENTAGE" jdbcType="DOUBLE" property="percentage"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+    </resultMap>
+
+    <select id="findTaskType"
+            resultType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlyTaskType">
+        SELECT
+		(CASE WHEN system.development_mode = 1 THEN 1 WHEN system.SYSTEM_CLASS = 1 THEN 3 ELSE 2 END ) systemType,
+ 		(CASE WHEN reqFeature.REQUIREMENT_FEATURE_SOURCE =1 THEN 1 ELSE 2 end) type,
+		count(DISTINCT CASE WHEN reqFeature.`STATUS` = 1 AND
+					reqFeature.REQUIREMENT_FEATURE_SOURCE != 6
+					AND	reqFeature.REQUIREMENT_FEATURE_STATUS != '00'
+					THEN reqFeature.ID END) taskCount
+		FROM tbl_commissioning_window window
+		LEFT JOIN	tbl_requirement_feature reqFeature	ON	reqFeature.COMMISSIONING_WINDOW_ID = window.ID
+		LEFT JOIN	tbl_system_info system	ON system.ID = reqFeature.SYSTEM_ID
+		WHERE window.`STATUS` = 1
+		AND system.status = 1
+		AND ((system.development_mode =1 and system.SYSTEM_CLASS !=NULL) OR system.SYSTEM_CLASS= 1 OR system.SYSTEM_CLASS= 2)
+		AND window.WINDOW_DATE   between #{startDate} and #{endDate}
+		GROUP BY systemType, type
+    </select>
+
+    <select id="findTaskTypeByYearMonthAndSystemTypeAndType"
+            resultMap="BaseResultMap">
+        select * from tbl_report_monthly_task_type taskType
+        where  taskType.YEAR_MONTH = #{date}
+        and taskType.SYSTEM_TYPE = #{systemType}
+        and taskType.TYPE = #{type}
+        and taskType.STATUS = 1
+    </select>
+
+
+    <update id="updateByYearMonthAndSystemTypeAndLevel">
+        update tbl_report_monthly_task_type taskType
+        set
+        taskType.TASK_NUMBER = #{taskNumber},
+        taskType.PERCENTAGE = #{percentage} ,
+        taskType.LAST_UPDATE_BY = #{lastUpdateBy},
+        taskType.LAST_UPDATE_DATE = #{lastUpdateDate},
+        taskType.STATUS =#{status}
+        where
+        taskType.YEAR_MONTH = #{yearMonth} and
+        taskType.SYSTEM_TYPE =#{systemType} and
+        taskType.TYPE =#{type}
+    </update>
+
+
+    <select id="findAgileTaskRateByDate" resultMap="BaseResultMap">
+        SELECT taskType.PERCENTAGE,
+        taskType.TYPE,
+        taskType.TASK_NUMBER
+        FROM tbl_report_monthly_task_type taskType
+        WHERE taskType.SYSTEM_TYPE =#{type}
+        AND taskType.`YEAR_MONTH` = #{date}
+    </select>
+    <select id="findDevTaskRateByDate"
+            resultType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlyTaskType">
+        SELECT  taskType.TYPE type,
+        taskType.TASK_NUMBER taskNumber ,
+        taskType.PERCENTAGE percentage
+        FROM tbl_report_monthly_task_type taskType
+        WHERE taskType.SYSTEM_TYPE =2
+        AND taskType.`YEAR_MONTH` = #{date}
+
+    </select>
+
+</mapper>

@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>测试案例执行</title>
+    <link rel="stylesheet" type="text/css" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" type="text/css" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table-reorder-rows.css" />
+
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css">
+    <link rel="stylesheet" href="#springUrl('')/testManageui/static/css/testExecution/testExrcutionManagement.css">
+
+    
+</head>
+<body>
+<div id="loading">
+    <img class="loadingImg" src="#springUrl('')/testManageui/static/images/loadingPic.gif"/>
+</div>
+
+#*实际结果弹窗*#
+<div class="modal fade bs-example-modal-lg" tabindex="-1" id="caseActualResultModal" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="submit_caseActualResult"> 
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <span>实际结果</span>
+                <input type="hidden"  id="caseActualResult_setCaseId" />
+            </div>
+            <div class="modal-body">
+                   <textarea type="text" maxlength="500"   class="form-control" placeholder="请输入" id="caseActualResult_ipt" ></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="testSetCase.edit.change_result()">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="hiddenResult hideBlock">
+    <select class="selectpicker" id="executionSelect" name="TaskPType">
+        #foreach($dictMap in ${dict.getDictMap(
+            "TBL_TEST_SET_CASE_STEP_STEP_EXECUTE_RESULT").entrySet()})
+            <option value="${dictMap.key}">${dictMap.value}</option>
+        #end
+    </select>
+</div>
+<div class="hiddenResult hideBlock">
+    <select class="selectpicker" id="relatedDefectsType" name="relatedDefectsType">
+        #foreach($dictMap in ${dict.getDictMap(
+            "TBL_DEFECT_INFO_SEVERITY_LEVEL").entrySet()})
+            <option value="${dictMap.key}">${dictMap.value}</option>
+        #end
+    </select>
+</div>
+<div class="left">
+    <div class="left_top">
+        <div class="left_top_search">
+            <div class="rowdiv">
+                <div class="def_col_36 input_search ">
+                    <input type="text" value="$!testTaskName" id="checkTaskName" class="form-control" placeholder="请输入测试工作任务名称"/>
+                </div>
+            </div>
+            <div class="rowdiv">
+                <div class="def_col_36 input_search">
+                    <input type="text" value="$!testSetName" id="checkTestSetName"   class="form-control" placeholder="请输入测试集名称"/>
+                </div>
+            </div>
+            <div class="rowdiv">
+                <div class="def_col_36 input_search ">
+                    <select class="selectpicker" multiple="multiple" id="executeResult" title="请选择测试案例执行状态">
+                        #foreach($dictMap in ${dict.getDictMap(
+                            "TBL_TEST_SET_CASE_CASE_EXECUTE_RESULT").entrySet()})
+                            <option value="${dictMap.key}">${dictMap.value}</option>
+                        #end
+                    </select>
+                </div>
+            </div>
+            <div class="rowdiv">
+                <div class="def_col_18">
+                    <div class="selectFont ">仅测试中工作任务</div>
+                    <div id="onlyDoing" class="def_choice def_Selection">
+                        <div class="def_choice_circle"></div>
+                    </div>
+                </div>
+                <div class="def_col_2 ">
+                </div>
+                <div class="def_col_14 ">
+                    <div class="selectFont ">自己的任务</div>
+                    <div id="onlyDoing2" class="def_choice">
+                        <div class="def_choice_circle"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="rowdiv control-row search_btn">
+                <button type="button" class="btn btn-primary" onclick="testExecution.left_Opt.getAllExecuteCase(1)">搜&nbsp;&nbsp;&nbsp;索</button>
+                <button type="button" class="btn btn-default" onclick="testExecution.resetFunction.reset()">重&nbsp;&nbsp;&nbsp;置</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="left_bottom" id="taskTree" page="1" total="" onscroll="testExecution.left_Opt.throttle(testExecution.left_Opt.moreExecuteCase,800,1600, this,1)">
+    </div>
+</div>
+
+<div class="right_blank">
+    <div class="right_alert">
+        <div class="haveNoFontRight">
+            <span>请点击左侧列表中的一个测试集</span>
+        </div>
+    </div>
+</div>
+<div class="right">
+    <div class="right_div rightCaseDivNew">
+        <div class="right_div_tit">
+            <div class="right_div_titFont"></div>
+            #if($auth.hasPermission("$token","testManage:testExecution:editTestCase"))
+                <div class="right_div_titImg" onclick=" testSetCase.edit.editCaseBtn()">
+                    <img title="编辑" src="#springUrl('')/testManageui/static/images/testExecution/bianji.png"/>
+                </div>
+            #end
+
+        </div>
+        <div class="right_div_body">
+            <div class="rowdiv">
+                <div class="rightModal">
+                    <div class="form-group def_col_18">
+                        <div class="tagTitle">
+                            <label class="def_col_8 font_right control-label fontWeihgt">所属子系统：</label>
+                            <div class="def_col_28">
+                                <label class="control-label font_left def_show" id="check_systemName"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group def_col_18">
+                        <div class="tagTitle">
+                            <label class="def_col_8 font_right control-label fontWeihgt">模块：</label>
+                            <div class="def_col_28">
+                                <label class="control-label font_left def_show" id="moduleName"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="rowdiv">
+                <div class="rightModal">
+                    <div class="form-group def_col_18">
+                        <div class="tagTitle">
+                            <label class="def_col_8 font_right control-label fontWeihgt">测试项：</label>
+                            <div class="def_col_28">
+                                <label class="control-label font_left def_show" id="testPoint"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group def_col_18">
+                        <div class="tagTitle">
+                            <label class="def_col_8 font_right control-label fontWeihgt">业务类型：</label>
+                            <div class="def_col_28">
+                                <label class="control-label font_left def_show" id="businessType"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rowdiv">
+                <div class="rightModal">
+                    <div class="form-group def_col_36">
+                        <div class="tagTitle">
+                            <label class="def_col_4 font_right control-label fontWeihgt">案例描述：</label>
+                            <div class="def_col_32">
+                                <label class="control-label font_left def_show" id="check_new_CaseDescription"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rowdiv">
+                <div class="rightModal">
+                    <div class="form-group def_col_36">
+                        <div class="tagTitle">
+                            <label class="def_col_4 font_right control-label fontWeihgt">前置条件：</label>
+                            <div class="def_col_32">
+                                <label class="control-label font_left def_show" id="newCasePrecondition"></label>
+                                <input type="hidden" id="testSetCaseId" value=""/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rowdiv">
+                <div class="rightModal">
+                    <div class="form-group def_col_36">
+                        <div class="tagTitle">
+                            <label class="def_col_4 font_right control-label fontWeihgt">输入数据：</label>
+                            <div class="def_col_32">
+                                <label class="control-label font_left def_show" id="inputData"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rowdiv">
+                <div class="rightModal">
+                    <div class="form-group def_col_36">
+                        <div class="tagTitle">
+                            <label class="def_col_4 font_right control-label fontWeihgt">预期结果：</label>
+                            <div class="def_col_32">
+                                <label class="control-label font_left def_show" id="expectResult"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rowdiv">
+                <div class="rightModal">
+                    <div class="form-group def_col_36">
+                        <div class="tagTitle">
+                            <label class="def_col_4 font_right control-label fontWeihgt">实际结果：</label>
+                            <div class="def_col_32">
+                                <label class="control-label font_left def_show" id="check_caseActualResult"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <hr>
+            <br>
+            <div class="rightModal">
+                <div class="tagTitle">案例步骤：</div>
+                <div class="tagBody">
+                    <table id="CaseSteps" style="word-break:break-all; word-wrap:break-all;table-layout:fixed"></table>
+                </div>
+            </div>
+            <div class="rightModal margB">
+                <div class="tagTitle">
+                    <div class="rowdiv">
+                        <div class="form-group">
+                            <div class="def_col_4 fontWeihgt">相关附件：</div>
+                            <div class="def_col_32">
+                                <input type="hidden" name="attachFiles" id="files" value=""/>
+                                <div class="myUpfileDiv"><input type="file" class="myUpfile" multiple="multiple"
+                                                                id="newUploadFile"/></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tagBody fileDiv">
+                    <table class="fileTable" id="newUpfileTable"></table>
+                </div>
+            </div>
+            <div class="rightModal borderBottom">
+                <div class="tagTitle">
+                    <div class="rowdiv">
+                        <div class="form-group">
+                            <div class="def_col_4 fontWeihgt">历史备注：</div>
+                            <div class="def_col_32" id="checkExcuteRemark2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="rightModal">
+                <textarea style="resize:none;" class="def_textarea" id="excuteRemark" placeholder="请输入备注"></textarea>
+            </div>
+        </div>
+        <div class="right_btnGroup">
+            #if($auth.hasPermission("$token","testManage:testExecution:success"))
+                <button type="button" class="btn btn-success"
+                        onclick="testExecution.right_Opt.execution_edit_button.getTestCaseStep( execute.dicType.success )">
+                    执行成功
+                </button>
+            #end
+            #if($auth.hasPermission("$token","testManage:testExecution:fail"))
+                <button type="button" class="btn btn-danger"
+                        onclick="testExecution.right_Opt.execution_edit_button.getTestCaseStep( execute.dicType.fail )">执行失败
+                </button>
+            #end
+            #if($auth.hasPermission("$token","testManage:testExecution:failBug"))
+                <button type="button" class="btn btn-danger"
+                        onclick="testExecution.right_Opt.execution_edit_button.getTestCaseStep( execute.dicType.fail_bug )">
+                    执行失败并提交Bug
+                </button>
+            #end
+            #if($auth.hasPermission("$token","testManage:testExecution:hangUp"))
+                <button type="button" class="btn btn-stop"
+                        onclick="testExecution.right_Opt.execution_edit_button.getTestCaseStep(execute.dicType.hangUp)">挂起
+                </button>
+            #end
+            #if($auth.hasPermission("$token","testManage:testExecution:unmake"))
+                <button type="button" class="btn btn-primary"
+                        onclick="testExecution.right_Opt.execution_edit_button.getTestCaseStep( execute.dicType.unmake )">撤销
+                </button>
+            #end
+            <button type="button" class="btn btn-default" onclick="testExecution.resetFunction.returnBlackList()">取消
+            </button>
+        </div>
+    </div>
+
+    <div class="right_div rightCaseDivEdit">
+        <div class="right_div_tit">
+            <div class="right_div_titImg noLeftPadding">
+                <img src="#springUrl('')/testManageui/static/images/testExecution/bianji.png"/>
+            </div>
+            <div class="right_div_titFont">编辑案例</div>
+        </div>
+        <div class="right_div_body">
+            <!-- 测试执行和测试集公共页面 公共案例编辑部分-->
+            #parse("./testSet/testSetCaseEdit.vm")
+        </div>
+        <div class="right_btnGroup">
+            <button type="button" id="edit_case_btn" class="btn btn-primary" onclick="testSetCase.edit.UpdateCaseStep()">保 存</button>
+            <button type="button" class="btn btn-default" onclick="testExecution.resetFunction.editReturnBlack()">取 消
+            </button>
+        </div>
+    </div>
+
+    <div class="right_div batchExecutivePage">
+        <input type="hidden" id="executeHiddenID" val=''/>
+        <input type="hidden" id="exeExcuteRound" val=''/>
+        <div class="right_div_tit">
+            <div class="right_div_titFont" id="exeTitleName"></div>
+            <div class="bigScreenBtn"></div>
+            <input id="excuteRound" type="hidden"/>
+        </div>
+        <div class="right_div_body">
+            <div class="rowdiv">
+                <label class="def_col_4 control-label fontWeihgt">执行状态：</label>
+                <div class="def_col_14">
+                    <select class="selectpicker" id="exeExecuteState" multiple="multiple" name="exeExecuteState"
+                            title="请选择">
+                        #foreach($dictMap in ${dict.getDictMap(
+                            "TBL_TEST_SET_CASE_CASE_EXECUTE_RESULT").entrySet()})
+                            <option value="${dictMap.key}">${dictMap.value}</option>
+                        #end
+                    </select>
+                </div>
+                <div class="def_col_1">
+
+                </div>
+                <div class="def_col_17">
+                    <button type="button" class="btn btn-primary"
+                            onclick="testExecution.right_Opt.executionTable.initExecutionTable()"> 搜 索
+                    </button>
+                </div>
+            </div>
+            <div class="btnArea">
+                #if($auth.hasPermission("$token","testManage:testExecution:batchExecution"))
+                    <button type="button" class="btn btn-primary"
+                            onclick="testExecution.right_Opt.executionTable.batchPass()">批量通过
+                    </button>
+                #end
+                #if($auth.hasPermission("$token","testManage:testExecution:newPass"))
+                    <button type="button" class="btn btn-primary" onclick="testSetCase.insert.newPass()">新增</button>
+                #end
+                #if($auth.hasPermission("$token","testManage:testExecution:copyPass"))
+                    <button type="button" class="btn btn-primary" onclick="testSetCase.copy.copyPass()">复制</button>
+                #end
+                #if($auth.hasPermission("$token","testManage:testExecution:relateCase"))
+                    <button type="button" class="btn btn-primary" id="relateCase">关联</button>
+                #end
+                #if($auth.hasPermission("$token","testManage:testExecution:leadInCase"))
+                    <button type="button" class="btn btn-primary" id="leadInCase">引入测试集案例</button>
+                #end
+                #if($auth.hasPermission("$token","testManage:testExecution:archivedCase"))
+                    <button type="button" class="btn btn-primary" onclick="testSetCase.archivedCase.archivedCaseCommit()">
+                        归档
+                    </button>
+                #end
+                #if($auth.hasPermission("$token","testManage:testExecution:import"))
+                    <button type="button" class="btn btn-primary" onclick="testSetCase.importExcel.importModal(0)">导入
+                    </button>
+                #end
+                #if($auth.hasPermission("$token","testManage:testExecution:exprot"))
+                    <button type="button" class="btn btn-primary" onclick="testSetCase.exportCase()">导出</button>
+                #end
+                #if($auth.hasPermission("$token","testManage:testExecution:order"))
+                    <button type="button" class="btn btn-primary" onclick="testSetCase.order.orderPass()">排序</button>
+                #end
+                #if($auth.hasPermission("$token","testManage:testExecution:move"))
+                    <button type="button" class="btn btn-primary" onclick="testSetCase.move.movePass()">移除</button>
+                #end
+##                <button type="button" class="btn btn-primary" onclick="testExecution.top_Opt.revokeSelect()">撤销</button>
+##                <button type="button" class="btn btn-primary" onclick="testExecution.top_Opt.failSelect()">失败</button>
+##                <button type="button" class="btn btn-primary" onclick="testExecution.top_Opt.handSelect()">挂起</button>
+            </div>
+            <div class="case_list_pager">共 <span id="span_case_total">0</span> 条，当前已显示 <span id="span_case_show">0</span> 条，剩余 <span id="span_case_remain">0</span> 条</div>
+            <div class="rightTableArea" id="executionTable_div" page="1" total="" onscroll="testExecution.left_Opt.throttle(testExecution.right_Opt.executionTable.appendTable,800,1600, this,2)">
+                #*bootstrapTable行拖动*#
+                <table id="executionTable"
+                       class="table table-hover table-condensed"
+                       data-use-row-attr-func="true"
+                       data-reorderable-rows="true"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+#*新建缺陷弹框*#
+<div class="modal fade bs-example-modal-lg" id="commitBug" tabindex="-1" role="dialog"
+     aria-labelledby="assignPersonModal">
+    <div class="modal-dialog modal-biggest" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <span class="modal-title">新建缺陷</span>
+                <input type="hidden" id="commitBug_type" />
+                <input type="hidden" id="commitBug_setCaseId" />
+            </div>
+            <div class="modal-body">
+                #parse("./defectManagement/newDefect.vm")
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary"
+                        onclick="testExecution.right_Opt.execution_edit_button.defect.submitDefect()">提交
+                </button>
+                <button type="button" class="btn btn-temporary"
+                        onclick="testExecution.right_Opt.execution_edit_button.defect.stagDefect()">暂 存
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+#*工作任务弹窗*#
+<div class="modal fade bs-example-modal-lg" tabindex="-1" id="testTaskModal" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <span>请选择工作任务</span>
+            </div>
+            <div class="modal-body">
+                <div class="color1">
+                    <div class="container-fluid" id="testTaskFrom">
+                        <div class="row control-row">
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">任务编号：</label></div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入" autocomplete="off"
+                                           id="taskCode" name="taskCode" value=""/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">任务名称：</label></div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入" autocomplete="off"
+                                           id="taskName" name="taskName" value=""/>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">任务状态：</label></div>
+                                <div class="search_input">
+                                    <select class="selectpicker" id="taskState" name="taskState">
+                                        #foreach($dictMap in ${dict.getDictMap(
+                                            "TBL_TEST_TASK_TEST_TASK_STATUS").entrySet()})
+                                            <option value="${dictMap.key}">${dictMap.value}</option>
+                                        #end
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row control-row search_btn">
+                            <button type="button" class="btn btn-primary" onclick="EtestTaskShow()">
+                                搜&nbsp;&nbsp;&nbsp;索
+                            </button>
+                            <button type="button" class="btn btn-default" onclick="cleanTextTask()">
+                                重&nbsp;&nbsp;&nbsp;置
+                            </button>
+                        </div>
+                    </div>
+                    <div id="downBtn1">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br>
+
+                <div class="content-table">
+                    <div class="wode">
+                        <table id="testTaskTable"></table>
+                        <div id="testTaskPage"></div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="selectTask(typeName)">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+#*新建案例弹框*#
+<div class="modal fade bs-example-modal-lg" id="newTestCaseModal"
+     tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">新建案例</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="newTestCaseForm"
+                      accept-charset="utf-8" enctype="multipart/form-data">
+
+                    <div class="allInfo" id="newTestCaseInfo">
+                        <div class="def_title">
+                            <span>基本信息</span> <span class="fa fa-angle-double-up"
+                                                    onclick="testExecution.vmOpt.down(this)"></span>
+                        </div>
+                        <div class="def_content down_content">
+                            <div class="rowdiv">
+                                <div class="form-group def_col_34">
+                                    <div class="def_col_4  caseLable">
+                                        <span class="redStar" style="color: red;">*</span>案例名称:
+                                    </div>
+                                    <div class="def_col_32">
+                                        <input class="form-control" type="text" placeholder="请输入" id="new_caseName" name="new_caseName"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rowdiv">
+                                <div class="def_col_34">
+                                    <div class="form-group def_col_18">
+                                        <div class="def_col_8  caseLable">
+                                            <span class="redStar" style="color: red;">*</span>所属子系统:
+                                        </div>
+                                        <div class="def_col_28">
+                                            <input id="systemId" type="hidden"> <input
+                                                class="form-control readonly pointStyle" readonly
+                                                type="text" placeholder="请选择子系统" id="systemName"
+                                                name="systemName"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group def_col_18">
+                                        <div class="def_col_8 caseLable">业务类型:</div>
+                                        <div class="def_col_28">
+                                            <input class="form-control" type="text" placeholder="请输入"
+                                                   maxlength="100" id="new_businessType" name="new_businessType"></input>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="rowdiv">
+                                <div class="form-group def_col_34">
+                                    <div class="form-group def_col_18">
+                                        <div class="def_col_8 caseLable">模块:</div>
+                                        <div class="def_col_28">
+                                            <input class="form-control" maxlength="50" type="text" placeholder="请输入" id="new_moduleName" name="new_moduleName"></input>
+                                        </div>
+                                    </div>
+                                    <div class="form-group def_col_18">
+                                        <div class="def_col_8 caseLable">测试项:</div>
+                                        <div class="def_col_28">
+                                            <input class="form-control" maxlength="100" type="text" placeholder="请输入" id="new_testPoint" name="new_testPoint"></input>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="rowdiv">
+                                <div class="form-group def_col_34">
+                                    <div class="def_col_4 caseLable">案例描述:</div>
+                                    <div class="def_col_32">
+                                        <textarea style="resize:none;" class="form-control" placeholder="请输入" id="new_CaseDescription" name="new_CaseDescription"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="rowdiv">
+                                <div class="form-group def_col_34">
+                                    <div class="def_col_4 caseLable">前置条件:</div>
+                                    <div class="def_col_32">
+											<textarea style="resize:none;" class="form-control" placeholder="请输入" id="new_precodition" name="new_precodition"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="rowdiv">
+                                <div class="form-group def_col_34">
+                                    <div class="def_col_4 caseLable">输入数据:</div>
+                                    <div class="def_col_32">
+                                        <textarea style="resize:none;" class="form-control" maxlength="500" type="text" placeholder="请输入" id="new_inputData" name="new_inputData"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rowdiv">
+                                <div class="form-group def_col_34">
+                                    <div class="def_col_4 caseLable">预期结果:</div>
+                                    <div class="def_col_32">
+                                        <textarea style="resize:none;" class="form-control" maxlength="500" type="text" placeholder="请输入" id="new_expectResult" name="new_expectResult"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rowdiv">
+                                <div class="form-group def_col_34">
+                                    <div class="def_col_4 caseLable">实际结果:</div>
+                                    <div class="def_col_32">
+                                        <textarea style="resize:none;" class="form-control" maxlength="500" type="text" placeholder="请输入" id="new_caseActualResult" name="new_expectResult"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rightModal">
+                        <div class="fontWeihgt caseTitleFont">案例步骤：</div>
+                        <button type="button" onclick="testSetCase.insert.addStep_btn()"
+                                class="btn btn-primary">增加步骤
+                        </button>
+                    </div>
+                    <div class="tagBody">
+                        <table id="newCaseSteps">
+
+                        </table>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="new_case_btn"
+                        onclick="testSetCase.insert.submitTestCase(2)">确定
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+##涉及子系统弹框
+<div class="modal fade bs-example-modal-lg" id="systemModal"
+     tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg modal-user" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <span class="modal-title" id="">选择子系统</span>
+            </div>
+            <div class="modal-body">
+
+                <div class="color1">
+                    <div class="container-fluid" id="">
+                        <div class="rowdiv control-row">
+                            <div class="col-md-2"></div>
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">子系统名称：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="输入"
+                                           id="sel_systemName" name="systemName" value=""/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">子系统编码：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入"
+                                           id="sel_systemCode" name="systemCode" value=""/>
+                                </div>
+                            </div>
+                            <div class="col-md-2"></div>
+                        </div>
+                        <div class="rowdiv control-row search_btn">
+                            <button type="button" class="btn btn-primary"
+                                    onclick="systemTableShow(true)">搜&nbsp;&nbsp;&nbsp;索
+                            </button>
+                            <button type="button" onclick="testSetCase.resetFunction.clearSystem()"
+                                    class="btn btn-default">重&nbsp;&nbsp;&nbsp;置
+                            </button>
+                        </div>
+
+                    </div>
+                    <div class="downBtn">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br>
+                <div class="content-table">
+                    <div class="wode">
+                        <table id="systemTable"></table>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="sysbutton" class="btn btn-primary"
+                        data-sys="default" onclick="testSetCase.insert.commitSys()">确定
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+#*投产窗口*#
+#parse("./defectManagement/comWindowModal.vm")
+
+<!-- 测试执行和测试集公共页面 引入测试集案例弹框、选择案例弹框、导入弹框 -->
+#parse("./testSet/testSetCaseCommon.vm")
+</body>
+	<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/wangEditor.min.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/echarts.common.min.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    <script src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+    #*bootstrapTable行拖动 jquery.tablednd.js、bootstrap-table-reorder-rows.js*#
+    <script src="#springUrl('')/systemui/static/js/frame/jquery.tablednd.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/bootstrap-table-reorder-rows.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/laydate.js"></script>
+    <script src="#springUrl('')/systemui/static/js/common/common.js"></script>
+    <script src="#springUrl('')/testManageui/static/js/common/modal.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/fuzzy_serach.js"></script>
+    
+    <script type="text/ecmascript" src="#springUrl('')/testManageui/static/js/common/fuzzy_serach_test.js"></script>
+    <script src="#springUrl('')/testManageui/static/js/testExecution/fileOpt.js"></script>
+    <script src="#springUrl('')/testManageui/static/js/testExecution/executionPopup.js"></script>
+    <script src="#springUrl('')/testManageui/static/js/testExecution/testExrcutionManagement.js"></script>
+    <script type="text/javascript" src="#springUrl('')/testManageui/static/js/defect/fieldDefect.js"></script>
+    <script src="#springUrl('')/testManageui/static/js/testExecution/testSetCaseCommonOpt.js"></script>
+    <script src="#springUrl('')/testManageui/static/js/testSet/testSetPupop.js"></script>
+    <script>
+
+        var permission = {
+            edit:$auth.hasPermission("$token","testManage:testExecution:editTestCase"), // 编辑
+            executionResult:$auth.hasPermission("$token","testManage:testExecution:executionResult"), // 查看执行结果
+            success:$auth.hasPermission("$token","testManage:testExecution:success"), // 执行成功
+            fail:$auth.hasPermission("$token","testManage:testExecution:fail"), // 执行失败
+            failBug:$auth.hasPermission("$token","testManage:testExecution:failBug"), // 执行失败并提交bug
+            hangUp:$auth.hasPermission("$token","testManage:testExecution:hangUp"), // 挂起
+            unmake:$auth.hasPermission("$token","testManage:testExecution:unmake"), // 撤销
+        }
+
+        var testCaseStepEdit = $auth.hasPermission("$token","testManage:testExecution:editTestCase");//编辑
+        var testCaseExecution = $auth.hasPermission("$token","testManage:testExecution:executeCase"); // 案例执行
+        var testCaseSee = $auth.hasPermission("$token","testManage:testExecution:seeCase"); //查看
+
+    </script>
+
+
+</html>

@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.itReAssetLibrary.ReTblSystemDirectoryDocumentMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="SYSTEM_DIRECTORY_ID" jdbcType="BIGINT" property="systemDirectoryId"/>
+        <result column="REQUIREMENT_ID" jdbcType="BIGINT" property="requirementId"/>
+        <result column="DOCUMENT_NAME" jdbcType="VARCHAR" property="documentName"/>
+        <result column="DOCUMENT_VERSION" jdbcType="TINYINT" property="documentVersion"/>
+        <result column="DOCUMENT_TYPE" jdbcType="BIGINT" property="documentType"/>
+        <result column="CHECKOUT_USER_ID" jdbcType="BIGINT" property="checkoutUserId"/>
+        <result column="SAVE_TYPE" jdbcType="TINYINT" property="saveType"/>
+        <result column="CHECKOUT_STATUS" jdbcType="TINYINT" property="checkoutStatus"/>
+        <result column="DOCUMENT_S3_BUCKET" jdbcType="VARCHAR" property="documentS3Bucket"/>
+        <result column="DOCUMENT_S3_KEY" jdbcType="VARCHAR" property="documentS3Key"/>
+        <result column="DOCUMENT_MONGO_KEY" jdbcType="VARCHAR" property="documentMongoKey"/>
+        <result column="DOCUMENT_TEMP_S3_KEY" jdbcType="VARCHAR" property="documentTempS3Key"/>
+        <result column="DOCUMENT_TEMP_MONGO_KEY" jdbcType="VARCHAR" property="documentTempMongoKey"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID, SYSTEM_DIRECTORY_ID, REQUIREMENT_ID, DOCUMENT_NAME, DOCUMENT_VERSION,
+    DOCUMENT_TYPE, SAVE_TYPE, CHECKOUT_STATUS, DOCUMENT_S3_BUCKET, DOCUMENT_S3_KEY, DOCUMENT_MONGO_KEY, 
+    DOCUMENT_TEMP_S3_KEY, DOCUMENT_TEMP_MONGO_KEY, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, 
+    LAST_UPDATE_DATE
+  </sql>
+<!--    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">-->
+<!--        select-->
+<!--        <include refid="Base_Column_List"/>-->
+<!--        from tbl_system_directory_document-->
+<!--        where ID = #{id,jdbcType=BIGINT}-->
+<!--    </select>-->
+<!--    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">-->
+<!--    delete from tbl_system_directory_document-->
+<!--    where ID = #{id,jdbcType=BIGINT}-->
+<!--  </delete>-->
+    <insert id="insert" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument">
+    insert into tbl_system_directory_document (ID, SYSTEM_DIRECTORY_ID,
+      REQUIREMENT_ID, DOCUMENT_NAME, DOCUMENT_VERSION,
+      DOCUMENT_TYPE, SAVE_TYPE, CHECKOUT_STATUS, 
+      DOCUMENT_S3_BUCKET, DOCUMENT_S3_KEY, DOCUMENT_MONGO_KEY, 
+      DOCUMENT_TEMP_S3_KEY, DOCUMENT_TEMP_MONGO_KEY, 
+      STATUS, CREATE_BY, CREATE_DATE, 
+      LAST_UPDATE_BY, LAST_UPDATE_DATE)
+    values (#{id,jdbcType=BIGINT}, #{systemDirectoryId,jdbcType=BIGINT}, #{projectType,jdbcType=TINYINT}, 
+      #{requirementId,jdbcType=BIGINT}, #{documentName,jdbcType=VARCHAR}, #{documentVersion,jdbcType=TINYINT},
+      #{documentType,jdbcType=TINYINT}, #{saveType,jdbcType=TINYINT}, #{checkoutStatus,jdbcType=TINYINT}, 
+      #{documentS3Bucket,jdbcType=VARCHAR}, #{documentS3Key,jdbcType=VARCHAR}, #{documentMongoKey,jdbcType=VARCHAR}, 
+      #{documentTempS3Key,jdbcType=VARCHAR}, #{documentTempMongoKey,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+<!--    <insert id="insertSelective" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument">-->
+<!--        insert into tbl_system_directory_document-->
+<!--        <trim prefix="(" suffix=")" suffixOverrides=",">-->
+<!--            <if test="id != null">-->
+<!--                ID,-->
+<!--            </if>-->
+<!--            <if test="systemDirectoryId != null">-->
+<!--                SYSTEM_DIRECTORY_ID,-->
+<!--            </if>-->
+
+<!--            <if test="requirementId != null">-->
+<!--                REQUIREMENT_ID,-->
+<!--            </if>-->
+<!--            <if test="documentName != null">-->
+<!--                DOCUMENT_NAME,-->
+<!--            </if>-->
+<!--            <if test="documentVersion != null">-->
+<!--                DOCUMENT_VERSION,-->
+<!--            </if>-->
+<!--            <if test="documentType != null">-->
+<!--                DOCUMENT_TYPE,-->
+<!--            </if>-->
+<!--            <if test="saveType != null">-->
+<!--                SAVE_TYPE,-->
+<!--            </if>-->
+<!--            <if test="checkoutStatus != null">-->
+<!--                CHECKOUT_STATUS,-->
+<!--            </if>-->
+<!--            <if test="documentS3Bucket != null">-->
+<!--                DOCUMENT_S3_BUCKET,-->
+<!--            </if>-->
+<!--            <if test="documentS3Key != null">-->
+<!--                DOCUMENT_S3_KEY,-->
+<!--            </if>-->
+<!--            <if test="documentMongoKey != null">-->
+<!--                DOCUMENT_MONGO_KEY,-->
+<!--            </if>-->
+<!--            <if test="documentTempS3Key != null">-->
+<!--                DOCUMENT_TEMP_S3_KEY,-->
+<!--            </if>-->
+<!--            <if test="documentTempMongoKey != null">-->
+<!--                DOCUMENT_TEMP_MONGO_KEY,-->
+<!--            </if>-->
+<!--            <if test="status != null">-->
+<!--                STATUS,-->
+<!--            </if>-->
+<!--            <if test="createBy != null">-->
+<!--                CREATE_BY,-->
+<!--            </if>-->
+<!--            <if test="createDate != null">-->
+<!--                CREATE_DATE,-->
+<!--            </if>-->
+<!--            <if test="lastUpdateBy != null">-->
+<!--                LAST_UPDATE_BY,-->
+<!--            </if>-->
+<!--            <if test="lastUpdateDate != null">-->
+<!--                LAST_UPDATE_DATE,-->
+<!--            </if>-->
+<!--        </trim>-->
+<!--        <trim prefix="values (" suffix=")" suffixOverrides=",">-->
+<!--            <if test="id != null">-->
+<!--                #{id,jdbcType=BIGINT},-->
+<!--            </if>-->
+<!--            <if test="systemDirectoryId != null">-->
+<!--                #{systemDirectoryId,jdbcType=BIGINT},-->
+<!--            </if>-->
+<!--            <if test="projectType != null">-->
+<!--                #{projectType,jdbcType=TINYINT},-->
+<!--            </if>-->
+<!--            <if test="requirementId != null">-->
+<!--                #{requirementId,jdbcType=BIGINT},-->
+<!--            </if>-->
+<!--            <if test="documentName != null">-->
+<!--                #{documentName,jdbcType=VARCHAR},-->
+<!--            </if>-->
+<!--            <if test="documentVersion != null">-->
+<!--                #{documentVersion,jdbcType=TINYINT},-->
+<!--            </if>-->
+<!--            <if test="documentType != null">-->
+<!--                #{documentType,jdbcType=TINYINT},-->
+<!--            </if>-->
+<!--            <if test="saveType != null">-->
+<!--                #{saveType,jdbcType=TINYINT},-->
+<!--            </if>-->
+<!--            <if test="checkoutStatus != null">-->
+<!--                #{checkoutStatus,jdbcType=TINYINT},-->
+<!--            </if>-->
+<!--            <if test="documentS3Bucket != null">-->
+<!--                #{documentS3Bucket,jdbcType=VARCHAR},-->
+<!--            </if>-->
+<!--            <if test="documentS3Key != null">-->
+<!--                #{documentS3Key,jdbcType=VARCHAR},-->
+<!--            </if>-->
+<!--            <if test="documentMongoKey != null">-->
+<!--                #{documentMongoKey,jdbcType=VARCHAR},-->
+<!--            </if>-->
+<!--            <if test="documentTempS3Key != null">-->
+<!--                #{documentTempS3Key,jdbcType=VARCHAR},-->
+<!--            </if>-->
+<!--            <if test="documentTempMongoKey != null">-->
+<!--                #{documentTempMongoKey,jdbcType=VARCHAR},-->
+<!--            </if>-->
+<!--            <if test="status != null">-->
+<!--                #{status,jdbcType=TINYINT},-->
+<!--            </if>-->
+<!--            <if test="createBy != null">-->
+<!--                #{createBy,jdbcType=BIGINT},-->
+<!--            </if>-->
+<!--            <if test="createDate != null">-->
+<!--                #{createDate,jdbcType=TIMESTAMP},-->
+<!--            </if>-->
+<!--            <if test="lastUpdateBy != null">-->
+<!--                #{lastUpdateBy,jdbcType=BIGINT},-->
+<!--            </if>-->
+<!--            <if test="lastUpdateDate != null">-->
+<!--                #{lastUpdateDate,jdbcType=TIMESTAMP},-->
+<!--            </if>-->
+<!--        </trim>-->
+<!--    </insert>-->
+<!--    <update id="updateByPrimaryKeySelective"-->
+<!--            parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument">-->
+<!--        update tbl_system_directory_document-->
+<!--        <set>-->
+<!--            <if test="systemDirectoryId != null">-->
+<!--                SYSTEM_DIRECTORY_ID = #{systemDirectoryId,jdbcType=BIGINT},-->
+<!--            </if>-->
+
+<!--            <if test="requirementId != null">-->
+<!--                REQUIREMENT_ID = #{requirementId,jdbcType=BIGINT},-->
+<!--            </if>-->
+<!--            <if test="documentName != null">-->
+<!--                DOCUMENT_NAME = #{documentName,jdbcType=VARCHAR},-->
+<!--            </if>-->
+<!--            <if test="documentVersion != null">-->
+<!--                DOCUMENT_VERSION = #{documentVersion,jdbcType=TINYINT},-->
+<!--            </if>-->
+<!--            <if test="documentType != null">-->
+<!--                DOCUMENT_TYPE = #{documentType,jdbcType=TINYINT},-->
+<!--            </if>-->
+<!--            <if test="saveType != null">-->
+<!--                SAVE_TYPE = #{saveType,jdbcType=TINYINT},-->
+<!--            </if>-->
+<!--            <if test="checkoutStatus != null">-->
+<!--                CHECKOUT_STATUS = #{checkoutStatus,jdbcType=TINYINT},-->
+<!--            </if>-->
+<!--            <if test="documentS3Bucket != null">-->
+<!--                DOCUMENT_S3_BUCKET = #{documentS3Bucket,jdbcType=VARCHAR},-->
+<!--            </if>-->
+<!--            <if test="documentS3Key != null">-->
+<!--                DOCUMENT_S3_KEY = #{documentS3Key,jdbcType=VARCHAR},-->
+<!--            </if>-->
+<!--            <if test="documentMongoKey != null">-->
+<!--                DOCUMENT_MONGO_KEY = #{documentMongoKey,jdbcType=VARCHAR},-->
+<!--            </if>-->
+<!--            <if test="documentTempS3Key != null">-->
+<!--                DOCUMENT_TEMP_S3_KEY = #{documentTempS3Key,jdbcType=VARCHAR},-->
+<!--            </if>-->
+<!--            <if test="documentTempMongoKey != null">-->
+<!--                DOCUMENT_TEMP_MONGO_KEY = #{documentTempMongoKey,jdbcType=VARCHAR},-->
+<!--            </if>-->
+<!--            <if test="status != null">-->
+<!--                STATUS = #{status,jdbcType=TINYINT},-->
+<!--            </if>-->
+<!--            <if test="createBy != null">-->
+<!--                CREATE_BY = #{createBy,jdbcType=BIGINT},-->
+<!--            </if>-->
+<!--            <if test="createDate != null">-->
+<!--                CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},-->
+<!--            </if>-->
+<!--            <if test="lastUpdateBy != null">-->
+<!--                LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},-->
+<!--            </if>-->
+<!--            <if test="lastUpdateDate != null">-->
+<!--                LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},-->
+<!--            </if>-->
+<!--        </set>-->
+<!--        where ID = #{id,jdbcType=BIGINT}-->
+<!--    </update>-->
+<!--    <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument">-->
+<!--    update tbl_system_directory_document-->
+<!--    set SYSTEM_DIRECTORY_ID = #{systemDirectoryId,jdbcType=BIGINT},-->
+
+<!--      REQUIREMENT_ID = #{requirementId,jdbcType=BIGINT},-->
+<!--      DOCUMENT_NAME = #{documentName,jdbcType=VARCHAR},-->
+<!--      DOCUMENT_VERSION = #{documentVersion,jdbcType=TINYINT},-->
+<!--      DOCUMENT_TYPE = #{documentType,jdbcType=TINYINT},-->
+<!--      SAVE_TYPE = #{saveType,jdbcType=TINYINT},-->
+<!--      CHECKOUT_STATUS = #{checkoutStatus,jdbcType=TINYINT},-->
+<!--      DOCUMENT_S3_BUCKET = #{documentS3Bucket,jdbcType=VARCHAR},-->
+<!--      DOCUMENT_S3_KEY = #{documentS3Key,jdbcType=VARCHAR},-->
+<!--      DOCUMENT_MONGO_KEY = #{documentMongoKey,jdbcType=VARCHAR},-->
+<!--      DOCUMENT_TEMP_S3_KEY = #{documentTempS3Key,jdbcType=VARCHAR},-->
+<!--      DOCUMENT_TEMP_MONGO_KEY = #{documentTempMongoKey,jdbcType=VARCHAR},-->
+<!--      STATUS = #{status,jdbcType=TINYINT},-->
+<!--      CREATE_BY = #{createBy,jdbcType=BIGINT},-->
+<!--      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},-->
+<!--      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},-->
+<!--      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}-->
+<!--    where ID = #{id,jdbcType=BIGINT}-->
+<!--  </update>-->
+
+
+
+
+
+    <select id="getDeptdirectory" parameterType="map" resultType="java.util.HashMap">
+        select distinct  tri.APPLY_DEPT_ID ,tdi.DEPT_NAME
+        from tbl_requirement_info tri
+        left join tbl_dept_info tdi on tdi.ID=tri.APPLY_DEPT_ID
+        where tri.status=1 and tri.APPLY_DEPT_ID is not null
+        <if test="requirementIds != null and requirementIds.length>0  ">
+            and tri.id in
+            <foreach item="item" index="index" collection="requirementIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+
+        </if>
+        <if test="systemIds!=null and systemIds.length>0 ">
+            and exists (select trs.id from tbl_requirement_system trs where trs.REQUIREMENT_ID=tsdd.REQUIREMENT_ID and
+            trs.status=1
+            and trs.system_id in
+            <foreach item="systemId" index="index" collection="systemIds" open="(" separator="," close=")">
+                #{systemId}
+            </foreach>
+
+            )
+
+        </if>
+
+        <if test="reqTaskIds!=null and reqTaskIds.length>0">
+            and exists (select trf.id from tbl_requirement_feature trf where trf.REQUIREMENT_ID=tsdd.REQUIREMENT_ID and
+            trf.status=1
+            and trf.id in
+            <foreach item="reqTaskId" index="index" collection="reqTaskIds" open="(" separator="," close=")">
+                #{reqTaskId}
+            </foreach>
+
+            )
+
+        </if>
+
+
+
+
+    </select>
+    <select id="getSystemDirectory" parameterType="map" resultType="java.util.HashMap">
+        select distinct tsi.id ,tsi.SYSTEM_NAME as systemName from tbl_system_info tsi
+        where tsi.status=1
+
+    </select>
+
+    <select id="getSystemDirectorySearch" parameterType="map" resultType="java.util.HashMap">
+        select distinct tsi.id ,tsi.SYSTEM_NAME as systemName from tbl_requirement_system trs
+        left  join tbl_system_info tsi on tsi.id=trs.SYSTEM_ID
+        where trs.REQUIREMENT_ID
+        in ( select distinct REQUIREMENT_ID from tbl_system_directory_document tsdd where tsdd.status=1
+--         and tsdd.PROJECT_TYPE=1
+        )
+        and trs.STATUS=1
+        <if test="systemIds!=null and systemIds.length>0 ">
+
+            and trs.system_id in
+            <foreach item="systemId" index="index" collection="systemIds" open="(" separator="," close=")">
+                #{systemId}
+            </foreach>
+        </if>
+        <if test="requirementIds != null and requirementIds.length>0  ">
+            and trs.id in
+            <foreach item="item" index="index" collection="requirementIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+
+        </if>
+        <if test="reqTaskIds!=null and reqTaskIds.length>0">
+            and exists (select trf.id from tbl_requirement_feature trf where trs.REQUIREMENT_ID=tsdd.REQUIREMENT_ID and
+            trf.status=1
+            and trf.id in
+            <foreach item="reqTaskId" index="index" collection="reqTaskIds" open="(" separator="," close=")">
+                #{reqTaskId}
+            </foreach>
+
+            )
+        </if>
+
+    </select>
+
+
+
+
+
+
+    <select id="getRequiredirectory" parameterType="map" resultType="java.util.HashMap">
+
+        select distinct tri.id as `REQUIREMENT_ID` ,tri.REQUIREMENT_NAME from tbl_requirement_info tri
+        where tri.status=1 and tri.`APPLY_DEPT_ID`=#{deptId} and tri.APPLY_DEPT_ID is not null
+        <if test="requirementIds != null and requirementIds.length>0  ">
+            and tri.id in
+            <foreach collection="requirementIds" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+
+        </if>
+        <if test="systemIds!=null and systemIds.length>0 ">
+            and exists (select trs.id from tbl_requirement_system trs where trs.REQUIREMENT_ID=tsdd.REQUIREMENT_ID and
+            trs.status=1
+            and trs.system_id in
+            <foreach collection="systemIds" item="systemId" index="index" open="(" separator="," close=")">
+
+                #{systemId}
+            </foreach>
+
+            )
+
+        </if>
+
+        <if test="reqTaskIds!=null and reqTaskIds.length>0">
+            and exists (select trf.id from tbl_requirement_feature trf where trf.REQUIREMENT_ID=tsdd.REQUIREMENT_ID and
+            trf.status=1
+            and trf.id in
+            <foreach collection="reqTaskIds" item="reqTaskId" index="index" open="(" separator="," close=")">
+
+                #{reqTaskId}
+            </foreach>
+
+            )
+
+        </if>
+
+
+    </select>
+
+    <select id="getDocumentsByRequire" parameterType="map" resultType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument">
+      select tsdd.id,
+--       tsdd.PROJECT_TYPE as projectType,
+      tsdd.DOCUMENT_NAME documentName,
+      tsdd.DOCUMENT_VERSION documentVersion,
+      tsdd.DOCUMENT_TYPE documentType,
+      tsdd.SAVE_TYPE saveType,
+      tsdd.CHECKOUT_STATUS checkoutStatus,
+      tsdd.DOCUMENT_S3_BUCKET documentS3Bucket,
+      tsdd.DOCUMENT_S3_KEY documentS3Key,
+      tsdd.CREATE_DATE createDate,
+      tsdd.LAST_UPDATE_DATE lastUpdateDate,
+      tsi.SYSTEM_NAME systemName
+       from  `tbl_system_directory_document` tsdd
+       left join tbl_system_directory tsd on tsd.id=tsdd.SYSTEM_DIRECTORY_ID
+       left  join tbl_system_document_type tsdt on tsdt.id=tsdd.DOCUMENT_TYPE
+       left join tbl_system_info tsi on tsi.id=tsdd.system_id
+
+       where tsdd.id in (  select distinct  tsddr.`SYSTEM_DIRECTORY_DOCUMENT_ID` from `tbl_system_directory_document_requirement`  tsddr
+
+
+       where tsddr.`REQUIREMENT_CODE` in (select tri.REQUIREMENT_CODE from tbl_requirement_info tri  where tri.id=#{requirementId}
+
+       )
+       )
+
+
+       and tsdd.status=1 and tsdd.DOCUMENT_TYPE=#{documentType}
+    </select>
+    <select id="getDocumentsByRequireSystem" parameterType="map" resultType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument">
+      select tsdd.id,
+
+      tsdd.DOCUMENT_NAME documentName,
+      tsdd.DOCUMENT_VERSION documentVersion,
+      tsdd.DOCUMENT_TYPE documentType,
+      tsdd.SAVE_TYPE saveType,
+      tsdd.CHECKOUT_STATUS checkoutStatus,
+      tsdd.DOCUMENT_S3_BUCKET documentS3Bucket,
+      tsdd.DOCUMENT_S3_KEY documentS3Key,
+      tsdd.CREATE_DATE createDate
+       from  `tbl_system_directory_document` tsdd
+       left join tbl_system_directory tsd on tsd.id=tsdd.SYSTEM_DIRECTORY_ID
+        left  join tbl_system_document_type tsdt on tsdt.id=tsdd.DOCUMENT_TYPE
+      where tsdd.id in
+      (
+      select distinct tsddr.`SYSTEM_DIRECTORY_DOCUMENT_ID` from `tbl_system_directory_document_requirement`  tsddr
+
+
+        where tsddr.`REQUIREMENT_CODE` in (select tri.REQUIREMENT_CODE from tbl_requirement_info tri  where tri.id=#{requirementId}
+        )
+
+
+      )
+
+
+
+      and tsd.system_id=#{systemId} and tsdd.status=1 and tsdt.status=1 and  tsdd.DOCUMENT_TYPE=#{documentType}
+    </select>
+
+
+    <select id="getRequireBydocuId" parameterType="String" resultType="String">
+        select tri. id as REQUIREMENT_ID
+         from tbl_system_directory_document_requirement tsddr
+         left join tbl_requirement_info tri on tri.REQUIREMENT_CODE=tsddr.REQUIREMENT_CODE
+
+          where tsddr.SYSTEM_DIRECTORY_DOCUMENT_ID=#{documetId} order by tsddr.DOCUMENT_VERSION desc
+
+    </select>
+
+
+    <select id="getDocmentByRequire" parameterType="map"
+            resultType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument">
+
+        select
+         tsdd.id,
+         tsdd.DOCUMENT_NAME documentName,
+         tsdd.DOCUMENT_VERSION documentVersion,
+         tsdd.DOCUMENT_TYPE documentType,
+         tsdd.SAVE_TYPE saveType,
+         tsdd.CHECKOUT_STATUS checkoutStatus,
+         tsdd.DOCUMENT_S3_BUCKET documentS3Bucket,
+         tsdd.DOCUMENT_S3_KEY documentS3Key,
+         tsdd.CREATE_DATE createDate
+         from tbl_system_directory_document tsdd where id
+         in(
+         select tsddr.SYSTEM_DIRECTORY_DOCUMENT_ID from tbl_system_directory_document_requirement tsddr
+
+
+
+          where tsddr.`REQUIREMENT_CODE` in (select tri.REQUIREMENT_CODE from tbl_requirement_info tri  where tri.id=#{requirementId}
+        )
+
+
+         )
+
+
+    </select>
+
+
+    <select id="getDocumentType" resultType="java.util.HashMap">
+
+        select
+        tsdt.id,
+        tsdt.DOCUMENT_TYPE documentType
+        from tbl_system_document_type tsdt
+        where
+        tsdt.CLASSIFY=1
+        and tsdt.status=1
+        ORDER BY tsdt.id
+
+
+    </select>
+    <select id="getAllDocumentType" resultType="java.util.HashMap">
+
+        select
+        tsdt.id,
+        tsdt.DOCUMENT_TYPE documentType
+        from tbl_system_document_type tsdt
+        where
+
+        tsdt.status=1
+        ORDER BY tsdt.id
+
+
+    </select>
+
+
+    <select id="getSvnFilesByDevTaskId" parameterType="Long" resultType="java.util.HashMap">
+        SELECT
+        tdtsf.ID,
+        tdtsf.SCM_URL,
+        tdtsf.COMMIT_NUMBER,
+        tdtsf.COMMIT_FILE,
+        tdtsf.CREATE_DATE
+        FROM tbl_dev_task_scm_file tdtsf
+        WHERE tdtsf.DEV_TASK_ID = #{devTaskId} AND tdtsf.STATUS = 1
+        ORDER BY tdtsf.LAST_UPDATE_DATE DESC
+    </select>
+    <select id="getGitFilesByDevTaskId" parameterType="Long" resultType="java.util.HashMap">
+        SELECT
+        tdtsgf.ID,
+        tdtsgf.TOOL_ID,
+        tdtsgf.GIT_REPOSITORY_ID,
+        tdtsgf.GIT_BRANCH,
+        tdtsgf.COMMIT_NUMBER,
+        tdtsgf.COMMIT_FILE,
+        tdtsgf.CREATE_DATE
+        FROM tbl_dev_task_scm_git_file tdtsgf
+        WHERE tdtsgf.DEV_TASK_ID = #{devTaskId} AND tdtsgf.STATUS = 1
+        ORDER BY tdtsgf.LAST_UPDATE_DATE DESC
+    </select>
+    <!-- fanwentao 查询所有文档 -->
+    <select id="getAllDocument" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument" resultMap="BaseResultMap">
+    	select ID,DOCUMENT_NAME,DOCUMENT_VERSION,DOCUMENT_TYPE
+    	from tbl_system_directory_document
+    	where status = 1
+    	<if test="documentName!=null and documentName!=''">
+    		and DOCUMENT_NAME like concat('%',#{documentName},'%')
+    	</if>
+    	<if test="documentType!=null">
+    		and DOCUMENT_TYPE = #{documentType}
+    	</if>
+    	<if test="saveType!=null">
+    		and SAVE_TYPE = #{saveType}
+    	</if>
+    </select>
+    <!-- fanwentao 查询关联的文档 -->
+    <select id="getRelationDocument" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChaptersRelation" resultMap="BaseResultMap">
+    	select document.ID,document.DOCUMENT_NAME
+    	from tbl_system_directory_document document
+    	left join tbl_system_directory_document_relation relation
+    	on relation.SYSTEM_DIRECTORY_DOCUMENT_ID2 = document.ID
+    	where relation.SYSTEM_DIRECTORY_DOCUMENT_ID1 = #{systemDirectoryDocumentId1}
+    	and relation.SYSTEM_DIRECTORY_DOCUMENT_CHAPTER_ID1 = #{systemDirectoryDocumentChapterId1}
+    </select>
+    
+    <select id="selectNameById" resultType="string">
+    	select DOCUMENT_NAME from tbl_system_directory_document
+    	where ID = #{id}
+    </select>
+</mapper>

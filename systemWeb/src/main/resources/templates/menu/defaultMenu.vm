@@ -1,0 +1,209 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <span class="modal-title" id="myModalLabel">设置默认页面</span>
+</div>
+<div class="modal-body">
+    <div id="defaultMenu_body">
+        <table id="tree_table" class="table table-bordered">
+            <thead>
+                <tr>
+                    <td class="center">菜单</td>
+                    <td class="center">排序</td>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" onclick="updateMenu()">确定</button>
+    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+</div>
+<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/jquery/jquery.treeTable.js"></script>
+<script>
+    var checked_num = 0;
+	var Max_num = 8; //选中不能超过9个
+	$(() => {
+        initTable();
+	})
+    //菜单按钮
+    function initTable() {
+        $.ajax({
+            type: "POST",
+            url: "/system/role/getUserMenu",
+            dataType: "json",
+            beforeSend: function () {
+                $("#loading").css('display', 'block');
+            },
+            success: function (msg) {
+                if (msg.status == 1) {
+                    if (!msg.result.length) return;
+                    $('#defaultMenu_body tbody').empty();
+					tree_table.tree_create_table(msg.result, {
+                        id: 'id',
+                        parentId: 'parentId',//父id
+                        parentIds: 'parentIds',//父id集合  例   一级"parentIds": ""   三级"parentIds": "20,299,"
+                        level: 'level',//级别
+                        isLeaf: 'isLeaf',//是否有子节点
+                        isSelect: 'isSelect',//是否选中
+                        leaf: 'leaf',//是否为子节点
+                        name: 'menuButtonName',//名称
+                        order: 'menuOrder',//排序
+                        padding_left: 20,//左边距倍率,默认20
+                        ipt_methods: 'update_ipt',//函数名  自定义ipt改变事件
+                        select_methods: 'update_checked',//函数名  自定义选中事件
+                    });
+                    give_data();
+                }
+            },
+            error: function (msg) {
+                $('#defaultMenuModal').modal("hide");
+                layer.alert('服务器内部错误,请联系管理员!', {
+                    icon: 2,
+                    title: "提示信息"
+                });
+            }
+        });
+    }
+    //填充数据
+    function give_data() {
+        $.ajax({
+            type: "POST",
+            url: "/system/role/getDefaultPage",
+            dataType: "json",
+            beforeSend: function () {
+                $("#loading").css('display', 'block');
+            },
+            success: function (msg) {
+                if (msg.data.length) {
+                    $('.tree_menu_order').each(function (index, ele) {
+                        msg.data.map(function (val, idx) {
+                            if ($(ele).data('id') == val.menuButtonId) {
+                                $(ele).val(val.menuOrder);
+                                /*let pid = $(ele).parents('tr').data('id');
+                                let arr = $(ele).parents('tr').get(0).classList;
+                                Object.values(arr).map(v=>{
+                            		let id = v.replace('tree_parent_','');
+                            		if(id != '_hide'){
+                            			if(id != 'menu'){
+		                            		setTimeout(function(){
+		                            			$('#'+id).find('.tree_arrows').click();
+		                            		},10)
+		                            	}
+                            		}
+                                })*/
+                            }
+                        })
+                    })
+                }
+                if (checked_num > Max_num) {
+                    $('.select_ipt').each(function (idx, val) {
+                        if (!$(val).is(":checked")) {
+                            $(val).attr('disabled', 'disabled')
+                        }
+                    })
+                }
+                $('#defaultMenuModal').modal("show");
+                $("#loading").css('display', 'none');
+            }
+        })
+    }
+
+	function update_checked(ID, This) {
+		if ($(This).is(":checked")) {
+			checked_num++;
+		} else {
+			checked_num--;
+		}
+		if (checked_num <= 0) {
+			checked_num = 0
+		}
+		if (checked_num > Max_num) {
+			$('.tree_select_ipt').each(function (idx, val) {
+				if (!$(val).is(":checked")) {
+					$(val).attr('disabled', 'disabled')
+				}
+			})
+			layer.alert('最多选中9个!', { icon: 0 })
+			return;
+		} else {
+			$('.tree_select_ipt').each(function (idx, val) {
+				if ($(val).attr('leaf') == 'true') {
+					$(val).removeAttr('disabled')
+				}else{
+				}
+				
+			})
+		}
+	}
+
+	function update_ipt(ID, This) {
+		$(This).keyup(function () {
+			if ($(This).val()) {
+				var _val = $(This).val();
+				$(This).val(_val.replace(/[^\d]/g, ''));
+				$(This).removeClass('bor_red');
+			}
+		})
+	}
+
+	function updateMenu() {
+		var update_arr = [];
+		var _flag = true;
+        var no_tit = '';
+		$('.tree_select_ipt').each(function (idx, val) {
+			if ($(val).is(":checked")) {
+				if (!$(val).parent().parent().next().children().val()) {
+					$(val).parent().parent().next().children().addClass('bor_red');
+                    no_tit = $(val).parent().parent().find('.tree_select_text').text();
+					_flag = false;
+				}
+				if (_flag) {
+					update_arr.push({
+						'menuButtonId': $(val).val(),
+						'menuOrder': $(val).parent().parent().next().children().val()
+					});
+				}
+
+			}
+		})
+		if (!_flag) {
+			layer.alert(no_tit+":排序未填写!", {
+				icon: 2,
+				title: "提示信息"
+			});
+			return
+		}
+		$.ajax({
+			type: "POST",
+			url: "/system/role/saveDefaultPage",
+			data: {
+				'pages': JSON.stringify(update_arr)
+			},
+			dataType: "json",
+			beforeSend: function () {
+				$("#loading").css('display', 'block');
+			},
+			success: function (msg) {
+				if (msg.status == 1) {
+					layer.alert("提交成功!", {
+						icon: 1,
+						title: "提示信息"
+					});
+					$('#defaultMenuModal').modal("hide");
+				} else {
+					layer.alert(msg.errorMessage, {
+						icon: 2,
+						title: "提示信息"
+					});
+				}
+				$("#loading").css('display', 'none');
+			},
+			error: function (XMLHttpRequest, textStatus, errorThrown) {
+				$("#loading").css('display', 'none');
+			}
+		});
+	}
+</script>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>cn.pioneerservice</groupId>
+    <artifactId>itmp</artifactId>
+    <version>1.0.0</version>
+    <name>itmp</name>
+    <description>itmp</description>
+    <packaging>pom</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <modules>
+        <module>common</module>
+        <module>eureka</module>
+        <module>config</module>
+        <module>zuul</module>
+        <module>system</module>
+        <module>systemWeb</module>
+        <module>devManage</module>
+        <module>devManageWeb</module>
+        <module>projectManageWeb</module>
+        <module>projectManage</module>
+        <module>testManageWeb</module>
+        <module>testManage</module>
+        <module>reportManage</module>
+        <module>jobManage</module>
+    </modules>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.4.0.RELEASE</version>
+        <relativePath/>
+    </parent>
+
+    <!-- 自动打包:deploy发布构件到私服，只有模块项目要发布到nexus里，供其他开发人员下载调用 -->
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <url>http://192.168.1.145:8081/nexus/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>http://192.168.1.145:8081/nexus/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.dozer</groupId>
+            <artifactId>dozer</artifactId>
+            <version>5.3.1</version>
+        </dependency>
+
+        <!-- 解决某些版本不能识别yml文件问题 -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.10</version>
+        </dependency>
+
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Dalston.SR1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.4</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>javax.ws.rs-api</artifactId>
+                <version>2.0.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.ccic.databus</groupId>
+                <artifactId>DataBus-Client</artifactId>
+                <version>5.4</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.ccic.databus</groupId>
+                <artifactId>DataBus-Common</artifactId>
+                <version>5.4</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+    <!--组件仓库-->
+    <repositories>
+        <repository>
+            <id>bjnlmf</id>
+            <!--<url>http://oa.ccic-net.com.cn:40091/nexus/repository/public/</url>-->
+            <url>http://10.1.13.7:27897/nexus/repository/public/</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>true</enabled>
+                <!--<updatePolicy>always</updatePolicy>-->
+            </snapshots>
+        </repository>
+    </repositories>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>copy-xmls</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>UTF-8</encoding>
+                            <outputDirectory>${basedir}/target/classes</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/src/main/java</directory>
+                                    <includes>
+                                        <include>**/*.xml</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

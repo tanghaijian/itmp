@@ -1,0 +1,546 @@
+.doing0{border-radius: 30px ; background:#FD5723 ;display: inline-block;padding:2px 12px;color:#ffffff;margin-bottom: 10px;}
+
+body{
+    height: auto !important;
+}
+.control-label{
+    font-size: 12px;
+    line-height: 30px;
+    display: block;
+    text-align: right;
+    font-weight: 500;
+    margin-bottom: 0;
+}
+#newDefect .modal-body{
+    padding-top: 30px;
+}
+#editDefect .modal-body{
+	padding-top: 30px;
+}
+.font_right { 
+    line-height:30px;
+}
+#newDefect .rowdiv{
+    margin-bottom: 10px;
+}
+#editDefect .rowdiv{
+    margin-bottom: 10px;
+}
+#sp{
+    color:red;
+}
+.modal {
+    height: auto !important;
+}
+.select-label {
+    font-size: 12px;
+    line-height: 34px;
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0;
+}
+.fileTb{
+    width: 600px;
+}
+.fileTb img{
+    padding-bottom: 3px; 
+    height: 20px;
+}
+#edit_submitDefect{
+    display: none;
+}
+#edit_stagDefect{
+    display: none;
+} 
+[class^="classColor"]{
+	border-radius: 4px;
+	margin-right: 6px;
+	padding: 2px 5px;
+	color: white; 
+	background: #F4F4F4; 
+	background: linear-gradient(#BCBEBD	,#DADADA, #BCBEBD);
+}
+.classColor1{
+	background: #33CC99; 
+}
+.classColor2{
+	background: #3399FF;
+}
+.classColor3{
+	background: #FF9933;
+}
+.classColor4{
+	background: #FF6699;
+}
+.classColor5{
+	background: #FF0000;
+}
+ 
+#rejectDiv .rowdiv{
+	margin-bottom: 20px;
+} 
+#rejectDiv textarea{
+	height: 133px;
+} 
+[class^="solutionSituation"]{
+	line-height: 30px;
+	padding: 6px 30px;
+	border-radius: 15px;
+	color: white;
+} 
+.solutionSituation1{
+	background: #33CC99;
+}
+.solutionSituation2{
+	background: #FF9933;
+}
+[class^="rejectionSituation"]{
+	line-height: 30px;
+	padding: 6px 30px;
+	border-radius: 15px;
+	color: white;
+}
+.rejectionSituation1{
+	background: #33CC99;
+}
+.rejectionSituation2{
+	background: #FF9933;
+}
+.rejectionSituation3{
+    background: #FF3E3E;
+}
+.rejectionSituation4{
+	background: #fcac6f;
+}
+[class^="defectStatus"]{ 
+	line-height: 28px;
+	padding: 6px 14px;
+	border-radius: 14px;
+	color: white;
+}
+.defectStatus1{
+	background: #108EE9;
+}
+.defectStatus2{
+	background: #FF6666;
+}
+.defectStatus3{
+	background: #33CC99;
+} 
+.defectDescribe{
+	margin-top: 10px;
+}
+.defectDescribe span{
+	word-wrap:break-word;
+} 
+.allInfo .def_content{
+	border-top: 1px solid #D9D9D9; 
+	background: white; 
+	padding: 10px 0;
+	border-radius: 0 0 4px 4px;
+}
+#checkDefectDiv .rowdiv{
+	margin: 0;
+}
+#checkDefectDiv [class*="def_col_"]{
+	line-height: 32px;
+	padding: 0;
+}
+.attachmentDetails{
+	padding: 0 50px 10px; 
+}
+.attachmentFont{
+	margin-bottom: 10px;
+	word-wrap:break-word;
+}
+.defectDescribe .file-upload-list{
+	display: none;
+}
+.logDiv{
+	padding: 0 50px;
+}
+.rejection {
+	display: none;
+}
+.transmit{
+	display: none;
+}
+.solution{
+	display: none;
+}
+.solutionStatu {
+	display: none;
+}
+#closeDefect{
+	display: none;
+}
+#opt_submitDefect{
+	display: none;
+}
+#opt_submitAgainDefect{
+	display: none;
+}
+#opt_RejectDefect{
+	display: none;
+}
+#opt_Restored{
+	display: none;
+}
+.opt_rejectionDiv{
+     display: none;
+ }
+#edit_Restored{
+    display: none;
+}
+#edit_RejectDefect{
+    display: none;
+}
+#edit_submitAgainDefect{
+    display: none;
+}
+#edit_submitDefect{
+    display: none;
+}
+#edit_closeDefect {
+    display: none;
+}
+#edit_submit{
+    display: none;
+}
+.defectHandlingLog .def_content{
+	display: none;	
+}
+#check_rejectReason_span {
+	display: none;
+}
+#check_solveStatus_span {
+	display: none;
+}
+.spanDefectStatus {
+	color: white;
+}
+.file-upload-tb a{
+	color: #428bca;
+}
+
+body [id*="downBtn"]{
+	background-color: rgb(225,234,247);
+	position: absolute;
+	width: 38px;
+	height: 12px;
+	bottom: -10px;
+	left: 50%;
+	margin-left: -19px;
+	border: 1px solid #ccc;
+	border-top: none;
+}
+body [id*="downBtn"] .fa{
+	left: 50%;
+	position: absolute;
+	top: -4px;
+	margin-left: -4px;
+}
+.file-upload-list .bootstrap-table *{
+	border: none;
+}
+#check_table >tbody>tr>td{
+	border:0px;
+}
+#edit_newFileTable >tbody>tr>td{
+	border:0px;
+}
+.span_a_style {
+	cursor:pointer;
+}
+#newDefect .form-group,#editDefect .form-group{
+	margin: 0;
+	padding-left: 0;
+}
+.modal-footer{
+	padding: 9px 20px 10px !important;
+	margin-top: 0 !important;
+	text-align: center;
+}
+.a_style{
+	text-decoration: none;
+	color: #0e90d2;
+}
+.opt_DelayRepair {
+	display:none;
+}
+
+#dealLogDiv .file-upload-tb>tbody>tr>td:first-child {
+	 width: 70px;
+}
+.defectDescribe .file-upload-tb>tbody>tr>td:first-child {
+	width: 70px;
+}
+#reqSource {
+	display:none;
+}
+.testTaskStatus {
+	display:none;
+}
+/*---------测试任务--------*/
+#checktestTask .allInfo .def_content{
+	border-top: 0px solid #D9D9D9;
+	background-color: #F4F4FB;
+	padding: 10px 0;
+	border-radius: 0 0 4px 4px;
+	padding: 0 20px 10px 50px;
+}
+
+#checktestTask  .def_content .form-group {
+	text-align: left;
+}
+
+#checktestTask .def_content .control-label {
+	display: inline-block;
+	line-height: 28px;
+}
+
+#checktestTask .def_content {
+	padding-bottom: 8px;
+}
+
+#checktestTask .def_title {
+	padding: 10px 20px 10px;
+	position: relative;
+	font-size: 13px;
+	font-weight: bold;
+	line-height: 16px;
+}
+
+#checktestTask .def_title .fa {
+	font-size: 18px;
+	position: absolute;
+	right: 20px;
+	top: 8px;
+}
+.connect_div>div{
+	margin-bottom: 15px;
+}
+.connect_div>div>div{
+	margin-bottom: 4px;
+}
+.new_workRemarks{
+	padding-right: 22px;
+	padding-bottom: 15px;
+	text-align: center;
+}
+.new_workRomarksBtn{
+	padding-bottom: 15px;
+	border-bottom: 1px solid #CCCCCC;
+}
+#checktestTask .def_content .fontWeihgt{
+	text-align: right;
+	font-weight: bold;
+}
+#checktestTask .dealLog{
+	display: none;
+}
+
+/*------------工作任务------------*/
+#selectdetail .dealLog{
+	display: none;
+}
+
+#selectdetail .def_content .control-label {
+	display: inline-block;
+	line-height: 28px;
+}
+#selectdetail .fontWeihgt{
+	text-align: right;
+	font-weight: bold;
+}
+#selectdetail .allInfo .def_content{
+	border-top: 0px solid #D9D9D9;
+	background-color: #F4F4FB;
+	padding: 10px 0;
+	border-radius: 0 0 4px 4px;
+	padding: 0 20px 10px 50px;
+}
+#selectdetail  .def_content .form-group {
+	text-align: left;
+}
+
+#selectdetail .def_content .control-label {
+	display: inline-block;
+	line-height: 28px;
+}
+
+#selectdetail .def_content {
+	padding-bottom: 8px;
+}
+
+/*测试案例*/
+.rightModal{
+	margin-bottom: 10px;
+}
+.right_div_titFont{
+	line-height: 45px;
+	font-size: 13px;
+	font-weight: bold;
+	color: #333333;
+	flex: 1;
+}
+.exeResult{
+	display: inline-block;
+	padding: 8px 10px;
+	border-radius: 17px;
+	line-height: 12px;
+}
+.failBg{
+	line-height: 28px;
+	padding: 6px 14px;
+	border-radius: 14px;
+	color: white;
+	background: #FF3E3E;
+}
+.tagTitle{
+	padding: 8px 0;
+	font-size: 13px;
+	font-weight: bold;
+	position: relative;
+}
+
+[class^='spanClass']{
+	border-radius: 30px;
+	display: inline-block;
+	padding:2px 12px;
+	text-align: center;
+	width : 70px;
+	margin-top:-2px;
+	margin-bottom:-2px;
+	color:#ffffff;
+}
+.spanClass1{
+	background: #CCCCCC;
+}
+.spanClass2{
+	background: #33CC99;
+}
+.spanClass3{
+	background: #FF3E3E;
+}
+.spanClass4{
+	background: #993399;
+}
+.spanClass5{
+	background: #1F97EF;
+}
+.myUpfileDiv{
+	width: 80px;
+	height: 22px;
+	background: url("../../images/testExe/upload-file.png") no-repeat 100% 100%;
+	overflow: hidden;
+	cursor: pointer;
+	margin-top: -2px;
+}
+#checkTestCaseModal .file-bucket,.file-s3Key,.file-url{
+	display: none;
+}
+.span_font-weight{
+	font-weight: bold
+}
+#checktestTask .file-bucket,.file-s3Key,.file-url{
+	display: none;
+}
+#selectdetail .file-bucket,.file-s3Key,.file-url{
+	display: none;
+}
+#defectOverview,#edit_defectOverview{
+	height: 320px;
+	overflow-y: auto;
+}
+#defectOverview>.w-e-text-container,#edit_defectOverview>.w-e-text-container{
+	 z-index: 100 !important;
+}
+#testTaskStatus{
+	display: none;
+}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button {
+	-webkit-appearance: none !important;
+	margin: 0;
+}
+#newDefect #canEditField,#editDefect #editFieldDiv{
+	padding: 15px 0 5px;
+	border: 1px solid #EFEFEF;
+	border-left: none;
+	border-right: none;
+}
+#canEditField>div,#editFieldDiv>div{
+	margin-bottom: 10px;
+	padding: 0;
+}
+#submitUserId,#windowId,#requirementCode,#sel_systemId,#reqFiD,#assignUserId{
+	display: none;
+}
+#newDefectFrom .parent_relative .btn_clear,#edit_DefectFrom .parent_relative .btn_clear{
+	position: absolute;
+	display: none;
+    width: 22px;
+    height: 22px;
+    right: 3px;
+    top: 5px;
+    z-index: 5;
+    background: url(../../images/btn_clear.png) no-repeat;
+}
+.w-e-text{
+	padding: 8px !important;
+	overflow-y: auto !important; 
+}
+.w-e-text-container{
+	border-radius: 4px !important;
+	border-top:1px solid #ccc !important;
+}
+.w-e-toolbar{
+	display: none !important;
+}
+
+/****操作***/
+/* .ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td:last-child{
+	overflow: inherit;
+}
+.defect_dropdown_opt>a{
+	display: block;;
+}
+.defect_dropdown_opt{
+	min-width: 70px;
+	width: 70px;
+	bottom: 100%;
+	top:unset;
+}
+a.edit-opt:hover{
+	background: #ec9999;
+  color: #fff !important;
+}
+/* .ui-jqgrid-bdiv{
+	padding-bottom: 180px !important;
+} */
+/* .ui-jqgrid .table-bordered th:last-child.ui-th-ltr{
+	text-align: center;
+}
+#defectList>tbody>tr:nth-child(2) .defect_dropdown_opt{
+	bottom: unset!important;
+	top:100%!important;
+}
+#defectList>tbody>tr:nth-child(3) .defect_dropdown_opt{
+	bottom: unset!important;
+	top:100%!important;
+}  */
+#dropdown_menu{
+	min-width:80px !important;
+}
+#dropdown_menu a{
+	color: #0e90d2;
+	padding: 3px 10px;
+	display: block;
+}
+#dropdown_menu a:hover{
+	color: #fff!important;
+	background: #0e90d2;
+}
+.main-content{
+	padding-bottom: 100px;
+}

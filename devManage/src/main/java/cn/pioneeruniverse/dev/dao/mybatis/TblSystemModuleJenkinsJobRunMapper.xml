@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblSystemModuleJenkinsJobRunMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblSystemModuleJenkinsJobRun">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="SYSTEM_JENKINS_JOB_RUN" jdbcType="BIGINT" property="systemJenkinsJobRun" />
+    <result column="SYSTEM_MODULE_ID" jdbcType="BIGINT" property="systemModuleId" />
+    <result column="SYSTEM_SCM_ID" jdbcType="BIGINT" property="systemScmId" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+      <result column="BUILD_STATUS" jdbcType="TINYINT" property="buildStatus" />
+     <result column="create_type" jdbcType="TINYINT" property="createType" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+     <result column="SYSTEM_ID" jdbcType="TINYINT" property="systemId" />
+    <result column="SONAR_QUALITY_GATE" jdbcType="VARCHAR" property="sonarQualityGate" />
+    <result column="SONAR_BUGS" jdbcType="TINYINT" property="sonarBugs" />
+     <result column="SONAR_VULNERABILITIES" jdbcType="TINYINT" property="sonarVulnerabilities" />
+     <result column="SONAR_CODE_SMELLS" jdbcType="TINYINT" property="sonarCodeSmells" />
+     <result column="SONAR_COVERAGE" jdbcType="DOUBLE" property="sonarCoverage" />
+     <result column="SONAR_DUPLICATIONS" jdbcType="DOUBLE" property="sonarDuplications" />
+      <result column="SONAR_UNIT_TEST_NUMBER" jdbcType="TINYINT" property="sonarUnitTestNumber" />
+      <result column="JOB_NAME" jdbcType="VARCHAR" property="jobName" />
+      <result column="JOB_TYPE" jdbcType="TINYINT" property="jobType" />
+    
+  </resultMap>
+<!--  插入数据-->
+   <insert id="insertNew"  keyProperty="id" useGeneratedKeys="true" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModuleJenkinsJobRun">
+    insert into tbl_system_module_jenkins_job_run ( SYSTEM_JENKINS_JOB_RUN, SYSTEM_MODULE_ID, 
+      STATUS, CREATE_BY, CREATE_DATE, SONAR_QUALITY_GATE,SONAR_BUGS,SONAR_VULNERABILITIES,SONAR_CODE_SMELLS,SONAR_COVERAGE,SONAR_DUPLICATIONS,
+      LAST_UPDATE_BY, SYSTEM_ID,SYSTEM_SCM_ID,LAST_UPDATE_DATE,JOB_NAME,CREATE_TYPE,JOB_TYPE,SONAR_UNIT_TEST_NUMBER,BUILD_STATUS)
+    values ( #{systemJenkinsJobRun,jdbcType=BIGINT}, #{systemModuleId,jdbcType=BIGINT}, 
+      #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{sonarQualityGate,jdbcType=VARCHAR}, 
+       #{sonarBugs,jdbcType=TINYINT},  #{sonarVulnerabilities,jdbcType=TINYINT}, 
+        #{sonarCodeSmells,jdbcType=TINYINT}, 
+         #{sonarCoverage,jdbcType=DOUBLE},  #{sonarDuplications,jdbcType=DOUBLE},
+      #{lastUpdateBy,jdbcType=BIGINT},#{systemId,jdbcType=BIGINT},#{systemScmId,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP},#{jobName,jdbcType=VARCHAR},#{createType,jdbcType=TINYINT},#{jobType,jdbcType=TINYINT},#{sonarUnitTestNumber,jdbcType=TINYINT},#{buildStatus,jdbcType=TINYINT})
+  </insert>
+  <sql id="Base_Column_List">
+    ID,SYSTEM_ID SYSTEM_JENKINS_JOB_RUN, SYSTEM_MODULE_ID, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, SYSTEM_SCM_ID,JOB_NAME,
+    LAST_UPDATE_DATE,SONAR_QUALITY_GATE,SONAR_BUGS,SONAR_VULNERABILITIES,SONAR_CODE_SMELLS,SONAR_COVERAGE,SYSTEM_ID,SONAR_DUPLICATIONS,create_type,JOB_TYPE,SONAR_UNIT_TEST_NUMBER,BUILD_STATUS
+  </sql>
+<!--    查询-->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_system_module_jenkins_job_run
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+ <!--  传统系统自动构建 -->
+  <select id="selectSonarBySystemidAndDate" parameterType="map"  resultMap="BaseResultMap">
+   select 
+    <include refid="Base_Column_List" />
+    from tbl_system_module_jenkins_job_run
+    where   DATE_FORMAT(LAST_UPDATE_DATE,'%Y-%m-%d')     between #{startDate,jdbcType=VARCHAR} and  #{endDate,jdbcType=VARCHAR}  and 
+    
+    
+    SYSTEM_ID = #{systemId,jdbcType=BIGINT} and SYSTEM_MODULE_ID is null and JOB_TYPE=1 and CREATE_TYPE=1  and status=1 order by LAST_UPDATE_DATE
+  </select>
+  
+  <!--  传统系统自动部署 -->
+  <select id="selectSonarBySystemidAndDateDeploy" parameterType="map"  resultMap="BaseResultMap">
+   select 
+    <include refid="Base_Column_List" />
+    from tbl_system_module_jenkins_job_run
+    where   DATE_FORMAT(LAST_UPDATE_DATE,'%Y-%m-%d')     between #{startDate,jdbcType=VARCHAR} and  #{endDate,jdbcType=VARCHAR}  and 
+    
+    
+    SYSTEM_ID = #{systemId,jdbcType=BIGINT} and SYSTEM_MODULE_ID is null and JOB_TYPE=2 and CREATE_TYPE=1   and status=1 order by LAST_UPDATE_DATE
+  </select>
+  
+   <!--  系统手动构建 -->
+  <select id="selectSonarBySystemidAndDateManual" parameterType="map"  resultMap="BaseResultMap">
+   select 
+    <include refid="Base_Column_List" />
+    from tbl_system_module_jenkins_job_run
+    where   DATE_FORMAT(LAST_UPDATE_DATE,'%Y-%m-%d')     between #{startDate,jdbcType=VARCHAR} and  #{endDate,jdbcType=VARCHAR}  and 
+    
+    
+    SYSTEM_ID = #{systemId,jdbcType=BIGINT} and SYSTEM_MODULE_ID is null and job_name=#{jobName,jdbcType=VARCHAR}  and JOB_TYPE=1 and CREATE_TYPE=2    and status=1
+    <if test="jobRunids.size() > 0">
+   and SYSTEM_JENKINS_JOB_RUN in 
+    
+    <foreach item="jobRunid" index="index" collection="jobRunids" open="(" separator="," close=")"> 
+     #{jobRunid} 
+</foreach>
+</if>
+
+    
+    
+      order by LAST_UPDATE_DATE
+  </select>
+  
+   <!--  系统手动构建无日期 -->
+  <select id="selectModuleJobRunByjobRunIdManual" parameterType="java.lang.Long"  resultType="map">
+   select 
+    <include refid="Base_Column_List" />
+    from tbl_system_module_jenkins_job_run
+    where     
+    
+    SYSTEM_JENKINS_JOB_RUN=#{jobRunId,jdbcType=BIGINT}  and status=1
+    
+  </select>
+  
+  
+  <select id="selectModuleJobRunByjobRunId" parameterType="java.lang.Long"  resultType="map">
+   select 
+   tsjr.*,tsm.module_name
+    from tbl_system_module_jenkins_job_run tsjr left join tbl_system_module  tsm on tsm.id=tsjr.SYSTEM_MODULE_ID
+    where   tsjr.SYSTEM_JENKINS_JOB_RUN=#{jobRunId,jdbcType=BIGINT}  and tsjr.status=1
+  </select>
+  
+  
+<!-- 自动构建微服务soanr扫描历史 -->
+  
+  <select id="selectSonarBySystemidAndDateMincro" parameterType="map"  resultMap="BaseResultMap">
+   select 
+    <include refid="Base_Column_List" />
+    from tbl_system_module_jenkins_job_run
+    where   DATE_FORMAT(LAST_UPDATE_DATE,'%Y-%m-%d')     between #{startDate,jdbcType=VARCHAR} and  #{endDate,jdbcType=VARCHAR}  and 
+    
+    
+    SYSTEM_MODULE_ID = #{moduleId,jdbcType=BIGINT} and system_id = #{systemId,jdbcType=BIGINT} and JOB_TYPE=1 and CREATE_TYPE=1  and status=1 order by LAST_UPDATE_DATE
+  </select>
+  
+  <!-- 自动部署微服务soanr扫描历史 -->
+   <select id="selectSonarBySystemidAndDateMincroDeploy" parameterType="map"  resultMap="BaseResultMap">
+   select 
+    <include refid="Base_Column_List" />
+    from tbl_system_module_jenkins_job_run
+    where   DATE_FORMAT(LAST_UPDATE_DATE,'%Y-%m-%d')     between #{startDate,jdbcType=VARCHAR} and  #{endDate,jdbcType=VARCHAR}  and 
+    
+    
+    SYSTEM_MODULE_ID = #{moduleId,jdbcType=BIGINT} and system_id = #{systemId,jdbcType=BIGINT} and JOB_TYPE=2 and CREATE_TYPE=1  and status=1  order by LAST_UPDATE_DATE
+  </select>
+  
+  
+<!--  删除-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_system_module_jenkins_job_run
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+      <select id="selectLastTimeByModuleId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_system_module_jenkins_job_run
+    where SYSTEM_MODULE_ID = #{id,jdbcType=BIGINT} order by CREATE_DATE  limit 1
+  </select>
+ 
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModuleJenkinsJobRun">
+    insert into tbl_system_module_jenkins_job_run
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="systemJenkinsJobRun != null">
+        SYSTEM_JENKINS_JOB_RUN,
+      </if>
+      <if test="systemModuleId != null">
+        SYSTEM_MODULE_ID,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="systemJenkinsJobRun != null">
+        #{systemJenkinsJobRun,jdbcType=BIGINT},
+      </if>
+      <if test="systemModuleId != null">
+        #{systemModuleId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+<!--    更新-->
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModuleJenkinsJobRun">
+    update tbl_system_module_jenkins_job_run
+    <set>
+      <if test="systemJenkinsJobRun != null">
+        SYSTEM_JENKINS_JOB_RUN = #{systemJenkinsJobRun,jdbcType=BIGINT},
+      </if>
+      <if test="systemModuleId != null">
+        SYSTEM_MODULE_ID = #{systemModuleId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+
+        <if test="buildStatus != null">
+            BUILD_STATUS = #{buildStatus,jdbcType=TINYINT},
+        </if>
+
+
+        <if test="systemId != null">
+        SYSTEM_ID = #{systemId,jdbcType=TINYINT},
+      </if>
+      
+       <if test="sonarQualityGate != null">
+        SONAR_QUALITY_GATE = #{sonarQualityGate,jdbcType=VARCHAR},
+      </if>
+       <if test="sonarBugs != null">
+        SONAR_BUGS = #{sonarBugs,jdbcType=TINYINT},
+      </if>
+       <if test="sonarVulnerabilities != null">
+        SONAR_VULNERABILITIES = #{sonarVulnerabilities,jdbcType=TINYINT},
+      </if>
+       <if test="sonarCodeSmells != null">
+        SONAR_CODE_SMELLS = #{sonarCodeSmells,jdbcType=TINYINT},
+      </if>
+       <if test="sonarCoverage != null">
+        SONAR_COVERAGE = #{sonarCoverage,jdbcType=DOUBLE},
+      </if>
+       <if test="sonarDuplications != null">
+        SONAR_DUPLICATIONS = #{sonarDuplications,jdbcType=DOUBLE},
+      </if>
+
+        <if test="sonarUnitTestNumber != null">
+            SONAR_UNIT_TEST_NUMBER = #{sonarUnitTestNumber,jdbcType=TINYINT},
+        </if>
+      
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModuleJenkinsJobRun">
+    update tbl_system_module_jenkins_job_run
+    set SYSTEM_JENKINS_JOB_RUN = #{systemJenkinsJobRun,jdbcType=BIGINT},
+      SYSTEM_MODULE_ID = #{systemModuleId,jdbcType=BIGINT},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+<!-- 更新错误信息 -->
+  <update id="updateErrorInfo" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModuleJenkinsJobRun">
+    update tbl_system_module_jenkins_job_run
+    set
+
+      <if test="status !=null and status!='' ">
+           status = #{status,jdbcType=TINYINT},
+      </if>
+
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where SYSTEM_JENKINS_JOB_RUN = #{systemJenkinsJobRun,jdbcType=BIGINT} 
+  </update>
+    <!-- 查询此次扫描的子模块 -->
+    <select id="selectModulesNamesByRunId" parameterType="Long" resultType="String">
+      select GROUP_CONCAT(tsm.MODULE_NAME) as moduleNames from tbl_system_module_jenkins_job_run tsmjj left join tbl_system_module tsm
+      on tsm.id=tsmjj.SYSTEM_MODULE_ID where tsmjj.SYSTEM_JENKINS_JOB_RUN=#{jobRunId,jdbcType=BIGINT}
+    </select>
+  
+  <!-- 查询系统最近一次代码扫描问题总览 -->
+  <select id="findNewModuleCountBySystemId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+	SELECT tsmjr.CREATE_DATE createTime,SUM(tsmjr.SONAR_BUGS) SONAR_BUGS,SUM(tsmjr.SONAR_CODE_SMELLS) SONAR_CODE_SMELLS,
+	SUM(tsmjr.SONAR_VULNERABILITIES) SONAR_VULNERABILITIES,SUM(tsmjr.SONAR_COVERAGE) SONAR_COVERAGE,
+	SUM(tsmjr.SONAR_DUPLICATIONS) SONAR_DUPLICATIONS,SUM(tsmjr.SONAR_UNIT_TEST_NUMBER) SONAR_UNIT_TEST_NUMBER
+    FROM tbl_system_module_jenkins_job_run tsmjr
+    WHERE tsmjr.STATUS = 1 AND tsmjr.JOB_TYPE = 1 AND tsmjr.SONAR_BUGS IS NOT NULL
+    <if test="systemId !=null">
+      AND tsmjr.SYSTEM_ID = #{systemId}
+    </if>
+    <if test="systemModuleId !=null">
+      AND tsmjr.SYSTEM_MODULE_ID=#{systemModuleId}
+    </if>
+    GROUP BY tsmjr.CREATE_DATE
+    ORDER BY tsmjr.CREATE_DATE DESC
+    LIMIT 0,1
+  </select>
+    <!-- 查询系统最近7次代码扫描问题趋势 -->
+  <select id="find7DayModuleTrendBySystemId" parameterType="java.lang.Long"
+          resultType="cn.pioneeruniverse.dev.entity.TblSystemModuleJenkinsJobRun">
+    SELECT tsmjr.CREATE_DATE createDate,IFNULL(SUM(tsmjr.SONAR_BUGS),0) bugsCount,IFNULL(SUM(tsmjr.SONAR_CODE_SMELLS),0)
+    smellsCount,IFNULL(SUM(tsmjr.SONAR_VULNERABILITIES),0) vulnerabilitiesCount,IFNULL(SUM(tsmjr.SONAR_COVERAGE),0)
+    coverageCount,IFNULL(SUM(tsmjr.SONAR_DUPLICATIONS),0) duplicationsCount,IFNULL(SUM(tsmjr.SONAR_UNIT_TEST_NUMBER),0)
+    sonarUnitTestNumber
+    FROM tbl_system_module_jenkins_job_run tsmjr
+    WHERE tsmjr.STATUS = 1 AND tsmjr.JOB_TYPE = 1 AND tsmjr.SONAR_BUGS IS NOT NULL
+    <if test="systemId !=null">
+        AND tsmjr.SYSTEM_ID = #{systemId}
+    </if>
+    <if test="systemModuleId !=null">
+        AND tsmjr.SYSTEM_MODULE_ID=#{systemModuleId}
+    </if>
+    GROUP BY tsmjr.CREATE_DATE
+    ORDER BY tsmjr.CREATE_DATE DESC
+    LIMIT 0,7
+  </select>
+
+  <!--<select id="find7DayModuleTrendBySystemId" parameterType="java.lang.Long" resultType="cn.pioneeruniverse.dev.entity.TblSystemModuleJenkinsJobRun">
+	  SELECT
+          c.click_date createDate,ifnull(d.bugsCount,0) bugsCount,ifnull(d.smellsCount,0) smellsCount,
+          ifnull(d.vulnerabilitiesCount,0) vulnerabilitiesCount,ifnull(d.coverageCount,0) coverageCount,
+          ifnull(d.duplicationsCount,0) duplicationsCount
+      FROM
+      (
+            SELECT curdate() as click_date union all
+            SELECT date_sub(curdate(), interval 1 day) as click_date union all
+            SELECT date_sub(curdate(), interval 2 day) as click_date union all
+            SELECT date_sub(curdate(), interval 3 day) as click_date union all
+            SELECT date_sub(curdate(), interval 4 day) as click_date union all
+            SELECT date_sub(curdate(), interval 5 day) as click_date union all
+            SELECT date_sub(curdate(), interval 6 day) as click_date
+      ) c
+      LEFT JOIN
+      (
+            SELECT
+                b.createTime1, a.createTime, a.bugsCount,a.smellsCount,
+                a.vulnerabilitiesCount, a.coverageCount, a.duplicationsCount
+            FROM
+            (
+                SELECT
+                    MAX( tsmjr.CREATE_DATE ) createTime,
+                    DATE_FORMAT( tsmjr.CREATE_DATE, '%Y-%m-%d' ) createTime1
+                FROM tbl_system_module_jenkins_job_run tsmjr
+                WHERE tsmjr.STATUS = 1 AND tsmjr.JOB_TYPE = 1 AND tsmjr.SONAR_BUGS IS NOT NULL
+                <if test="systemId !=null">
+                    AND tsmjr.SYSTEM_ID = #{systemId}
+                </if>
+                <if test="systemModuleId !=null">
+                    AND tsmjr.SYSTEM_MODULE_ID=#{systemModuleId}
+                </if>
+                GROUP BY createTime1
+            ) b
+            LEFT JOIN
+            (
+                SELECT
+                    SUM(tsmjr.SONAR_BUGS) bugsCount,
+                    SUM(tsmjr.SONAR_CODE_SMELLS) smellsCount,
+                    SUM(tsmjr.SONAR_VULNERABILITIES) vulnerabilitiesCount,
+                    SUM(tsmjr.SONAR_COVERAGE) coverageCount,
+                    SUM(tsmjr.SONAR_DUPLICATIONS) duplicationsCount,
+                    tsmjr.CREATE_DATE createTime
+                FROM tbl_system_module_jenkins_job_run tsmjr
+                WHERE tsmjr.STATUS = 1 AND tsmjr.JOB_TYPE = 1 AND tsmjr.SONAR_BUGS IS NOT NULL
+                <if test="systemId !=null">
+                    AND tsmjr.SYSTEM_ID = #{systemId}
+                </if>
+                <if test="systemModuleId !=null">
+                    AND tsmjr.SYSTEM_MODULE_ID=#{systemModuleId}
+                </if>
+                GROUP BY createTime
+            )a
+            ON a.createTime = b.createTime
+      ) d
+      ON c.click_date = d.createTime1
+      ORDER BY createDate
+  </select>		-->
+</mapper>

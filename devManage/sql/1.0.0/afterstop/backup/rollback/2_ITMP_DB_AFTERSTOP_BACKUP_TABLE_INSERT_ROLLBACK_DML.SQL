@@ -1,0 +1,1 @@
+delete from AFTERSTOP_BACKUP where ID=1;

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <title>变更管理</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css"/>
+    <link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/newProject/riskManage.css"/>
+</head>
+
+<body>
+    <!-- 存储后台传来的参数 -->
+    <input type="hidden" id="projectId" value="$!id">
+    <input type="hidden" id="_userId" value="$!userId">
+    <input type="hidden" id="_userName" value="$!userName">
+    <input type="hidden" id="project_name" name="" value="$!name" />
+    <input type="hidden" id="project_type" name="" value="$!type" />
+    <div class="flex items_c bor_b">
+        <h5 style="height: 36px;padding:10px;font-weight:bold;" class="">
+            <span id="projectName">$!name</span>：变更管理</h5>
+    </div>
+    <div class="main-content">
+        <div class="content-btn">
+            <button type="button" onclick="addProject()" class="btn btn-primary">新建变更记录</button>
+        </div>
+        <div class="content-table">
+            <table id="project_list"></table>
+        </div>
+    </div>
+
+    <!-- 新增---编辑---查看 -->
+    <div
+        class="modal fade bs-example-modal-lg"
+        id="add_modal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="">
+        <div class="modal-dialog modal-lg _Max_dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="add_tit">新建变更记录</h4>
+                    <input type="hidden" id="edit_id"/>
+                </div>
+                <div class="modal-body bg_f2">
+                    <div class="def_col_25">
+                        <h5 class="check_tit" id="">详细内容</h5>
+                        <form id="add_form">
+                            <div class="rowdiv form-group">
+                                <div class="def_col_5">
+                                    <label class="control-label">
+                                        <span class="redStar">*</span>变更事项描述：</label>
+                                </div>
+                                <div class="def_col_31">
+                                    <textarea type="text" name="changeItem" class="form-control" placeholder="请输入"></textarea>
+                                </div>
+                            </div>
+                            <div class="rowdiv">
+                                <div class="form-group def_col_18">
+                                    <div class="def_col_10">
+                                        <label class="control-label">
+                                            <span class="redStar">*</span>提出日期：</label>
+                                    </div>
+                                    <div class="def_col_26">
+                                        <input type="text" id="submitDate" name="submitDate" readonly class="form-control pointStyle" placeholder="请选择"/>
+                                    </div>
+                                </div>
+                                <div class="form-group def_col_18">
+                                    <div class="def_col_10">
+                                        <label class="control-label">批准日期：</label>
+                                    </div>
+                                    <div class="def_col_26">
+                                        <input type="text" id="approveDate" name="approveDate" readonly class="form-control pointStyle" placeholder="请选择"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rowdiv">
+                                <div class="form-group def_col_18">
+                                    <div class="def_col_10">
+                                        <label class="control-label">
+                                            <span class="redStar">*</span>状态：</label>
+                                    </div>
+                                    <div class="def_col_26">
+                                        <select id="changeStatus" name="changeStatus" class="selectpicker form-control">
+                                            <option value="">请选择</option>
+                                            #foreach($dictMap in ${dict.getDictMap("TBL_PROJECT_CHANGE_INFO_CHANGE_STATUS").entrySet()})
+                                                <option value="${dictMap.key}">${dictMap.value}</option>
+                                            #end
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="def_col_18 form-group">
+                                    <div class="def_col_10">
+                                        <label class="control-label">责任人：</label>
+                                    </div>
+                                    <div class="def_col_26">
+                                        <input type="hidden" id="responsibleUserId" name="responsibleUserId"> 
+                                        <input
+                                            type="text"
+                                            readonly="readonly"
+                                            name="responsibleUserName"
+                                            id="responsibleUserName"
+                                            class="form-control pointStyle"
+                                            placeholder="请选择" onclick="userTableShowAll()" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rowdiv">
+                                <div class="def_col_5">
+                                    <label class="control-label">分析汇总：</label>
+                                </div>
+                                <div class="def_col_31">
+                                    <textarea type="text" name="analyseSummary" class="form-control" placeholder="请输入"></textarea>
+                                </div>
+                            </div>
+                            <div class="rowdiv">
+                                <div class="def_col_5">
+                                    <label class="control-label">执行结果说明：</label>
+                                </div>
+                                <div class="def_col_31">
+                                    <textarea type="text" name="resultExplain" class="form-control" placeholder="请输入"></textarea>
+                                </div>
+                            </div>
+                            <div class="rowdiv form-group">
+                                <div class="def_col_5">
+                                    <label class="control-label">备注：</label>
+                                </div>
+                                <div class="def_col_31">
+                                    <textarea type="text" name="remark" class="form-control" placeholder="请输入"></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="def_col_1 bg_f2"></div>
+                    <div class="def_col_10">
+                        <h5 class="check_tit" id="">修订记录</h5>
+                        <div id="logs_body"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="add_submit()" class="btn btn-primary">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 人员 -->
+    <div
+        class="modal fade bs-example-modal-lg"
+        id="userModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="newPerson">
+        <div class="modal-dialog modal-lg modal-user" role="document">
+            <div class="modal-content modalStyle">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <span>选择人员</span>
+                </div>
+                <div class="modal-body">
+                    <div class="color1">
+                        <div class="container-fluid">
+                            <div class="row control-row">
+                                <div class="col-md-4">
+                                    <div class="search_font">
+                                        <label class="control-label">姓名：</label>
+                                    </div>
+                                    <div class="search_input" style="position: relative;">
+                                        <input type="text" class="form-control " placeholder="请输入" id="userName" name="userName" value="">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="search_font">
+                                        <label class="control-label">部门：</label>
+                                    </div>
+                                    <div class="search_input" style="position: relative;">
+                                        <input type="text" class="form-control " placeholder="请输入" id="deptName" name="deptName" value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="search_font">
+                                        <label class="control-label">公司：</label>
+                                    </div>
+                                    <div class="search_input" style="position: relative;">
+                                        <input
+                                            type="text"
+                                            class="form-control "
+                                            placeholder="请输入"
+                                            id="companyName"
+                                            name="companyName"
+                                            value="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row control-row search_btn">
+                                <button type="button" class="btn btn-primary" onclick="userTableShowAll()">搜&nbsp;&nbsp;&nbsp;索</button>
+                                <button type="button" onclick="clearSearchUser()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                            </div>
+                        </div>
+                        <div id="downBtn" class="downBtn">
+                            <span class="fa fa-caret-up"></span>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="content-table">
+                        <table id="userTable"></table>
+                        <div id="userPage"></div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <div class="bottom-container">
+                        <button
+                            type="button"
+                            id="userbutton"
+                            class="btn btn-primary"
+                            data-user="requirementManageUser"
+                            onclick="commitUser()">确定
+                        </button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading">
+        <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif"/>
+    </div>
+
+</body>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script  type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/projectManageui/static/js/newProject/updateManage.js"></script>
+    <script>
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap4';
+        $.jgrid.defaults.iconSet = "fontAwesome";
+    </script>
+</html>

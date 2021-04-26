@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>规则配置</title>
+    <link rel="stylesheet" type="text/css" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css">
+
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script src="#springUrl('')/systemui/static/js/template-debug.js"></script>
+    <style>
+        * {
+            margin: 0 auto;
+            padding: 0;
+            font-size: 12px;
+        }
+
+        body {
+            padding: 0 25px;
+        }
+
+        /*样式覆盖*/
+        .fixed-table-body {
+            overflow-x: visible !important;
+            overflow-y: visible !important;
+        }
+
+        .block {
+            margin-bottom: 35px;
+        }
+
+        .block2 {
+            text-align: center;
+        }
+
+        .title_font {
+            border-bottom: 1px solid #CCCCCC;
+            font-weight: bold;
+            padding: 15px 0;
+        }
+
+        .botton_group .btn {
+            margin: 8px 0;
+            font-size: 12px;
+        }
+
+        .tableStyle tbody > tr > td {
+            padding: 3px 8px !important;
+        }
+
+        .fontCenter .a_style {
+            line-height: 30px;
+        }
+
+        .save {
+            padding: 12px 45px !important;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="block">
+    <div class="title_font">
+        延期测试规则配置：
+    </div>
+    <div class="botton_group">
+        <botton class="btn btn-primary" type="button" onclick="addCondition('postponeTest')">新增条件</botton>
+    </div>
+    <div class="table_area">
+        <table id="postponeTest" class="tableStyle"></table>
+    </div>
+</div>
+<div class="block">
+    <div class="title_font">
+        敏捷测试规则配置：
+    </div>
+    <div class="botton_group">
+        <botton class="btn btn-primary" type="button" onclick="addCondition('agileTest')">新增条件</botton>
+    </div>
+    <div class="table_area">
+        <table id="agileTest" class="tableStyle"></table>
+    </div>
+</div>
+<div class="block">
+    <div class="title_font">
+        标准测试规则配置：
+    </div>
+    <br>
+    <div class="fontWeihgt">以上条件以外</div>
+
+</div>
+<div class="block2">
+    <botton class="btn btn-primary save" type="button" onclick="saveRule()">保&nbsp;&nbsp;&nbsp;存</botton>
+</div>
+
+<script>
+    var storage = window.localStorage;
+    var filedNameOptions = [{label: "系统级别", val: "1"},
+        {label: "系统用户规模", val: "2"},
+        {label: "日联机交易量", val: "3"},
+        {label: "是否动账交易", val: "4"},
+        {label: "是否试运行", val: "5"},
+        {label: "系统类别", val: "6"},
+        {label: "当前时间-投产时间", val: "7"},
+        {label: "投产紧迫类型", val: "8"},
+        {label: "测试窗口", val: "9"}];
+
+    var mathSymbol1 = [{label: "=", val: "1"},
+        {label: "!=", val: "2"},
+        {label: "<=", val: "3"},
+        {label: ">=", val: "4"},
+        {label: "<", val: "5"},
+        {label: ">", val: "6"}];
+    var symbol1Field = ["2", "3", "7", "9"];
+
+    var mathSymbol2 = [{label: "=", val: "1"}, {label: "!=", val: "2"}];
+    var symbol2Field = ["1", "4", "5", "6", "8"];
+
+    var systemLevel = [{label: "A", val: "1"}, {label: "B", val: "2"}, {label: "C", val: "3"}];
+    var trueOrFalse = [{label: "是", val: "1"}, {label: "否", val: "2"}];
+    var systemType = [{label: "平稳", val: "1"}, {label: "震荡", val: "2"}];
+    var urgencyType = [{label: "监管", val: "1"}, {label: "总经理室", val: "2"}, {label: "无", val: "3"}];
+
+    $("#postponeTest").bootstrapTable({
+        pagination: false,
+        columns: [
+            {
+                field: "id",
+                title: "id",
+                visible: false
+            },
+            {
+                field: "name",
+                title: "字段名称",
+                align: 'center',
+                formatter: function (value, rows, index) {
+                    var data = {
+                        name: "fieldName",
+                        selectedValue: value,
+                        options: filedNameOptions,
+                        changeFunc: "fieldChange(\'postponeTest\',this," + index + ")"
+                    };
+                    var html = template("selectTemplate", data);
+                    return html;
+                }
+            }, {
+                field: "operator",
+                title: "运算符号",
+                align: 'center',
+                formatter: function (value, rows, index) {
+                    var data = {
+                        name: "mathSymbol",
+                        selectedValue: value,
+                        changeFunc: "fieldValueChange(\'postponeTest\',\'operator\'," + index + ",this)"
+                    };
+                    if (symbol1Field.indexOf(rows.name) != -1) {
+                        data.options = mathSymbol1;
+                    }
+                    if (symbol2Field.indexOf(rows.name) != -1) {
+                        data.options = mathSymbol2;
+                    }
+                    var html = template("selectTemplate", data);
+                    return html;
+                }
+            }, {
+                field: "number",
+                title: "数值",
+                align: 'center',
+                formatter: function (value, rows, index) {
+                    return returnFieldValueHtmlByType("postponeTest", "number", rows.name, value, index);
+                }
+            }, {
+                field: "opt",
+                title: "操作",
+                align: 'center',
+                class: 'fontCenter',
+                formatter: function (value, rows, index) {
+                    return '<a class="a_style" href="javascript:void(0);" onclick="del(\'postponeTest\',\'' + rows.id + '\')">删除</a>';
+                }
+            }],
+        onLoadSuccess: function () {
+            $('.selectpicker').selectpicker('refresh');
+        }
+    });
+
+    $("#agileTest").bootstrapTable({
+        pagination: false,
+        columns: [
+            {
+                field: "id",
+                title: "id",
+                visible: false
+            },
+            {
+                field: "name",
+                title: "字段名称",
+                align: 'center',
+                formatter: function (value, rows, index) {
+                    var data = {
+                        name: "fieldName",
+                        selectedValue: value,
+                        options: filedNameOptions,
+                        changeFunc: "fieldChange(\'agileTest\',this," + index + ")"
+                    };
+                    var html = template("selectTemplate", data);
+                    return html;
+                }
+            }, {
+                field: "operator",
+                title: "运算符号",
+                align: 'center',
+                formatter: function (value, rows, index) {
+                    var data = {
+                        name: "mathSymbol",
+                        selectedValue: value,
+                        changeFunc: "fieldValueChange(\'agileTest\',\'operator\'," + index + ",this)"
+                    };
+                    if (symbol1Field.indexOf(rows.name) != -1) {
+                        data.options = mathSymbol1;
+                    }
+                    if (symbol2Field.indexOf(rows.name) != -1) {
+                        data.options = mathSymbol2;
+                    }
+                    var html = template("selectTemplate", data);
+                    return html;
+                }
+            }, {
+                field: "number",
+                title: "数值",
+                align: 'center',
+                formatter: function (value, rows, index) {
+                    return returnFieldValueHtmlByType("agileTest", "number", rows.name, value, index);
+                }
+            }, {
+                field: "opt",
+                title: "操作",
+                align: 'center',
+                class: 'fontCenter',
+                formatter: function (value, rows, index) {
+                    return '<a class="a_style" href="javascript:void(0);" onclick="del(\'agileTest\',\'' + rows.id + '\')">删除</a>';
+                }
+            }],
+        onLoadSuccess: function () {
+            $('.selectpicker').selectpicker('refresh');
+        }
+    });
+
+    $(function () {
+        //初始化延期测试规则配置
+        var table1_init_data;
+        if (storage.getItem("postphoneTestRules") != null) {
+            table1_init_data = JSON.parse(storage.getItem("postphoneTestRules"));
+        } else {
+            table1_init_data = [{
+                id: getUniqueId(),
+                name: "8",
+                operator: "2",
+                number: "3"
+            },
+                {id: getUniqueId(), name: "7", operator: "6", number: "15"},
+                {id: getUniqueId(), name: "7", operator: "3", number: "30"},
+                {id: getUniqueId(), name: "4", operator: "1", number: "2"}];
+        }
+        for (var i in table1_init_data) {
+            $("#postponeTest").bootstrapTable('append', table1_init_data[i]);
+        }
+        //初始化敏捷测试规则配置
+        var table2_init_data;
+        if (storage.getItem("agileTestRules") != null) {
+            table2_init_data = JSON.parse(storage.getItem("agileTestRules"));
+        } else {
+            table2_init_data = [{
+                id: getUniqueId(),
+                name: "8",
+                operator: "2",
+                number: "3"
+            },
+                {id: getUniqueId(), name: "7", operator: "3", number: "15"},
+                {id: getUniqueId(), name: "4", operator: "1", number: "2"}];
+        }
+        for (var j in table2_init_data) {
+            $("#agileTest").bootstrapTable('append', table2_init_data[j]);
+        }
+    });
+
+    function returnFieldValueHtmlByType(tableName, tableField, type, value, index) {
+        switch (type) {
+            case "1":
+                var data = {
+                    name: "systemLevel",
+                    selectedValue: value,
+                    options: systemLevel,
+                    changeFunc: "fieldValueChange(\'" + tableName + "\',\'" + tableField + "\'," + index + ",this)"
+                };
+                return template("selectTemplate", data);
+            case "2":
+                var data = {
+                    name: "systemUserScale",
+                    value: value,
+                    changeFunc: "fieldValueChange(\'" + tableName + "\',\'" + tableField + "\'," + index + ",this)"
+                };
+                return template("inputTemplate", data);
+            case "3":
+                var data = {
+                    name: "dailyTradeNum",
+                    value: value,
+                    changeFunc: "fieldValueChange(\'" + tableName + "\',\'" + tableField + "\'," + index + ",this)"
+                };
+                return template("inputTemplate", data);
+            case "4":
+                var data = {
+                    name: "whetherMoveAccounutTrade",
+                    selectedValue: value,
+                    options: trueOrFalse,
+                    changeFunc: "fieldValueChange(\'" + tableName + "\',\'" + tableField + "\'," + index + ",this)"
+                };
+                return template("selectTemplate", data);
+            case "5":
+                var data = {
+                    name: "whetherTestRun",
+                    selectedValue: value,
+                    options: trueOrFalse,
+                    changeFunc: "fieldValueChange(\'" + tableName + "\',\'" + tableField + "\'," + index + ",this)"
+                };
+                return template("selectTemplate", data);
+            case "6":
+                var data = {
+                    name: "systemType",
+                    selectedValue: value,
+                    options: systemType,
+                    changeFunc: "fieldValueChange(\'" + tableName + "\',\'" + tableField + "\'," + index + ",this)"
+                };
+                return template("selectTemplate", data);
+            case "7":
+                var data = {
+                    name: "commissioningTime",
+                    value: value,
+                    changeFunc: "fieldValueChange(\'" + tableName + "\',\'" + tableField + "\'," + index + ",this)"
+                };
+                return template("inputTemplate", data);
+            case "8":
+                var data = {
+                    name: "commissioningUrgentType",
+                    selectedValue: value,
+                    options: urgencyType,
+                    changeFunc: "fieldValueChange(\'" + tableName + "\',\'" + tableField + "\'," + index + ",this)"
+                };
+                return template("selectTemplate", data);
+            case "9":
+                var data = {
+                    name: "testWindow",
+                    value: value,
+                    changeFunc: "fieldValueChange(\'" + tableName + "\',\'" + tableField + "\'," + index + ",this)"
+                };
+                return template("inputTemplate", data);
+            default:
+                return "";
+        }
+    }
+
+    function getUniqueId() {
+        return Number(Math.random().toString().substr(3, 10) + Date.now()).toString(36);
+    }
+
+    function addCondition(tableName) {
+        $("#" + tableName).bootstrapTable('append', {id: getUniqueId(), name: ""});
+        $('.selectpicker').selectpicker('refresh');
+    }
+
+    function del(tableName, id) {
+        $("#" + tableName).bootstrapTable('remove', {field: "id", values: [id]});
+        $('.selectpicker').selectpicker('refresh');
+    }
+
+    function fieldChange(tableName, obj, index) {
+        var val = $(obj).val();
+        $("#" + tableName).bootstrapTable('updateRow', {index: index, row: {name: val, operator: "", number: ""}});
+        $('.selectpicker').selectpicker('refresh');
+    }
+
+    function fieldValueChange(tableName, tableField, index, obj) {
+        $("#" + tableName).bootstrapTable('updateCell', {index: index, field: tableField, value: $(obj).val()});
+        $('.selectpicker').selectpicker('refresh');
+    }
+
+    function saveRule() {
+        storage.setItem("postphoneTestRules", JSON.stringify($("#postponeTest").bootstrapTable('getData')));
+        storage.setItem("agileTestRules", JSON.stringify($("#agileTest").bootstrapTable('getData')));
+        layer.alert("保存成功", {
+            icon: 1,
+            title: "提示信息"
+        });
+    }
+
+</script>
+
+<script id="selectTemplate" type="text/html">
+    <select class="selectpicker" name="{{name}}" onchange="{{changeFunc}}">
+        <option value="">----请选择----</option>
+        {{each options}}
+        {{if selectedValue == $value.val}}
+        <option value="{{$value.val}}" selected>{{$value.label}}</option>
+        {{else}}
+        <option value="{{$value.val}}">{{$value.label}}</option>
+        {{/if}}
+        {{/each}}
+    </select>
+</script>
+
+<script id="inputTemplate" type="text/html">
+    <input type="text" class="form-control" placeholder="请输入" autocomplete="off" name="{{name}}"
+           value="{{value}}" onchange="{{changeFunc}}"></input>
+</script>
+
+</body>
+</html>

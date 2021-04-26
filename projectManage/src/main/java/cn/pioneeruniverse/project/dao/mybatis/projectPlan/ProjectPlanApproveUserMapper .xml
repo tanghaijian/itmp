@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.projectPlan.ProjectPlanApproveUserMapper">
+	<resultMap id="BaseResultMap"
+			   type="cn.pioneeruniverse.project.entity.TblProjectPlanApproveUser">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="PROJECT_PLAN_APPROVE_REQUEST_ID" jdbcType="BIGINT" property="projectPlanApproveRequestId" />
+		<result column="USER_ID" jdbcType="BIGINT" property="userId" />
+		<result column="APPROVE_LEVEL" jdbcType="TINYINT" property="approveLevel" />
+		<result column="APPROVE_STATUS" jdbcType="TINYINT" property="approveStatus" />
+		<result column="APPROVE_SUGGEST" jdbcType="VARCHAR" property="approveSuggest" />
+		<result column="APPROVE_ON_OFF" jdbcType="TINYINT" property="approveOnOff" />
+	</resultMap>
+
+	<resultMap id="BaseResultMap1"
+			   type="cn.pioneeruniverse.project.entity.TblProjectPlanApproveUserConfig">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="PROJECT_ID" jdbcType="BIGINT" property="projectId" />
+		<result column="USER_ID" jdbcType="BIGINT" property="userId" />
+		<result column="APPROVE_LEVEL" jdbcType="TINYINT" property="approveLevel" />
+		<result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+	</resultMap>
+	<!--查询项目计划审批人员配置-->
+	<select id="getApproveUserConfig"  resultMap="BaseResultMap1" parameterType="java.lang.Long">
+		select t.ID,t.PROJECT_ID,t.USER_ID,t.APPROVE_LEVEL,tui.USER_NAME
+		from tbl_project_plan_approve_user_config t
+		left join tbl_user_info tui on tui.ID = t.USER_ID
+		WHERE t.PROJECT_ID = #{projectId}
+	</select>
+	<!--新增项目计划审批人员-->
+	<insert id="insertProjectPlanApproveUser"
+			parameterType = "cn.pioneeruniverse.project.entity.TblProjectPlanApproveUser">
+		insert into tbl_project_plan_approve_user(
+			PROJECT_PLAN_APPROVE_REQUEST_ID,
+			USER_ID,
+			APPROVE_LEVEL,
+			APPROVE_STATUS,
+			APPROVE_SUGGEST,
+			APPROVE_ON_OFF
+		)values(
+			#{projectPlanApproveRequestId},
+			#{userId},
+			#{approveLevel},
+			#{approveStatus},
+			#{approveSuggest},
+			#{approveOnOff})
+	</insert>
+	<!--删除项目计划审批人员配置-->
+	<delete id="deleteProjectPlanApproveUserConfig" parameterType="java.lang.Long">
+		delete from tbl_project_plan_approve_user_config where PROJECT_ID = #{projectId}
+	</delete>
+	<!--新增项目计划审批人员配置-->
+	<insert id="insertProjectPlanApproveUserConfig"
+			parameterType = "cn.pioneeruniverse.project.entity.TblProjectPlanApproveUserConfig">
+		insert into tbl_project_plan_approve_user_config(
+			PROJECT_ID,
+			USER_ID,
+			APPROVE_LEVEL
+		)values(
+			#{projectId},
+			#{userId},
+			#{approveLevel}
+		)
+	</insert>
+
+	<select id="getAllApproveUserDesc"  resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select t.ID,t.USER_ID from tbl_project_plan_approve_user t
+		WHERE t.PROJECT_PLAN_APPROVE_REQUEST_ID = #{approveRequestId}
+		order by t.APPROVE_LEVEL desc
+	</select>
+
+	<!--<select id="getApproveUserButt"  resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select t.ID,t.USER_ID,t.APPROVE_LEVEL,t.APPROVE_STATUS
+		from tbl_project_plan_approve_user t
+		WHERE t.PROJECT_PLAN_APPROVE_REQUEST_ID = #{approveRequestId}
+		AND t.USER_ID = #{userId} AND t.APPROVE_STATUS = 1
+		order by t.APPROVE_LEVEL asc
+		LIMIT 0,1
+	</select>-->
+
+	<select id="getApproveUserButt"  resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select t.ID,t.USER_ID,t.APPROVE_LEVEL,t.APPROVE_STATUS,t.APPROVE_ON_OFF
+		from tbl_project_plan_approve_user t
+		WHERE t.PROJECT_PLAN_APPROVE_REQUEST_ID = #{approveRequestId}
+		AND t.USER_ID = #{userId} AND t.APPROVE_STATUS = 1 AND t.APPROVE_ON_OFF = 1
+	</select>
+
+	<delete id="deletePlanApproveUserByRequestId" parameterType="java.lang.Long">
+		delete from tbl_project_plan_approve_user
+		where PROJECT_PLAN_APPROVE_REQUEST_ID = #{approveRequestId}
+	</delete>
+
+	<update id="updateApproveUser" parameterType="cn.pioneeruniverse.project.entity.TblProjectPlanApproveUser">
+		update tbl_project_plan_approve_user
+		set
+		APPROVE_STATUS = #{approveStatus},
+		APPROVE_SUGGEST = #{approveSuggest},
+		APPROVE_ON_OFF = #{approveOnOff}
+		where ID = #{id}
+	</update>
+	<update id="updateApproveUser1" >
+		update tbl_project_plan_approve_user
+		set
+		APPROVE_ON_OFF = 1
+		where ID = #{id}
+	</update>
+
+</mapper>

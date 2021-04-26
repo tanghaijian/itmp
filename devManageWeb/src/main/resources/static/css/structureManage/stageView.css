@@ -1,0 +1,221 @@
+.tab-pane{
+	background: #F4F4FB;
+	border: 1px solid rgb(221, 221, 221);
+	border-top: none; 
+	border-radius: 0 0 4px 4px;
+	padding: 40px 15px;
+}
+#logModal .nav-tabs > li.active > a{
+	background: #F4F4FB;
+	font-weight: bold;
+}
+#logModal .nav-tabs > li > a{ 
+	font-size: 13px;
+	border-width: 1px;
+    border-style: solid;
+    border-color: rgb(221, 221, 221) rgb(221, 221, 221) transparent;
+    padding: 10px 15px 7px;
+    color: #666;
+}
+#StageView{
+    text-align:center;
+}
+#JenkinsJobsTable{
+    display: inline-block;
+    margin: 0 auto; 
+    border: 1px solid #ccc;
+    box-shadow: rgba(0, 0, 0, 0.25) 1px 3px 5px;
+    background: #FFF;
+}
+#JenkinsJobsTable #headDiv{
+    font-size: 0;
+
+}
+.stage-header,.stage-body{
+    width: 154px;
+    display: table-cell;
+    border: 1px solid rgba(0, 0, 0, 0.025);
+}
+#headDiv{
+	 min-height: 67px;	
+} 
+.stage-header{
+	height: 67px;
+	vertical-align: middle;
+}
+.stage-header>div{ 
+	width: 152px;  
+	font-size: 13px;
+    font-weight: bold;
+    text-align: center; 
+    word-wrap:break-word;
+    vertical-align: middle;
+    padding: 10px;
+}
+.stage-body{
+    height: 90px;
+    position: relative;
+}
+.stage-header:nth-child( odd ),.stage-body:nth-child( odd ){
+    background: rgba(0, 0, 0, 0.03);
+}
+.headBodyBg_success{
+    background: #FFF;
+}
+.headBodyBg_fail{
+    background: rgba(255, 50, 0, 0.1);
+}
+.duration,.paused{
+    position: absolute;
+    white-space: nowrap;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    border: solid 1px #e0e0e0;
+    border-radius: 5px;
+    color: #999;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 84px;
+    cursor: pointer;
+}
+.duration:hover{
+    border: solid 1px #d7d7d7;
+    box-shadow: inset 0px -10px 100px -20px #ffffff, inset #d7d7d7 0 0 0 1px;
+}
+.durationBg_success{
+    background: rgba(0, 255, 0, 0.1);
+}
+.durationBg_fail{
+    border: solid 1px #d9534f;
+    background: repeating-linear-gradient(-45deg, rgba(255, 50, 0, 0.1), rgba(255, 50, 0, 0.1) 20px, rgba(255, 0, 0, 0.15) 20px, rgba(255, 0, 0, 0.15) 40px);
+    box-shadow: 0 1px 2px;
+    color: #d9534f;
+}
+.durationBg_fail:hover{
+    border: solid 1px #d9534f;
+    box-shadow: 0 1px 2px;
+}
+.durationBg_fail .cornerMark{
+    position: absolute;
+    bottom: 1px;
+    right: 2px;
+    font-size: 12px;
+    color: #d9534f;
+    line-height: 16px;
+}
+.promptInfo{
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: 15px;
+    color: #777777;
+    opacity: 0.6;
+    line-height: 14px;
+}
+.promptInfo span{
+    display: inline-block;
+    transform: scale(0.6);
+    transform-origin: center 0;
+}
+#StageLogsInfo{
+    padding: 5px;
+    padding-bottom: 2px;
+}
+.StageLogsDiv{
+    margin-bottom: 3px;
+}
+.StageLogsTit{
+    padding: 5px 10px;
+    background-color: #eeeeee;
+    border-radius: 4px;
+    cursor: pointer;
+    font-style: normal;
+    font-weight: normal;
+    color: #333333;
+}
+.StageLogsCont{
+    max-height: 400px;
+    overflow: auto;
+    display: none;
+    color: rgba(0, 0, 0, 0.67);
+    background: #eff;
+    box-shadow: inset rgba(0, 0, 0, 0.2) 0 1px 2px, inset rgba(0, 0, 0, 0.2) 0 0 0 1px, inset rgba(255, 255, 255, 0.2) 0 0 0 99em;
+}
+.StageLogsCont>pre{
+    padding: 20px 15px;
+    margin: 0;
+    border-radius: 0;
+    line-height: 20px;
+    box-shadow: inset rgba(0, 0, 0, 0.1) -1px 0 0;
+    background: repeating-linear-gradient(transparent, transparent 20px, rgba(0, 0, 0, 0.05) 20px, rgba(0, 0, 0, 0.05) 40px);
+    border: 1px solid #cccccc;
+}
+.progress { 
+    height: auto;
+    margin: 0 auto;
+    line-height: 84px; 
+}
+.progress-bar{
+	background-repeat: repeat;
+	font-size: 14px;
+}
+
+.headBodyBg_fail .durationBg_success{
+	background: none;
+}
+
+#loading{
+	z-index: 10000000000 !important;
+} 
+.tab-pane {
+    overflow-x: auto;
+} 
+.paused .promptInfo span{
+	color: #333;
+	text-shadow: #fff 0 1px 1px, #fff 0 1px 2px;
+}
+#moveRun{
+	display: none;
+	z-index: 100000;
+	position: fixed;
+}
+.runRequired{
+	width: 200px; 
+    position: relative;
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+    color: #8a6d3b;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+    text-shadow: #fff 0 0 2px, #fff 0 1px 1px; 
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid t
+}
+.remove{
+	cursor: pointer;
+    position: absolute;
+    right: 6px; 
+}
+.caption{ 
+	margin-bottom: 10px;
+	font-weight: bold;
+}
+.buttons  .btn{
+    padding: 5px 10px !important;
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+    border-radius: 3px !important;
+}
+.subT{
+	display: block;
+    position: absolute; 
+    border: 8px solid #fcf8e3;
+    content: ' ';
+    line-height: 0;
+    bottom: -16px;
+    left: 96px;
+    border-bottom: 8px solid transparent;
+    border-left: 8px solid transparent; 
+}

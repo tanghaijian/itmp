@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <META HTTP-EQUIV="pragma" CONTENT="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="no-cache,IE=edge,Chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>测试案例执行详细信息</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css"/>
+	<link rel="stylesheet" href="#springUrl('')/testManageui/static/css/testExecution/testExrcutionManagement.css">
+    
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/testManageui/static/js/testExecution/testCaseExecutionResult.js"></script>
+    <script>
+        testCaseExecutionResult_Param.testCaseId = "$!testCaseId";
+        testCaseExecutionResult_Param.testSetId = "$!testSetId";
+        testCaseExecutionResult_Param.refreshtoType = "$!refreshtoType";
+        #foreach($dictMap in ${dict.getDictMap("TBL_TEST_SET_CASE_CASE_EXECUTE_RESULT").entrySet()})
+        testCaseExecutionResult_Param.caseExecuteResult_Dic.push(["${dictMap.key}", "${dictMap.value}"]);
+        #end
+    </script>
+</head>
+<body>
+<div class="main-content">
+    <div class="right_div rightCaseDivCheck" >
+        <div class="right_div_tit" style="display: none">
+            <div class="right_div_titFont" id="checkTitle"></div>
+        </div>
+        <div class="right_div_body">
+            <div class="rightModal">
+                <div class="exeResult successBg" style="display: none;">执行结果：Pass</div>
+                <div class="exeResult failBg" style="display: none;">执行结果：Failed</div>
+                <div class="exeResult" id="checkNameAndTime"></div>
+            </div>
+
+            <div class="rowdiv">
+                <div class="rightModal">
+                    <div class="form-group def_col_36">
+                        <div class="tagTitle">
+                            <label class="def_col_4 font_right control-label fontWeihgt">前置条件：</label>
+                            <div class="def_col_32">
+                                <label class="control-label font_left def_show" id="checkCasePrecondition"></label>
+                                <input type="hidden" id="testSetCaseId" value=""/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="rowdiv">
+                <div class="rightModal">
+                    <div class="form-group def_col_18">
+                        <div class="tagTitle">
+                            <label class="def_col_8 font_right control-label fontWeihgt">输入数据：</label>
+                            <div class="def_col_28">
+                                <label class="control-label font_left def_show" id="check_inputData"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group def_col_18">
+                        <div class="tagTitle">
+                            <label class="def_col_8 font_right control-label fontWeihgt">测试项：</label>
+                            <div class="def_col_28">
+                                <label class="control-label font_left def_show" id="check_testPoint"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="rowdiv">
+                <div class="rightModal">
+                    <div class="form-group def_col_18">
+                        <div class="tagTitle">
+                            <label class="def_col_8 font_right control-label fontWeihgt">模块：</label>
+                            <div class="def_col_28">
+                                <label class="control-label font_left def_show" id="check_moduleName"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group def_col_18">
+                        <div class="tagTitle">
+                            <label class="def_col_8 font_right control-label fontWeihgt">业务类型：</label>
+                            <div class="def_col_28">
+                                <label class="control-label font_left def_show" id="check_businessType"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="rowdiv">
+                <div class="rightModal">
+                    <div class="form-group def_col_18">
+                        <div class="tagTitle">
+                            <label class="def_col_8 font_right control-label fontWeihgt">预期结果：</label>
+                            <div class="def_col_28">
+                                <label class="control-label font_left def_show" id="check_expectResult"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br><hr><br>
+            <div class="rightModal">
+                <div class="tagTitle">案例步骤：</div>
+                <div class="tagBody">
+                    <table id="checkCaseSteps" style="word-break:break-all; word-wrap:break-all;table-layout:fixed" ></table>
+                </div>
+            </div>
+            <div class="rightModal">
+                <div class="tagTitle">
+                    <div class="rowdiv">
+                        <div class="form-group">
+                            <div class="def_col_4 fontWeihgt">相关附件：</div>
+                            <div class="def_col_32">
+                                <input type="hidden" name="attachFiles" id="seeFiles" value=""/>
+                                <table class="fileTable" id="checkUpfileTable"></table>
+                            ##<div class="myUpfileDiv"><input type="file" class="myUpfile" multiple="multiple" id="checkUploadFile"/></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ## <div class="tagBody fileDiv">
+            ##  <table class="fileTable" id="checkUpfileTable"></table>
+            ##</div>
+            </div>
+            <div class="rightModal borderBottom">
+                <div class="rowdiv">
+                    <div class="form-group">
+                        <div class="def_col_4 fontWeihgt">备注信息：</div>
+                        <div class="def_col_32" id="checkExcuteRemark"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="rightModal">
+                <div class="rowdiv">
+                    <div class="form-group">
+                        <div class="def_col_4 fontWeihgt">关联缺陷：</div>
+                        <div class="def_col_32" id="checkRelatedDefects">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="loading">
+    <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif"/>
+</div>
+</body>
+</html>

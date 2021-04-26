@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblSystemScmSubmitMapper">
+
+    <insert id="insertSystemScmSubmit" parameterType="cn.pioneeruniverse.dev.entity.TblSystemScmSubmit"
+            useGeneratedKeys="true"
+            keyProperty="id">
+      INSERT INTO tbl_system_scm_submit(
+         GROUP_FLAG,
+         SYSTEM_ID,
+         SYSTEM_SCM_REPOSITORY_ID,
+         SCM_REPOSITORY_NAME,
+         SCM_URL,
+         SCM_BRANCH,
+         SUBMIT_STATUS,
+         SUBMIT_SUPER_USER_NAMES,
+         SUBMIT_USER_NAMES,
+         SYSTEM_VERSION_ID,
+         COMMISSIONING_WINDOW_ID,
+         STATUS,
+         CREATE_BY,
+         CREATE_DATE,
+         LAST_UPDATE_BY,
+         LAST_UPDATE_DATE
+        ) VALUES (
+         #{groupFlag},
+         #{systemId},
+         #{systemScmRepositoryId},
+         #{scmRepositoryName},
+         #{scmUrl},
+         #{scmBranch},
+         #{submitStatus},
+         #{submitSuperUserNames},
+         #{submitUserNames},
+         #{systemVersionId},
+         #{commissioningWindowId},
+         #{status},
+         #{createBy},
+         #{createDate},
+         #{lastUpdateBy},
+         #{lastUpdateDate}
+        )
+    </insert>
+<!-- 新增提交用户配置日志 -->
+    <insert id="insertOperationLog" useGeneratedKeys="true">
+        INSERT INTO TBL_SYSTEM_SCM_SUBMIT_LOG(SCM_SUBMIT_ID, OLD_DATA, NEW_DATA, SUBMIT_STATUS, OPERATION, SYSTEM_ID)
+        SELECT ID, SUBMIT_USER_NAMES, #{arg1},
+               CONCAT(CASE SUBMIT_STATUS WHEN 1 THEN '是' WHEN 2 THEN '否' ELSE '' END, ' > ', #{arg2}),
+               #{arg3}, #{arg4}
+        FROM TBL_SYSTEM_SCM_SUBMIT
+        WHERE ID = #{arg0};
+    </insert>
+
+<!-- 更新代码提交配置 -->
+    <update id="updateSystemScmSubmit" parameterType="cn.pioneeruniverse.dev.entity.TblSystemScmSubmit">
+        UPDATE tbl_system_scm_submit
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="systemId != null">
+                SYSTEM_ID = #{systemId},
+            </if>
+            <if test="systemScmRepositoryId != null">
+                SYSTEM_SCM_REPOSITORY_ID = #{systemScmRepositoryId},
+            </if>
+            <if test="scmRepositoryName != null and scmRepositoryName != ''">
+                SCM_REPOSITORY_NAME = #{scmRepositoryName},
+            </if>
+            <if test="scmUrl != null and scmUrl != ''">
+                SCM_URL = #{scmUrl},
+            </if>
+            <if test="scmBranch != null and scmBranch != ''">
+                SCM_BRANCH = #{scmBranch},
+            </if>
+            <if test="submitStatus != null">
+                SUBMIT_STATUS = #{submitStatus},
+            </if>
+            <if test="groupFlag != null">
+                GROUP_FLAG = #{groupFlag},
+            </if>
+            SUBMIT_SUPER_USER_NAMES = #{submitSuperUserNames},
+            SUBMIT_USER_NAMES = #{submitUserNames},
+            SYSTEM_VERSION_ID = #{systemVersionId},
+            COMMISSIONING_WINDOW_ID = #{commissioningWindowId},
+            LAST_UPDATE_BY = #{lastUpdateBy},
+            LAST_UPDATE_DATE = #{lastUpdateDate}
+        </trim>
+        WHERE ID = #{id}
+    </update>
+    
+    <!-- 设置代码提交开关 -->
+    <update id="updateSubmitUser">
+        UPDATE TBL_SYSTEM_SCM_SUBMIT
+        SET SUBMIT_STATUS = #{arg1}, SUBMIT_USER_NAMES = #{arg2}
+        WHERE ID = #{arg0}
+    </update>
+
+    <delete id="deleteSystemScmSubmit" parameterType="cn.pioneeruniverse.dev.entity.TblSystemScmSubmit">
+        DELETE FROM tbl_system_scm_submit WHERE ID = #{id}
+    </delete>
+
+<!-- 查询提交用户配置日志 -->
+    <select id="findOperationLog" resultType="cn.pioneeruniverse.dev.entity.TblSystemScmSubmitLog">
+        SELECT ID id,
+               SCM_SUBMIT_ID scmSubmitId,
+               OLD_DATA oldData,
+               NEW_DATA newData,
+               SUBMIT_STATUS submitStatus,
+               OPERATION operation,
+               CREATE_DATE createDate
+        FROM TBL_SYSTEM_SCM_SUBMIT_LOG
+        WHERE SYSTEM_ID = #{arg0}
+        ORDER BY CREATE_DATE DESC , ID DESC
+        LIMIT #{arg1}, 10
+    </select>
+
+    <select id="findOperationLogCount" resultType="long">
+        SELECT COUNT(ID)
+        FROM TBL_SYSTEM_SCM_SUBMIT_LOG
+        WHERE SYSTEM_ID = #{arg0}
+    </select>
+<!-- 获取系统源码提交配置 -->
+    <select id="getSystemScmSubmits" resultMap="extendBaseMap">
+        SELECT SS.ID,
+               SS.SYSTEM_SCM_REPOSITORY_ID ,
+               SS.SCM_REPOSITORY_NAME ,
+               SS.SCM_URL ,
+               SS.SCM_BRANCH ,
+               SS.SUBMIT_STATUS ,
+               SS.SUBMIT_USER_NAMES ,
+               SS.SUBMIT_SUPER_USER_NAMES ,
+               SS.SYSTEM_VERSION_ID ,
+               SS.COMMISSIONING_WINDOW_ID ,
+               SS.GROUP_FLAG ,
+               CW.WINDOW_NAME ,
+               SV.VERSION
+        FROM TBL_SYSTEM_SCM_SUBMIT SS
+                 LEFT JOIN TBL_SYSTEM_SCM_REPOSITORY SR ON SS.SYSTEM_SCM_REPOSITORY_ID = SR.ID
+                 LEFT JOIN TBL_COMMISSIONING_WINDOW CW ON SS.COMMISSIONING_WINDOW_ID = CW.ID
+                 LEFT JOIN TBL_SYSTEM_VERSION SV ON SV.SYSTEM_ID = SR.SYSTEM_ID AND SS.SYSTEM_VERSION_ID = SV.ID
+        WHERE SS.STATUS = 1
+          AND SR.STATUS = 1
+          AND SS.SYSTEM_ID = #{systemId}
+          AND SR.SCM_TYPE = #{scmType}
+        ORDER BY SS.GROUP_FLAG, SS.SCM_REPOSITORY_NAME, SS.SCM_URL
+    </select>
+
+<!-- 通过仓库地址获取源码提交配置 -->
+    <select id="getSystemScmSubmitByScmUrl" parameterType="java.lang.String" resultMap="extendBaseMap">
+        SELECT
+        tsss.ID,
+        tsss.SYSTEM_ID,
+        tsss.SYSTEM_SCM_REPOSITORY_ID,
+        tsss.SCM_REPOSITORY_NAME,
+        tsss.SCM_URL,
+        tsss.SCM_BRANCH,
+        tsss.SUBMIT_STATUS,
+        (SELECT GROUP_CONCAT(tui.USER_SCM_ACCOUNT) FROM tbl_user_info tui WHERE FIND_IN_SET(tui.ID,tsss.SUBMIT_SUPER_USER_NAMES)) AS "SUBMIT_SUPER_USER_NAMES",
+        (SELECT GROUP_CONCAT(tui.USER_SCM_ACCOUNT) FROM tbl_user_info tui WHERE FIND_IN_SET(tui.ID,tsss.SUBMIT_USER_NAMES)) AS "SUBMIT_USER_NAMES",
+        tsss.SYSTEM_VERSION_ID,
+        tsss.COMMISSIONING_WINDOW_ID,
+        tsv.VERSION,
+        tcw.WINDOW_NAME
+        FROM
+        tbl_system_scm_submit tsss
+        LEFT JOIN tbl_system_version tsv ON tsv.ID = tsss.SYSTEM_VERSION_ID AND tsv.STATUS = 1
+        LEFT JOIN tbl_commissioning_window tcw ON tcw.ID = tsss.COMMISSIONING_WINDOW_ID AND tcw.STATUS = 1
+        WHERE
+        #{scmUrl} LIKE CONCAT(tsss.SCM_URL,'%')
+        AND tsss.STATUS = 1
+        ORDER BY LENGTH(tsss.SCM_URL) DESC
+        LIMIT 1
+    </select>
+
+    <!-- 获取gitlab代码提交配置 -->
+    <select id="getGitLabSystemScmSubmit" resultMap="extendBaseMap">
+      SELECT
+      tsss.ID,
+      tsss.SYSTEM_ID,
+      tsss.SUBMIT_STATUS,
+      (SELECT GROUP_CONCAT(tui.USER_SCM_ACCOUNT) FROM tbl_user_info tui WHERE FIND_IN_SET(tui.ID,tsss.SUBMIT_SUPER_USER_NAMES)) AS "SUBMIT_SUPER_USER_NAMES",
+      (SELECT GROUP_CONCAT(tui.USER_SCM_ACCOUNT) FROM tbl_user_info tui WHERE FIND_IN_SET(tui.ID,tsss.SUBMIT_USER_NAMES)) AS "SUBMIT_USER_NAMES",
+      tsss.SYSTEM_VERSION_ID,
+      tsss.COMMISSIONING_WINDOW_ID,
+      tsv.VERSION,
+      tcw.WINDOW_NAME
+      FROM
+      tbl_system_scm_submit tsss
+      LEFT JOIN tbl_system_scm_repository tssr ON tsss.SYSTEM_SCM_REPOSITORY_ID = tssr.ID AND tssr.SCM_TYPE = 1 AND tssr.STATUS = 1
+      LEFT JOIN tbl_system_version tsv ON tsv.ID = tsss.SYSTEM_VERSION_ID AND tsv.STATUS = 1
+      LEFT JOIN tbl_commissioning_window tcw ON tcw.ID = tsss.COMMISSIONING_WINDOW_ID AND tcw.STATUS = 1
+      WHERE
+      tssr.TOOL_ID = #{tool.id}
+      AND tssr.GIT_REPOSITORY_ID = #{gitRepositoryId}
+      AND tsss.SCM_BRANCH = #{scmBranch}
+      AND tsss.STATUS = 1
+      LIMIT 1
+    </select>
+
+
+    <resultMap type="cn.pioneeruniverse.dev.entity.TblSystemScmSubmit" id="baseMap">
+        <id column="ID" property="id"/>
+        <result column="SYSTEM_ID" property="systemId"/>
+        <result column="GROUP_FLAG" property="groupFlag"/>
+        <result column="SYSTEM_SCM_REPOSITORY_ID" property="systemScmRepositoryId"/>
+        <result column="SCM_REPOSITORY_NAME" property="scmRepositoryName"/>
+        <result column="SCM_URL" property="scmUrl"/>
+        <result column="SCM_BRANCH" property="scmBranch"/>
+        <result column="SUBMIT_STATUS" property="submitStatus"/>
+        <result column="SUBMIT_SUPER_USER_NAMES" property="submitSuperUserNames"/>
+        <result column="SUBMIT_USER_NAMES" property="submitUserNames"/>
+        <result column="SYSTEM_VERSION_ID" property="systemVersionId"/>
+        <result column="COMMISSIONING_WINDOW_ID" property="commissioningWindowId"/>
+        <result column="STATUS" property="status"/>
+        <result column="CREATE_BY" property="createBy"/>
+        <result column="CREATE_DATE" property="createDate"/>
+        <result column="LAST_UPDATE_BY" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate"/>
+    </resultMap>
+
+    <resultMap type="cn.pioneeruniverse.dev.entity.TblSystemScmSubmit" id="extendBaseMap" extends="baseMap">
+        <result column="SUBMIT_SUPER_USER_REAL_NAMES" jdbcType="VARCHAR" property="submitSuperUserRealNames"/>
+        <result column="SUBMIT_USER_REAL_NAMES" jdbcType="VARCHAR" property="submitUserRealNames"/>
+        <result column="SUBMIT_SUPER_USER_NAMES" jdbcType="VARCHAR" property="submitSuperUserNamesCollection"/>
+        <result column="SUBMIT_USER_NAMES" jdbcType="VARCHAR" property="submitUserNamesCollection"/>
+        <result column="VERSION" jdbcType="VARCHAR" property="systemVersionName"/>
+        <result column="WINDOW_NAME" jdbcType="VARCHAR" property="commissioningWindowName"/>
+    </resultMap>
+
+    <resultMap type="cn.pioneeruniverse.dev.entity.TblSystemScmSubmit" id="scmConfigMap" extends="extendBaseMap">
+        <result column="VERSION" jdbcType="VARCHAR" property="systemVersionName"/>
+        <result column="WINDOW_NAME" jdbcType="VARCHAR" property="commissioningWindowName"/>
+    </resultMap>
+
+</mapper>

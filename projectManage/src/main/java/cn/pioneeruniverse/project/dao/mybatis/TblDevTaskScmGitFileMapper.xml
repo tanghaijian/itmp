@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.TblDevTaskScmGitFileMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblDevTaskScmGitFile">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="DEV_TASK_ID" jdbcType="BIGINT" property="devTaskId" />
+    <result column="DEV_TASK_SCM_ID" jdbcType="BIGINT" property="devTaskScmId" />
+    <result column="TOOL_ID" jdbcType="BIGINT" property="toolId" />
+    <result column="GIT_REPOSITORY_ID" jdbcType="BIGINT" property="gitRepositoryId" />
+    <result column="GIT_BRANCH" jdbcType="VARCHAR" property="gitBranch" />
+    <result column="COMMIT_NUMBER" jdbcType="VARCHAR" property="commitNumber" />
+    <result column="LAST_COMMIT_NUMBER" jdbcType="VARCHAR" property="lastCommitNumber" />
+    <result column="COMMIT_FILE" jdbcType="VARCHAR" property="commitFile" />
+    <result column="BEFORE_RENAME_FILE" jdbcType="VARCHAR" property="beforeRenameFile" />
+    <result column="OPERATE_TYPE" jdbcType="VARCHAR" property="operateType" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+
+  <!-- 根据开发工作任务获取git  提交文件 和 操作类型-->
+  <select id="getGitFile" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select COMMIT_FILE, OPERATE_TYPE from tbl_dev_task_scm_git_file where DEV_TASK_ID = #{id} and STATUS = 1 and OPERATE_TYPE ='A' or OPERATE_TYPE = 'M'
+  </select>
+  
+</mapper>

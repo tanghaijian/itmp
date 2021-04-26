@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblProjectInfoMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblProjectInfo">
+  	<id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="PROJECT_NAME" jdbcType="VARCHAR" property="projectName" />
+    <result column="PROJECT_CODE" jdbcType="VARCHAR" property="projectCode" />
+    <result column="PROJECT_TYPE" jdbcType="TINYINT" property="projectType" />
+    <result column="PROJECT_STATUS" jdbcType="TINYINT" property="projectStatus" />
+    <result column="APPROVAL_DATE" jdbcType="DATE" property="approvalDate" />
+    <result column="LONG_TIME_STATUS" jdbcType="TINYINT" property="longTimeStatus" />
+    <result column="PLAN_START_DATE" jdbcType="DATE" property="planStartDate" />
+    <result column="PLAN_END_DATE" jdbcType="DATE" property="planEndDate" />
+    <result column="PLAN_COMMISSIONING_DATE" jdbcType="DATE" property="planCommissioningDate" />
+    <result column="DEPT_ID" jdbcType="BIGINT" property="deptId" />
+    <result column="MANAGER_USER_ID" jdbcType="BIGINT" property="managerUserId" />
+    <result column="PROJECT_OVERVIEW" jdbcType="VARCHAR" property="projectOverview" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />    
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, PROJECT_NAME, PROJECT_CODE, PROJECT_TYPE, PROJECT_STATUS, APPROVAL_DATE, PLAN_COMMISSIONING_DATE, 
+    DEPT_ID, MANAGER_USER_ID, PROJECT_OVERVIEW, STATUS, CREATE_BY, CREATE_DATE, 
+    LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_project_info
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <!-- 查询项目下项目组  ztt -->
+  <select id="getProjectGroupByProjectIds" parameterType="Long" resultType="map">
+  	select tpg.ID id ,tpg.PROJECT_ID projectId,tpg.PROJECT_GROUP_NAME projectGroupName,tpg.PARENT_ID parentId,tpg.PARENT_IDS parentIds,tpg.DISPLAY_SEQ displaySeq
+    from tbl_project_group tpg 
+    where  tpg.status=1
+   	and tpg.project_id in(
+   		SELECT DISTINCT project_id
+		FROM tbl_project_system
+		WHERE system_Id = #{systemId} AND STATUS = 1
+   	)
+    	
+  </select>
+  
+  <select id="getProjectListBySystemId" parameterType="Long" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from tbl_project_info
+   	where status=1 and id in(
+   		SELECT DISTINCT project_id
+		FROM tbl_project_system
+		WHERE system_Id = #{systemId} AND STATUS = 1
+   	)
+  </select>
+
+  <!--看板  根据当前登录用户获取所在项目-->
+  <select id="getAllProjectByUid" parameterType="Long" resultType="cn.pioneeruniverse.dev.entity.TblProjectInfo">
+  	SELECT DISTINCT project.ID id ,project.PROJECT_NAME projectName,project.PROJECT_CODE projectCode
+  FROM tbl_project_info project
+  LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = project.ID AND pgroup.STATUS =1
+  LEFT JOIN tbl_project_group_user pguser ON pguser.PROJECT_GROUP_ID = pgroup.ID  AND pguser.STATUS = 1
+  WHERE pguser.USER_ID = #{uid} and project.PROJECT_STATUS!=4 and project.STATUS = 1
+</select>
+  
+  <!-- 查询某人所在的项目组信息 -->
+   <select id="selectAllProjectByUser" parameterType="java.lang.Long"  resultMap="BaseResultMap">
+        SELECT
+		tpi.ID, PROJECT_NAME, PROJECT_CODE, PROJECT_TYPE,
+		PROJECT_STATUS, APPROVAL_DATE, PLAN_COMMISSIONING_DATE,
+        DEPT_ID, MANAGER_USER_ID, PROJECT_OVERVIEW
+		FROM tbl_project_group_user tpgu
+		INNER JOIN tbl_project_group tpg ON tpgu.PROJECT_GROUP_ID= tpg.ID 
+		INNER JOIN tbl_project_info tpi ON tpg.PROJECT_ID = tpi.ID 
+		WHERE tpgu.STATUS=1 AND tpg.STATUS=1 AND tpi.STATUS=1 AND tpgu.USER_ID=#{userId}   
+		GROUP BY tpi.ID,tpi.PROJECT_CODE,tpi.PROJECT_TYPE,tpi.PROJECT_STATUS 
+		
+		
+		
+	<!-- 	 select 
+    <include refid="Base_Column_List" />
+    from tbl_project_info where STATUS=1
+		 -->
+    
+  </select>
+  
+  
+   <select id="selectAllProject"   resultMap="BaseResultMap">
+      
+	 select 
+    <include refid="Base_Column_List" />
+    from tbl_project_info where STATUS=1 and PROJECT_TYPE=1
+		
+    
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_project_info
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblProjectInfo">
+    insert into tbl_project_info (ID, PROJECT_NAME, PROJECT_CODE, 
+      PROJECT_TYPE, PROJECT_STATUS, APPROVAL_DATE, 
+      PLAN_COMMISSIONING_DATE, DEPT_ID, MANAGER_USER_ID, 
+      PROJECT_OVERVIEW, STATUS, 
+      CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, 
+      LAST_UPDATE_DATE)
+    values (#{id,jdbcType=BIGINT}, #{projectName,jdbcType=VARCHAR}, #{projectCode,jdbcType=VARCHAR}, 
+      #{projectType,jdbcType=TINYINT}, #{projectStatus,jdbcType=TINYINT}, #{approvalDate,jdbcType=DATE}, 
+      #{planCommissioningDate,jdbcType=DATE}, #{deptId,jdbcType=BIGINT}, #{managerUserId,jdbcType=BIGINT}, 
+      #{projectOverview,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
+      #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, 
+      #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.dev.entity.TblProjectInfo">
+    insert into tbl_project_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="projectName != null">
+        PROJECT_NAME,
+      </if>
+      <if test="projectCode != null">
+        PROJECT_CODE,
+      </if>
+      <if test="projectType != null">
+        PROJECT_TYPE,
+      </if>
+      <if test="projectStatus != null">
+        PROJECT_STATUS,
+      </if>
+      <if test="approvalDate != null">
+        APPROVAL_DATE,
+      </if>
+      <if test="planCommissioningDate != null">
+        PLAN_COMMISSIONING_DATE,
+      </if>
+      <if test="deptId != null">
+        DEPT_ID,
+      </if>
+      <if test="managerUserId != null">
+        MANAGER_USER_ID,
+      </if>
+      <if test="projectOverview != null">
+        PROJECT_OVERVIEW,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="projectName != null">
+        #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="projectCode != null">
+        #{projectCode,jdbcType=VARCHAR},
+      </if>
+      <if test="projectType != null">
+        #{projectType,jdbcType=TINYINT},
+      </if>
+      <if test="projectStatus != null">
+        #{projectStatus,jdbcType=TINYINT},
+      </if>
+      <if test="approvalDate != null">
+        #{approvalDate,jdbcType=DATE},
+      </if>
+      <if test="planCommissioningDate != null">
+        #{planCommissioningDate,jdbcType=DATE},
+      </if>
+      <if test="deptId != null">
+        #{deptId,jdbcType=BIGINT},
+      </if>
+      <if test="managerUserId != null">
+        #{managerUserId,jdbcType=BIGINT},
+      </if>
+      <if test="projectOverview != null">
+        #{projectOverview,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblProjectInfo">
+    update tbl_project_info
+    <set>
+      <if test="projectName != null">
+        PROJECT_NAME = #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="projectCode != null">
+        PROJECT_CODE = #{projectCode,jdbcType=VARCHAR},
+      </if>
+      <if test="projectType != null">
+        PROJECT_TYPE = #{projectType,jdbcType=TINYINT},
+      </if>
+      <if test="projectStatus != null">
+        PROJECT_STATUS = #{projectStatus,jdbcType=TINYINT},
+      </if>
+      <if test="approvalDate != null">
+        APPROVAL_DATE = #{approvalDate,jdbcType=DATE},
+      </if>
+      <if test="planCommissioningDate != null">
+        PLAN_COMMISSIONING_DATE = #{planCommissioningDate,jdbcType=DATE},
+      </if>
+      <if test="deptId != null">
+        DEPT_ID = #{deptId,jdbcType=BIGINT},
+      </if>
+      <if test="managerUserId != null">
+        MANAGER_USER_ID = #{managerUserId,jdbcType=BIGINT},
+      </if>
+      <if test="projectOverview != null">
+        PROJECT_OVERVIEW = #{projectOverview,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblProjectInfo">
+    update tbl_project_info
+    set PROJECT_NAME = #{projectName,jdbcType=VARCHAR},
+      PROJECT_CODE = #{projectCode,jdbcType=VARCHAR},
+      PROJECT_TYPE = #{projectType,jdbcType=TINYINT},
+      PROJECT_STATUS = #{projectStatus,jdbcType=TINYINT},
+      APPROVAL_DATE = #{approvalDate,jdbcType=DATE},
+      PLAN_COMMISSIONING_DATE = #{planCommissioningDate,jdbcType=DATE},
+      DEPT_ID = #{deptId,jdbcType=BIGINT},
+      MANAGER_USER_ID = #{managerUserId,jdbcType=BIGINT},
+      PROJECT_OVERVIEW = #{projectOverview,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 查找某人所在的项目组信息 -->
+  <select id="findProjectByUser" parameterType="java.lang.Long" resultMap="BaseResultMap">		
+		SELECT tpi.ID, PROJECT_NAME, PROJECT_CODE, PROJECT_TYPE, PROJECT_STATUS, APPROVAL_DATE,
+		    PLAN_COMMISSIONING_DATE, DEPT_ID, MANAGER_USER_ID, PROJECT_OVERVIEW
+		FROM tbl_project_info tpi
+		LEFT JOIN tbl_project_group tpg ON tpg.PROJECT_ID = tpi.ID AND tpg.STATUS=1
+		LEFT JOIN tbl_project_group_user tpgu ON tpgu.PROJECT_GROUP_ID= tpg.ID AND tpgu.STATUS=1
+		WHERE tpi.STATUS=1 AND tpgu.USER_ID=#{userId} AND PROJECT_STATUS !=4
+		group by tpi.ID
+  </select>
+
+
+ <!-- 通过项目名称查找项目组信息 -->
+  <select id="findProjectByName" parameterType="String" resultMap="BaseResultMap">
+		SELECT tpi.ID, PROJECT_NAME, PROJECT_CODE, PROJECT_TYPE, PROJECT_STATUS, APPROVAL_DATE,
+		    PLAN_COMMISSIONING_DATE, DEPT_ID, MANAGER_USER_ID, PROJECT_OVERVIEW
+		FROM tbl_project_info tpi where tpi.status=1 and PROJECT_NAME=#{projectName}
+  </select>
+
+
+
+
+  <!-- 获取某人所在的项目小组信息 -->
+  <select id="getProjectGroupByUid" parameterType="map" resultType="map" >
+
+    select
+    tpg.ID id ,tpg.PROJECT_ID projectId,tpg.PROJECT_GROUP_NAME projectGroupName,tpg.PARENT_ID parentId,tpg.PARENT_IDS parentIds,tpg.DISPLAY_SEQ displaySeq
+
+    FROM tbl_project_group tpg  where tpg.id in (  select tpgu.PROJECT_GROUP_ID  from tbl_project_group_user tpgu where tpgu.user_id = #{uid,jdbcType=BIGINT} and tpgu.status=1 )
+
+  </select>
+ <!-- 获取某人所在的项目小组信息 -->
+  <select id="getProjectGroupBySystemId" parameterType="map" resultType="map" >
+
+    select
+    tpg.ID id ,tpg.PROJECT_ID projectId,tpg.PROJECT_GROUP_NAME projectGroupName,tpg.PARENT_ID parentId,tpg.PARENT_IDS parentIds,tpg.DISPLAY_SEQ displaySeq
+
+    FROM tbl_project_group tpg  where tpg.id in (  select tpgu.PROJECT_GROUP_ID  from tbl_project_group_user tpgu where tpgu.user_id = #{uid,jdbcType=BIGINT} and tpgu.status=1 )
+
+  </select>
+
+
+<!--根据项目获取项目小组-->
+  <select id="getProjectGroupByProjectId" parameterType="map" resultType="map" >
+
+
+
+    select tpg.ID id ,tpg.PROJECT_ID projectId,tpg.PROJECT_GROUP_NAME projectGroupName,tpg.PARENT_ID parentId,tpg.PARENT_IDS parentIds,tpg.DISPLAY_SEQ displaySeq
+    from tbl_project_group tpg where tpg.project_id = #{projectId,jdbcType=BIGINT} and tpg.status=1
+
+
+  </select>
+
+  <!-- <select id="findProjectByManagerUser" parameterType="java.lang.Long" resultMap="BaseResultMap">		
+		SELECT tpi.ID,tpi.PROJECT_NAME,tpi.PROJECT_CODE
+		FROM tbl_project_group_user tpgu
+		INNER JOIN tbl_project_group tpg ON tpgu.PROJECT_GROUP_ID= tpg.ID 
+		INNER JOIN tbl_project_info tpi ON tpg.PROJECT_ID = tpi.ID
+		WHERE tpgu.STATUS=1 AND tpg.STATUS=1 AND tpi.STATUS=1 AND tpgu.USER_ID=#{userId} 
+  </select>-->
+  
+   <!-- 获取某人所在的某个具体项目小组信息 -->
+  <select id="getProjectGroupByName" parameterType="map" resultType="map" >
+
+    select
+    tpg.ID id ,tpg.PROJECT_ID projectId,tpg.PROJECT_GROUP_NAME projectGroupName,tpg.PARENT_ID parentId,tpg.PARENT_IDS parentIds,tpg.DISPLAY_SEQ displaySeq
+
+    FROM tbl_project_group tpg  where tpg.project_id = #{projectId,jdbcType=BIGINT}  and  tpg.PROJECT_GROUP_NAME = #{projectGroupName,jdbcType=VARCHAR}    and tpg.status=1   and  tpg.id in (  select tpgu.PROJECT_GROUP_ID  from tbl_project_group_user tpgu where tpgu.user_id = #{uid,jdbcType=BIGINT} and tpgu.status=1 )
+
+  </select>
+
+
+
+
+<!-- 获取某个项目小组下的项目成员 -->
+  <select id="getUserIdByProjectId" parameterType="map" resultType="map" >
+select DISTINCT tpgu.`USER_ID` as userId from `tbl_project_group_user` tpgu where tpgu.PROJECT_GROUP_ID in
+( select tpg.id as pgid from `tbl_project_group` tpg where tpg.`PROJECT_ID`=#{projectId} and tpg.status=1) and tpgu.`STATUS`=1
+
+  </select>
+
+<!-- 获取某个系统所管理的项目 -->
+  <select id="getProjectBySystemId" parameterType="Long" resultMap="BaseResultMap">
+    SELECT DISTINCT tpi.ID  FROM tbl_project_system tps
+    left join tbl_project_info tpi on tps.project_id = tpi.ID
+    WHERE system_Id = #{systemId} AND tps.STATUS = 1 and tpi.STATUS = 1
+    GROUP BY tpi.ID
+    ORDER BY tpi.ID desc
+    LIMIT 0,1
+  </select>
+
+  <!-- 获取系统管理员项目信息 -->
+  <select id="getProjectListBySystem"  parameterType="String" resultType="cn.pioneeruniverse.dev.entity.TblProjectInfo">
+    SELECT pro.ID AS id,pro.PROJECT_NAME AS projectName,pro.PROJECT_CODE AS projectCode,
+      pro.PROJECT_TYPE as projectType
+    FROM tbl_project_info pro where pro.`STATUS` = 1
+    AND pro.PROJECT_NAME like concat("%",LOWER(#{projectName}),"%")
+    GROUP BY pro.ID DESC
+    UNION
+    SELECT pro.ID AS id,pro.PROJECT_NAME AS projectName,pro.PROJECT_CODE AS projectCode,
+      pro.PROJECT_TYPE as projectType
+    FROM tbl_project_info pro where pro.`STATUS` = 1
+    AND pro.PROJECT_CODE like concat("%",LOWER(#{projectName}),"%")
+    GROUP BY pro.ID DESC
+  </select>
+  <!-- 获取项目信息非管理员 -->
+  <select id="getProjectListByNoSystem"  parameterType="Map" resultType="cn.pioneeruniverse.dev.entity.TblProjectInfo">
+    SELECT DISTINCT pro.ID AS id,pro.PROJECT_NAME AS projectName,
+        pro.PROJECT_CODE AS projectCode,pro.PROJECT_TYPE as projectType
+    FROM tbl_project_info pro
+    LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = pro.ID
+    where
+    pgroup.ID IN (
+      SELECT DISTINCT guser2.PROJECT_GROUP_ID
+      FROM tbl_project_group_user guser2
+      WHERE guser2.USER_ID = #{uid}
+      AND guser2.STATUS = 1
+    ) AND pro.`STATUS` = 1 AND pgroup.STATUS = 1
+    AND pro.PROJECT_NAME like concat("%",LOWER(#{projectName}),"%")
+    GROUP BY pro.ID DESC
+    UNION
+    SELECT DISTINCT pro.ID AS id,pro.PROJECT_NAME AS projectName,
+        pro.PROJECT_CODE AS projectCode,pro.PROJECT_TYPE as projectType
+    FROM tbl_project_info pro
+    LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = pro.ID
+    where
+    pgroup.id IN (
+      SELECT DISTINCT guser2.PROJECT_GROUP_ID
+      FROM tbl_project_group_user guser2
+      WHERE guser2.USER_ID = #{uid}
+      AND guser2.STATUS = 1
+    ) AND pro.`STATUS` = 1 AND pgroup.STATUS = 1
+    AND pro.PROJECT_CODE like concat("%",LOWER(#{projectCode}),"%")
+    GROUP BY pro.ID DESC
+  </select>
+  <!-- 获取某个项目组关联的系统信息 -->
+  <select id="getSystemByProjectId"  parameterType="Long" resultType="cn.pioneeruniverse.dev.entity.TblSystemInfo">
+    SELECT tsi.ID AS id,tsi.SYSTEM_NAME AS systemName,tsi.SYSTEM_CODE AS systemCode
+    FROM tbl_system_info tsi
+    LEFT JOIN tbl_project_system tps ON tps.SYSTEM_ID = tsi.ID
+    where tsi.`STATUS` = 1 and tps.`STATUS` = 1 and tps.PROJECT_ID = #{projectId}
+    group by tsi.ID
+  </select>
+
+  <select id="findProjectGroupIdsByProjectId" parameterType="java.lang.Long" resultType="long">
+  	select ID from tbl_project_group where PROJECT_ID = #{id,jdbcType=BIGINT} and STATUS = 1
+  </select>
+  
+  <!-- 获取某个小组下，某个岗位的用户ID -->
+  <select id="findUserId" parameterType="map" resultType="long">
+    select USER_ID from tbl_project_group_user
+    <where>
+      USER_POST = #{userPost,jdbcType=TINYINT} and STATUS = 1 and
+      PROJECT_GROUP_ID in
+      <foreach collection="projectGroupIds" index="index" item="projectGroupId" separator="," open="(" close=")">
+        #{projectGroupId,jdbcType=BIGINT}
+      </foreach>
+    </where>
+  </select>
+</mapper>

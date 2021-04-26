@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="cn.pioneeruniverse.system.dao.mybatis.role.RoleDao">  
+
+<sql id="baseColumn">
+  ID,
+  ROLE_NAME,
+  ROLE_CODE,
+  PROJECT_ID,
+  USER_POST,
+  STATUS,
+  CREATE_BY,
+  CREATE_DATE,
+  LAST_UPDATE_BY,
+  LAST_UPDATE_DATE
+</sql>
+
+<!-- 通过角色编码和角色名获取角色信息 -->
+<select id="getAllRole" parameterType="cn.pioneeruniverse.system.entity.TblRoleInfo" resultMap="roleResult">
+  SELECT
+  <include refid="baseColumn"/>
+  FROM TBL_ROLE_INFO
+  WHERE STATUS = 1 AND PROJECT_ID IS NULL
+  <if test="roleName != null and roleName != ''">
+  	AND ROLE_NAME LIKE CONCAT('%', #{roleName}, '%') 
+  </if> 
+  <if test="roleCode != null and roleCode != ''">
+  	AND ROLE_CODE LIKE CONCAT('%', #{roleCode}, '%') 
+  </if>
+  ORDER BY ID
+</select>
+
+<!-- 获取所有角色信息，并且带出角色关联的菜单信息 -->
+<select id="getRoleWithMenu" resultMap="roleMenuResult">
+  SELECT
+  <include refid="baseColumn"/>
+  FROM TBL_ROLE_INFO
+  WHERE STATUS = 1 
+</select>
+
+<!-- 通过角色ID获取角色信息 -->
+<select id="findRoleById" parameterType="Long" resultMap="roleWithMenusResult">
+ SELECT 
+ <include refid="baseColumn" />
+ FROM TBL_ROLE_INFO   WHERE ID = #{id}
+</select>
+
+<!-- 获取某个人所拥有的所有角色信息 -->
+<select id="findUserRole" parameterType="Long" resultMap="roleResult">
+ SELECT 
+ <include refid="baseColumn" />
+ FROM TBL_ROLE_INFO TRI
+ WHERE EXISTS (SELECT 1 FROM TBL_USER_ROLE WHERE ROLE_ID = TRI.ID AND USER_ID=#{userId})
+</select>
+
+<!-- 获取某个人所拥有的有效的角色信息 -->
+<select id="getUserAllRole" parameterType="Long" resultMap="roleResult">
+SELECT
+<include refid="baseColumn" />
+FROM TBL_ROLE_INFO TRI
+WHERE TRI.STATUS=1 AND
+EXISTS (SELECT 1 FROM TBL_USER_ROLE TUR WHERE TUR.ROLE_ID = TRI.ID AND TUR.USER_ID=#{userId} AND TUR.STATUS=1)
+</select>
+
+<!-- 获取拥有相同角色编码前缀的角色数量 -->
+<select id="selectRoleCodeLen" parameterType="String" resultType="Long">
+  SELECT COUNT(1) FROM TBL_ROLE_INFO WHERE ROLE_CODE LIKE CONCAT(#{roleCode},'_%')
+</select>
+
+<!-- 新增角色 -->
+<insert id="insertRole" parameterType="cn.pioneeruniverse.system.entity.TblRoleInfo" useGeneratedKeys="true" keyProperty="id">
+
+ INSERT INTO TBL_ROLE_INFO
+ (
+  ROLE_NAME,
+  ROLE_CODE,
+  STATUS,
+  CREATE_BY,
+  LAST_UPDATE_BY
+ )
+ VALUES
+ (
+  #{roleName},
+  #{roleCode},
+  #{status},
+  #{createBy},
+  #{lastUpdateBy}
+ )
+
+</insert>
+
+    <!-- 查询最大的编号 -->
+<select id="selectMaxEmpNo" resultType="String">
+    SELECT
+	MAX(ROLE_CODE) FROM TBL_ROLE_INFO
+</select>
+
+<!-- 更新角色 -->
+<update id="updateRole" parameterType="cn.pioneeruniverse.system.entity.TblRoleInfo">
+        UPDATE TBL_ROLE_INFO 
+         <trim prefix="SET" suffixOverrides=",">
+             <if test="roleName != null and roleName != ''">
+               ROLE_NAME = #{roleName},
+             </if>
+             <if test="roleCode != null and roleCode != ''">
+              ROLE_CODE = #{roleCode},
+             </if>
+             <if test="status != null and status != ''">
+                 STATUS = #{status},
+             </if>
+             <if test="lastUpdateBy != null">
+                 LAST_UPDATE_BY = #{lastUpdateBy},
+             </if>
+             <if test="lastUpdateDate != null">
+                 LAST_UPDATE_DATE = #{lastUpdateDate},
+             </if>
+         </trim>
+        WHERE ID = #{id}
+</update>
+
+<!-- 逻辑删除指定的角色 -->
+<update id="delRole">
+    UPDATE TBL_ROLE_INFO  SET STATUS = 2,LAST_UPDATE_BY=#{lastUpdateBy} WHERE  ID IN 
+    <foreach item="id" collection="ids" open="(" close=")" separator=",">
+    #{id}
+    </foreach>
+   
+</update>
+
+<!-- 获取某个菜单关联的角色信息 -->
+<select id="getRoleByMenuId" parameterType="Long" resultMap="roleResult">
+   SELECT 
+  <include refid="baseColumn" />
+	 FROM TBL_ROLE_INFO  TRI  WHERE  EXISTS 
+	 (SELECT 1 FROM TBL_ROLE_MENU_BUTTON  WHERE ROLE_ID = TRI.ID AND MENU_BUTTON_ID=#{menuId})
+</select>
+
+<!-- 新增用户和角色关联关系 -->
+<insert id="insertRoleUser" parameterType="hashmap">
+    INSERT INTO tbl_user_role (
+    `USER_ID`,
+    `ROLE_ID`,
+    `STATUS`,
+    `CREATE_BY`,
+    `LAST_UPDATE_BY`
+    )
+    values
+    (
+      #{useId},
+      #{roleId},
+      #{status},
+      #{createBy},
+      #{lastUpdateBy}
+    )
+</insert>
+
+<!-- 更新用户和角色关联关系 -->
+<update id="updateRoleUser" parameterType="hashmap">
+    UPDATE tbl_user_role
+    SET `STATUS` = 1,`LAST_UPDATE_BY`= #{lastUpdateBy}
+    WHERE
+        USER_ID = #{useId}
+    AND ROLE_ID = #{roleId}
+</update>
+
+<!-- 获取某个人所拥有的某个具体角色 -->
+<select id="getRoleUserById" parameterType="hashmap" resultMap="roleResult">
+    SELECT
+        a.*
+    FROM
+        tbl_role_info a
+    INNER JOIN tbl_user_role b on a.ID = b.ROLE_ID
+    WHERE
+        USER_ID = #{useId}
+    AND ROLE_ID = #{roleId}
+</select>
+
+<!-- 获取某个人所拥有的所有角色信息 -->
+<select id="getRoleByUserId" parameterType="Long" resultMap="roleResult">
+   SELECT
+   <include refid="baseColumn" />
+   FROM TBL_ROLE_INFO TRI WHERE EXISTS
+   (SELECT 1 FROM TBL_USER_ROLE WHERE ROLE_ID = TRI.ID AND USER_ID = #{userId} AND STATUS = 1)
+   AND TRI.STATUS = 1
+</select>
+
+<!-- 获取未被项目关联的某个人的角色信息，分配岗位权限时显示角色 -->
+<select id="getRoleByUserId1" parameterType="Long" resultMap="roleResult">
+    SELECT
+    <include refid="baseColumn" />
+    FROM TBL_ROLE_INFO TRI WHERE EXISTS
+    (SELECT 1 FROM TBL_USER_ROLE WHERE ROLE_ID = TRI.ID AND USER_ID = #{userId} AND STATUS = 1)
+    AND TRI.STATUS = 1 AND PROJECT_ID IS NULL
+</select>
+
+<!-- 逻辑删除指定用户下的角色关联关系 -->
+<update id="updateRoleWithUser" parameterType="hashmap">
+    UPDATE tbl_user_role
+    SET `STATUS` = 2,`LAST_UPDATE_BY`= #{lastUpdateBy}
+    WHERE ROLE_ID = #{roleId}
+    AND USER_ID in
+    <foreach collection="userId" item="userId" index="index" open="(" close=")" separator=",">
+        #{userId}
+    </foreach>
+</update>
+
+<!-- 通过角色名获取角色信息 -->
+<select id="findRoleByName" parameterType="cn.pioneeruniverse.system.entity.TblRoleInfo" resultMap="roleResult">
+    SELECT
+        <include refid="baseColumn"/>
+    FROM
+        tbl_role_info
+    WHERE
+        ROLE_NAME = #{roleName}
+</select>
+
+<!-- 删除角色和菜单的关联关系 -->
+<delete id="deleteRoleMenu" parameterType="hashmap">
+    DELETE
+    FROM
+        tbl_role_menu_button
+    WHERE
+        ROLE_ID = #{roleId}
+</delete>
+
+<!-- 新增角色和菜单关联关系 -->
+<insert id="insertRoleMenu" parameterType="hashmap">
+    INSERT INTO `tbl_role_menu_button` (
+    `ROLE_ID`,
+    `MENU_BUTTON_ID`,
+    `LAST_UPDATE_BY`
+    )
+    VALUES
+    <foreach collection="menuId" item="menuId" index="index" separator=",">
+        (
+        #{roleId},
+        #{menuId},
+        #{lastUpdateBy}
+        )
+    </foreach>
+</insert>
+
+<!-- 获取系统管理员的角色信息 -->
+    <select id="getAdminRole" resultMap="roleResult">
+      SELECT
+        ID,
+        ROLE_NAME,
+        ROLE_CODE
+      FROM
+        tbl_role_info
+      WHERE
+        ID = 1
+      AND `STATUS` = 1
+    </select>
+
+<resultMap type="cn.pioneeruniverse.system.entity.TblRoleInfo"  id="roleResult">
+	<id column="ID" property="id"/>
+	<result column="ROLE_NAME" property="roleName"/>
+    <result column="ROLE_CODE" property="roleCode"/>
+    <result column="PROJECT_ID" property="projectId"/>
+    <result column="USER_POST" property="userPost"/>
+	<result column="STATUS" property="status"/>
+	<result column="CREATE_BY" property="createBy"/>
+	<result column="CREATE_DATE" property="createDate"/>
+	<result column="LAST_UPDATE_BY" property="lastUpdateBy"/>
+	<result column="LAST_UPDATE_DATE" property="lastUpdateDate"/>
+</resultMap>
+
+<!--在查询角色信息的时候，一起查询出对应角色下已分配的菜单ID -->
+<resultMap type="cn.pioneeruniverse.system.entity.TblRoleInfo" id="roleWithMenusResult" extends="roleResult">
+  <collection property="menuIds" ofType="String" column="ID" select="cn.pioneeruniverse.system.dao.mybatis.role.MenuRoleDao.selectMenuIdsByRoleId"></collection>
+</resultMap>
+
+<!-- 在查询角色信息的时候，一起查询出对应角色下已分配的菜单列表信息 -->
+<resultMap type="cn.pioneeruniverse.system.entity.TblRoleInfo" id="roleMenuResult" extends="roleResult">
+   <collection property="menuList" ofType= "cn.pioneeruniverse.system.entity.TblMenuButtonInfo" column="ID" select="cn.pioneeruniverse.system.dao.mybatis.menu.MenuDao.getMenuByRoleId"></collection>
+</resultMap>
+
+<!-- 获取所有有效的角色信息 -->
+<select id="getRoles" resultMap="roleResult">
+	select  <include refid="baseColumn"/> from tbl_role_info where STATUS = 1
+</select>
+</mapper>

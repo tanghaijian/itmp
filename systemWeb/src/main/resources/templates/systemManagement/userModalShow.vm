@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <META HTTP-EQUIV="pragma" CONTENT="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="no-cache,IE=edge,Chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>培训管理</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+
+
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/component.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/systemManagement/useManagement/userModal.js"></script>
+    <style>
+        .container-fluid{
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="layer-content">
+    <form class="form-horizontal" id="addTrainModalForm">
+        <div class="color1">
+            <div class="container-fluid" id="userForm">
+                <div class="rowdiv">
+                    <div class="def_col_12">
+                        <label class="select-label def_col_12 font_right">姓名：</label>
+                        <div class="def_col_24">
+                            <input type="text" class="form-control " placeholder="请输入" id="userName" name="userName" value="" />
+                        </div>
+                    </div>
+
+                    <div class="def_col_12">
+                        <label class="select-label def_col_12 font_right">部门：</label>
+                        <div class="def_col_24">
+                            <input type="text" class="form-control " placeholder="请输入" id="deptName" name="deptName" value="" />
+                        </div>
+                    </div>
+                    <div class="def_col_12">
+                        <label class="select-label def_col_12 font_right">公司：</label>
+                        <div class="def_col_24">
+                            <input type="text" class="form-control " placeholder="请输入" id="companyName" name="companyName" value="" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row control-row search_btn">
+                    <button type="button" class="btn btn-primary" onclick="userTableShow()">搜&nbsp;&nbsp;&nbsp;索</button>
+                    <button type="button" onclick="userReset()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                </div>
+
+            </div>
+            <div  class="downBtn">
+                <span class="fa fa-caret-up"></span>
+            </div>
+        </div>
+        <br>
+        <div class="content-table">
+            <div class="wode">
+                <table id="userTable"></table>
+                <div id="userPage"></div>
+            </div>
+        </div>
+    </form>
+    #*<div class="layer-footer">
+        <button type="button" id="userbutton" class="btn btn-primary" data-user="default" onclick="commitUser()">确定</button>
+        <button type="button" class="btn btn-default" onclick="layerFormClose()">取消</button>
+    </div>*#
+</div>
+<div id="loading">
+    <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+</div>
+</body>
+</html>

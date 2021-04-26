@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblSystemModuleScmMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblSystemModuleScm">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="system_ID" jdbcType="BIGINT" property="systemId" />
+    <result column="system_scm_ID" jdbcType="BIGINT" property="systemScmId" />
+    <result column="system_module_ID" jdbcType="BIGINT" property="systemModuleId" />
+    <result column="environment_type" jdbcType="TINYINT" property="environmentType" />
+    <result column="SCM_TYPE" jdbcType="TINYINT" property="scmType" />
+    <result column="TOOL_ID" jdbcType="BIGINT" property="toolId" />
+    <result column="SYSTEM_REPOSITORY_ID" jdbcType="BIGINT" property="systemRepositoryId"/>
+    <result column="SCM_REPOSITORY_NAME" jdbcType="VARCHAR" property="scmRepositoryName"/>
+    <result column="SCM_URL" jdbcType="VARCHAR" property="scmUrl" />
+    <result column="SCM_BRANCH" jdbcType="VARCHAR" property="scmBranch" />
+    <result column="dependency_system_module_ids" jdbcType="VARCHAR" property="dependencySystemModuleIds" />
+    <result column="source_code_update_STATUS" jdbcType="TINYINT" property="sourceCodeUpdateStatus" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+    
+   <result column="SYSTEM_SCM_ID" jdbcType="BIGINT" property="systemScmId" />
+   <result column="ids" jdbcType="VARCHAR" property="idsString" />
+   <result column="moduleIds" jdbcType="VARCHAR" property="moduleIdsString" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, system_ID, system_module_ID, ENVIRONMENT_TYPE, SCM_TYPE, TOOL_ID, SCM_URL, SCM_BRANCH,
+    DEPENDENCY_SYSTEM_MODULE_IDS, SOURCE_CODE_UPDATE_STATUS,SYSTEM_REPOSITORY_ID,SCM_REPOSITORY_NAME,
+    STATUS, CREATE_BY, CREATE_DATE,LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  <!-- 根据systemScmId和systemId把微服务与之配置的配置也应该被删除 -->
+	<update id="deleteBySystemScmId" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModuleScm" >
+		UPDATE tbl_system_module_scm
+		set STATUS = 2
+		where  SYSTEM_SCM_ID = #{id} and SYSTEM_ID = #{systemId}
+	
+	</update>
+  <!-- 把勾选的配置置为有效 -->
+  <update id="updateYes" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModuleScm" >
+  	UPDATE tbl_system_module_scm  moduleScm
+  	set moduleScm.SYSTEM_ID = #{systemId},
+  	 moduleScm.SYSTEM_SCM_ID = #{systemScmId},
+  	 moduleScm.SYSTEM_MODULE_ID = #{systemModuleId},
+  	 moduleScm.STATUS = 1 ,
+  	 moduleScm.LAST_UPDATE_BY = #{lastUpdateBy},
+  	 moduleScm.LAST_UPDATE_DATE = #{lastUpdateDate}
+  	WHERE ID =#{id}
+  </update>
+  <!-- 把当前服务下所有的配置都置为无效 -->
+  <update id="updateNo" parameterType="Long" >
+  	update tbl_system_module_scm set STATUS = 2
+		where system_module_ID=#{id}
+  </update>
+  <!-- 根据系统id删除 -->
+	<update id="deleteBySystemId" parameterType="Long">
+		update tbl_system_module_scm set STATUS = 2
+		where system_ID=#{id}
+	</update>
+	
+	<!-- 更新模块源码状态 -->
+	<update id="updateModuleScm" parameterType="map" >
+  	update tbl_system_module_scm set STATUS = #{status}
+		where system_module_ID=#{id}
+  </update>
+	
+  <!-- 插入 -->
+  <insert id="insertModuleScm" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModuleScm">
+	  insert into tbl_system_module_scm(system_ID,SYSTEM_SCM_ID, SYSTEM_MODULE_ID,
+     CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE) 
+     values(#{systemId},#{systemScmId},#{systemModuleId},
+	  #{createBy},#{createDate},#{lastUpdateBy},#{lastUpdateDate})
+  </insert>
+  <!-- 根据systemModuleId逻辑删除 -->
+  <update id="delete" parameterType="Long">
+  	update tbl_system_module_scm
+	set STATUS = 2
+	WHERE SYSTEM_MODULE_ID = #{systemModuleId}
+  </update>
+  <!-- 根据id查询 -->
+  <select id="findModuleScm" parameterType="Long" resultType="cn.pioneeruniverse.dev.entity.TblSystemModuleScm">
+	  SELECT scm.ID id,scm.SYSTEM_SCM_ID systemScmId
+	  FROM tbl_system_module_scm scm
+	  WHERE scm.SYSTEM_MODULE_ID = #{id} and scm.STATUS = 1
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_system_module_scm
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+    <select id = "getModuleScmByParam" parameterType="map" resultMap="BaseResultMap">
+   
+   select 
+  	<include refid="Base_Column_List" />
+    from tbl_system_module_scm
+   <!--  where system_ID = #{systemId} and environment_type=#{environmentType} -->
+     <where>
+     <if test="systemId!=null and systemId!=''">
+    		and system_ID = #{systemId}
+    	</if>
+   <if test="systemScmId!=null and systemScmId!=''">
+    		and SYSTEM_SCM_ID = #{systemScmId}
+    	</if>
+     
+    <!-- <if test="environmentType!=null and environmentType!=''">
+    		and environment_type=#{environmentType}
+    	</if> -->
+    	
+    	 <if test="systemModuleId!=null and systemModuleId!=''">
+    		and SYSTEM_MODULE_ID=#{systemModuleId}
+    	</if>
+       <if test="status!=null and status!=''">
+         and status=1
+       </if>
+     </where>
+    
+  </select>
+  
+  
+  <!-- 普通单表查询 -->
+   <select id = "judge" parameterType="map" resultType="cn.pioneeruniverse.dev.entity.TblSystemModuleScm">
+   
+   select 
+  	<include refid="Base_Column_List" />
+    from tbl_system_module_scm
+   
+     <where>
+     <if test="systemId!=null and systemId!=''">
+    		and system_ID = #{systemId}
+    	</if>
+   <if test="systemScmId!=null and systemScmId!=''">
+    		and SYSTEM_SCM_ID = #{systemScmId}
+    	</if>
+     
+    
+    	
+    	 <if test="systemModuleId!=null and systemModuleId!=''">
+    		and SYSTEM_MODULE_ID=#{systemModuleId}
+    	</if>
+    	and STATUS=1
+    	
+     </where>
+     
+    
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_system_module_scm
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModuleScm">
+    insert into tbl_system_module_scm (ID, environment_type, system_ID, 
+      system_module_ID, dependency_system_module_ids, 
+      source_code_update_STATUS, STATUS, CREATE_BY, 
+      CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+      )
+    values (#{id,jdbcType=BIGINT}, #{environmentType,jdbcType=TINYINT}, #{systemId,jdbcType=BIGINT}, 
+      #{systemModuleId,jdbcType=BIGINT}, #{dependencySystemModuleIds,jdbcType=VARCHAR}, 
+      #{sourceCodeUpdateStatus,jdbcType=TINYINT}, #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <!-- 按选择插入 -->
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModuleScm">
+    insert into tbl_system_module_scm
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="environmentType != null">
+        environment_type,
+      </if>
+      <if test="systemId != null">
+        system_ID,
+      </if>
+      <if test="systemModuleId != null">
+        system_module_ID,
+      </if>
+      <if test="dependencySystemModuleIds != null">
+        dependency_system_module_ids,
+      </if>
+      <if test="sourceCodeUpdateStatus != null">
+        source_code_update_STATUS,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="environmentType != null">
+        #{environmentType,jdbcType=TINYINT},
+      </if>
+      <if test="systemId != null">
+        #{systemId,jdbcType=BIGINT},
+      </if>
+      <if test="systemModuleId != null">
+        #{systemModuleId,jdbcType=BIGINT},
+      </if>
+      <if test="dependencySystemModuleIds != null">
+        #{dependencySystemModuleIds,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceCodeUpdateStatus != null">
+        #{sourceCodeUpdateStatus,jdbcType=TINYINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 按需更新 -->
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModuleScm">
+    update tbl_system_module_scm
+    <set>
+      <if test="environmentType != null">
+        environment_type = #{environmentType,jdbcType=TINYINT},
+      </if>
+      <if test="systemId != null">
+        system_ID = #{systemId,jdbcType=BIGINT},
+      </if>
+      <if test="systemModuleId != null">
+        system_module_ID = #{systemModuleId,jdbcType=BIGINT},
+      </if>
+      <if test="dependencySystemModuleIds != null">
+        dependency_system_module_ids = #{dependencySystemModuleIds,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceCodeUpdateStatus != null">
+        source_code_update_STATUS = #{sourceCodeUpdateStatus,jdbcType=TINYINT},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 更新所有字段 -->
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModuleScm">
+    update tbl_system_module_scm
+    set environment_type = #{environmentType,jdbcType=TINYINT},
+      system_ID = #{systemId,jdbcType=BIGINT},
+      system_module_ID = #{systemModuleId,jdbcType=BIGINT},
+      dependency_system_module_ids = #{dependencySystemModuleIds,jdbcType=VARCHAR},
+      source_code_update_STATUS = #{sourceCodeUpdateStatus,jdbcType=TINYINT},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+   <!-- 把勾选的配置置为有效 -->
+  <update id="updateModuleStatusBySystemId" parameterType="map" >
+  	UPDATE tbl_system_module_scm  moduleScm
+  	set moduleScm.status = #{status}
+  	WHERE system_id =#{systemId} and SYSTEM_SCM_ID=#{systemScmId} 
+  </update>
+
+
+
+<!-- 模块源码配置中显示内容，按环境合并 -->
+  <select id="getModuleScmBySystemId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    SELECT ts.SYSTEM_ID,ts.SCM_TYPE,ts.ENVIRONMENT_TYPE,ts.SCM_URL,ts.SCM_BRANCH,ts.SYSTEM_REPOSITORY_ID,
+    COUNT(ID) as cnt,concat(GROUP_CONCAT(ts.ID)) as ids,concat (GROUP_CONCAT(ts.SYSTEM_MODULE_ID)) as moduleIds
+    FROM tbl_system_module_scm ts
+    WHERE ts.system_ID = #{systemId,jdbcType=BIGINT} and ts.STATUS = 1
+    GROUP BY ts.ENVIRONMENT_TYPE,ts.SCM_TYPE,ts.SYSTEM_REPOSITORY_ID,ts.SCM_URL,ts.SCM_BRANCH
+  </select>
+
+  <update id="deleteModuleScmById" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModuleScm">
+  	update tbl_system_module_scm
+	set STATUS = 2,
+	LAST_UPDATE_BY = #{lastUpdateBy,jdbcType = BIGINT},
+	LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType = TIMESTAMP}
+	WHERE ID = #{id,jdbcType = BIGINT}
+  </update>
+
+  <!-- 子模块源码插入 -->
+  <insert id="insertModuleScm1" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModuleScm">
+    insert into tbl_system_module_scm
+    (system_ID,environment_type,SYSTEM_SCM_ID,system_module_ID,SCM_TYPE,TOOL_ID,
+    SYSTEM_REPOSITORY_ID,SCM_URL,SCM_REPOSITORY_NAME,SCM_BRANCH,dependency_system_module_ids,
+    source_code_update_STATUS, STATUS, CREATE_BY,CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE)
+    values
+    (#{systemId,jdbcType=BIGINT}, #{environmentType,jdbcType=TINYINT},#{systemScmId,jdbcType=BIGINT},
+    #{systemModuleId,jdbcType=BIGINT},#{scmType,jdbcType=TINYINT},#{toolId,jdbcType=BIGINT},
+    #{systemRepositoryId,jdbcType=BIGINT},#{scmUrl,jdbcType=VARCHAR},
+    #{scmRepositoryName,jdbcType=VARCHAR},#{scmBranch,jdbcType=VARCHAR},
+    #{dependencySystemModuleIds,jdbcType=VARCHAR},#{sourceCodeUpdateStatus,jdbcType=TINYINT},
+    #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT},#{createDate,jdbcType=TIMESTAMP},
+    #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+
+<!-- 更新子模块源码 -->
+  <update id="updateModuleScm1" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModuleScm">
+    update tbl_system_module_scm set
+    SCM_TYPE = #{scmType,jdbcType=TINYINT},TOOL_ID = #{toolId,jdbcType=BIGINT},
+    SYSTEM_REPOSITORY_ID = #{systemRepositoryId,jdbcType=BIGINT},SCM_URL = #{scmUrl,jdbcType=VARCHAR},
+    SCM_REPOSITORY_NAME = #{scmRepositoryName,jdbcType=VARCHAR},SCM_BRANCH = #{scmBranch,jdbcType=VARCHAR},
+    LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+    LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+<!-- 获取某个环境下的模块源码配置数 -->
+  <select id="findModuleScmByEnvironmentType" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModuleScm"
+          resultType="Integer">
+    SELECT count(ts.ID) FROM tbl_system_module_scm ts
+    WHERE ts.system_ID = #{systemId,jdbcType=BIGINT} AND ts.STATUS = 1
+    AND ts.ENVIRONMENT_TYPE = #{environmentType,jdbcType=TINYINT}
+  </select>
+
+<!-- 查询，通过结果判断是否存在，在新增、编辑模块源码配置的时候使用 -->
+  <select id="findModuleScmDoesItExist" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModuleScm"
+          resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" /> FROM tbl_system_module_scm
+    WHERE system_ID = #{systemId,jdbcType=BIGINT} and  system_MODULE_ID= #{systemModuleId,jdbcType=BIGINT}
+    and ENVIRONMENT_TYPE = #{environmentType,jdbcType=TINYINT} and STATUS = 1
+  </select>
+
+<!-- 通过系统获取模块源码配置信息 -->
+  <select id="findModuleScmBySystemId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" /> FROM tbl_system_module_scm ts
+    WHERE ts.system_ID = #{systemId,jdbcType=BIGINT} AND ts.STATUS = 1
+  </select>
+</mapper>

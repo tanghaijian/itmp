@@ -1,0 +1,4 @@
+#set($systemuiStatic="#springUrl('')/systemui/static")
+#set($devManageuiStatic="#springUrl('')/devManageui/static")
+#set($projectManageuiStatic="#springUrl('')/projectManageui/static")
+#set($testManageuiStatic="#springUrl('')/testManageui/static")

@@ -1,0 +1,257 @@
+.ztree{
+	border: none;
+}
+.treeSearch{
+	padding-left: 10px;
+	padding-right: 50px;
+	border-bottom: 1px solid #E4E4E4;
+	position: relative;
+	height: 50px;
+}
+.treeSearch input{
+	display: inline-block;
+	margin: 10px 0;
+}
+.showBtn{
+	position: absolute;
+	right: 0; 
+	top: 0;
+	height: 100%;
+	width: 50px; 
+	font-size: 28px;  
+	cursor: pointer; 
+	vertical-align:middle
+} 
+.center_open+a+ul>li{
+	display: list-item !important;
+}
+.ztree li span.button.root_open{background-position:-105px -63px}
+.ztree li span.button.root_close{background-position:-126px -63px}
+.ztree li span.button.roots_open{background-position: -105px 0;}
+.ztree li span.button.roots_close{background-position: -126px 0;}
+.ztree li span.button.center_open{background-position: -105px -21px;}
+.ztree li span.button.center_close{background-position: -126px -21px;}
+.ztree li span.button.bottom_open{background-position: -105px -42px;}
+.ztree li span.button.bottom_close{background-position: -126px -42px;}
+.ztree li span.button.noline_open{background-position: -105px -84px;}
+.ztree li span.button.noline_close{background-position: -126px -84px;} 
+.ztree li span.button.roots_docu{background-position: -84px 0;}
+.ztree li span.button.center_docu{background-position: -84px -21px;}
+.ztree li span.button.bottom_docu{background-position: -84px -42px;}
+.treeDiv{
+	width: 300px; 
+	border: 1px solid #E4E4E4;
+	margin: 10px;
+}
+ .ztree{
+ 	display: block;
+ 	max-height: 600px;
+ }
+ .new_menuSelect{
+ 	display: none;
+ }
+#addMenuModal .modal-dialog{
+	width: 450px;
+}
+#addMenuModal .modal-body{
+	padding: 20px !important;
+	padding-bottom: 5px !important;
+} 
+body{
+    height: auto !important;
+    display: flex;
+    flex-direction: row;
+}  
+.main-content{
+	flex: 1;
+	width: 0;
+}
+.allInfo .def_content{
+	border-top: 1px solid #D9D9D9;
+	background: white;
+	padding: 10px 0;
+	border-radius: 0 0 4px 4px;
+}
+ 
+#addCaseSteps>tbody>tr{
+	height:102px;
+}
+#addCaseSteps textarea.form-control{
+	height:94px;
+}
+#editCaseSteps>tbody>tr{
+	height:102px;
+}
+#editCaseSteps>tbody>tr>td.stepOrder{
+	line-height:84px;
+}
+#editCaseSteps>tbody>tr>td.handleBtn{
+	line-height:84px;
+}
+#editCaseSteps textarea.form-control{
+	height:94px;
+}
+#test-case-table>tbody>tr>td:first-child{
+	color:#F4F4F4;
+	background:url('../../images/tabe-dot.png') no-repeat 70% 50%;
+}
+#addCaseSteps td{
+    position: relative;
+}  
+.def_tableDiv2{
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    top: 2px;
+    bottom: 3px;
+}
+#editCaseSteps td{
+    position: relative;
+}
+.def_tableDiv2{
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    top: 2px;
+    bottom: 3px;
+}  
+#commitBug .rowdiv{
+    margin-bottom: 15px;
+}
+.rightModal{
+	padding: 0 15px;
+    margin-bottom: 10px;
+}
+.tagTitle{
+	
+    padding: 8px 0;
+    font-size: 13px;
+    font-weight: bold;
+    position: relative;
+}
+#newTestCaseInfo .content-table{
+	margin: 0!important;
+} 
+.caseTitleFont{
+	font-size: 13px;
+	line-height: 13px;
+	margin-bottom: 10px;
+}
+.caseLable{
+	text-align:right;
+	padding-right: 8px;
+	line-height : 30px;
+}  
+
+#checkTestCaseModal .rowdiv{
+	margin: 0;
+}
+#checkTestCaseModal .rowdiv{
+	margin: 0;
+}
+#check_caseType{ 
+	line-height: 16px;
+	border-radius: 3px;
+	padding: 2px 8px;
+}
+#casePrecondition,#inputData,#expectResult{
+	line-height: 30px;
+} 
+.form-group{
+	margin: 0!important;
+}
+.a_style{
+	cursor:pointer;
+	color: #0e90d2;
+} 
+#newTestCaseInfo .def_content{
+	padding-right: 20px;
+} 
+.hideCaseID{
+	display:none;
+}
+.btnArea{
+	margin-bottom: 5px;
+}
+#canEditField,#editFieldDiv,#checkEditField{
+	margin: 10px 0;
+	padding: 15px 0 5px;
+	border: 1px solid #CCCCCC;
+	border-left: none;
+	border-right: none; 
+}
+#canEditField>div,#editFieldDiv>div{
+	margin-bottom: 5px;
+	padding: 0;
+}
+#checkEditField>div{
+	margin-bottom: 5px;
+	line-height: 30px; 
+}
+#canEditField .font_right,#editFieldDiv .font_right{
+	line-height: 30px;
+}
+#checkTestCaseModal .modal-body{
+	padding: 8px!important;
+}
+.whiteBox{
+	background: #fff;
+	position: absolute; 
+	top: 8px;
+	bottom: 8px;
+	left: 8px;
+	right: 8px;
+	border-radius: 4px;
+}
+.whiteBox>div{
+	background: #fff;
+	padding: 8px 20px;
+	margin-bottom: 8px;
+	border-radius: 4px;
+}
+.whiteBox .def_title{
+	padding: 10px 0; 
+	border-bottom: 1px solid #d1d1d1;
+	margin-bottom: 8px;
+}
+.whiteBox .def_title span{
+	color: #108EE9 !important;
+}
+.tagBody{
+	margin-bottom: 8px;
+}
+.ztree li span.button.ico_open, .ztree li span.button.ico_close, .ztree li span.button.ico_docu{
+	background-image: url(../../images/assetsLibrary/file.jpg);
+	background-repeat: no-repeat;
+    background-position: 0;
+}
+.icon-double-angle-left{
+	width: 20px;
+	height: 20px;
+	display: block;  
+    border: 1px solid #bbb; 
+    border-radius: 16px;
+    background-color: #fff; 
+    position: absolute;  
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+.showBtn .fa{  
+	position: absolute;
+	top: 2px; 
+	left: 5px; 
+	color: #aaa;
+	font-size: 13px; 
+}
+body>.main-content{
+	display: none;
+}
+.content-btn{
+	padding: 10px 20px 0px 20px  !important;
+}
+.content-table{
+	padding-top: 10px !important;
+}

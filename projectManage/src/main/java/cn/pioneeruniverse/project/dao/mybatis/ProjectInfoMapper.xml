@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.ProjectInfoMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblProjectInfo">
+  	<id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="PROJECT_NAME" jdbcType="VARCHAR" property="projectName" />
+    <result column="PROJECT_CODE" jdbcType="VARCHAR" property="projectCode" />
+    <result column="PROJECT_TYPE" jdbcType="TINYINT" property="projectType" />
+    <result column="PROJECT_STATUS" jdbcType="TINYINT" property="projectStatus" />
+    <result column="APPROVAL_DATE" jdbcType="DATE" property="approvalDate" />
+    <result column="LONG_TIME_STATUS" jdbcType="TINYINT" property="longTimeStatus" />
+    <result column="PLAN_START_DATE" jdbcType="DATE" property="planStartDate" />
+    <result column="PLAN_END_DATE" jdbcType="DATE" property="planEndDate" />
+    <result column="PLAN_COMMISSIONING_DATE" jdbcType="DATE" property="planCommissioningDate" />
+    <result column="DEPT_ID" jdbcType="BIGINT" property="deptId" />
+    <result column="MANAGER_USER_ID" jdbcType="BIGINT" property="managerUserId" />
+    <result column="PROJECT_OVERVIEW" jdbcType="VARCHAR" property="projectOverview" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+    
+  </resultMap>
+  <sql id="Base_Column_List">
+   		 ID, PROJECT_NAME, PROJECT_CODE, PROJECT_TYPE, PROJECT_STATUS, APPROVAL_DATE,LONG_TIME_STATUS, PLAN_START_DATE, PLAN_END_DATE, 
+   		 PLAN_COMMISSIONING_DATE, DEPT_ID, MANAGER_USER_ID, PROJECT_OVERVIEW, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  <select id="selectProjects" parameterType="map" resultMap="BaseResultMap">
+  	select 
+  	 <include refid="Base_Column_List" />
+  	 from tbl_project_info
+  	 <where>
+  	 	<if test="tblProjectInfo.projectCode != null">
+  	 		and PROJECT_CODE like concat("%",#{tblProjectInfo.projectCode,jdbcType=VARCHAR},"%")
+  	 	</if>
+  	 	<if test="tblProjectInfo.projectName != null">
+  	 		and PROJECT_NAME like concat("%",#{tblProjectInfo.projectName,jdbcType=VARCHAR},"%")
+  	 	</if>
+  	 	<if test="tblProjectInfo.projectType !=null">
+  	 		and PROJECT_TYPE = #{tblProjectInfo.projectType,jdbcType=TINYINT}
+  	 	</if>
+  	 	<if test="tblProjectInfo.projectStatus != null">
+  	 		and PROJECT_STATUS = #{tblProjectInfo.projectStatus,jdbcType=TINYINT}
+  	 	</if>
+  	 	<if test="tblProjectInfo.planStartDate != null">
+  	 		and PLAN_START_DATE = #{tblProjectInfo.planStartDate,jdbcType=DATE}
+  	 	</if>
+  	 	<if test="tblProjectInfo.planEndDate != null">
+  	 		and PLAN_END_DATE  = #{tblProjectInfo.planEndDate,jdbcType=DATE}
+  	 	</if>
+  	 	<if test="tblProjectInfo.projectOverview != null">
+  	 		and PROJECT_OVERVIEW like concat("%",#{tblProjectInfo.projectOverview,jdbcType=VARCHAR},"%")
+  	 	</if>
+  	 	<if test="tblProjectInfo.ids != null">
+  	 		<foreach collection="tblProjectInfo.ids" item="id">
+  	 			and ID = #{id,jdbcType=BIGINT}
+  	 		</foreach>
+  	 	</if>
+  	 </where>
+  	 <!-- limit (#{currentPage}-1*#{pageSize}),#{pageSize}  -->
+  	 limit #{start},#{pageSize}
+  </select>
+ 
+  <insert id="insertObject" useGeneratedKeys="true" keyProperty="id" parameterType="cn.pioneeruniverse.project.entity.TblProjectInfo">
+  	insert into tbl_project_info (PROJECT_NAME, PROJECT_CODE, 
+      PROJECT_TYPE, PROJECT_STATUS, APPROVAL_DATE, LONG_TIME_STATUS, PLAN_START_DATE, PLAN_END_DATE,
+      PLAN_COMMISSIONING_DATE, DEPT_ID, 
+      MANAGER_USER_ID, PROJECT_OVERVIEW, STATUS, CREATE_BY, CREATE_DATE,  LAST_UPDATE_BY, LAST_UPDATE_DATE)
+    values (#{projectName,jdbcType=VARCHAR}, #{projectCode,jdbcType=VARCHAR}, 
+      #{projectType,jdbcType=TINYINT}, #{projectStatus,jdbcType=TINYINT}, 
+      #{approvalDate,jdbcType=DATE}, #{longTimeStatus,jdbcType=TINYINT}, #{planStartDate,jdbcType=DATE}
+      #{planEndDate,jdbcType=DATE}, #{planCommissioningDate,jdbcType=DATE}, #{deptId,jdbcType=BIGINT}, 
+      #{managerUserId,jdbcType=BIGINT}, #{projectOverview,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT},
+      #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <delete id="deleteProjectById" parameterType="java.lang.Long">
+  	delete from tbl_project_info where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <select id="selectProjectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select 
+  	<include refid="Base_Column_List" />
+  	from tbl_project_info 
+  	where ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <update id="updateProject" parameterType="cn.pioneeruniverse.project.entity.TblProjectInfo">
+  	 update tbl_project_info
+    set PROJECT_NAME = #{projectName,jdbcType=VARCHAR},
+      PROJECT_CODE = #{projectCode,jdbcType=VARCHAR},
+      PROJECT_TYPE = #{projectType,jdbcType=TINYINT},
+      PROJECT_STATUS = #{projectStatus,jdbcType=TINYINT},
+      APPROVAL_DATE = #{approvalDate,jdbcType=DATE},
+      LONG_TIME_STATUS = #{longTimeStatus,jdbcType=TINYINT},
+      PLAN_START_DATE = #{planStartDate,jdbcType=DATE},
+      PLAN_END_DATE = #{planEndDate,jdbcType=DATE},
+      PLAN_COMMISSIONING_DATE = #{planCommissioningDate,jdbcType=DATE},
+      DEPT_ID = #{deptId,jdbcType=BIGINT},
+      MANAGER_USER_ID = #{managerUserId,jdbcType=BIGINT},
+      PROJECT_OVERVIEW = #{projectOverview,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+      
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectCount" resultType="java.lang.Integer">
+  	select count(*) from tbl_project_info
+  </select>
+
+    <!-- 当前人所处的项目-->
+    <select id="getAllProjectByCurrentUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT DISTINCT
+            project.ID,
+            project.PROJECT_NAME,
+            project.PROJECT_CODE
+        FROM
+            tbl_project_info project
+        LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = project.ID
+        AND pgroup. STATUS = 1
+        LEFT JOIN tbl_project_group_user pguser ON pguser.PROJECT_GROUP_ID = pgroup.ID
+        AND pguser. STATUS = 1
+        WHERE
+            pguser.USER_ID = #{currentUserId}
+        AND project.PROJECT_STATUS != 4
+        AND project.`STATUS` = 1
+    </select>
+
+    <!--所有项目-->
+    <select id="getAllProject" resultMap="BaseResultMap">
+      SELECT DISTINCT
+            project.ID,
+            project.PROJECT_NAME,
+            project.PROJECT_CODE
+      FROM
+            tbl_project_info project
+      WHERE
+            project.`STATUS` = 1
+      AND project.PROJECT_STATUS != 4
+    </select>
+</mapper>

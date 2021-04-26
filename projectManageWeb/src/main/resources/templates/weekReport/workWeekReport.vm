@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<title>任务交付累计流图</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="X-UA-Compatible" content="no-cache,IE=edge,Chrome=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/daterangepicker-bs3.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+	<style>
+	body{
+		background: #f2f2f2;
+	}
+	#main_chart{
+		width: 1000px;
+		height:500px;
+		margin:30px auto;
+		background: #fff;
+    border-radius: 4px;
+	}
+	</style>
+</head>
+
+<body>
+	<div class="color1">
+		<div class="container-fluid search_div" id="search_div">
+			<div class="row control-row">
+				<div class="col-md-5">
+					<div class="search_font">
+						<label class="control-label">子系统：</label>
+					</div>
+					<div class="search_input">
+						<select id="systemIds" class="selectpicker" multiple></select>
+					</div>
+				</div>
+				<div class="col-md-5">
+					<div class="search_font">
+						<label class="control-label">任务来源：</label>
+					</div>
+					<div class="search_input">
+						<select id="Source" class="selectpicker" multiple>
+							#foreach($dictMap in ${dict.getDictMap("TBL_REQUIREMENT_FEATURE_REQUIREMENT_FEATURE_SOURCE").entrySet()})
+							<option value="${dictMap.key}">${dictMap.value}</option>
+							#end
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row control-row">
+				<div class="col-md-5">
+					<div class="search_font">
+						<label class="control-label">时间区间：</label>
+					</div>
+					<div class="search_input">
+						<input type="text" id="Date" class="form-control pointStyle" 
+							placeholder="请选择" title="默认当前周" />
+					</div>
+				</div>
+				<div class="col-md-5">
+					<div class="search_font">
+						<label class="control-label">交付状态：</label>
+					</div>
+					<div class="search_input">
+						<select id="Status" class="selectpicker form-control" multiple></select>
+					</div>
+				</div>
+			</div>
+			<div class="row control-row search_btn">
+				<button type="button" class="btn btn-primary" onclick="searchInfo()">统&nbsp;&nbsp;&nbsp;计</button>
+				<button type="button" onclick="clearSearch()" class="btn btn-default">清&nbsp;&nbsp;&nbsp;空</button>
+				<div class="collection">
+					<span class="fa fa-heart-o"></span>&nbsp;收藏此次筛选
+				</div>
+			</div>
+			<div class="row control-row">
+				<div class="col-md-3 col-md-offset-9">
+					<select id="projectType2" class="selectpicker form-control" onchange="tab_option(this)">
+						<option value="">选择收藏方案</option>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="downBtn" id="downBtn">
+			<span class="fa fa-caret-up"></span>
+		</div>
+	</div>
+	<div class="main-content">
+		<div class="" id="main_chart"></div>
+	</div>
+
+	<!-- 收藏弹窗名称  -->
+	<div class="modal fade bs-example-modal-lg" id="collect_Modal" tabindex="-1" role="dialog" aria-labelledby="">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content modalStyle">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<span>添加筛选器名称</span>
+				</div>
+				<div class="modal-body">
+					<div class="row control-row">
+						<div class="col-md-11">
+							<div class="search_font">
+								<label class="control-label"><span class="redStar">*</span>筛选器名称：</label>
+							</div>
+							<div class="search_input">
+								<input type="text" class="form-control " placeholder="请输入" id="collect_Name" />
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="windowButton" class="btn btn-primary" onclick="collect_submit()">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="loading">
+		<img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+	</div>
+</body>
+<script src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+<script src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/moment.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/daterangepicker.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+<script src="#springUrl('')/systemui/static/js/echarts.min.js"></script>
+<script src="#springUrl('')/systemui/static/js/common/common.js"></script>
+
+<script src="#springUrl('')/projectManageui/static/js/weekReport/workWeekReport.js"></script>
+
+</html>

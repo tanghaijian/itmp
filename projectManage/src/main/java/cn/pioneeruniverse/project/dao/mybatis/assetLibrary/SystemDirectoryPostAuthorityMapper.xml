@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace=" cn.pioneeruniverse.project.dao.mybatis.assetLibrary.SystemDirectoryPostAuthorityDao">
+	<resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblSystemDirectoryPostAuthority">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="SYSTEM_DIRECTORY_ID" jdbcType="VARCHAR" property="systemDirectoryId" />
+		<result column="USER_POST" jdbcType="TINYINT" property="userPost" />
+		<result column="READ_AUTH" jdbcType="TINYINT" property="readAuth" />
+		<result column="WRITE_AUTH" jdbcType="TINYINT" property="writeAuth" />
+		
+		<result column="STATUS" jdbcType="TINYINT" property="status" />
+		<result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+		<result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+		<result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+		<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, SYSTEM_DIRECTORY_ID,USER_POST,READ_AUTH, WRITE_AUTH,STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+	</sql>
+</mapper>

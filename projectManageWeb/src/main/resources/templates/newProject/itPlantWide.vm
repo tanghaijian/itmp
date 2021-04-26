@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head> 
+		<title>it全流程</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <META HTTP-EQUIV="pragma" CONTENT="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="no-cache,IE=edge,Chrome=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jquery-ztree/3.5.36/css/metroStyle/metroStyle.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/editormd.css" />  
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/editormd.preview.min.css" />    
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+
+    <link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/itPlantWide/assetsLibrary.css" />
+    <link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/itPlantWide/assetsLibraryNeeds.css" />
+    <link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/itPlantWide/doc.css" />
+		<style>
+				body > .content, .makeDownModal > .content {
+					display: unset;
+				}
+				.redStar{
+					color:red;
+				}
+				.modal-lg{
+					width: 100%;
+				}
+				.modal-content{
+					margin-top: 5%;
+				}
+				.modal-content,.modal-header,.modal-body,.modal-footer,.modal-lg .modal-content .modal-body{
+					position: static !important;
+				}
+		</style> 
+</head>
+<body style="background:#fff;">
+
+		<div class="content">
+			<div class="myTableDiv" style="display:block;">
+				<div class="btnArea">
+					<button class="btn btn-primary" id="newMKDoc">新建MK文档</button>
+					&nbsp;
+					<button class="btn btn-primary" id="upDoc">上传文档 </button>
+				</div>
+				<table id="documentList"></table>
+			</div> 
+		</div>
+
+		## 文档历史版本
+		<div class="modal fade bs-example-modal-lg" id="history_list_Modal" tabindex="-1" role="dialog" aria-labelledby="">
+				<div class="modal-dialog modal-lg" role="document">
+						<div class="modal-content">
+								<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">×</span>
+										</button>
+										<h4 class="modal-title" id="">历史版本</h4>
+								</div>
+								<div class="modal-body">
+									<div class="content-table">
+												<div class="wode">
+														<table id="historyTable"></table>
+												</div>
+										</div>
+								</div>
+								<div class="modal-footer">
+										<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+								</div>
+						</div>
+				</div>
+		</div>
+
+		<!-- 版本对比数量 -->
+		<div class="modal fade" id="versions_comparison_Modal"
+				tabindex="-1"
+				role="dialog"
+				aria-labelledby=""
+				type="hidden">
+				<div class="modal-dialog modal-lg" role="document">
+						<div class="modal-content">
+								## <div class="modal-header" style="display: flex;justify-content: space-between;">
+								<div class="modal-header" style="">
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true" style="font-size: 30px;">&times;</span>
+										</button>
+										<span class="modal-title" id="versions_comparison_tit"></span>
+
+										## <span class="modal-title" id="versions_comparison_tit"></span>
+										## <button type="button" class="btn btn-primary" onclick="create_doc_book()">生成需求确认书</button>
+								</div>
+								<div class="modal-body">
+										<input id="doc_id" type="hidden" />
+										<div class="" style="width:600px;margin: 0 auto;">
+												<h4 style="text-align: center;background: #dedede;margin-bottom: 0;">基准版本到当前版本条目变化情况</h4>
+												<table class="table table-bordered">
+														<thead>
+																<tr>
+																		<th>变化类型</th>
+																		<th>变化数量</th>
+																		<th>变化比例</th>
+																</tr>
+														</thead>
+														<tbody id="versions_comparison_tbody"></tbody>
+												</table>
+										</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+								</div>
+						</div>
+				</div>
+		</div>
+
+		<!-- 版本对比详情 -->
+		<div class="modal fade" id="versions_detail_Modal"
+				tabindex="-1"
+				role="dialog"
+				aria-labelledby=""
+				type="hidden">
+				<div class="modal-dialog modal-lg" role="document" style="width: 100%;padding: 0;">
+						<div class="modal-content" style="top: 0;bottom: 0;">
+								<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true" style="font-size: 30px;">&times;</span>
+										</button>
+										<span class="modal-title" id="document_tit"></span>
+								</div>
+								<div class="modal-body">
+										<div class="" style="margin: 0 auto;">
+												<h4 style="text-align: center;background: #dedede;margin-bottom: 0;">需求条目变化信息</h4>
+												<table class="table table-bordered">
+														<thead>
+																<tr>
+																		<th>需求文档</th>
+																		<td id="document_tit2"></td>
+																		<th>选择章节</th>
+																		<td><select id="chapters_select" style="width: 100%;border-radius: 4px;height: 30px;"></select></td>
+																</tr>
+																<tr>
+																		<th>操作人</th>
+																		<td id="createUserName"></td>
+																		<th>操作时间</th>
+																		<td id="createDate"></td>
+																</tr>
+																<tr>
+																		<th colspan="2" width="50%">变化前</th>
+																		<th colspan="2" width="50%">变化后</th>
+																</tr>
+														</thead>
+														<tbody>
+																<tr>
+																		<td colspan="2">
+																				<div id="test-editormd-view55" class="markdown-body editormd-html-preview">
+																						<textarea id="append-test55"></textarea>
+																				</div>
+																		</td>
+																		<td colspan="2">
+																				<div id="test-editormd-view66" class="markdown-body editormd-html-preview">
+																						<textarea id="append-test66"></textarea>
+																				</div>
+																		</td>
+																</tr>
+														</tbody>
+												</table>
+										</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+								</div>
+						</div>
+				</div>
+		</div>
+		
+		<!-- 上传文档弹窗 -->
+		<div class="modal fade" id="updateDoc" tabindex="-1" role="dialog" aria-labelledby="" type="hidden">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<span class="modal-title">上传文档</span>
+					</div>
+					<div class="modal-body">
+						<form method="POST"  enctype="multipart/form-data" id="updateForm" onsubmit="return false">
+							<div class="rowdiv form-group">
+								<div class="def_col_18 control-label">
+									<label class="def_col_10 control-label font_right"><span class="redStar">*</span>文档类型：</label>
+									<div class="def_col_24 control-label">
+										<select class="selectpicker form-control" id="docTypes" name="docTypes">  
+										</select>
+									</div>
+								</div> 
+							</div> 
+							<div class="rowdiv">
+								<div class="def_col_36 control-label">
+									<label class="def_col_5 control-label font_right"><span class="redStar">*</span> 选择文件：</label>
+									<div class="def_col_26 control-label"> 
+										<input id="upfile" type="file" name="upfile" multiple="multiple" />
+										<input id="pidValue" type="hidden" name="pId" value=" " />
+									</div>
+									<div class="def_col_5 has-error _hide" id="upfile_invalid_tit">
+										<small class="help-block" data-bv-validator="notEmpty" data-bv-for="upfile" data-bv-result="INVALID">请选择上传文件</small>
+									</div>
+								</div>
+							</div>
+						</form>  
+					</div>
+					<div class="modal-footer"> 
+						<button type="button" class="btn btn-primary" onclick="uploadDoc()" id="btn">确定</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					</div>
+				</div>
+			</div>
+			</div>
+		</div>
+
+		<!-- 覆盖上传 - 弹窗 -->
+		<div class="modal fade" id="coverModal" tabindex="-1" role="dialog" aria-labelledby="" type="hidden">
+				<div class="modal-dialog" role="document">
+						<div class="modal-content"> 
+									<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+											<span class="modal-title">覆盖上传窗口</span>
+									</div>
+									<div class="modal-body">
+										<form method="POST"  id="coverForm" onsubmit="return false">  
+											<div class="rowdiv">
+												<label class="def_col_5 control-label font_right fontWeihgt"><span class="redStar">*</span>上传文档：</label>
+												<div class="def_col_26 control-label">
+															<input id="coverUpFile" type="file" name="upfile_re" />
+												</div> 
+												<div class="def_col_5 has-error _hide" id="upfile_invalid_tit_re">
+													<small class="help-block" data-bv-validator="notEmpty" data-bv-for="upfile_re" data-bv-result="INVALID">请选择上传文件</small>
+												</div>
+											</div>  
+										</form>
+								</div>
+								<div class="modal-footer"> 
+											<button type="button" class="btn btn-primary" onclick="uploadDoc()">确定</button>
+											<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+									</div>  
+						</div>
+				</div>
+		</div> 
+
+		<!-- 新建MK文档弹窗 -->
+		<div class="modal fade" id="newMKDocDiv" tabindex="-1" role="dialog" aria-labelledby="" type="hidden">
+				<div class="modal-dialog" role="document">
+						<div class="modal-content"> 
+									<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+											<span class="modal-title">新建MK文档</span>
+									</div>
+									<div class="modal-body">
+										<form method="POST"  onsubmit="return false" id="newMKDoc_form">  
+												<div class="rowdiv form-group">
+													<label class="def_col_8 control-label font_right"><span class="redStar">*</span>文档类型：</label>
+													<div class="def_col_28 control-label">
+															<select class="selectpicker form-control" id="mdTypes" name="mdTypes">  
+															</select>
+													</div>
+												</div>
+												<br />
+												<div class="rowdiv form-group">
+													<label class="def_col_8 control-label font_right"><span class="redStar">*</span>文档名称：</label>
+													<div class="def_col_28 control-label">
+															<input type="text" class="form-control" placeholder="请输入文档名称" id="mdName" name="mdName" />
+													</div>
+												</div>  
+										</form>
+								</div>
+								<div class="modal-footer"> 
+											<button type="button" class="btn btn-primary"  id="newMKDoc_btn">确定</button>
+										<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+									</div>  
+						</div>
+				</div>
+		</div> 
+
+		<!-- 导出 - 弹窗 -->
+		<div class="modal fade" id="export_Modal" tabindex="-1" role="dialog" aria-labelledby="" type="hidden">
+				<div class="modal-dialog" role="document">
+						<div class="modal-content"> 
+									<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+											<span class="modal-title">选择导出类型</span>
+											<input type="hidden" id="export_id" />
+											<input type="hidden" id="export_version" />
+									</div>
+									<div class="modal-body">
+										<ol>
+											<li><input type="radio" name="expot_ipt" value="word" checked />word</li>
+											<li><input type="radio" name="expot_ipt" value="pdf" />pdf</li>
+										</ol>
+								</div>
+								<div class="modal-footer"> 
+											<button type="button" class="btn btn-primary" onclick="export_submit()">提交</button>
+										<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+									</div>  
+						</div>
+				</div>
+		</div> 
+
+		<div id="loading">
+			<img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+		</div>
+</body>
+		<script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/jquery.min.js"></script> 
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>  
+		<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script> 
+		
+		<script src="#springUrl('')/systemui/static/js/frame/editor/marked.min.js"></script>
+		<script src="#springUrl('')/systemui/static/js/frame/editor/prettify.min.js"></script>
+		<script src="#springUrl('')/systemui/static/js/frame/editor/raphael.min.js"></script>
+		<script src="#springUrl('')/systemui/static/js/frame/editor/underscore.min.js"></script>
+		<script src="#springUrl('')/systemui/static/js/frame/editor/sequence-diagram.min.js"></script>
+		<script src="#springUrl('')/systemui/static/js/frame/editor/flowchart.min.js"></script>
+		<script src="#springUrl('')/systemui/static/js/frame/editor/jquery.flowchart.min.js"></script>
+		<script src="#springUrl('')/systemui/static/js/frame/editormd.min.js"></script> 
+		<!--[if lt IE 9]>
+		  <script src="http://apps.bdimg.com/libs/html5shiv/3.7/html5shiv.min.js"></script>
+		  <script src="http://apps.bdimg.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		  ##<script src="#springUrl('')/projectManageui/static/js/html5shiv.min.js"></script>
+		  ##<script src="#springUrl('')/projectManageui/static/js/common/respond.js"></script>
+		<![endif]-->  
+		##<script  src="#springUrl('')/projectManageui/static/js/common/common.js"></script>  
+		<script>
+			var currentUserAccount="$token";
+			var cs_requirementCode ="$requirementCode";
+			var taskCode ="$taskCode";
+		</script> 
+		<script  src="#springUrl('')/projectManageui/static/js/itPlantWide/itPlantWide.js"></script>
+		##<script src="#springUrl('')/projectManageui/static/js/common/browser.min.js"></script>
+</html>

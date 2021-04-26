@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="cn.pioneeruniverse.system.dao.mybatis.role.MenuRoleDao">  
+
+<!-- 新增菜单 -->
+<insert id="insertMenuRole" parameterType="java.util.List">
+
+ INSERT INTO TBL_ROLE_MENU_BUTTON
+ (
+  ROLE_ID,
+  MENU_BUTTON_ID,
+  STATUS,
+  CREATE_BY,
+  LAST_UPDATE_BY
+ )
+ VALUES
+  <foreach item="mr" collection="list" separator=",">  
+      (
+       #{mr.roleId},
+       #{mr.menuButtonId},
+       #{mr.status},
+       #{mr.createBy},
+       #{mr.lastUpdateBy}
+      )
+  </foreach>  
+</insert>
+
+<!-- 获取某个角色关联的菜单ID，并合并成一行返回 -->
+<select id="selectMenuIdsByRoleId" parameterType="Long" resultType="String">
+  SELECT GROUP_CONCAT(MENU_BUTTON_ID) FROM TBL_ROLE_MENU_BUTTON WHERE ROLE_ID=#{roleId}
+</select>
+
+<!-- 逻辑删除指定的角色下的角色菜单关联信息 -->
+<update id="delMenuByRoleIds">
+   UPDATE TBL_ROLE_MENU_BUTTON SET STATUS = 2,LAST_UPDATE_BY=#{lastUpdateBy}  WHERE ROLE_ID IN 
+   <foreach item="roleId" collection="list" open="(" close=")" separator=",">
+   #{roleId}
+   </foreach>
+
+</update>
+
+<!-- 删除某个角色下的角色菜单关联关系 -->
+<delete id="delMenuByRoleId" parameterType="Long">
+  DELETE FROM TBL_ROLE_MENU_BUTTON WHERE ROLE_ID = #{roleId}
+</delete>
+
+
+
+    <!--批量删除-->
+<delete id="delMenuRole" parameterType="java.util.List">
+ DELETE FROM TBL_ROLE_MENU_BUTTON  WHERE MENU_ID IN 
+ <foreach item="menuId" collection="list" open= "(" close=")" separator=",">
+	 #{menuId}
+ </foreach> 
+</delete>
+
+</mapper>

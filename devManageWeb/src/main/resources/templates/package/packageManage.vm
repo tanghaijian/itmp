@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>包件管理</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+    <link rel="stylesheet"  type="text/css"  media="screen" href="#springUrl('')/devManageui//static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css" />
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/workManagement/devtaskManagement/devtaskManagement.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/jquery.editable-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/devtask/devtask.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+    <style>
+
+        .micSup{
+            background-color: #CC66FF;
+            line-height:12px;
+            padding:2px 6px;
+            color: white;
+            border-radius: 10px;
+        }
+
+    </style>
+
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/devManageui/static/js/package/packageManagement.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/devManageui/static/js/package/packagePopup.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common.js"></script>
+    <script>
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap4';
+        $.jgrid.defaults.iconSet = "fontAwesome";
+        var ctxStatic="${ctxStatic}";
+
+        var packageTag = $auth.hasPermission("$token","devManage:package:tag");    //包件标记
+        var packageEdit = $auth.hasPermission("$token","devManage:package:edit");  //包件编辑
+        var packageCancel = $auth.hasPermission("$token","devManage:package:cancel");  //取消标记
+        var packageDelete = $auth.hasPermission("$token","devManage:package:delete");  //删除包件
+        $(function(){
+            $("[data-toggle='tooltip']").tooltip();
+        });
+    </script>
+
+</head>
+<body>
+<div id="loading">
+    <img class="loadingImg" src="#springUrl('')/devManageui/static/images/loadingPic.gif" />
+</div>
+<div class="color1">
+    <div class="container-fluid" id="search_div">
+        <div class="row control-row">
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">子系统名称：</label></div>
+                <div class="search_input">
+                    <input type="hidden" id="systemId"/>
+                    <input type="hidden" id="searchGroupId"/>
+                    <input type="hidden" id="searchArtifactId"/>
+                    <input type="text" class="form-control pointStyle readonly"   readonly autocomplete="off" placeholder="请选择" id="systemName" name="" value=""/>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">Repository：</label></div>
+                <div class="search_input">
+                    <select class="selectpicker" style="overflow: scroll" id="snapshotRepositoryName" name="snapshotRepositoryName">
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">所属项目：</label></div>
+                <div class="search_input">
+                    <input type="hidden" id="projectId"/>
+                    <input type="text" class="form-control pointStyle readonly"   readonly autocomplete="off" placeholder="请输入" id="projectName" name="" value="" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">包件标记：</label></div>
+                <div class="search_input">
+                    <select class="selectpicker" id="tag"  multiple name="tag">
+                        #foreach($dictMap in ${dict.getDictMap(
+                            "TBL_SYSTEM_SCM_ENVIRONMENT_TYPE").entrySet()})
+                            <option value="${dictMap.key}">${dictMap.value}</option>
+                        #end
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row control-row">
+        	<div class="col-md-3">
+                <div class="search_font"><label class="control-label">Group：</label></div>
+                <div class="search_input">
+                	 <select class="selectpicker" style="overflow: scroll" id="systemGroupId" name="systemGroupId">
+                    </select>
+                	
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">ArtifactID：</label></div>
+                <div class="search_input">
+                	<select class="selectpicker" style="overflow: scroll" id="systemArtifactID" name="systemArtifactID">
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">Version：</label></div>
+                <div class="search_input">
+                   <input type="text" class="form-control"    autocomplete="off" placeholder="请输入" id="systemVersion" name="systemVersion" value="" />
+                </div>
+            </div>
+         </div>
+        <div class="row control-row search_btn">
+
+            <button type="button" class="btn btn-primary" onclick="searchInfo()">搜&nbsp;&nbsp;&nbsp;索</button>
+            <button type="button" onclick="clearSearch()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+        </div>
+    </div>
+    <div id="downBtn">
+        <span class="fa fa-caret-up"></span>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="content-btn">
+        #if($auth.hasPermission("$token","devManage:package:delete"))
+          <button type="button" onclick="deletePackages()" class="btn btn-primary">删除包件</button>&nbsp;
+		#end
+    </div>
+    <div class="content-table">
+        <div class="wode">
+            <table id="packagelist"></table>
+            <div id="packagepager"></div>
+        </div>
+    </div>
+</div>
+
+
+
+##查看弹出框
+<div class="modal fade bs-example-modal-lg" id="packageSign" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"><span id="title_code"> </span>&nbsp&nbsp<span id="title_name"> </span>&nbsp&nbsp<span id="">构建包标记  </span></h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="allInfo">
+                    <div class="def_title">
+                        <input id="" type="hidden" />
+                        <span>包件基本信息</span>
+                    </div>
+                    <div class="def_content">
+                        <div class="rowdiv">
+                            <div class="form-group col-md-6">
+                                <label class="col-sm-5 control-label fontWeihgt">Repository：</label>
+                                <label class="select-label" id="repository"></label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="col-sm-5 control-label fontWeihgt">Version：</label>
+                                <label class="select-label" id="version"></label>
+                            </div>
+                        </div>
+
+                        <div class="rowdiv">
+                            <div class="form-group col-md-6">
+                                <label class="col-sm-5 control-label fontWeihgt">Name：</label>
+                                <label class="select-label" id="name"></label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="col-sm-5 control-label fontWeihgt">Group：</label>
+                                <label class="select-label" id="group"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </br></br>
+                <div>
+                    <div class="rowdiv">
+                        <div class="form-group col-md-12">
+                            <label class="col-md-2 fontWeihgt" style="width:106px;">可部署标记：</label>
+                            <div class="col-md-8" id="deploy">
+                                <!-- #foreach($dictMap in ${dict.getDictMap(
+                                    "TBL_SYSTEM_SCM_ENVIRONMENT_TYPE").entrySet()}) -->
+                                    <!-- <div class="col-md-2" style="margin-bottom:10px;">
+                                        <span><input value=${dictMap.key}  type='checkbox' name='envType'  />${dictMap.value}</span>
+                                    </div> -->
+                                <!-- #end -->
+                            </div>
+                        </div>
+                    </div>
+
+                    </br>
+
+                    <div class="main-content">
+                        <input type = "hidden" id = "artifactInfoId"/>
+                        <input type = "hidden" id = "path"/>
+                        <input type = "hidden" id = "systemId"/>
+                        <input type = "hidden" id = "systemModuleId"/>
+                        <input type = "hidden" id = "artifactId"/>
+                        <div class="content-btn" style="display:none;padding-left:0px">
+                            <button type="button" class="btn btn-primary" onclick="showFeature()" >关联开发任务</button>
+                            <button type="button" onclick="removeManyFeature()" class="btn btn-default">取消关联</button>
+                        </div>
+                        <div class="content-table" style="margin:0px">
+                            <div class="wode">
+                                <table id="signTable"></table>
+                                <div id="signPage"></div>
+                            </div>
+                        </div>
+                        <div class="rowdiv">
+                            <div class="form-group col-md-12">
+                                <label class="col-sm-1" style="width:100px">任务描述：</label>
+                                <div class="col-sm-10"><textarea class=" form-control" rows="2" cols="80" placeholder="请输入" name="taskOverview" id="remark"> </textarea></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-test" class="btn btn-primary"  onclick="commitTag()">确认</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+##开发任务
+<div  class="modal fade bs-example-modal-lg" tabindex="-1" id="featureP" role="dialog" aria-labelledby="newPerson" >
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"  aria-hidden="true">
+                    &times;
+                </button>
+                <span>请选择开发任务</span>
+            </div>
+            <div class="modal-body">
+                <div class="color1">
+                    <div class="container-fluid" id="">
+                        <div class="row control-row">
+                            <div class="col-md-3">
+                                <div class="search_font">
+                                    <label class="control-label">任务名称：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input style="width: 137px" type="text" class="form-control" placeholder="请输入" id="FeatureName" name="FeatureName" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="search_font">
+                                    <label class="control-label">任务编号：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text"   style="width: 137px" class="form-control" placeholder="请输入" id="FeatureCode" name="FeatureCode" />
+                                </div>
+                            </div>
+
+##                            <div class="col-md-6">
+##                                <div class="search_font">
+##                                    <label class="control-label">冲刺：</label>
+##                                </div>
+##
+##                                <select   class="selectpicker" id="sprint" name="sprint"
+##                                          data-live-search="true">
+##                                    <option value="">请选择</option>
+##                                </select>
+##
+##                            </div>
+
+
+                            <div class="col-md-3">
+                                <div class="search_font"><label class="control-label">冲刺：</label></div>
+                                <div class="search_input">
+                                    <select class="selectpicker" id="sprint" name="sprint"  >
+                                        <option value="">请选择</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="search_font"><label class="control-label">投产窗口：</label></div>
+                                <div class="search_input">
+                                    <select class="selectpicker" id="window" name="window" >
+                                        <option value="">请选择</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+##                            <div class="col-md-6">
+##                                <div class="search_font">
+##                                    <label class="control-label">投产窗口：</label>
+##                                </div>
+##
+##                                <select   class="selectpicker" id="window" name="window"
+##                                          data-live-search="true">
+##                                    <option value="">请选择</option>
+##                                </select>
+##
+##                            </div>
+
+
+
+
+                        </div>
+                        <div class="row control-row search_btn">
+                            <button type="button" class="btn btn-primary" onclick="DevTaskShow()">搜&nbsp;&nbsp;&nbsp;索</button>
+                            <button type="button" class="btn btn-default" onclick="clearFeatuer()">重&nbsp;&nbsp;&nbsp;置</button>
+                        </div>
+                    </div>
+
+                    <div id="downBtn2">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br>
+
+                <div class="content-table">
+                    <div class="wode">
+                        <table id="featureTable"></table>
+                        <div id="featurePage"></div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <div class="bottom-container">
+                    <button type="button" class="btn btn-primary" onclick="relate()" >确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+##子系统弹窗
+<div class="modal fade bs-example-modal-lg" id="selSys" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg modal-user" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <span class="modal-title" id="">选择子系统</span>
+            </div>
+            <div class="modal-body">
+
+                <div class="color1">
+                    <div class="container-fluid" id="">
+                        <div class="rowdiv control-row">
+                            <div class="col-md-2">
+
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">子系统名称：</label></div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="输入" id="SCsystemName"
+                                           name="systemName" value=""/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">子系统编码：</label></div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入" id="SCsystemCode"
+                                           name="systemCode" value=""/>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+
+                            </div>
+                        </div>
+                        <div class="rowdiv control-row search_btn">
+                            <button type="button" class="btn btn-primary" onclick="systemTableShow()">搜&nbsp;&nbsp;&nbsp;索</button>
+                            <button type="button" onclick="clearSearchSys()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                        </div>
+
+                    </div>
+                    <div id="downBtn2">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br>
+                <div class="content-table">
+                    <div class="wode">
+                        <table id="systemTable"></table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="sysbutton" class="btn btn-primary" data-sys="default" onclick="commitSys()">
+                    确定
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+##项目弹窗
+<div class="modal fade bs-example-modal-lg" id="projectModal" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg modal-user" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <span class="modal-title" id="">选择项目</span>
+            </div>
+            <div class="modal-body">
+
+                <div class="color1">
+                    <div class="container-fluid" id="">
+                        <div class="rowdiv control-row">
+                            <div class="col-md-2">
+
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">项目名称：</label></div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="输入" id="projectModalName"
+                                           name="projectModalName" value=""/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">项目状态：</label></div>
+                                <div class="search_input">
+                                    <select class="selectpicker" id="projectStatus"  name="projectStatus">
+                                        <option value = "">请选择</option>
+                                        #foreach($dictMap in ${dict.getDictMap(
+                                            "TBL_PROJECT_INFO_PROJECT_STATUS").entrySet()})
+                                            <option value="${dictMap.value}">${dictMap.value}</option>
+                                        #end
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+
+                            </div>
+                        </div>
+                        <div class="rowdiv control-row search_btn">
+                            <button type="button" class="btn btn-primary" onclick="projectShow()">搜&nbsp;&nbsp;&nbsp;索</button>
+                            <button type="button" onclick="clearProject()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                        </div>
+
+                    </div>
+                    <div id="downBtn2">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br>
+                <div class="content-table">
+                    <div class="wode">
+                        <table id="projectTable"></table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="sysbutton" class="btn btn-primary" data-sys="default" onclick="commitPro()">
+                    确定
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+
+
+</html>
+ 

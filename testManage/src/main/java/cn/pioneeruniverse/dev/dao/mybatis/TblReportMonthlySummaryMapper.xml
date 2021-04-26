@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblReportMonthlySummaryMapper">
+	<resultMap id="BaseResultMap"
+		type="cn.pioneeruniverse.dev.entity.TblReportMonthlySummary">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="YEAR_MONTH" jdbcType="VARCHAR"
+			property="yearMonth" />
+		<result column="PLAN_WINDOWS_NUMBER" jdbcType="INTEGER"
+			property="planWindowsNumber" />
+		<result column="TEMP_WINDOWS_NUMBER" jdbcType="INTEGER"
+			property="tempWindowsNumber" />
+		<result column="TEMP_ADD_TASK_NUMBER" jdbcType="INTEGER"
+			property="tempAddTaskNumber" />
+		<result column="TEMP_DEL_TASK_NUMBER" jdbcType="INTEGER"
+			property="tempDelTaskNumber" />
+		<result column="TOTAL_TASK_NUMBER" jdbcType="INTEGER"
+			property="totalTaskNumber" />
+		<result column="REQUIREMENT_NUMBER" jdbcType="INTEGER"
+			property="requirementNumber" />
+		<result column="DEFECT_NUMBER" jdbcType="INTEGER"
+			property="defectNumber" />
+		<result column="CHANGE_PERCENT" jdbcType="DOUBLE"
+			property="changePercent" />
+		<result column="CREATE_BY" jdbcType="BIGINT"
+			property="createBy" />
+		<result column="CREATE_DATE" jdbcType="TIMESTAMP"
+			property="createDate" />
+		<result column="LAST_UPDATE_BY" jdbcType="BIGINT"
+			property="lastUpdateBy" />
+		<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP"
+			property="lastUpdateDate" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, `YEAR_MONTH`, PLAN_WINDOWS_NUMBER, TEMP_WINDOWS_NUMBER,
+		TEMP_ADD_TASK_NUMBER, TEMP_DEL_TASK_NUMBER,
+		TOTAL_TASK_NUMBER, REQUIREMENT_NUMBER, DEFECT_NUMBER, CHANGE_PERCENT, CREATE_BY,
+		CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tbl_report_monthly_summary
+		where ID = #{id,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from tbl_report_monthly_summary
+		where ID = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert"
+		parameterType="cn.pioneeruniverse.dev.entity.TblReportMonthlySummary">
+		insert into tbl_report_monthly_summary (YEAR_MONTH, PLAN_WINDOWS_NUMBER,
+		TEMP_WINDOWS_NUMBER, TEMP_ADD_TASK_NUMBER, TEMP_DEL_TASK_NUMBER,
+		TOTAL_TASK_NUMBER, REQUIREMENT_NUMBER, DEFECT_NUMBER,
+		CHANGE_PERCENT, CREATE_BY, CREATE_DATE,
+		LAST_UPDATE_BY, LAST_UPDATE_DATE)
+		values ( #{yearMonth,jdbcType=VARCHAR},
+		#{planWindowsNumber,jdbcType=INTEGER},
+		#{tempWindowsNumber,jdbcType=INTEGER},
+		#{tempAddTaskNumber,jdbcType=INTEGER},
+		#{tempDelTaskNumber,jdbcType=INTEGER},
+		#{totalTaskNumber,jdbcType=INTEGER},
+		#{requirementNumber,jdbcType=INTEGER},
+		#{defectNumber,jdbcType=INTEGER},
+		#{changePercent,jdbcType=DOUBLE}, #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP},
+		#{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="cn.pioneeruniverse.dev.entity.TblReportMonthlySummary">
+		insert into tbl_report_monthly_summary
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="yearMonth != null">
+				YEAR_MONTH,
+			</if>
+			<if test="planWindowsNumber != null">
+				PLAN_WINDOWS_NUMBER,
+			</if>
+			<if test="tempWindowsNumber != null">
+				TEMP_WINDOWS_NUMBER,
+			</if>
+			<if test="tempAddTaskNumber != null">
+				TEMP_ADD_TASK_NUMBER,
+			</if>
+			<if test="tempDelTaskNumber != null">
+				TEMP_DEL_TASK_NUMBER,
+			</if>
+			<if test="totalTaskNumber != null">
+				TOTAL_TASK_NUMBER,
+			</if>
+			<if test="requirementNumber != null">
+				REQUIREMENT_NUMBER,
+			</if>
+			<if test="defectNumber != null">
+				DEFECT_NUMBER,
+			</if>
+			<if test="changePercent != null">
+				CHANGE_PERCENT,
+			</if>
+			<if test="createBy != null">
+				CREATE_BY,
+			</if>
+			<if test="createDate != null">
+				CREATE_DATE,
+			</if>
+			<if test="lastUpdateBy != null">
+				LAST_UPDATE_BY,
+			</if>
+			<if test="lastUpdateDate != null">
+				LAST_UPDATE_DATE,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="yearMonth != null">
+				#{yearMonth,jdbcType=VARCHAR},
+			</if>
+			<if test="planWindowsNumber != null">
+				#{planWindowsNumber,jdbcType=INTEGER},
+			</if>
+			<if test="tempWindowsNumber != null">
+				#{tempWindowsNumber,jdbcType=INTEGER},
+			</if>
+			<if test="tempAddTaskNumber != null">
+				#{tempAddTaskNumber,jdbcType=INTEGER},
+			</if>
+			<if test="tempDelTaskNumber != null">
+				#{tempDelTaskNumber,jdbcType=INTEGER},
+			</if>
+			<if test="totalTaskNumber != null">
+				#{totalTaskNumber,jdbcType=INTEGER},
+			</if>
+			<if test="requirementNumber != null">
+				#{requirementNumber,jdbcType=INTEGER},
+			</if>
+			<if test="defectNumber != null">
+				#{defectNumber,jdbcType=INTEGER},
+			</if>
+			<if test="changePercent != null">
+				#{changePercent,jdbcType=DOUBLE},
+			</if>
+			<if test="createBy != null">
+				#{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdateBy != null">
+				#{lastUpdateBy,jdbcType=BIGINT},
+			</if>
+			<if test="lastUpdateDate != null">
+				#{lastUpdateDate,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="cn.pioneeruniverse.dev.entity.TblReportMonthlySummary">
+		update tbl_report_monthly_summary
+		<set>
+			<if test="yearMonth != null">
+				YEAR_MONTH = #{yearMonth,jdbcType=VARCHAR},
+			</if>
+			<if test="planWindowsNumber != null">
+				PLAN_WINDOWS_NUMBER = #{planWindowsNumber,jdbcType=INTEGER},
+			</if>
+			<if test="tempWindowsNumber != null">
+				TEMP_WINDOWS_NUMBER = #{tempWindowsNumber,jdbcType=INTEGER},
+			</if>
+			<if test="tempAddTaskNumber != null">
+				TEMP_ADD_TASK_NUMBER = #{tempAddTaskNumber,jdbcType=INTEGER},
+			</if>
+			<if test="tempDelTaskNumber != null">
+				TEMP_DEL_TASK_NUMBER = #{tempDelTaskNumber,jdbcType=INTEGER},
+			</if>
+			<if test="totalTaskNumber != null">
+				TOTAL_TASK_NUMBER = #{totalTaskNumber,jdbcType=INTEGER},
+			</if>
+			<if test="requirementNumber != null">
+				REQUIREMENT_NUMBER = #{requirementNumber,jdbcType=INTEGER},
+			</if>
+			<if test="defectNumber != null">
+				DEFECT_NUMBER = #{defectNumber,jdbcType=INTEGER},
+			</if>
+			<if test="changePercent != null">
+				CHANGE_PERCENT = #{changePercent,jdbcType=DOUBLE},
+			</if>
+			<if test="createBy != null">
+				CREATE_BY = #{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="createDate != null">
+				CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdateBy != null">
+				LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+			</if>
+			<if test="lastUpdateDate != null">
+				LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="cn.pioneeruniverse.dev.entity.TblReportMonthlySummary">
+		update tbl_report_monthly_summary
+		set YEAR_MONTH = #{yearMonth,jdbcType=VARCHAR},
+		PLAN_WINDOWS_NUMBER = #{planWindowsNumber,jdbcType=INTEGER},
+		TEMP_WINDOWS_NUMBER = #{tempWindowsNumber,jdbcType=INTEGER},
+		TEMP_ADD_TASK_NUMBER = #{tempAddTaskNumber,jdbcType=INTEGER},
+		TEMP_DEL_TASK_NUMBER = #{tempDelTaskNumber,jdbcType=INTEGER},
+		TOTAL_TASK_NUMBER = #{totalTaskNumber,jdbcType=INTEGER},
+		REQUIREMENT_NUMBER = #{requirementNumber,jdbcType=INTEGER},
+		DEFECT_NUMBER = #{defectNumber,jdbcType=INTEGER},
+		CHANGE_PERCENT = #{changePercent,jdbcType=DOUBLE},
+		CREATE_BY = #{createBy,jdbcType=BIGINT},
+		CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+		LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+		LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+		where ID = #{id,jdbcType=BIGINT}
+	</update>
+	<insert id="batchInsert">
+		insert into tbl_report_monthly_summary (`YEAR_MONTH`,
+		PLAN_WINDOWS_NUMBER,
+		TEMP_WINDOWS_NUMBER, TEMP_ADD_TASK_NUMBER, TEMP_DEL_TASK_NUMBER,
+		TOTAL_TASK_NUMBER, REQUIREMENT_NUMBER, DEFECT_NUMBER,
+		CHANGE_PERCENT, CREATE_BY, CREATE_DATE,
+		LAST_UPDATE_BY, LAST_UPDATE_DATE) values
+		<foreach collection="list" item="item" separator=",">
+			( #{item.yearMonth,jdbcType=VARCHAR},
+			#{item.planWindowsNumber,jdbcType=INTEGER},
+			#{item.tempWindowsNumber,jdbcType=INTEGER},
+			#{item.tempAddTaskNumber,jdbcType=INTEGER},
+			#{item.tempDelTaskNumber,jdbcType=INTEGER},
+			#{item.totalTaskNumber,jdbcType=INTEGER},
+			#{item.requirementNumber,jdbcType=INTEGER},
+			#{item.defectNumber,jdbcType=INTEGER},
+			#{item.changePercent,jdbcType=DOUBLE},
+			#{item.createBy,jdbcType=BIGINT},
+			#{item.createDate,jdbcType=TIMESTAMP},
+			#{item.lastUpdateBy,jdbcType=BIGINT},
+			#{item.lastUpdateDate,jdbcType=TIMESTAMP})
+		</foreach>
+	</insert>
+	<select id="selectYearReport" resultType="map">
+		SELECT `YEAR_MONTH` yearMonth, PLAN_WINDOWS_NUMBER planWindowsNumber, TEMP_WINDOWS_NUMBER tempWindowsNumber,
+		TEMP_ADD_TASK_NUMBER tempAddTaskNumber, TEMP_DEL_TASK_NUMBER tempDelTaskNumber,
+		TOTAL_TASK_NUMBER totalTaskNumber, REQUIREMENT_NUMBER requirementNumber, DEFECT_NUMBER defectNumber, CHANGE_PERCENT changePercent
+		 FROM tbl_report_monthly_summary
+		WHERE SUBSTR(`YEAR_MONTH`,6) &lt;= #{month}
+		AND SUBSTR(`YEAR_MONTH`,1,4) = #{year}
+	</select>
+	
+	<delete id="deleteByYearMonth">
+		delete from tbl_report_monthly_summary
+		where `YEAR_MONTH` = #{yearMonth}
+	</delete>
+	
+	<select id="jugeHis" resultType="int">
+		select count(id) from tbl_report_monthly_summary
+		where `YEAR_MONTH` = #{yearMonth}
+	</select>
+	
+	<select id="selectReportByTime" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tbl_report_monthly_summary
+		where `YEAR_MONTH` = #{yearMonth}
+	</select>
+</mapper>

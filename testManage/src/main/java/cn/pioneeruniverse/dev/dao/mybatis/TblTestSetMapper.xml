@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="cn.pioneeruniverse.dev.dao.mybatis.TblTestSetMapper">
+	<resultMap id="BaseResultMap"
+		type="cn.pioneeruniverse.dev.entity.TblTestSet">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="TEST_TASK_ID" jdbcType="BIGINT"
+			property="testTaskId" />
+		<result column="TEST_SET_NAME" jdbcType="VARCHAR"
+			property="testSetName" />
+		<result column="TEST_SET_NUMBER" jdbcType="VARCHAR"
+			property="testSetNumber" />
+		<result column="EXCUTE_ROUND" jdbcType="INTEGER"
+			property="excuteRound" />
+		<result column="STATUS" jdbcType="TINYINT" property="status" />
+		<result column="CREATE_BY" jdbcType="BIGINT"
+			property="createBy" />
+		<result column="CREATE_DATE" jdbcType="TIMESTAMP"
+			property="createDate" />
+		<result column="LAST_UPDATE_BY" jdbcType="BIGINT"
+			property="lastUpdateBy" />
+		<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP"
+			property="lastUpdateDate" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, TEST_TASK_ID, TEST_SET_NAME,TEST_SET_NUMBER,
+		EXCUTE_ROUND, STATUS,
+		CREATE_BY, CREATE_DATE, LAST_UPDATE_BY,
+		LAST_UPDATE_DATE
+	</sql>
+	<select id="selectOneById" resultType="map">
+		select task.ID
+		testTaskId,task.TEST_TASK_NAME testTaskName,testset.TEST_SET_NAME testSetName,
+		testset.TEST_SET_NUMBER testSetNumber,testset.EXCUTE_ROUND excuteRound,
+		feature.ID featureID,feature.FEATURE_NAME featureName,feature.FEATURE_CODE featureCode,
+		(select GROUP_CONCAT(userinfo.USER_NAME) from tbl_test_set_execute_round_user executeUser
+		left join tbl_user_info userinfo on userinfo.ID = executeUser.EXECUTE_USER_ID
+		where executeUser.`STATUS`=1 and executeUser.TEST_SET_ID = #{id} group by
+		executeUser.TEST_SET_ID
+		) executeUser
+		from tbl_test_set testset 
+		left join tbl_test_task task on task.ID = testset.TEST_TASK_ID and task.status = 1
+		left join tbl_requirement_feature feature on feature.ID = task.REQUIREMENT_FEATURE_ID and feature.status = 1
+		where testset.ID = #{id}
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tbl_test_set
+		where ID = #{id,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from
+		tbl_test_set
+		where ID = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert"
+		parameterType="cn.pioneeruniverse.dev.entity.TblTestSet">
+		<selectKey resultType="java.lang.Long" order="AFTER"
+			keyProperty="id">
+			SELECT LAST_INSERT_ID() AS ID
+		</selectKey>
+		insert into tbl_test_set (TEST_TASK_ID, TEST_SET_NAME,
+		TEST_SET_NUMBER,
+		EXCUTE_ROUND, STATUS, CREATE_BY,
+		CREATE_DATE,
+		LAST_UPDATE_BY, LAST_UPDATE_DATE
+		)
+		values
+		(#{testTaskId,jdbcType=BIGINT}, #{testSetName,jdbcType=VARCHAR},
+		#{testSetNumber,jdbcType=VARCHAR},
+		#{excuteRound,jdbcType=INTEGER},
+		#{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT},
+		#{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT},
+		#{lastUpdateDate,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="cn.pioneeruniverse.dev.entity.TblTestSet">
+		update tbl_test_set
+		<set>
+			<if test="testTaskId != null">
+				TEST_TASK_ID = #{testTaskId,jdbcType=BIGINT},
+			</if>
+			<if test="testSetName != null">
+				TEST_SET_NAME = #{testSetName,jdbcType=VARCHAR},
+			</if>
+			<if test="testSetNumber != null">
+				TEST_SET_NUMBER = #{testSetNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="excuteRound != null">
+				EXCUTE_ROUND = #{excuteRound,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				STATUS = #{status,jdbcType=TINYINT},
+			</if>
+			<if test="createBy != null">
+				CREATE_BY = #{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="createDate != null">
+				CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdateBy != null">
+				LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+			</if>
+			<if test="lastUpdateDate != null">
+				LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=BIGINT}
+	</update>
+	<!-- 系统管理员 -->
+	<select id="selectTestSet"
+		parameterType="cn.pioneeruniverse.dev.entity.TblTestSet"
+		resultType="map">
+		SELECT DISTINCT testset.ID id,testset.TEST_SET_NUMBER
+		testSetNumber,testset.TEST_SET_NAME testSetName,
+		testset.EXCUTE_ROUND
+		excuteRound,(SELECT COUNT(setcase.ID) from tbl_test_set_case setcase
+		WHERE setcase.TEST_SET_ID=testset.ID and setcase.`STATUS`=1) caseNum,
+		task.ID testTaskId,task.TEST_TASK_NAME testTaskName,task.TEST_TASK_CODE testTaskCode,
+		creuser.USER_NAME createBy,task.TEST_STAGE testStage,
+		feature.EXECUTE_USER_ID excuteUserId,feature.MANAGE_USER_ID manageUserId
+		FROM tbl_test_set testset
+		LEFT JOIN tbl_test_task task ON task.ID = testset.TEST_TASK_ID and task.status = 1
+		left join tbl_requirement_feature feature on feature.id = task.REQUIREMENT_FEATURE_ID and feature.status = 1
+		LEFT JOIN tbl_user_info creuser ON creuser.ID = testset.CREATE_BY and creuser.status = 1
+		
+		where testset.status = 1 
+		<if test="testSetNumber != null and testSetNumber!=''">
+			and TEST_SET_NUMBER like concat('%',#{testSetNumber},'%')
+		</if>
+		<if test="testSetName != null and testSetName !=''">
+			and TEST_SET_NAME like concat('%',#{testSetName},'%')
+		</if>
+		<if test="createBys != null and createBys!=''">
+			and testset.CREATE_BY in
+			<foreach collection="createBys.split(',')" item="item" index="index" open="(" close=")" separator="," >
+				#{item}
+			</foreach>
+		</if>
+		<if test="createBy != null">
+			and testset.CREATE_BY = #{createBy}
+			
+		</if>
+		<if test="testTaskIds != null and testTaskIds!=''">
+			and testset.TEST_TASK_ID in
+			<foreach collection="testTaskIds.split(',')" item="item" index="index" open="(" close=")" separator="," >
+				#{item}
+			</foreach>
+		</if>
+		<if test="testTaskId != null">
+			and testset.TEST_TASK_ID = #{testTaskId}
+		</if>
+		order by testset.ID DESC
+	</select>
+	<!-- 非系统管理员 -->
+	<select id="selectTestSetByCon"
+		parameterType="cn.pioneeruniverse.dev.entity.TblTestSet"
+		resultType="map">
+		SELECT DISTINCT testset.ID id,testset.TEST_SET_NUMBER
+		testSetNumber,testset.TEST_SET_NAME testSetName,
+		testset.EXCUTE_ROUND
+		excuteRound,(SELECT COUNT(setcase.ID) from tbl_test_set_case setcase
+		WHERE setcase.TEST_SET_ID=testset.ID and setcase.`STATUS`=1) caseNum,
+		task.ID testTaskId,task.TEST_TASK_NAME testTaskName,task.TEST_TASK_CODE testTaskCode,
+		creuser.USER_NAME createBy,task.TEST_STAGE testStage,
+		testfeature.EXECUTE_USER_ID excuteUserId,testfeature.MANAGE_USER_ID manageUserId
+		FROM tbl_test_set testset
+		LEFT JOIN tbl_test_task task ON task.ID = testset.TEST_TASK_ID and task.status = 1
+		LEFT JOIN tbl_user_info creuser ON creuser.ID = testset.CREATE_BY and creuser.status = 1
+		<!-- 查询当前登录用户所在项目所属系统下的测试集 -->
+	 
+	  LEFT JOIN tbl_requirement_feature testfeature ON task.REQUIREMENT_FEATURE_ID = testfeature.id and testfeature.status = 1
+      LEFT JOIN tbl_system_info tsystem  ON testfeature.SYSTEM_ID = tsystem.ID AND tsystem.STATUS=1 
+      LEFT JOIN tbl_project_system prosys ON prosys.SYSTEM_ID =tsystem.ID AND prosys.STATUS=1 
+      <!-- AND prosys.RELATION_TYPE = 1 -->
+      LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = prosys.PROJECT_ID AND pgroup.STATUS = 1 
+      LEFT JOIN tbl_project_group_user  pgUser ON pgUser.PROJECT_GROUP_ID = pgroup.ID AND pgUser.STATUS = 1 
+      
+		where testset.status = 1 and pgUser.USER_ID = #{uid}
+		<if test="testSetNumber != null and testSetNumber!=''">
+			and TEST_SET_NUMBER like concat('%',#{testSetNumber},'%')
+		</if>
+		<if test="testSetName != null and testSetName !=''">
+			and TEST_SET_NAME like concat('%',#{testSetName},'%')
+		</if>
+		<if test="createBys != null and createBys!=''">
+			and testset.CREATE_BY in
+			<foreach collection="createBys.split(',')" item="item" index="index" open="(" close=")" separator="," >
+				#{item}
+			</foreach>
+		</if>
+		<if test="createBy != null">
+			and testset.CREATE_BY = #{createBy}
+			
+		</if>
+		<if test="testTaskIds != null and testTaskIds!=''">
+			and testset.TEST_TASK_ID in
+			<foreach collection="testTaskIds.split(',')" item="item" index="index" open="(" close=")" separator="," >
+				#{item}
+			</foreach>
+		</if>
+		<if test="testTaskId != null">
+			and testset.TEST_TASK_ID = #{testTaskId}
+		</if>
+		order by testset.ID DESC
+	</select>
+
+	<select id="findMaxId" resultType="string">
+		SELECT max(TEST_SET_NUMBER)
+		from tbl_test_set
+	</select>
+	<select id="getTestSetByFeatureId" resultMap="BaseResultMap"
+		resultType="list">
+		select
+		testset.ID,testset.TEST_SET_NAME,testset.EXCUTE_ROUND from
+		tbl_test_set testset
+		left join tbl_test_task task on
+		testset.TEST_TASK_ID = task.ID
+		where task.REQUIREMENT_FEATURE_ID =
+		#{featureId}
+	</select>
+
+	<!--liushan:根据工作任务查询测试集-->
+	<select id="getTestSetByTestTaskId" parameterType="map" resultType="map">
+		SELECT DISTINCT
+			testset.ID as testSetId,
+			testset.TEST_SET_NAME testSetName,
+			testset.TEST_SET_NUMBER testSetNumber,
+			testset.EXCUTE_ROUND totalRound
+		FROM
+			tbl_test_set testset
+		<if test="currentUserId != null and currentUserId !=''">
+			LEFT JOIN tbl_test_task task ON testset.TEST_TASK_ID = task.ID
+			LEFT JOIN tbl_requirement_feature feature ON task.REQUIREMENT_FEATURE_ID = feature.ID
+			LEFT JOIN tbl_system_info system ON feature.SYSTEM_ID = system.ID
+			LEFT JOIN tbl_project_system pSystem ON pSystem.SYSTEM_ID = system.ID AND pSystem.`STATUS` = 1
+			LEFT JOIN tbl_project_group pg ON pg.PROJECT_ID = pSystem.PROJECT_ID AND pg.`STATUS` = 1
+			LEFT JOIN tbl_project_group_user pgu ON pg.ID = pgu.PROJECT_GROUP_ID AND pgu.`STATUS` = 1
+		</if>
+		<where>
+			testset.TEST_TASK_ID = #{testTaskId}
+			AND testset.`STATUS` = 1
+			<if test="currentUserId != null and currentUserId !=''">
+				AND pgu.USER_ID = #{currentUserId}
+			</if>
+			<if test="testSetName != null and testSetName != ''">
+				AND testset.TEST_SET_NAME LIKE CONCAT('%',#{testSetName},'%')
+			</if>
+		</where>
+		ORDER BY
+			testset.ID DESC
+	</select>
+
+	<select id="getTestTree" parameterType="map" resultType="map">
+		SELECT round.TEST_SET_ID testSetId,GROUP_CONCAT(round.EXECUTE_ROUND)
+		executeRound,testset.EXCUTE_ROUND totalRound,testset.TEST_SET_NUMBER
+		testSetNumber,testset.TEST_SET_NAME testSetName,
+		feature.ID featureId
+		FROM tbl_test_set_execute_round_user round
+		LEFT JOIN tbl_test_set
+		testset ON
+		testset.ID = round.TEST_SET_ID
+		LEFT JOIN tbl_test_task task
+		ON
+		task.ID = testset.TEST_TASK_ID
+		LEFT JOIN tbl_requirement_feature
+		feature ON
+		feature.ID = task.REQUIREMENT_FEATURE_ID
+		WHERE
+		testset.`STATUS` = 1
+		AND
+		round.`STATUS` = 1
+		<if test="userId != null">
+			AND round.EXECUTE_USER_ID = #{userId}
+		</if>
+		<if test="taskName!=null">
+			AND feature.FEATURE_NAME LIKE CONCAT('%',#{taskName},'%')
+		</if>
+		<if test="testSetName!=null">
+			AND testset.TEST_SET_NAME LIKE
+			CONCAT('%',#{testSetName},'%')
+		</if>
+		<if test="requirementFeatureStatus!=null">
+			AND
+			feature.REQUIREMENT_FEATURE_STATUS=#{requirementFeatureStatus}
+		</if>
+		GROUP BY round.TEST_SET_ID
+	</select>
+
+	<select id="getTaskTree" parameterType="map" resultType="map">
+		SELECT feature.ID featureId,feature.FEATURE_CODE
+		featureCode,feature.FEATURE_NAME featureName FROM
+		tbl_requirement_feature feature
+		LEFT JOIN tbl_test_task task ON
+		feature.ID = task.REQUIREMENT_FEATURE_ID
+		LEFT JOIN tbl_test_set testset
+		ON
+		testset.TEST_TASK_ID = task.ID
+		LEFT JOIN
+		tbl_test_set_execute_round_user round ON
+		testset.ID = round.TEST_SET_ID
+		WHERE testset.`STATUS` = 1
+		AND
+		round.`STATUS` = 1
+		<if test="userId != null">
+			AND round.EXECUTE_USER_ID = #{userId}
+		</if>
+		<if test="taskName!=null">
+			AND feature.FEATURE_NAME LIKE CONCAT('%',#{taskName},'%')
+		</if>
+		<if test="testSetName!=null">
+			AND testset.TEST_SET_NAME LIKE
+			CONCAT('%',#{testSetName},'%')
+		</if>
+		<if test="requirementFeatureStatus!=null">
+			AND
+			feature.REQUIREMENT_FEATURE_STATUS=#{requirementFeatureStatus}
+		</if>
+		GROUP BY feature.ID
+	</select>
+	<select id="getRelateSystem" resultType="map">
+		SELECT
+		sys.ID id,sys.SYSTEM_NAME systemName FROM tbl_system_info sys
+		LEFT JOIN tbl_requirement_feature feature ON
+		feature.SYSTEM_ID = sys.ID
+		LEFT JOIN tbl_test_task task ON
+		task.REQUIREMENT_FEATURE_ID = feature.ID
+		LEFT JOIN tbl_test_set testset ON
+		testset.TEST_TASK_ID = task.ID
+		WHERE testset.ID = #{testSetId}
+	</select>
+	
+	<select id="selectTestByCon"
+		resultType="map">
+		SELECT testset.ID id,testset.TEST_SET_NUMBER
+		testSetNumber,testset.TEST_SET_NAME testSetName,
+		testset.EXCUTE_ROUND
+		excuteRound,(SELECT COUNT(setcase.ID) from tbl_test_set_case setcase
+		WHERE setcase.TEST_SET_ID=testset.ID and setcase.`STATUS`=1) caseNum,
+		task.ID testTaskId,task.TEST_TASK_NAME testTaskName,
+		creuser.USER_NAME
+		createBy
+		FROM tbl_test_set testset
+		LEFT JOIN tbl_test_task task ON
+		task.ID = testset.TEST_TASK_ID
+		LEFT JOIN tbl_user_info creuser ON
+		creuser.ID = testset.CREATE_BY
+		where testset.status = 1
+		and testset.TEST_TASK_ID = #{testTaskId}
+		<if test="nameOrNumber!=null">
+  			AND	(testset.TEST_SET_NAME LIKE CONCAT('%',#{nameOrNumber},'%') OR
+  			testset.TEST_SET_NUMBER LIKE CONCAT('%',#{nameOrNumber},'%') )
+  		</if>
+  		<if test="createBy!=null and createBy.size!=0">
+  			AND testset.CREATE_BY in
+  			<foreach collection="createBy" item="item" open="(" separator="," close=")">
+  				#{item}
+  			</foreach>
+  		</if>
+	</select>
+
+	<update id="updateTestSetCaseByTestSetId" parameterType="Long">
+		UPDATE tbl_test_set_case SET STATUS = 2  WHERE TEST_SET_ID = #{testSetId} AND STATUS = 1
+	</update>
+
+</mapper>

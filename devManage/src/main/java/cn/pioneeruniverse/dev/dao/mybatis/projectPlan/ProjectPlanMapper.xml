@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.projectPlan.ProjectPlanMapper">
+	<resultMap id="BaseResultMap"
+			   type="cn.pioneeruniverse.dev.entity.TblProjectPlan">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="PROJECT_ID" jdbcType="BIGINT" property="projectId" />
+		<result column="RESPONSIBLE_USER_ID" jdbcType="BIGINT" property="responsibleUserId" />
+		<result column="PLAN_CODE" jdbcType="VARCHAR" property="planCode" />
+		<result column="PLAN_NAME" jdbcType="VARCHAR" property="planName" />
+		<result column="DELIVERABLES" jdbcType="VARCHAR" property="deliverables" />
+		<result column="PLAN_START_DATE" jdbcType="DATE" property="planStartDate" />
+		<result column="PLAN_START_MILESTONE" jdbcType="TINYINT" property="planStartMilestone" />
+		<result column="PLAN_END_DATE" jdbcType="DATE" property="planEndDate" />
+		<result column="PLAN_END_MILESTONE" jdbcType="TINYINT" property="planEndMilestone" />
+		<result column="PLAN_DURATION" jdbcType="DOUBLE" property="planDuration" />
+		<result column="PLAN_WORKLOAD" jdbcType="DOUBLE" property="planWorkload" />
+		<result column="PLAN_SCHEDULE" jdbcType="TINYINT" property="planSchedule" />
+		<result column="PARENT_ID" jdbcType="BIGINT" property="parentId" />
+		<result column="PARENT_IDS" jdbcType="VARCHAR" property="parentIds" />
+		<result column="PLAN_LEVEL" jdbcType="TINYINT" property="planLevel" />
+		<result column="PLAN_ORDER" jdbcType="TINYINT" property="planOrder" />
+		<result column="STATUS" jdbcType="TINYINT" property="status" />
+		<result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+		<result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+		<result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+		<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+		<result column="USER_NAME" jdbcType="VARCHAR" property="responsibleUser" />
+	</resultMap>
+
+	<!-- 计划弹窗总数 -->
+	<select id="getAllProjectPlanCount" parameterType="cn.pioneeruniverse.dev.entity.TblProjectPlan" resultType="int">
+		SELECT COUNT(*) FROM (
+		select tpp.ID id
+		FROM tbl_project_system tps
+		LEFT JOIN tbl_project_info tpi ON tps.PROJECT_ID = tpi.ID
+		LEFT JOIN tbl_project_plan tpp ON tpp.PROJECT_ID = tpi.ID
+		LEFT JOIN tbl_user_info tui ON tpp.RESPONSIBLE_USER_ID = tui.ID
+		<where>
+			AND tps.SYSTEM_ID = #{systemId}
+			<if test="projectName != null and projectName != ''">
+				AND tpi.PROJECT_NAME LIKE CONCAT('%',#{projectName},'%')
+			</if>
+			<if test="responsibleUserName != null and responsibleUserName != ''">
+				AND tui.USER_NAME LIKE CONCAT('%',#{responsibleUserName},'%')
+			</if>
+			<if test="planName != null and planName != ''">
+				AND tpp.PLAN_NAME LIKE CONCAT('%',#{planName},'%')
+			</if>
+			<if test="planCode != null and planCode != ''">
+				AND tpp.PLAN_CODE LIKE CONCAT('%',#{planCode},'%')
+			</if>
+			AND tps.`STATUS` = 1 AND tpi.`STATUS` = 1
+			AND tpp.`STATUS` = 1 AND tui.`STATUS` = 1
+		</where>
+		GROUP BY tpp.ID
+		) table_count
+	</select>
+
+	<!-- 计划弹窗（bootstrap）  -->
+	<select id="getAllProjectPlan" parameterType="map" resultType="map">
+		select tpp.ID id,tpp.PLAN_CODE,tpp.PLAN_NAME,tpi.PROJECT_NAME projectName,
+		tui.USER_NAME responsibleUserName
+		FROM tbl_project_system tps
+		LEFT JOIN tbl_project_info tpi ON tps.PROJECT_ID = tpi.ID
+		LEFT JOIN tbl_project_plan tpp ON tpp.PROJECT_ID = tpi.ID
+		LEFT JOIN tbl_user_info tui ON tpp.RESPONSIBLE_USER_ID = tui.ID
+		<where>
+			AND tps.SYSTEM_ID = #{tblProjectPlan.systemId}
+			<if test="tblProjectPlan.projectName != null and tblProjectPlan.projectName != ''">
+				AND tpi.PROJECT_NAME LIKE CONCAT('%',#{tblProjectPlan.projectName},'%')
+			</if>
+			<if test="tblProjectPlan.responsibleUserName != null and tblProjectPlan.responsibleUserName != ''">
+				AND tui.USER_NAME LIKE CONCAT('%',#{tblProjectPlan.responsibleUserName},'%')
+			</if>
+			<if test="tblProjectPlan.planName != null and tblProjectPlan.planName != ''">
+				AND tpp.PLAN_NAME LIKE CONCAT('%',#{tblProjectPlan.planName},'%')
+			</if>
+			<if test="tblProjectPlan.planCode != null and tblProjectPlan.planCode != ''">
+				AND tpp.PLAN_CODE LIKE CONCAT('%',#{tblProjectPlan.planCode},'%')
+			</if>
+			AND tps.`STATUS` = 1 AND tpi.`STATUS` = 1
+			AND tpp.`STATUS` = 1 AND tui.`STATUS` = 1
+		</where>
+		GROUP BY tpp.ID
+		limit #{start},#{pageSize}
+	</select>
+
+	<!--计划树形-->
+	<select id="selectPlanTree" resultMap="BaseResultMap" parameterType="Long">
+		select tpp.ID,tpp.PLAN_NAME,tpp.PLAN_CODE,tpp.PLAN_LEVEL,tpp.PLAN_ORDER
+		from tbl_project_plan tpp WHERE PROJECT_ID = #{projectId}
+		order by tpp.PLAN_ORDER
+	</select>
+
+	<select id="getProjectPlanParentId" resultMap="BaseResultMap">
+		select ID
+		from tbl_project_plan
+		WHERE PROJECT_ID = #{projectId} and PLAN_LEVEL = #{planLevel}
+		AND PLAN_ORDER &lt; #{planOrder}
+		ORDER BY PLAN_ORDER desc
+		LIMIT 0,1
+	</select>
+
+</mapper>

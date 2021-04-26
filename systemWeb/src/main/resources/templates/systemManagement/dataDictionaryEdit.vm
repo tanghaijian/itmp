@@ -1,0 +1,239 @@
+<script type="test/javascript" src="#springUrl('')/systemui/static/js/template-debug.js"></script>
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+    </button>
+    #if($type.equals("add"))
+        <h4 class="modal-title" id="modifyDataDictModalTitle">新建字典</h4>
+    #end
+    #if($type.equals("modify"))
+        <h4 class="modal-title" id="modifyDataDictModalTitle">编辑字典</h4>
+    #end
+</div>
+<div class="modal-body"> 
+    <form class="form-horizontal" id="modifyDataDictModalForm">
+        <div class="row">
+            <div class="form-group col-md-6 col-lg-6 ">
+                <label class="col-sm-4 control-label"><span class="red">*</span>数据字典名称：</label>
+                <div class="col-sm-8 col-md-8">
+                    <input type="text" class="form-control" placeholder="请填写字典名称" autocomplete="off"
+                        #if($type.equals("modify"))
+                           value="$termName"
+                        #end
+                           id="modalTermName" name="modalTermName"/>
+                </div>
+            </div>
+            <div class="form-group col-md-6 col-lg-6 ">
+                <label class="col-sm-4 control-label"><span class="red">*</span>数据字典编码：</label>
+                <div class="col-sm-8 col-md-8">
+                    <input type="text" class="form-control" placeholder="请填写字典编码" autocomplete="off"
+                        #if($type.equals("modify"))
+                           value="$termCode"
+                        #end
+                           id="modalTermCode" name="modalTermCode"/>
+                </div>
+            </div>
+        </div>
+        <div class="content-table">
+            <div class="content-btn">
+                <button type="button" onclick="addDataDict()" class="btn btn-primary">新增字典项</button>
+            </div>
+        </div>
+        <div class="wode">
+            <table class="table table-bordered table-hover" style="text-align: center;" id="modifyDataDictModalTable">
+                <thead>
+                <tr>
+                    <th width="10%" class="text-center">字典项名称</th>
+                    <th width="10%" class="text-center">排序</th>
+                    <th width="20%" class="text-center">键值</th>
+                    <th width="25%" class="text-center">操作</th>
+                </tr>
+                </thead>
+                <tbody id="modifyDataDictModalTableBody">
+                    #if($type.equals("add"))
+                    <tr>
+                        <td><input type="text" value=""></td>
+                        <td><input type="text" value=""></td>
+                        <td><input type="text" value=""></td>
+                        <td><a href="javascript:void(0);" class="invalid" value="1" onclick="delDataDict(this)">删除</a></td>
+                    </tr>
+                    #end
+
+                    #if($type.equals("modify"))
+                        #foreach($dataDict in ${system.getDataDicListBytermCode("$termCode")})
+                        #if($dataDict.status==1)
+                        <tr dataDictId="$dataDict.id" id="$dataDict.id">
+                            <td><input type="text" value="$dataDict.valueName"/></td>
+                            <td><input type="text" value="$dataDict.valueSeq"/></td>
+                            <td><input type="text" value="$dataDict.valueCode"/></td>
+                            <td><a href="javascript:void(0);" class="invalid" value="1" onclick="setInvalid(this,$dataDict.id)">设置无效</a></td>
+                           <!--  #if($dataDict.status==2)
+                            <td><a href="javascript:void(0);"  class="invalid" value="2" onclick="setInvalid(this,$dataDict.id)">设置有效</a></td>
+                            $("#$dataDict.id").css("text-decoration","line-through");
+                            #end -->
+                        </tr>
+                        #end
+                        #if($dataDict.status==2)
+                        <tr class="invalidClass" dataDictId="$dataDict.id" id="$dataDict.id">
+                            <td><input type="text" readonly value="$dataDict.valueName" /></td>
+                            <td><input type="text" readonly value="$dataDict.valueSeq"/></td>
+                            <td><input type="text" readonly value="$dataDict.valueCode"/></td>
+                            <td><a href="javascript:void(0);" class="invalid" value="2" onclick="setInvalid(this,$dataDict.id)">设置有效</a></td>
+                           <!--  #if($dataDict.status==2)
+                            <td><a href="javascript:void(0);"  class="invalid" value="2" onclick="setInvalid(this,$dataDict.id)">设置有效</a></td>
+                            $("#$dataDict.id").css("text-decoration","line-through");
+                            #end -->
+                        </tr>
+                        #end
+                        #end
+                    #end
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" onclick="submitChange()" class="btn btn-primary">确定</button>
+    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+</div>
+
+<script>
+   /*  var delArray = []; */
+    $(function () {
+        $('#modifyDataDictModalForm').bootstrapValidator({
+            message: 'This value is not valid',//通用的验证失败消息
+            feedbackIcons: {
+                //根据验证结果显示的各种图标
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                modalTermName: {
+                    validators: {
+                        notEmpty: {
+                            message: '数据库字典名称不能为空'
+                        },
+                    }
+                },
+                modalTermCode: {
+                    validators: {
+                        notEmpty: {
+                            message: '字典编码不能为空'
+                        },
+                    }
+                },
+
+            }
+        });
+    });
+
+   //【新增字典项】，组装一行新的Html
+    function addDataDict() {
+        var html = $(template("dataDictTemplate", {}));
+        $("#modifyDataDictModalTableBody").append(html);
+    }
+   
+   //保存数据
+    function submitChange() {
+        $('#modifyDataDictModalForm').data('bootstrapValidator').validate();
+        if (!$('#modifyDataDictModalForm').data('bootstrapValidator').isValid()) {
+            return;
+        }
+        var dataDictList = [];
+        var dataDicMapForRedis = {};
+        var dataDicMapValueForRedis = {};
+        $('#modifyDataDictModalTableBody tr').each(function () {
+            var dataDict = {};
+            var valueName;
+            var valueCode;
+            if (typeof $(this).attr("dataDictId") != undefined) {
+                dataDict["id"] = $(this).attr("dataDictId");
+            }
+            dataDict["termName"] = $("#modalTermName").val();
+            dataDict["termCode"] = $("#modalTermCode").val();
+            
+            $(this).children("td").find("input[type='text']").each(function (i) {
+                if (i == 0) {
+                    valueName = $(this).val();
+                    dataDict["valueName"] = $(this).val();
+                } else if (i == 1) {
+                    dataDict["valueSeq"] = $(this).val();
+                } else if (i == 2) {
+                    valueCode = $(this).val();
+                    dataDict["valueCode"] = $(this).val();
+                }
+            });
+            dataDict["status"] = $(this).children("td").find(".invalid").attr("value");
+            var s = $(this).children("td").find(".invalid").attr("value");
+            dataDictList.push(dataDict);
+            if (valueCode != "" && s == 1) {
+                dataDicMapValueForRedis[valueCode] = valueName;
+            }
+        });
+        dataDicMapForRedis[$("#modalTermCode").val()] = dataDicMapValueForRedis;
+        
+        $.ajax({
+            type: "POST",
+            url: "/system/dataDic/saveDataDict",
+            dataType: "json",
+            contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+            data: {
+                dataDics: JSON.stringify(dataDictList),
+                /* delDataDicts: JSON.stringify(delArray), */
+                dataDicMapForRedis: JSON.stringify(dataDicMapForRedis)
+            },
+            success: function (msg) {
+                if (msg.flag) {
+                    $("#modifyDataDictModal").modal('hide');
+                    searchInfo();
+                } else {
+                    layer.alert("保存失败", {
+                        icon: 2,
+                        title: "提示信息"
+                    });
+                }
+            }
+        });
+
+    }
+
+     function delDataDict(obj, id) {
+       /*  if (typeof id != undefined) {
+            delArray.push(id);
+        } */
+        $(obj).parents("tr").remove();
+    } 
+
+    //设置无效
+    function setInvalid(This,id){
+    	console.log($(This));
+    	if( $(This).attr("value")==1 ){
+    		$(This).attr("value",2);
+    		$(This).parent("td").parent("tr").addClass( " invalidClass " );
+    		$(This).parent("td").parent("tr").find("input[type='text']").prop( "readonly","readonly" );
+    		$(This).text("设置有效");
+    	}else if($(This).attr("value")==2){
+    		$(This).attr("value",1);
+    		$(This).parent("td").parent("tr").removeClass( " invalidClass " );
+    		$(This).parent("td").parent("tr").find("input[type='text']").removeAttr("readOnly");
+    		$(This).text("设置无效");
+    	}
+    }
+    
+   /*  //设置有效
+    function setEffective(this,id){
+    	$(this).children("td").find(".invalid").attr("value",1);
+    } */
+    
+</script>
+
+<script id="dataDictTemplate" type="text/html">
+    <tr>
+        <td><input type="text" value=""></td>
+        <td><input type="text" value=""></td>
+        <td><input type="text" value=""></td>
+        <td><a href="javascript:void(0);" class="invalid" value="1" onclick="delDataDict(this)">删除</a></td>
+    </tr>
+</script>
+

@@ -1,0 +1,98 @@
+1.配置任务创建方式字典表，增加两项
+//TBL_REQUIREMENT_FEATURE_CREATE_TYPE
+提前下发,3,0
+生产问题,4,-1
+
+2.导入模板、（测试环境变量以后导出）
+    tbl_report_monthly_module.sql
+3.导入漏检经验总结
+    tbl_report_monthly_undetected_summary.sql
+4.导入全年数据（9月）
+    tbl_report_cumulative_system_data_9.sql
+5.config服务器增加白名单到api-gateway-prod.properties的
+    1）cas.exclude.url.patterns
+    2）system.outer.interface.url
+
+6.导入月报配置表tbl_report_monthly_config
+    tbl_report_monthly_config.sql
+7.执行commonddl.sql
+
+8.月报菜单配置
+
+../testManageui/testMonthReport/toTestMonthReportStatis
+testManageui:monthReport:toMonthReport
+92
+icon-caret-right
+
+
+
+
+
+1.发布服务
+    1）制品构建
+        *1））config
+        2））zuul
+        3））dev*2
+        *4））system
+        5））project*2
+        6））test*2
+        *7））report
+    2）下载制品包
+
+    3）上传到测试服务器
+
+    4）启动服务
+        *1））config
+        2））zuul
+        3））dev
+        *4））system
+        5））project*2
+        6））test*2
+        *7））report
+
+
+
+
+
+
+本次测管平台发布内容清单如下：
+1.测管平台常规需求开发、遗留缺陷修复：包括测试任务合并，测试任务增加提前下发和生产问题两类tag测试任务管理、工作任务管理、缺陷管理的默认排序规则、测试案例执行实际结果字段长度等功能
+2.测试月报功能，不影响开发测试管理平台原有任何功能。
+
+公共模块影响
+    porject模块：调整了需求同步接口任务下发测试任务合并逻辑，不涉及到开发平台逻辑调整
+    projectweb模块：调整了风险管理，新增风险的子系统关联项目的查询
+    dev模块：调整了生产问题确认插入测试任务逻辑，修改测试任务创建类型
+    zuul模块：登录超时时限调整为6小时，
+
+数据库：
+    月报功能：
+        DDL：增加10张表；
+        DML：初始化sql
+
+    非月报功能：
+        DDL：调整测试案例执行表的实际结果字段长度到500
+        DML：无
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

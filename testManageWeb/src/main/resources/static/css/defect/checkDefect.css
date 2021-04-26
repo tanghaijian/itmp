@@ -1,0 +1,155 @@
+body{
+    background: #F2F2F2;
+}
+.defectBody [class*="def_col_"]{
+    padding-left: 0;
+}
+.head{
+	position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    padding: 10px 12px;
+    border-bottom: 1px solid #E8E8E8; 
+    z-index: 10;
+     background: #F2F2F2;
+}
+.headReturn{ 
+    width: 55px;
+    height: 36px;
+    background: url("../../images/defect/return.png") no-repeat 8px 0;
+    border-right: 2px solid #E8E8E8;
+    cursor:pointer;
+}
+.title{
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    padding-left: 20px;
+}
+.title>div{
+    line-height: 36px;
+}
+[class^="classColor"]{
+    border-radius: 3px;
+    padding: 3px 5px;
+}
+.titleFont{
+    font-size: 15px;
+    font-weight: bold;
+}
+.defectBody{
+    padding: 8px;
+    display: flex;
+    flex-direction: row;
+    margin-top: 57px;
+    margin-bottom: 55px; 
+}
+.defectInfos{ 
+    padding-right: 8px;
+}
+.defectHandlingLog{ 
+    width: 35%;
+}
+.defectBody .allInfo {
+    margin: 0;
+    border: none;
+    padding: 0 20px;
+    background-color: #FFF;
+}
+.defectBody .def_title{
+    padding: 10px 0 8px;
+    border-bottom: 1px solid #D1D1D1;
+}
+.defectBody .def_title span{
+    color: #108EE9 !important;
+}
+.defectBody .allInfo .def_content{
+    border: none;
+    padding:  8px 0 8px 10px;
+}
+#defectBaseInfo [class*="def_col_"]{
+    line-height: 30px;
+    margin-bottom: 0;
+}
+#defectBaseInfo{ 
+    position: relative;
+    height: 100%;
+}
+#defectBaseInfo .rowdiv{
+    margin-bottom: 0;
+}
+#defectBaseInfo hr{
+    margin: 8px 0;
+    background-color: #D1D1D1;
+    height: 1px;
+    border: none;
+}
+.bottomBtn{
+    position: fixed;
+    border-top: 1px solid #D1D1D1;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 55px;
+    text-align: center;
+    background: #FFFFFF;
+}
+.bottomBtn .btn{
+	padding: 6px 18px;
+	margin: 12px 5px;
+}
+.defectHandlingLog .def_content{
+	display: block;
+}
+.defectBody .logDiv{
+	padding: 0;
+}
+#canEditField{
+	padding: 5px 0;
+	margin:10px 0 !important;
+	border: 1px solid #EFEFEF;
+	border-left: none;
+	border-right: none;
+}
+#canEditField [class*="def_col_"]{
+	height: 30px;
+}
+#selectdetail .select-label{
+	line-height: 30px !important; 
+}
+#titleOfwork .def_controlTit{
+	font-weight: bold
+}
+#titleOfwork .def_changeTit{
+	font-weight: 500 !important;
+}
+.new_workRomarksBtn{
+	text-align: center;
+	margin-top: 8px;
+}
+.def_content .control-label {
+	display: inline-block;
+	line-height: 28px; 
+}  
+.file-upload-tb>tbody>tr>td:first-child{
+	max-width: 80%;
+	width: 80%;
+}
+.file-upload-tb{
+	width: 100% !important;;
+}
+.fileTb{
+	width: 100%;
+	text-overflow: ellipsis;
+	white-space: nowrap; 
+	overflow: hidden;
+}
+.new_workRemarks{
+	text-align: left;
+}
+.file-bucket{
+	display: none;
+}

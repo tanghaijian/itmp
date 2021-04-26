@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblDevTaskScmFileReviewMapper">
+
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblDevTaskScmFileReview">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="SCM_FILE_TYPE" jdbcType="TINYINT" property="scmFileType"/>
+        <result column="DEV_TASK_SCM_FILE_ID" jdbcType="BIGINT" property="devTaskScmFileId"/>
+        <result column="REVIEW_USER_ID" jdbcType="BIGINT" property="reviewUserId"/>
+        <result column="REVIEW_COMMENT" jdbcType="VARCHAR" property="reviewComment"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+    </resultMap>
+
+
+    <!-- 获取某个文件的代码评审次数 -->
+    <select id="getScmFileCommentsCountByFileId" resultType="java.lang.Integer">
+        SELECT COUNT(tdtsfr.ID)
+        FROM tbl_dev_task_scm_file_review tdtsfr
+        WHERE
+        tdtsfr.DEV_TASK_SCM_FILE_ID = #{devTaskScmFileId}
+        AND tdtsfr.SCM_FILE_TYPE = #{scmFileType}
+        AND tdtsfr.STATUS = 1
+    </select>
+
+   <!-- 获取评审意见 -->
+    <select id="getFileComments" resultMap="devTaskScmFileReviewDTOMap">
+        SELECT
+        tui.USER_NAME AS "REVIEW_USER_NAME",
+        tdtsfr.CREATE_DATE,
+        tdtsfr.REVIEW_COMMENT
+        FROM tbl_dev_task_scm_file_review tdtsfr
+        LEFT JOIN tbl_user_info tui ON tui.ID = tdtsfr.REVIEW_USER_ID
+        WHERE
+        tdtsfr.DEV_TASK_SCM_FILE_ID = #{devTaskScmFileId}
+        AND tdtsfr.SCM_FILE_TYPE = #{scmFileType}
+        AND tdtsfr.STATUS = 1
+        ORDER BY tdtsfr.CREATE_DATE DESC
+    </select>
+
+<!-- 保存评审结果 -->
+    <insert id="insertOneDevTaskScmFileReview" parameterType="cn.pioneeruniverse.dev.entity.TblDevTaskScmFileReview"
+            useGeneratedKeys="true"
+            keyProperty="id">
+       INSERT INTO tbl_dev_task_scm_file_review(
+         SCM_FILE_TYPE,
+         DEV_TASK_SCM_FILE_ID,
+         REVIEW_USER_ID,
+         REVIEW_COMMENT,
+         STATUS,
+         CREATE_BY,
+         CREATE_DATE,
+         LAST_UPDATE_BY,
+         LAST_UPDATE_DATE
+        ) VALUES (
+         #{scmFileType},
+         #{devTaskScmFileId},
+         #{reviewUserId},
+         #{reviewComment},
+         #{status},
+         #{createBy},
+         #{createDate},
+         #{lastUpdateBy},
+         #{lastUpdateDate}
+        )
+    </insert>
+
+    <resultMap type="cn.pioneeruniverse.dev.entity.TblDevTaskScmFileReview" id="devTaskScmFileReviewDTOMap"
+               extends="BaseResultMap">
+        <result column="REVIEW_USER_NAME" property="reviewUserName"/>
+    </resultMap>
+
+</mapper>

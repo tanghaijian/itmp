@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.DeptInfoMapper">
+  <!--根据部门名称查询id-->
+    <select id="selectDeptId" parameterType="java.lang.String" resultType="long">
+  	select ID from tbl_dept_info where DEPT_NAME like concat("%",#{deptName},"%") 
+  </select>
+
+    <!--根据id查询名称-->
+  <select id="selectDeptName" parameterType="java.lang.Long" resultType="string">
+  	select DEPT_NAME from tbl_dept_info where ID = #{deptId}
+  </select>
+
+    <!--查询所有的部门名称-->
+  <select id="selectAllDeptName" resultType="string">
+  	select DEPT_NAME from tbl_dept_info 
+  </select>
+  
+
+    <!--同步时查询部门信息，无视状态-->
+  <select id="findIdByDeptNumber" parameterType="String" resultType="long">
+  	select ID from TBL_DEPT_INFO WHERE DEPT_NUMBER = #{deptNumber} AND STATUS=1
+  </select>
+  
+  <select id="selectDeptIds" parameterType="java.lang.String" resultType="long">
+  	select ID from tbl_dept_info where DEPT_NAME like concat("%",#{deptName},"%") and STATUS = 1
+  </select>
+  
+  <select id="getDeptNumById" parameterType="java.lang.Long" resultType="string">
+  	select DEPT_NUMBER from tbl_dept_info where ID = #{deptId}
+  </select>
+  
+  <select id="getDeptIdByNumber" parameterType="java.lang.String" resultType="long">
+  	select ID from tbl_dept_info where DEPT_NUMBER = #{deptNumber}
+  </select>
+</mapper>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<title>wiki</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="X-UA-Compatible" content="no-cache,IE=edge,Chrome=1"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css"/>
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/jquery-ztree/3.5.36/css/metroStyle/metroStyle.css"/>
+	<link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/wiki/default.css" />
+	<link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/wiki/simple.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css"/>
+
+	<link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/wiki/assetsLibrary.css"/>
+	<link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/wiki/assetsLibraryNeeds.css"/>
+	<link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/wiki/checkMakeDown.css"/>
+	<style>
+		.tree_icon {
+			background-image: url("#springUrl('')/projectManageui/static/images/detail/zTreeStandard.png");
+		}
+		#content2 .selected {
+			padding: 10px;
+			margin: 10px;
+		}
+
+		#content2 table,
+		#content2 td,
+		#content2 tr {
+			padding: 10px;
+			margin: 10px;
+		}
+
+		#content2 .ke-content {
+			padding: 20px;
+		}
+	</style>
+</head>
+
+<body>
+	<input type="hidden" id="projectId" value="$!id"/>
+	<input type="hidden" id="systemDiretoryId"/>
+
+	<div id="requirement">
+		<div class="makeDownModal">
+			<div class="head">
+				<div class="reqInfo">
+					<h4 class="def_col_7">$!projectName</h4>
+					<span class="version"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+					<span class="Check_out_people" style="display:none;border: 1px solid red;padding: 3px;border-radius: 4px;background: #f3d2d2;color: red;"></span>
+					&nbsp;&nbsp;<span class="Check_out_user redStar" style="display:none;"></span>
+					<div class="editHeadDiv _hide">
+						<div>
+							<button class="btn btn-default" id="makeDownStorage" onclick="submit_HTML(1)"> 暂 存 </button>&nbsp;
+							<button class="btn btn-primary" onclick="submit_HTML(2)"> 提 交 </button> &nbsp;
+							<button class="btn btn-default" id="makeDowncancel" onclick="submit_HTML(3)"> 取消签出 </button>&nbsp;
+						</div>
+					</div>
+					<div class="checkHeadDiv">
+						<button class="btn btn-primary signBtn disableBtn" id="signBtn"> 签 出 </button>
+						<span class="history" id="history">
+							<span class="icon_history"></span>
+							<a href="#" onclick="select_history()">历史版本</a>
+						</span>
+						<span class="build _show_ellipsis"></span>
+						<span class="last _show_ellipsis"></span>
+					</div>
+				</div>
+			</div>
+			<div class="content">
+				<div class="left">
+					<div class="menu docMenu">
+						<div class="rowdiv">
+							<div class="def_col_25 max_w180">
+								<select class="selectpicker show-tick form-control" id="system_body" 
+									multiple data-live-search="true" 
+									data-none-selected-text="全部" data-actions-box="true" ></select>
+							</div>
+							<div class="def_col_8 font_right">
+								<button class="btn btn-primary" id="" onclick="create_ztree()">查询</button>
+							</div>
+						</div>
+						<div class="addEntryDiv">
+						 	##<button class="btn btn-primary" id="associated_item_btn">关联条目</button>
+							##<button class="btn btn-primary" id="export_btn"> 导出 </button>
+						 	##<button class="btn btn-primary" id="addNotic_btn"> 新增一级条目 </button>
+						</div>
+						<div class="docHead">章节列表</div>
+						<div id="docTree" class="ztree"></div>
+					</div>
+				</div>
+				<div class="right">
+					<div id="editor" class="_hide">
+						<textarea name="content2" id="content2" cols="100" rows="20" style="width:100%;"></textarea>
+					</div>
+					<div class="noData">请点击左侧目录，来显示文档列表…</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	## 历史版本
+	<div class="modal fade bs-example-modal-lg" id="history_list_Modal" tabindex="-1" role="dialog" aria-labelledby="">
+			<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+							<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">×</span>
+									</button>
+									<h4 class="modal-title" id="">历史版本</h4>
+							</div>
+							<div class="modal-body">
+								<div class="content-table">
+										<table id="history_list_Table"></table>
+										## <div id="userPage"></div>
+								</div>
+							</div>
+							<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							</div>
+					</div>
+			</div>
+	</div>
+	
+	## 查看某一版本章节信息
+	<div class="modal fade" id="associated_charpt_Modal" tabindex="-1" role="dialog" aria-labelledby="" type="hidden">
+			<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content"> 
+								<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+										<span class="modal-title" id="his_charpt_tit">章节信息</span>
+								</div>
+								<div class="modal-body">
+									<textarea id="" name="content_check" style="width:100%;"></textarea>
+								</div>
+								<div class="modal-footer"> 
+									<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+								</div>  
+					</div>
+			</div>
+	</div>
+
+	## 新增条目
+	<div class="modal fade bs-example-modal-lg" id="add_article_modal" tabindex="-1" role="dialog" aria-labelledby="">
+			<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="add_group_tit">新建条目</h4>
+							<input type="hidden" id="add_article_id" />
+						</div>
+						<div class="modal-body">
+							<form id="add_article_form">
+								<div class="rowdiv form-group">
+									<div class="def_col_8">
+										<label class="control-label"><span class="redStar">*</span>条目名称：</label></div>
+									<div class="def_col_28">
+										<input type="text" name="add_article_name" id="add_article_name" 
+											class="form-control" placeholder="请输入" />
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" onclick="addNotic_submit()" class="btn btn-primary">确定</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+						</div>
+					</div>
+			</div>
+	</div>
+
+	## 上传附件
+	<div
+		class="modal fade bs-example-modal-lg"
+		id="importModal"
+		tabindex="-1"
+		role="dialog"
+		aria-labelledby="">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+					<h4 class="modal-title" id="import_Label">上传文件</h4>
+					<input type="hidden" id="uploadFile_type" status="1" />
+				</div>
+				<div class="modal-body">
+					<form id="importModalForm" class="form-horizontal" enctype="multipart/form-data">
+						<div class="rowdiv form-group">
+							<div class="def_col_8 font_right fontWeihgt">选择文件：</div>
+							<div class="def_col_12">
+								<div class="file-upload-select_file">
+									<input type="file" class="upload-files" id="opt_uploadFile" multiple="multiple"/>
+								</div>
+								<div class="file-upload-list">
+									<table class="file-upload-tb" id="optFileTable"></table>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" onclick="import_files()">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+
+	<div id="loading">
+		<img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif"/>
+	</div>
+
+</body>
+
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+
+    <script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.core.js"></script>
+    <script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.excheck.min.js"></script>
+    <script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.exedit.js"></script>
+    <script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.exhide.js"></script>
+    <script src="#springUrl('')/projectManageui/static/js/common/common.js"></script>
+
+	<script src="#springUrl('')/projectManageui/static/js/project/oamProjectManage/kindeditor-all.js"></script>
+    <script src="#springUrl('')/projectManageui/static/js/project/oamProjectManage/wiki.js"></script>
+    <script src="#springUrl('')/projectManageui/static/js/project/oamProjectManage/uploadImg.js"></script>
+</html>

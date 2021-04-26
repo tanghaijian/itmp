@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblCaseCatalogMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblCaseCatalog">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="SYSTEM_ID" jdbcType="BIGINT" property="systemId" />
+    <result column="CATALOG_NAME" jdbcType="VARCHAR" property="catalogName" />
+    <result column="PARENT_ID" jdbcType="BIGINT" property="parentId" />
+    <result column="PARENT_IDS" jdbcType="VARCHAR" property="parentIds" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, SYSTEM_ID, CATALOG_NAME, PARENT_ID, PARENT_IDS, STATUS, CREATE_BY, CREATE_DATE, 
+    LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+    <!--根据id查询测试案例日志-->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_case_catalog
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+    <!--新增-->
+  <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblCaseCatalog" useGeneratedKeys="true" keyProperty="id">
+    insert into tbl_case_catalog (SYSTEM_ID, CATALOG_NAME, 
+      PARENT_ID, PARENT_IDS, STATUS, 
+      CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, 
+      LAST_UPDATE_DATE)
+    values ( #{systemId,jdbcType=BIGINT}, #{catalogName,jdbcType=VARCHAR}, 
+      #{parentId,jdbcType=BIGINT}, #{parentIds,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
+      #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, 
+      #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+    <!--判断修改操作-->
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblCaseCatalog">
+    update tbl_case_catalog
+    <set>
+      <if test="systemId != null">
+        SYSTEM_ID = #{systemId,jdbcType=BIGINT},
+      </if>
+      <if test="catalogName != null">
+        CATALOG_NAME = #{catalogName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        PARENT_ID = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="parentIds != null">
+        PARENT_IDS = #{parentIds,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <!--根据目录查询测试案例 -->
+    <select id="selectCaseCatalogsByCon" parameterType="cn.pioneeruniverse.dev.entity.TblCaseCatalog" resultType="map">
+  	select concat('log_',catalog.ID) id,catalog.ID realId,catalog.SYSTEM_ID systemId,catalog.CATALOG_NAME name,
+  	(SELECT count(archivedCase.id) FROM tbl_archived_case archivedCase WHERE archivedCase.status = 1
+		AND archivedCase.CASE_CATALOG_ID = catalog.ID
+		<if test="systemId!=null">
+			AND archivedCase.SYSTEM_ID = #{systemId}
+		</if>
+		) archivedCaseCount,count(caseinfo.id) caseCount,
+  	(case when catalog.PARENT_ID is null then catalog.SYSTEM_ID else concat('log_',catalog.PARENT_ID) end) pId
+  	from tbl_case_catalog catalog
+		LEFT JOIN tbl_case_info caseinfo
+		ON caseinfo.CASE_CATALOG_ID = catalog.ID
+		AND caseinfo.`STATUS` = 1
+		<if test="systemId!=null">
+			AND caseinfo.SYSTEM_ID = #{systemId}
+		</if>
+  		where catalog.status = 1
+		<if test="systemId!=null">
+  			and catalog.SYSTEM_ID = #{systemId}
+  		</if>
+		GROUP BY catalog.ID
+  </select>
+
+    <!--根据系统查询测试案例id和目录名称 -->
+  <select id="selectCaseCatalogsBySystemId" resultMap="BaseResultMap">
+  	select ID,CATALOG_NAME from tbl_case_catalog
+  	where status = 1 and SYSTEM_ID = #{systemId}
+  </select>
+  
+</mapper>

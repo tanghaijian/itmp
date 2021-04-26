@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblArtifactInfoMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblArtifactInfo">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="SYSTEM_ID" jdbcType="BIGINT" property="systemId" />
+    <result column="SYSTEM_MODULE_ID" jdbcType="BIGINT" property="systemModuleId" />
+    <result column="REPOSITORY" jdbcType="VARCHAR" property="repository" />
+    <result column="GROUP_ID" jdbcType="VARCHAR" property="groupId" />
+    <result column="ARTIFACT_ID" jdbcType="VARCHAR" property="artifactId" />
+    <result column="VERSION" jdbcType="VARCHAR" property="version" />
+    <result column="NEXUS_PATH" jdbcType="VARCHAR" property="nexusPath" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, SYSTEM_ID, SYSTEM_MODULE_ID, REPOSITORY, GROUP_ID, ARTIFACT_ID, VERSION, NEXUS_PATH, 
+    REMARK, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_artifact_info
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 获取保健信息 -->
+   <select id="findArtInfo" parameterType="map" resultType="map">
+   select * from tbl_artifact_tag tat left join tbl_artifact_info tai on tai.id=tat.ARTIFACT_ID 
+where tat.ENVIRONMENT_TYPE=#{ENVIRONMENT_TYPE} and tai.system_id=#{system_id} and tai.SYSTEM_MODULE_ID=#{SYSTEM_MODULE_ID} and status=1
+  </select>
+  
+  <!-- 插入包件信息 -->
+  <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblArtifactInfo">
+  	<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">  
+             SELECT LAST_INSERT_ID() AS ID  
+    </selectKey> 
+    insert into tbl_artifact_info (SYSTEM_ID, SYSTEM_MODULE_ID, 
+      REPOSITORY, GROUP_ID, ARTIFACT_ID, 
+      VERSION, NEXUS_PATH, REMARK, 
+      STATUS, CREATE_BY, CREATE_DATE, 
+      LAST_UPDATE_BY, LAST_UPDATE_DATE)
+    values ( #{systemId,jdbcType=BIGINT}, #{systemModuleId,jdbcType=BIGINT}, 
+      #{repository,jdbcType=VARCHAR}, #{groupId,jdbcType=VARCHAR}, #{artifactId,jdbcType=VARCHAR}, 
+      #{version,jdbcType=VARCHAR}, #{nexusPath,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!-- 根据可选项更新 -->
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblArtifactInfo">
+    update tbl_artifact_info
+    <set>
+      <if test="systemId != null">
+        SYSTEM_ID = #{systemId,jdbcType=BIGINT},
+      </if>
+      <if test="systemModuleId != null">
+        SYSTEM_MODULE_ID = #{systemModuleId,jdbcType=BIGINT},
+      </if>
+      <if test="repository != null">
+        REPOSITORY = #{repository,jdbcType=VARCHAR},
+      </if>
+      <if test="groupId != null">
+        GROUP_ID = #{groupId,jdbcType=VARCHAR},
+      </if>
+      <if test="artifactId != null">
+        ARTIFACT_ID = #{artifactId,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        VERSION = #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="nexusPath != null">
+        NEXUS_PATH = #{nexusPath,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="findNewPackage" resultMap="BaseResultMap" resultType="list">
+  <!--   		SELECT
+  		  max(ID) ID,max(REPOSITORY) REPOSITORY,max(ARTIFACT_ID) ARTIFACT_ID,max(VERSION) VERSION
+     		FROM (-->
+                SELECT
+                info.ID,info.REPOSITORY,info.ARTIFACT_ID, info.CREATE_DATE,info.LAST_UPDATE_DATE,info.VERSION,SUBSTR(info.VERSION,1,5) ver
+                 FROM tbl_artifact_info info LEFT JOIN tbl_artifact_tag tag ON
+              info.ID = tag.ARTIFACT_ID WHERE info.SYSTEM_ID = #{systemId}
+              AND tag.ENVIRONMENT_TYPE = #{env} and info.status=1
+              <if test="systemModuleId!=null">
+                  AND info.SYSTEM_MODULE_ID = #{systemModuleId}
+              </if>
+              <if test="systemModuleId==null">
+                  AND info.SYSTEM_MODULE_ID is null
+              </if>
+              ORDER BY info.LAST_UPDATE_DATE DESC limit 0,100
+  <!--    ) a GROUP BY ver-->
+</select>
+
+
+
+
+
+<select id="findRequidsByartId" parameterType="map"  resultType="java.lang.String">
+select
+REQUIREMENT_FEATURE_ID from tbl_artifact_requirement_feature  where status=1
+
+<if test="artIds.size() > 0">
+and ARTIFACT_ID in
+
+<foreach item="artId" index="index" collection="artIds" open="(" separator="," close=")">
+#{artId}
+</foreach>
+</if>
+</select>
+
+
+
+
+
+
+</mapper>

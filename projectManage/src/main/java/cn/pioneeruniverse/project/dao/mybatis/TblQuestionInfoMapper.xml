@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="cn.pioneeruniverse.project.dao.mybatis.TblQuestionInfoMapper">
+	<resultMap id="BaseResultMap"
+		type="cn.pioneeruniverse.project.entity.TblQuestionInfo">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="PROJECT_ID" jdbcType="BIGINT" property="projectId" />
+		<result column="PROGRAM_ID" jdbcType="BIGINT" property="programId" />
+		<result column="RESPONSIBLE_USER_ID" jdbcType="BIGINT" property="responsibleUserId" />
+		<result column="QUESTION_DESCRIPTION" jdbcType="VARCHAR" property="questionDescription" />
+		<result column="QUESTION_REASON_TYPE" jdbcType="TINYINT" property="questionReasonType" />
+		<result column="QUESTION_IMPORTANCE" jdbcType="TINYINT" property="questionImportance" />
+		<result column="QUESTION_EMERGENCY_LEVEL" jdbcType="TINYINT" property="questionEmergencyLevel" />
+		<result column="QUESTION_PRIORITY" jdbcType="TINYINT" property="questionPriority" />
+		<result column="HAPPEN_DATE" jdbcType="DATE" property="happenDate" />
+		<result column="END_DATE" jdbcType="DATE" property="endDate" />
+		<result column="COPING_STRATEGY_RECORD" jdbcType="VARCHAR" property="copingStrategyRecord" />
+		<result column="HAPPEN_STAGE" jdbcType="TINYINT" property="happenStage" />
+		<result column="REASON_ANALYSIS" jdbcType="VARCHAR" property="reasonAnalysis" />
+		<result column="REMARK" jdbcType="VARCHAR" property="remark" />
+		<result column="STATUS" jdbcType="TINYINT" property="status" />
+		<result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+		<result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+		<result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+		<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+
+	</resultMap>
+<!--查询	-->
+	<select id="getQuestions" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select question.ID,question.QUESTION_DESCRIPTION, question.QUESTION_PRIORITY, question.HAPPEN_DATE, question.END_DATE,
+			question.COPING_STRATEGY_RECORD, question.REMARK, question.RESPONSIBLE_USER_ID, user.USER_NAME responsibleUser
+			from tbl_question_info question
+			left join tbl_user_info user on user.ID = question.RESPONSIBLE_USER_ID
+			where question.PROJECT_ID = #{projectId} and question.STATUS = 1
+	</select>
+<!--	删除-->
+	<update id="deleteQuestion" parameterType="cn.pioneeruniverse.project.entity.TblQuestionInfo">
+		update tbl_question_info set STATUS = 2, LAST_UPDATE_BY = #{lastUpdateBy}, LAST_UPDATE_DATE = #{lastUpdateDate}
+			where ID = #{id}
+	</update>
+<!--	插入-->
+	<insert id="insertQuestion" useGeneratedKeys="true" keyProperty="id" parameterType="cn.pioneeruniverse.project.entity.TblQuestionInfo">
+		insert into tbl_question_info (PROJECT_ID, PROGRAM_ID, RESPONSIBLE_USER_ID, QUESTION_DESCRIPTION, QUESTION_REASON_TYPE,
+			QUESTION_IMPORTANCE, QUESTION_EMERGENCY_LEVEL, QUESTION_PRIORITY, HAPPEN_DATE, END_DATE, COPING_STRATEGY_RECORD,
+			HAPPEN_STAGE, REASON_ANALYSIS, REMARK, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE)
+			values
+			(#{projectId}, #{programId}, #{responsibleUserId}, #{questionDescription}, #{questionReasonType}, #{questionImportance},
+			 #{questionEmergencyLevel}, #{questionPriority}, #{happenDate}, #{endDate}, #{copingStrategyRecord},
+			 #{happenStage}, #{reasonAnalysis}, #{remark}, #{status}, #{createBy}, #{createDate}, #{lastUpdateBy}, #{lastUpdateDate})
+	</insert>
+<!--	通过id查询-->
+	<select id="getQuestionById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select question.*, user.USER_NAME responsibleUser
+			from tbl_question_info question
+			left join tbl_user_info user on user.ID = question.RESPONSIBLE_USER_ID
+			where question.ID = #{id}
+	</select>
+<!--	查询-->
+	<update id="updateQuestion" parameterType="cn.pioneeruniverse.project.entity.TblQuestionInfo">
+		update tbl_question_info set RESPONSIBLE_USER_ID = #{responsibleUserId}, QUESTION_DESCRIPTION = #{questionDescription},
+			QUESTION_REASON_TYPE = #{questionReasonType}, QUESTION_IMPORTANCE = #{questionImportance}, QUESTION_EMERGENCY_LEVEL = #{questionEmergencyLevel},
+			QUESTION_PRIORITY = #{questionPriority}, HAPPEN_DATE = #{happenDate}, END_DATE = #{endDate}, COPING_STRATEGY_RECORD = #{copingStrategyRecord},
+			HAPPEN_STAGE = #{happenStage}, REASON_ANALYSIS = #{reasonAnalysis}, REMARK = #{remark}, LAST_UPDATE_BY = #{lastUpdateBy},
+			LAST_UPDATE_DATE = #{lastUpdateDate}
+			where ID = #{id}
+	</update>
+<!--	根据Programid查询-->
+	<select id="getQuestionByProgram" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select question.ID,question.QUESTION_DESCRIPTION, question.QUESTION_PRIORITY, question.HAPPEN_DATE, question.END_DATE,
+			question.COPING_STRATEGY_RECORD, question.REMARK, question.RESPONSIBLE_USER_ID, user.USER_NAME responsibleUser
+			from tbl_question_info question
+			left join tbl_user_info user on user.ID = question.RESPONSIBLE_USER_ID
+			where question.PROGRAM_ID = #{programId} and question.STATUS = 1
+	</select>
+	
+</mapper>

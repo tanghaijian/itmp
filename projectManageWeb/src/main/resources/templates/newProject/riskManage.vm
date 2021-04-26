@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <title>风险管理</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css"/>
+    <link rel="stylesheet" type="text/css" media="screen"
+          href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css"/>
+    <link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/newProject/riskManage.css"/>
+
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript"
+            src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/laydate.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+    #if($!entryType == 1)
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/common/fuzzy_serach.js"></script>
+    #end
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/common/modal.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/projectManageui/static/js/newProject/riskManage.js"></script>
+    <script>
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap4';
+        $.jgrid.defaults.iconSet = "fontAwesome";
+
+        var currentUserId = "$!userId";
+        var toProjectType = "$!toProjectType";
+        var entryType = "$!entryType";
+        var environmentTypeDic = [];
+            #foreach($dictMap in ${dict.getDictMap("TBL_RISK_ENVIRONMENT_TYPE").entrySet()})
+            environmentTypeDic.push(["${dictMap.key}", "${dictMap.value}"]);
+            #end
+            
+         // 菜单  风险管理
+        var entry_pageSzie = 200;
+        if(entryType == 1){
+        	entry_pageSzie = 20;
+        }
+    </script>
+</head>
+
+<body>
+<input type="hidden" id="projectId" value="$!id">
+<input type="hidden" id="_userId" value="$!userId">
+<input type="hidden" id="_userName" value="$!userName">
+<input type="hidden" id="project_name" name="" value="$!name"/>
+<input type="hidden" id="project_type" name="" value="$!type"/>
+#if($!entryType != 1)
+<div class="flex items_c bor_b">
+    <h5 style="height: 36px;padding:10px;font-weight:bold;" class="">
+        <span id="projectName">$!name</span>：风险管理</h5>
+</div>
+#end
+<!-- 运维类项目 -->
+    #if($!toProjectType == 1)
+    <div class="color1">
+        <div class="container-fluid search_div" id="search_div">
+            <div class="row control-row">
+            	#if($!entryType == 1)
+            	<div class="col-md-3">
+                    <div class="search_font"><label class="control-label">所属项目：</label></div>
+                    <div class="search_input">
+                    	<input type="hidden" id="sel_project_id" />
+                        <input type="text" class="form-control" placeholder="请输入关键字搜索" id="sel_project_name" />
+                    </div>
+                </div>
+                #end
+                <div class="col-md-3">
+                    <div class="search_font"><label class="control-label">风险描述：</label></div>
+                    <div class="search_input">
+                        <input type="text" class="form-control" maxlength="500" placeholder="请输入" id="sel_riskDescription"  value="" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="search_font"><label class="control-label">涉及子系统：</label></div>
+                    <div class="search_input">
+                        <input type="hidden" id="sel_system_id" />
+                        <input type="text" class="form-control pointStyle" placeholder="请选择" id="sel_system"  value="" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="search_font"><label class="control-label">投产窗口：</label></div>
+                    <div class="search_input">
+                        <input type="hidden" id="sel_window_id" />
+                        <input type="text" class="form-control pointStyle" placeholder="请选择" id="sel_window"  value="" />
+                    </div>
+                </div>
+            </div>
+            <div class="row control-row">
+            	<div class="col-md-3">
+                    <div class="search_font"><label class="control-label">测试任务：</label></div>
+                    <div class="search_input">
+                        <input type="hidden" id="sel_Feature_id" />
+                        <input type="text" class="form-control pointStyle" placeholder="请选择" id="sel_Feature"  value="" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="search_font"><label class="control-label">需求编号：</label></div>
+                    <div class="search_input">
+                        <input type="hidden" id="sel_requirement_id" />
+                        <input type="text" class="form-control pointStyle"  placeholder="请选择" id="sel_requirement"  value="" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="search_font"><label class="control-label">所属处室：</label></div>
+                    <div class="search_input">
+                        <select id="sel_deptName" title="请选择" multiple class="selectpicker form-control" autocomplete="off" data-dropup-auto="false" data-live-search="true">
+                            #foreach($dept in ${system.getDept()})
+                                <option value="${dept.id}">${dept.deptName}</option>
+                            #end
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="search_font"><label class="control-label">环境：</label></div>
+                    <div class="search_input">
+                        <select id="sel_environmentType" class="selectpicker form-control">
+                            <option value="">请选择</option>
+                            #foreach($dictMap in ${dict.getDictMap(
+                                "TBL_RISK_ENVIRONMENT_TYPE").entrySet()})
+                                <option value="${dictMap.key}">${dictMap.value}</option>
+                            #end
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row control-row search_btn">
+                <button type="button" class="btn btn-primary" onclick="opsClassProject.searchInfo()">搜&nbsp;&nbsp;&nbsp;索</button>
+                <button type="button" onclick="opsClassProject.clearSearch()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+            </div>
+        </div>
+        <div class="downBtn">
+            <span class="fa fa-caret-up"></span>
+        </div>
+    </div>
+    #end
+<div class="main-content">
+    <div class="content-btn">
+        <button type="button" onclick="addProject()" class="btn btn-primary">新增风险记录</button>
+    </div>
+    <div class="content-table">
+        <table id="project_list"></table>
+        #if($!entryType == 1)
+        ##<div class="hide-article-box hide-article-pos text-center">
+        ##    <a class="btn-readmore" onclick="opsClassProject.load_more()">点击加载更多</a>
+        ##</div>
+        #end
+    </div>
+</div>
+<!-- 运维类项目 -->
+    #if($!toProjectType == 1)
+    <div    class="modal fade bs-example-modal-lg"
+            id="add_modal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="">
+        <div class="modal-dialog modal-lg _Max_dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="add_tit">新建风险记录</h4>
+                    <input type="hidden" id="edit_id"/>
+                </div>
+                <div class="modal-body bg_f2">
+                    <div class="def_col_25">
+                        <form id="add_form">
+                        	#if($!entryType == 1)
+                        	<div class="rowdiv form-group">
+			                    <div class="def_col_5"><label class="control-label"><span class="redStar">*</span>所属项目：</label></div>
+			                    <div class="def_col_13">
+			                    	<input type="hidden" id="add_project_id" />
+			                        <input type="text" class="form-control" placeholder="请输入关键字搜索" id="add_project_name" name="add_project_name" />
+			                    </div>
+				            </div>
+				            #end
+                            <div class="rowdiv form-group">
+                                <div class="def_col_5">
+                                    <label class="control-label">
+                                        <span class="redStar">*</span>风险描述：</label>
+                                </div>
+                                <div class="def_col_31">
+                                <textarea type="text" id="riskDescription"  maxlength="500" name="riskDescription" class="form-control"
+                                          placeholder="请输入"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="rowdiv">
+                                <div class="form-group def_col_18">
+                                    <div class="def_col_10">
+                                        <label class="control-label">
+                                            <span class="redStar">*</span>涉及子系统：</label>
+                                    </div>
+                                    <div class="def_col_26">
+                                        <input type="hidden" id="systemId" />
+                                        <input type="text" id="systemName" autocomplete="off" name="systemName" class="form-control pointStyle" placeholder="请选择"/>
+                                    </div>
+                                </div>
+                                <div class="form-group def_col_18">
+                                    <div class="def_col_10">
+                                        <label class="control-label">
+                                            <span class="redStar">*</span>投产窗口：</label>
+                                    </div>
+                                    <div class="def_col_26">
+                                        <input type="hidden" id="commissioningWindowId" />
+                                        <input type="text" autocomplete="off" id="commissioningWindowName" name="commissioningWindowName" class="form-control pointStyle" placeholder="请选择"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="rowdiv">
+                                <div class="form-group def_col_18">
+                                    <div class="def_col_10">
+                                        <label class="control-label">测试任务：</label>
+                                    </div>
+                                    <div class="def_col_26">
+                                        <input type="hidden" id="requirementFeatureId" />
+                                        <input type="text" autocomplete="off" id="requirementFeatureName" name="requirementFeatureName" class="form-control pointStyle" placeholder="请选择"/>
+                                    </div>
+                                </div>
+                                <div class="form-group def_col_18">
+                                    <div class="def_col_10">
+                                        <label class="control-label">需求编号：</label>
+                                    </div>
+                                    <div class="def_col_26">
+                                        <input type="hidden" id="requirementId" />
+                                        <input type="text" autocomplete="off" id="requirementCode" name="requirementCode" class="form-control pointStyle" placeholder="请选择"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="rowdiv">
+                                <div class="form-group def_col_18">
+                                    <div class="def_col_10">
+                                        <label class="control-label">所属处室：</label>
+                                    </div>
+                                    <div class="def_col_26">
+                                        <select id="deptName" name="deptName" class="selectpicker form-control" autocomplete="off" data-dropup-auto="false" data-live-search="true">
+                                            <option value="">请选择</option>
+                                            #foreach($dept in ${system.getDept()})
+                                                <option value="${dept.id}">${dept.deptName}</option>
+                                            #end
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group def_col_18">
+                                    <div class="def_col_10">
+                                        <label class="control-label">环境：</label>
+                                    </div>
+                                    <div class="def_col_26">
+                                        <select id="environmentType" name="environmentType" class="selectpicker form-control">
+                                            <option value="">请选择</option>
+                                            #foreach($dictMap in ${dict.getDictMap(
+                                                "TBL_RISK_ENVIRONMENT_TYPE").entrySet()})
+                                                <option value="${dictMap.key}">${dictMap.value}</option>
+                                            #end
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="rowdiv form-group">
+                                <div class="def_col_5">
+                                    <label class="control-label">备注：</label>
+                                </div>
+                                <div class="def_col_31">
+                                <textarea type="text" id="remark" name="remark" class="form-control" placeholder="请输入"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="rowdiv form-group">
+                                <div class="def_col_5">
+                                    <label class="control-label">相关附件：</label>
+                                </div>
+                                <div class="def_col_31">
+                                    <div class="file-upload-select">
+                                        <input type="file" name="files" class="upload-files" multiple="multiple"
+                                               id="uploadFile"/>
+                                    </div>
+                                    <div class="file-upload-list">
+                                        <table class="file-upload-tb" id='newFileTable'>
+
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="opsClassProject.add_submit()" class="btn btn-primary">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    #end
+
+<!-- 新建类项目管理 -->
+    #if($!toProjectType == 2)
+    <!-- 新增---编辑---查看 -->
+    <div    class="modal fade bs-example-modal-lg"
+            id="add_modal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="">
+        <div class="modal-dialog modal-lg _Max_dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="add_tit">新建风险记录</h4>
+                    <input type="hidden" id="edit_id"/>
+                </div>
+                <div class="modal-body bg_f2">
+                    <div class="def_col_25">
+                        <h5 class="check_tit" id="">详细内容</h5>
+                        <form id="add_form">
+                            <div class="rowdiv form-group">
+                                <div class="def_col_5">
+                                    <label class="control-label">
+                                        <span class="redStar">*</span>风险描述：</label>
+                                </div>
+                                <div class="def_col_31">
+                                <textarea type="text" name="riskDescription" class="form-control"
+                                          placeholder="请输入"></textarea>
+                                </div>
+                            </div>
+                            <div class="rowdiv">
+                                <div class="form-group def_col_18">
+                                    <div class="def_col_10">
+                                        <label class="control-label">
+                                            <span class="redStar">*</span>风险分类：</label>
+                                    </div>
+                                    <div class="def_col_26">
+                                        <select name="riskType" class="selectpicker form-control">
+                                            <option value="">请选择</option>
+                                            #foreach($dictMap in ${dict.getDictMap(
+                                                "TBL_RISK_INFO_RISK_TYPE").entrySet()})
+                                                <option value="${dictMap.key}">${dictMap.value}</option>
+                                            #end
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group def_col_18">
+                                    <div class="def_col_10">
+                                        <label class="control-label">
+                                            <span class="redStar">*</span>危险度：</label>
+                                    </div>
+                                    <div class="def_col_26">
+                                        <select id="riskFactor" name="riskFactor" class="selectpicker form-control">
+                                            <option value="">请选择</option>
+                                            #foreach($dictMap in ${dict.getDictMap(
+                                                "TBL_RISK_INFO_RISK_FACTOR").entrySet()})
+                                                <option value="${dictMap.key}">${dictMap.value}</option>
+                                            #end
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rowdiv">
+                                <div class="form-group def_col_18">
+                                    <div class="def_col_10">
+                                        <label class="control-label">
+                                            <span class="redStar">*</span>发生概率：</label>
+                                    </div>
+                                    <div class="def_col_26">
+                                        <select id="riskProbability" name="riskProbability"
+                                                class="selectpicker form-control">
+                                            <option value="">请选择</option>
+                                            #foreach($dictMap in ${dict.getDictMap(
+                                                "TBL_RISK_INFO_RISK_PROBABILITY").entrySet()})
+                                                <option value="${dictMap.key}">${dictMap.value}</option>
+                                            #end
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group def_col_18">
+                                    <div class="def_col_10">
+                                        <label class="control-label">
+                                            <span class="redStar">*</span>优先级：</label>
+                                    </div>
+                                    <div class="def_col_26">
+                                        <select id="riskPriority" name="riskPriority" class="selectpicker form-control"
+                                                disabled="disabled">
+                                            <option value="">请选择</option>
+                                            #foreach($dictMap in ${dict.getDictMap(
+                                                "TBL_RISK_INFO_RISK_PRIORITY").entrySet()})
+                                                <option value="${dictMap.key}">${dictMap.value}</option>
+                                            #end
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rowdiv form-group">
+                                <div class="def_col_5">
+                                    <label class="control-label">
+                                        <span class="redStar">*</span>风险影响：</label>
+                                </div>
+                                <div class="def_col_31">
+                                    <input type="text" name="riskInfluence" class="form-control" placeholder="请输入"/>
+                                </div>
+                            </div>
+                            <div class="rowdiv form-group">
+                                <div class="def_col_5">
+                                    <label class="control-label">
+                                        <span class="redStar">*</span>触发条件：</label>
+                                </div>
+                                <div class="def_col_31">
+                                    <input type="text" name="riskTriggers" class="form-control" placeholder="请输入"/>
+                                </div>
+                            </div>
+                            <div class="rowdiv">
+                                <div class="form-group def_col_18">
+                                    <div class="def_col_10">
+                                        <label class="control-label">
+                                            <span class="redStar">*</span>风险状态：</label>
+                                    </div>
+                                    <div class="def_col_26">
+                                        <select name="riskStatus" class="selectpicker form-control">
+                                            <option value="">请选择</option>
+                                            #foreach($dictMap in ${dict.getDictMap(
+                                                "TBL_RISK_INFO_RISK_STATUS").entrySet()})
+                                                <option value="${dictMap.key}">${dictMap.value}</option>
+                                            #end
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="def_col_18 form-group">
+                                    <div class="def_col_10">
+                                        <label class="control-label">责任人：</label>
+                                    </div>
+                                    <div class="def_col_26">
+                                        <input type="hidden" id="responsibleUserId" name="responsibleUserId">
+                                        <input
+                                                type="text"
+                                                readonly="readonly"
+                                                name="responsibleUserName"
+                                                id="responsibleUserName"
+                                                class="form-control pointStyle"
+                                                placeholder="请选择" onclick="userTableShowAll()"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rowdiv">
+                                <div class="def_col_5">
+                                    <label class="control-label">风险缓解措施：</label>
+                                </div>
+                                <div class="def_col_31">
+                                <textarea type="text" name="copingStrategy" class="form-control"
+                                          placeholder="请输入"></textarea>
+                                </div>
+                            </div>
+                            <div class="rowdiv form-group">
+                                <div class="def_col_5">
+                                    <label class="control-label">备注：</label>
+                                </div>
+                                <div class="def_col_31">
+                                <textarea type="text" name="remark" class="form-control"
+                                          placeholder="请输入"></textarea>
+                                </div>
+                            </div>
+                            <div class="rowdiv">
+                                <div class="def_col_5">
+                                    <label class="control-label">措施执行情况：</label>
+                                </div>
+                                <div class="def_col_31">
+                                <textarea type="text" name="copingStrategyRecord" class="form-control"
+                                          placeholder="请输入"></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="def_col_1 bg_f2"></div>
+                    <div class="def_col_10">
+                        <h5 class="check_tit" id="">修订记录</h5>
+                        <div id="logs_body"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="add_submit()" class="btn btn-primary">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    #end
+
+<!-- 人员 -->
+<div
+        class="modal fade bs-example-modal-lg"
+        id="userModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg modal-user" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <span>选择人员</span>
+            </div>
+            <div class="modal-body">
+                <div class="color1">
+                    <div class="container-fluid">
+                        <div class="row control-row">
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">姓名：</label>
+                                </div>
+                                <div class="search_input" style="position: relative;">
+                                    <input type="text" class="form-control " placeholder="请输入" id="userName"
+                                           name="userName" value="">
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">部门：</label>
+                                </div>
+                                <div class="search_input" style="position: relative;">
+                                    <input type="text" class="form-control " placeholder="请输入" id="deptName"
+                                           name="deptName" value="">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">公司：</label>
+                                </div>
+                                <div class="search_input" style="position: relative;">
+                                    <input
+                                            type="text"
+                                            class="form-control "
+                                            placeholder="请输入"
+                                            id="companyName"
+                                            name="companyName"
+                                            value="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row control-row search_btn">
+                            <button type="button" class="btn btn-primary" onclick="userTableShowAll()">搜&nbsp;&nbsp;&nbsp;索</button>
+                            <button type="button" onclick="clearSearchUser()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                        </div>
+                    </div>
+                    <div id="downBtn" class="downBtn">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br>
+                <div class="content-table">
+                    <table id="userTable"></table>
+                    <div id="userPage"></div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="bottom-container">
+                    <button
+                            type="button"
+                            id="userbutton"
+                            class="btn btn-primary"
+                            data-user="requirementManageUser"
+                            onclick="commitUser()">确定
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+#*投产窗口*#
+<div class="modal fade bs-example-modal-lg" id="comWindowModal" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <span>选择投产窗口</span>
+            </div>
+            <div class="modal-body">
+                <div class="color1">
+                    <div class="container-fluid" id="comWindowForm">
+                        <div class="row control-row">
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">窗口名称：</label></div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control " placeholder="请输入" id="win_windowName"
+                                           name="windowName" value=""/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">窗口日期：</label></div>
+                                <div class="search_input">
+                                    <input size="16" type="text" onfocus="this.blur()"
+                                           class="form-control form_datetime active" placeholder="请选择" id="timeDate"
+                                           name="windowDate">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">窗口类型：</label></div>
+                                <div class="search_input">
+                                    <select class="selectpicker" id="win_windowType" name="windowType">
+                                        <option value="">请选择</option>
+                                        #foreach($dictMap in ${dict.getDictMap(
+                                            "TBL_COMMISSIONING_WINDOW_WINDOW_TYPE").entrySet()})
+                                            <option value="${dictMap.key}">${dictMap.value}</option>
+                                        #end
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row control-row search_btn">
+                            <button type="button" class="btn btn-primary" onclick="ComWindowShow()">
+                                搜&nbsp;&nbsp;&nbsp;索
+                            </button>
+                            <button type="button" onclick="opsClassProject.modal.commissioning.resetComm()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置
+                            </button>
+                        </div>
+
+                    </div>
+                    <div id="downBtn3" class="downBtn">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br>
+                <div class="content-table">
+                    <div class="wode">
+                        <table id="ComWindowTable"></table>
+                        <div id="userPage"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="bottom-container">
+                    <button type="button"  class="btn btn-primary" data-user="default"
+                            onclick="opsClassProject.modal.commissioning.commitWin()">确定
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+#*需求弹框*#
+<div id="selReq" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <span class="modal-title">请选择需求</span>
+            </div>
+
+            <div class="modal-body">
+                <div class="color1">
+                    <div class="container-fluid" id="reqForm">
+                        <div class="row control-row">
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">需求编号：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入" id="reqCode"
+                                           name="reqCode"/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">需求名称：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入" id="reqName"
+                                           name="reqName"/>
+                                </div>
+                            </div>
+                            <div class="col-md-4 ">
+                                <div class="search_font">
+                                    <label class="control-label">需求状态：</label>
+                                </div>
+                                <div class="search_input">
+                                    <select class="selectpicker" id="reqStatus" name="reqStatus"
+                                            data-live-search="true">
+                                        #foreach($dictMap in ${dict.getDictMap(
+                                            "TBL_REQUIREMENT_INFO_REQUIREMENT_STATUS").entrySet()})
+                                            <option value="${dictMap.key}">${dictMap.value}</option>
+                                        #end
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row control-row search_btn">
+                            <button type="button" class="btn btn-primary" onclick="reqTableShow()">
+                                搜&nbsp;&nbsp;&nbsp;索
+                            </button>
+                            <button type="button" class="btn btn-default" onclick="opsClassProject.modal.requirement.resetReq()">重&nbsp;&nbsp;&nbsp;置
+                            </button>
+                        </div>
+                    </div>
+                    <div id="downBtn4" class="downBtn">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br/>
+                <div class="content-table">
+                    <div class="wode">
+                        <table id="listReq"></table>
+                        <div id="pagerReq"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="bottom-container">
+                    <button type="button" id="reqbutton" class="btn btn-primary" data-req="default"
+                            onclick="opsClassProject.modal.requirement.commitReq()">确定
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+##涉及子系统弹框
+<div class="modal fade bs-example-modal-lg" id="systemModal"
+     tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg modal-user" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <span class="modal-title" id="">选择子系统</span>
+            </div>
+            <div class="modal-body">
+
+                <div class="color1">
+                    <div class="container-fluid" id="">
+                        <div class="rowdiv control-row">
+                            <div class="col-md-2"></div>
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">子系统名称：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入"
+                                           id="sel_systemName" name="systemName" value=""/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">子系统编码：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入"
+                                           id="sel_systemCode" name="systemCode" value=""/>
+                                </div>
+                            </div>
+                            <div class="col-md-2"></div>
+                        </div>
+                        <div class="rowdiv control-row search_btn">
+                            <button type="button" class="btn btn-primary"
+                                    onclick="systemTableShow(true)">搜&nbsp;&nbsp;&nbsp;索
+                            </button>
+                            <button type="button" onclick=" opsClassProject.modal.system.resetSystem()"
+                                    class="btn btn-default">重&nbsp;&nbsp;&nbsp;置
+                            </button>
+                        </div>
+
+                    </div>
+                    <div class="downBtn">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br>
+                <div class="content-table">
+                    <div class="wode">
+                        <table id="systemTable"></table>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="sysbutton" class="btn btn-primary"
+                        data-sys="default" onclick="opsClassProject.modal.system.commitSys()">确定
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+#*测试任务*#
+<div  class="modal fade bs-example-modal-lg" tabindex="-1" id="DevPopup" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <span>请选择测试任务</span>
+            </div>
+
+            <div class="modal-body">
+                <div class="color1">
+                    <div class="container-fluid" id="search_div">
+                        <div class="row control-row">
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label ">测试任务编号：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入"  id="RelationCode" name="RelationCode" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">测试任务名称：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入" id="RelationName" name="RelationName" />
+                                </div>
+                            </div>
+                            <div class="col-md-4 ">
+                                <div class="search_font">
+                                    <label class="control-label">状态：</label>
+                                </div>
+                                <div class="search_input">
+                                    <select class="selectpicker" title="请选择" id="PoStatus" multiple name="PoStatus">
+                                        #foreach($dictMap in ${dict.getDictMap(
+                                            "TBL_REQUIREMENT_FEATURE_REQUIREMENT_FEATURE_STATUS_2").entrySet()})
+                                            <option value="${dictMap.key}">${dictMap.value}</option>
+                                        #end
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row control-row search_btn">
+                            <button type="button" class="btn btn-primary" onclick="DevPopup()">搜&nbsp;&nbsp;&nbsp;索</button>
+                            <button type="button" class="btn btn-default" onclick=" opsClassProject.modal.feature.resetFeature()">重&nbsp;&nbsp;&nbsp;置</button>
+                        </div>
+                    </div>
+                    <div id="downBtn" class="downBtn">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br>
+                <div class="main-content">
+                    <div class="content-table">
+                        <div class="wode">
+                            <table id="TestPopupTable"></table>
+                            <div id="TestPopupDiv"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="bottom-container">
+                    <button type="button" class="btn btn-primary"  onclick="opsClassProject.modal.feature.commitFeature()">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="loading">
+    <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif"/>
+</div>
+
+</body>
+
+</html>

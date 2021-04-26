@@ -1,0 +1,315 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+        &times;
+    </button>
+    <span>选择人员</span>
+</div>
+<div class="modal-body">
+    <div class="color1">
+        <div class="container-fluid">
+            <div class="row control-row">
+                <div class="col-md-3">
+                    <div class="search_font"><label class="control-label">姓名：</label></div>
+                    <div class="search_input">
+                        <input type="text" class="form-control " placeholder="请输入" id="submitConfigUserModalUserName"
+                               name="submitConfigUserModalUserName" value=""/>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="search_font"><label class="control-label">部门：</label></div>
+                    <div class="search_input">
+                        <select class="selectpicker" data-live-search="true" id="submitConfigUserModalDeptName"
+                                name="submitConfigUserModalDeptName">
+                            <option value="">请选择</option>
+                            #foreach($dept in ${system.getDept()})
+                                <option value="$dept.id">$dept.deptName</option>
+                            #end
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="search_font"><label class="control-label">项目：</label></div>
+                    <div class="search_input">
+                        <select class="selectpicker" id="submitConfigUserModalProjectName"
+                                name="submitConfigUserModalProjectName" data-live-search="true"
+                                onchange="CodeSubmitConfigUserModal.projectNameChange()">
+                            <option value="">请选择</option>
+                            #foreach($project in ${system.getProject()})
+                                <option value="$project.id">$project.projectName</option>
+                            #end
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="search_font"><label class="control-label">项目组：</label></div>
+                    <div class="search_input">
+                        <input type="text" class="form-control pointStyle" readonly placeholder="选择项目组"
+                               onclick="CodeSubmitConfigUserModal.showMenu()" id="submitConfigUserModalProjectGroupName"
+                               name="submitConfigUserModalProjectGroupName"
+                               onmouseover="this.title=this.value"
+                               idValue="$!currentUserProjectGroupId"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row control-row search_btn">
+                <button type="button" class="btn btn-primary" onclick="CodeSubmitConfigUserModal.findUser()">
+                    搜&nbsp;&nbsp;&nbsp;索
+                </button>
+                <button type="button" onclick="CodeSubmitConfigUserModal.clearSearch()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+            </div>
+        </div>
+        <div id="downBtn">
+            <span class="fa fa-caret-up"></span>
+        </div>
+    </div>
+    <br>
+    <div class="content-table">
+        <div class="wode">
+            <table id="submitConfigUserModalUserTable"></table>
+            <div id="submitConfigUserModalUserPage"></div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <div class="bottom-container">
+        <button type="button" id="userbutton" class="btn btn-primary" data-user="default"
+                onclick="CodeSubmitConfigUserModal.commitUser()">确定
+        </button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+    </div>
+</div>
+
+<script>
+
+    $('.selectpicker').selectpicker('refresh');
+
+    var selectedUser = [];
+
+    var CodeSubmitConfigUserModal = {
+    		//查找用户信息
+        findUser: function () {
+            var userName = $.trim($("#submitConfigUserModalUserName").val());
+            var deptId = $.trim($("#submitConfigUserModalDeptName").find("option:selected").val());
+            var projectId = $.trim($("#submitConfigUserModalProjectName").find("option:selected").val());
+            var existUsersArry = selectedUser.map(a => a.id);
+            var projectGroupId = $("#submitConfigUserModalProjectGroupName").attr("idValue");
+            $("#submitConfigUserModalUserTable").bootstrapTable('destroy');
+            $("#submitConfigUserModalUserTable").bootstrapTable({
+                url: "/system/user/getUserPageForCodeBase",
+                method: "post",
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                queryParamsType: "",
+                pagination: true,
+                sidePagination: "server",
+                pageNumber: 1,
+                pageSize: 5,
+                pageList: [5, 10, 20],
+                queryParams: function (params) {
+                    var param = {
+                        pageNumber: params.pageNumber,
+                        pageSize: params.pageSize,
+                        userName: userName,
+                        deptId: deptId,
+                        projectId: projectId,
+                        projectGroupId: projectGroupId,
+                        removeExcludeUser: false,
+                        excludeUserId: existUsersArry.join(",")
+                    };
+                    return param;
+                },
+                columns: [{
+                    checkbox: true,
+                    width: "30px",
+                    formatter: function (value, grid, rows, state) {
+                        var flag = false;
+                        $.each(existUsersArry, function (index, val) {
+                            if (val == grid.id) {
+                                flag = true;
+                                return true;
+                            }
+                        });
+                        return flag;
+                    }
+                }, {
+                    field: "id",
+                    title: "id",
+                    visible: false,
+                    align: 'center'
+                }, {
+                    field: "userName",
+                    title: "姓名",
+                    align: 'center'
+                }, {
+                    field: "userAccount",
+                    title: "用户名",
+                    align: 'center'
+                }, {
+                    field: "deptName",
+                    title: "所属部门",
+                    align: 'center'
+                }, {
+                    field: "myProjectGroupName",
+                    title: "所属项目组",
+                    align: 'center'
+                }],
+                onCheck: function (row, dom) {
+                    selectedUser.push({
+                        id: row.id,
+                        userName: row.userName
+                    });
+                },
+                onUncheck: function (row, dom) {
+                    selectedUser.splice(selectedUser.findIndex(v => v.id === row.id), 1);
+                },
+                onCheckAll: function (rows) {
+                    $.each(rows, function (index, value) {
+                        selectedUser.push({
+                            id: value.id,
+                            userName: value.userName
+                        });
+                    });
+                    var hash = {};
+                    selectedUser = selectedUser.reduceRight((item, next) => {
+                        hash[next.id] ? '' : hash[next.id] = true && item.push(next);
+                        return item;
+                    }, []);
+                },
+                onUncheckAll: function (rows) {
+                    var unselectedUser = [];
+                    $.each(rows, function (index, value) {
+                        unselectedUser.push({
+                            id: value.id,
+                            userName: value.userName
+                        });
+                    });
+                    selectedUser = selectedUser.filter(function (item1) {
+                        return unselectedUser.every(function (item2) {
+                            return item2.id != item1.id
+                        });
+                    });
+                },
+                onLoadSuccess: function () {
+                    $("#loading").css('display', 'none');
+                },
+                onLoadError: function () {
+                }
+            });
+        },
+        clearSearch: function () {
+            $("#submitConfigUserModalUserName").val('');
+            $("#submitConfigUserModalDeptName").selectpicker('val', '');
+            $("#submitConfigUserModalProjectName").selectpicker('val', '');
+            CodeSubmitConfigUserModal.projectNameChange();
+            CodeSubmitConfigUserModal.findUser();
+        },
+        commitUser: function () {
+            var target = $("input[userModalShow=true]").eq(0);
+            target.val(selectedUser.map(a => a.userName).join(","));
+            target.prev().val(selectedUser.map(a => a.id).join(","));
+            target.removeAttr("userModalShow");
+            $("#codeSubmitConfigUserModal").modal("hide");
+        },
+        projectNameChange: function () {
+            $("#submitConfigUserModalProjectGroupName").val('');
+            $("#submitConfigUserModalProjectGroupName").attr('idValue', '');
+            projectGroupSetting.async.otherParam = ["projectId", $("#submitConfigUserModalProjectName").val()];
+            $.fn.zTree.init($("#projectGroupSelect"), projectGroupSetting);
+        },
+        showMenu: function () {
+            $.fn.zTree.getZTreeObj("projectGroupSelect").reAsyncChildNodes(null, "refresh");
+            var projectOffset = $("#submitConfigUserModalProjectGroupName").offset();
+            var projectObj = $("#submitConfigUserModalProjectGroupName");
+            $("#projectGroupContent").css({
+                left: projectOffset.left + "px",
+                top: projectOffset.top + projectObj.outerHeight() + "px"
+            }).slideDown("fast");
+            $("body").bind("mousedown", CodeSubmitConfigUserModal.onBodyDown);
+        },
+        onBodyDown: function (event) {
+            if (!(event.target.id == "submitConfigUserModalProjectGroupName" || event.target.id == "projectGroupContent" || $(event.target).parents("#projectGroupContent").length > 0)) {
+                CodeSubmitConfigUserModal.hideMenu();
+            }
+        },
+        hideMenu: function () {
+            $("#projectGroupContent").fadeOut("fast");
+            $("body").unbind("mousedown", CodeSubmitConfigUserModal.onBodyDown);
+        },
+        onCheck: function (e, treeId, treeNode) {
+            var selectedProjectGroupName = [];
+            var selectedProjecrGroupId = [];
+            var checkedNodes = $.fn.zTree.getZTreeObj("projectGroupSelect").getCheckedNodes(true);
+            for (var i in checkedNodes) {
+                selectedProjectGroupName.push(checkedNodes[i].name);
+                selectedProjecrGroupId.push(checkedNodes[i].id);
+            }
+            $("#submitConfigUserModalProjectGroupName").val(selectedProjectGroupName.join(","));
+            $("#submitConfigUserModalProjectGroupName").attr("idValue", selectedProjecrGroupId.join(","));
+        },
+        onAsyncSuccess: function (event, treeId, treeNode, msg) {
+            var zTree = $.fn.zTree.getZTreeObj("projectGroupSelect");
+            zTree.expandAll(false);
+            var selectedProjectGroupId = $("#submitConfigUserModalProjectGroupName").attr("idValue").split(",");
+            for (var i in selectedProjectGroupId) {
+                var node = zTree.getNodeByParam("id", selectedProjectGroupId[i], null);
+                if (node != null) {
+                    zTree.checkNode(node, true, null, true);
+                }
+            }
+        }
+    };
+
+    //初始化项目组
+    var projectGroupSetting = {
+        async: {
+            enable: true,
+            type: "POST",
+            dataType: "json",
+            contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+            url: "/projectManage/project/getProjectGroupTree",
+            otherParam: ["projectId", $("#submitConfigUserModalProjectName").val()]
+        },
+        check: {
+            enable: true,
+            chkboxType: {"Y": "", "N": ""}
+        },
+        view: {
+            dblClickExpand: false,
+            showIcon: false,
+        },
+        data: {
+            simpleData: {
+                enable: true
+            },
+            key: {
+                title: "submitConfigUserModalProjectName"
+            }
+        },
+        callback: {
+            onCheck: CodeSubmitConfigUserModal.onCheck,
+            onAsyncSuccess: CodeSubmitConfigUserModal.onAsyncSuccess,
+            onAsyncError: function (event, treeId, treeNode, XMLHttpRequest, textStatus, errorThrown) {
+                layer.alert("获取项目组异常", {
+                    icon: 2,
+                    title: "提示信息"
+                });
+            }
+        }
+    }
+
+    $(document).ready(function () {
+        $.fn.zTree.init($("#projectGroupSelect"), projectGroupSetting);
+        var existUserId = "$!existUsers".split(",");
+        var existUserName = "$!existUsersName".split(",");
+        $.each(existUserId, function (index, value) {
+            if (value != "" && existUserName[index] != "") {
+                selectedUser.push({
+                    id: value,
+                    userName: existUserName[index]
+                });
+            }
+        });
+        CodeSubmitConfigUserModal.findUser();
+    });
+
+
+</script>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.projectPlan.ProjectPlanMapper">
+	<resultMap id="BaseResultMap"
+			   type="cn.pioneeruniverse.project.entity.TblProjectPlanInfo">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="PROJECT_ID" jdbcType="BIGINT" property="projectId" />
+		<result column="RESPONSIBLE_USER_ID" jdbcType="BIGINT" property="responsibleUserId" />
+		<result column="PLAN_CODE" jdbcType="VARCHAR" property="planCode" />
+		<result column="PLAN_NAME" jdbcType="VARCHAR" property="planName" />
+		<result column="DELIVERABLES" jdbcType="VARCHAR" property="deliverables" />
+		<result column="PLAN_START_DATE" jdbcType="DATE" property="planStartDate" />
+		<result column="PLAN_START_MILESTONE" jdbcType="TINYINT" property="planStartMilestone" />
+		<result column="PLAN_END_DATE" jdbcType="DATE" property="planEndDate" />
+		<result column="PLAN_END_MILESTONE" jdbcType="TINYINT" property="planEndMilestone" />
+		<result column="PLAN_DURATION" jdbcType="DOUBLE" property="planDuration" />
+		<result column="PLAN_WORKLOAD" jdbcType="DOUBLE" property="planWorkload" />
+		<result column="PLAN_SCHEDULE" jdbcType="TINYINT" property="planSchedule" />
+		<result column="PARENT_ID" jdbcType="BIGINT" property="parentId" />
+		<result column="PARENT_IDS" jdbcType="VARCHAR" property="parentIds" />
+		<result column="PLAN_LEVEL" jdbcType="TINYINT" property="planLevel" />
+		<result column="PLAN_ORDER" jdbcType="TINYINT" property="planOrder" />
+		<result column="STATUS" jdbcType="TINYINT" property="status" />
+		<result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+		<result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+		<result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+		<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+		<result column="USER_NAME" jdbcType="VARCHAR" property="responsibleUser" />
+	</resultMap>
+
+<!--	更新-->
+	<update id="updateProjectStatus">
+		update tbl_project_info set PROJECT_PLAN_STATUS = #{planStatus}
+		where ID = #{projectId}
+	</update>
+<!--	查询-->
+	<select id="getProjectPlanTemplate"  resultType="cn.pioneeruniverse.project.vo.JqueryGanttVO">
+		select plan.ID id,plan.PLAN_CODE code,plan.PLAN_NAME name,plan.DELIVERABLES description,
+		plan.PLAN_START_MILESTONE startIsMilestone1,plan.PLAN_END_MILESTONE endIsMilestone1,
+		plan.PLAN_LEVEL level
+		from tbl_project_plan_template plan
+		where  plan.STATUS = 1
+	</select>
+<!--查询项目计划-->
+	<select id="getProjectPlan" parameterType="java.lang.Long" resultType="cn.pioneeruniverse.project.vo.JqueryGanttVO">
+		select plan.ID id,plan.PLAN_CODE code,plan.PLAN_NAME name,plan.RESPONSIBLE_USER_ID userId,
+		plan.DELIVERABLES description, plan.PLAN_START_DATE start,plan.PLAN_START_MILESTONE startIsMilestone1,
+		plan.PLAN_END_DATE 'end',plan.PLAN_END_MILESTONE endIsMilestone1,plan.PLAN_DURATION duration,plan.PLAN_SCHEDULE progress,
+		plan.PLAN_LEVEL level,tui.ID userId,tui.USER_NAME userName
+		from tbl_project_plan plan left join tbl_user_info tui on tui.ID = plan.RESPONSIBLE_USER_ID
+		where plan.PROJECT_ID = #{projectId} and plan.STATUS = 1 and tui.STATUS = 1
+		order by plan.PLAN_ORDER asc
+	</select>
+	<!--获取项目计划状态-->
+	<select id="getProjectPlanStatus"  resultType="java.lang.Integer" parameterType="java.lang.Long">
+		select tpi.PROJECT_PLAN_STATUS from tbl_project_info tpi
+		where  tpi.ID = #{projectId} and tpi.STATUS = 1
+	</select>
+	<!--删除项目计划-->
+	<delete id="deleteProjectPlanByProjectId" parameterType = "java.lang.Long">
+		delete from tbl_project_plan
+		where PROJECT_ID = #{projectId}
+	</delete>
+
+<!--	新增-->
+	<insert id="insertProjectPlan" parameterType = "cn.pioneeruniverse.project.entity.TblProjectPlanInfo">
+		insert into tbl_project_plan(
+			PROJECT_ID,
+			PLAN_CODE,
+			PLAN_NAME,
+			RESPONSIBLE_USER_ID,
+			DELIVERABLES,
+			PLAN_START_DATE,
+			PLAN_START_MILESTONE,
+			PLAN_END_DATE,
+			PLAN_END_MILESTONE,
+			PLAN_DURATION,
+			PLAN_WORKLOAD,
+			PLAN_SCHEDULE,
+			ACTUAL_START_DATE,
+			ACTUAL_END_DATE,
+			PARENT_ID,
+			PARENT_IDS,
+			PLAN_LEVEL,
+			PLAN_ORDER,
+			STATUS,
+			CREATE_BY,
+			CREATE_DATE,
+			LAST_UPDATE_BY,
+			LAST_UPDATE_DATE
+		)values(
+			#{projectId},
+			#{planCode},
+			#{planName},
+			#{responsibleUserId},
+			#{deliverables},
+			#{planStartDate},
+			#{planStartMilestone},
+			#{planEndDate},
+			#{planEndMilestone},
+			#{planDuration},
+			#{planWorkload},
+			#{planSchedule},
+			#{actualStartDate},
+			#{actualEndDate},
+			#{parentId},
+			#{parentIds},
+			#{planLevel},
+			#{planOrder},
+			#{status},
+			#{createBy},
+			#{createDate},
+			#{lastUpdateBy},
+			#{lastUpdateDate})
+	</insert>
+
+<!--	查询项目计划根据项目id-->
+	<select id="getProjectPlanByProjectId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select plan.ID,plan.PLAN_CODE,plan.PLAN_NAME,plan.RESPONSIBLE_USER_ID,
+		plan.DELIVERABLES,plan.PLAN_START_DATE,plan.PLAN_START_MILESTONE,
+		plan.PLAN_END_DATE,plan.PLAN_END_MILESTONE,plan.PLAN_DURATION,plan.PLAN_SCHEDULE,
+		plan.PLAN_LEVEL,tui.USER_NAME
+		from tbl_project_plan plan left join tbl_user_info tui on tui.ID = plan.RESPONSIBLE_USER_ID
+		where plan.PROJECT_ID = #{projectId} and plan.STATUS = 1 and tui.STATUS = 1
+		order by plan.PLAN_ORDER asc
+	</select>
+	<!--模糊查询用户数据-->
+	<select id="selectUserInfoVague" resultType="cn.pioneeruniverse.project.entity.TblUserInfo">
+		SELECT t.ID id,t.USER_ACCOUNT userAccount,t.USER_NAME userName
+		FROM tbl_user_info t
+		WHERE t.STATUS = 1 and (t.USER_ACCOUNT LIKE CONCAT('%',#{userAndAccount},'%')
+		OR t.USER_NAME LIKE CONCAT('%',#{userAndAccount},'%'))
+		order by t.ID asc
+		LIMIT 0,10
+	</select>
+
+
+	<select id="selectUserInfoVagueInProject" parameterType="map" resultType="cn.pioneeruniverse.project.entity.TblUserInfo">
+		SELECT DISTINCT
+		userinfo.ID id,
+
+		userinfo.USER_ACCOUNT userAccount,
+		userinfo.USER_NAME userName,
+
+		userinfo.USER_STATUS userStatus
+		FROM TBL_USER_INFO userinfo
+		LEFT JOIN tbl_project_group_user pgUser ON pgUser.USER_ID = userinfo.ID and pgUser.status = 1
+		LEFT JOIN tbl_project_group pg ON pg.ID = pgUser.PROJECT_GROUP_ID and pg.status = 1
+		LEFT JOIN tbl_project_info project ON project.ID = pg.PROJECT_ID and project.status = 1
+
+		where
+		userinfo.status = 1 and userinfo.USER_STATUS=1
+		and (userinfo.USER_ACCOUNT LIKE CONCAT('%',#{userAndAccount},'%')
+		OR userinfo.USER_NAME LIKE CONCAT('%',#{userAndAccount},'%'))
+
+		and project.ID IN
+		(
+
+		select PROJECT_ID from tbl_project_system tps
+		where tps.SYSTEM_ID = #{systemId} and tps.status=1
+
+
+		)
+
+		ORDER BY userinfo.id asc
+		LIMIT 0,30
+	</select>
+
+<!--查询-->
+
+	<select id="getProjectPlanById" parameterType="java.lang.Long" resultType="map">
+		select ID id,PLAN_CODE planCode,PLAN_NAME planName,PLAN_LEVEL planLevel
+		from tbl_project_plan
+		where ID = #{id} and STATUS = 1
+		order by PLAN_ORDER asc
+	</select>
+</mapper>

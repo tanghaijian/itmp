@@ -1,0 +1,254 @@
+.headReturn {
+    width: 55px;
+    height: 36px;
+    background: url(../../images/return.png) no-repeat 8px 0;
+    border-right: 2px solid #E8E8E8;
+    cursor: pointer;
+    margin-top: 10px;
+} 
+.close span{
+	font-size: 21px;
+}
+.headr>span{
+	float: left;
+}
+.headTitle{
+	margin-left: 10px;
+	font-size: 14px;
+	font-weight: bold;
+}
+.headr{
+	position: relative;
+	padding-right: 90px;
+}
+.headRight{
+	position: absolute;
+	right: 10px;
+	top: 0;
+}
+.headRight>.btn{
+	padding: 7px 11px;
+}
+.notRequirement > .title{
+	display: none;
+	border: none !important; 
+	font-size: 13px !important; 
+}
+.notRequirement>.tableArea {
+    padding: 10px 17px;
+}
+.notRequirement{ 
+	background-color: inherit; 
+}
+.tableArea{
+	flex: 1;
+	border-radius: 4px;
+	background-color: #FFF;
+}
+.myTableDiv{
+	/* display: none;  */             /* 解放  */
+}
+.btnArea{
+	margin-bottom: 10px;
+}
+#return{
+	display: none;
+}
+.powerDiv_List{
+	display: none;
+	flex: 1;
+	background-color: #FFF;
+    border-radius: 4px;
+}
+.powerDiv_List>.title{
+	font-weight: bold;
+    height: 50px;
+    padding: 15px 17px;
+    font-size: 13px !important;
+    border-bottom: 1px solid #E4E4E4;
+}
+.myTableTit{
+	font-weight: bold;  
+	padding-bottom: 10px;
+	font-size: 13px !important;
+	border-bottom: 1px solid #E4E4E4;
+	margin-bottom: 10px;
+}
+#updateDoc .modal-dialog{
+	width: 743px !important;
+}
+#newMKDocDiv .modal-body{
+	padding: 50px !important;
+}
+#updateDoc .modal-body{
+	padding: 25px 50px !important;
+} 
+.requirement {
+	display: none;
+}
+#requirement{
+	display: flex;
+	flex: 1;
+}
+.makeDownModal{
+	flex: 1;
+}
+.editDiv{
+	flex: 1;
+    min-width: 0;
+}
+.head{
+    border-bottom: 1px solid #E4E4E4;
+    padding: 0 10px;
+    display:flex;
+    justify-content: space-between;
+}
+.headReturn{
+    float: left;
+    margin-top: 7px;
+    margin-right: 10px;
+}
+.docMenu{
+    background: inherit !important;
+}
+.docHead{
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 40px;
+    border-bottom: 1px solid #E4E4E4;
+}
+.file,.relevanceInfo{
+    border: 1px solid #E4E4E4;
+}
+#test-editormd-view2{
+	border-radius: 4px;
+	height: 100% !important;
+} 
+.editHeadDiv{
+    float: right;
+}
+.checkHeadDiv{
+	display: none;
+	display: flex;
+    align-items: center;
+    height: 30px;
+    width: 150px;
+}
+.editHeadDiv .btn{
+	padding: 7px 30px !important;
+}
+.editHeadDiv>div{
+	display: inline-block;
+}
+#makeDownStorage{
+	border: 1px solid #108EE9;
+	color: #108EE9 !important;
+}
+.updataFilesBtn{
+	padding: 0 10px 0 35px;
+	border-left: 1px solid #E4E4E4;
+	background: url("../../images/assetsLibrary/link3.png") no-repeat 10px 13px;
+	background-size: 22px 22px;
+	cursor: pointer;
+}
+.updataFilesBtn,.updataFilesBtn span{ 
+	color: #108EE9;
+	font-weight: bold;  
+} 
+.coverFileDiv{
+	display: none;
+}
+.history{
+	position:relative; 
+}
+.history span,.history li a{
+	color: #1890FF;
+}
+.history .caret{
+	border-top-color: #1890FF;
+} 
+.history .dropdown-menu{
+	width: 100px;
+	min-width: 100px;
+	left: auto;
+	right: -5px !important;
+	top: 90%; 
+}
+.signBtn{
+	margin: 10px;
+	margin-right: 0; 
+	font-weight: bold;
+	padding: 4px 18px !important;
+}
+
+.disableBtn,.disableBtn:hover{
+	background-color: #CCCCCC !important;
+}
+.addEntryDiv{
+	float: right;
+	padding-top: 0px;
+}
+.addEntryDiv .btn{
+	height: auto !important;
+	padding: 4px 6px !important; 
+	margin-bottom: 5px;
+}
+.redStar{
+	color: red;
+}
+.ztree li a.curSelectedNode {
+	background-color: rgb(210, 205, 205) !important;
+}
+
+.doc_name {
+	background: #e2d8d8;
+	border-radius: 4px;
+	padding: 3px;
+	cursor:pointer;
+}
+.p_l_10{
+	padding-left:10px;
+}
+.dis_between{
+	display:flex;
+	justify-content: space-between;
+}
+.font_14{
+	font-size:14px;
+}
+.search_list{
+	padding-left:0px;
+}
+textarea{
+	resize:none;
+}
+.file_Table_style{
+	background: url(/projectManageui/static/images/assetsLibrary/link.png) no-repeat;
+	background-size: 20px 20px;
+	background-position: 8px center;
+	padding: 8px 10px 0px 32px !important;
+	font-size: 12px;
+	cursor: pointer;
+}
+.addEntryDiv {
+	float: unset;
+	padding-top: 0px;
+}
+.modal-lg{
+	width: 100%;
+}
+.modal-content{
+  	margin-top: 5%;
+}
+.modal-content,.modal-header,.modal-body,.modal-footer,.modal-lg .modal-content .modal-body{
+	position: static !important;
+}
+body,.requirement {
+	height: 100%;
+}
+.icon_history {
+	margin-top: 0;
+}
+.reqInfo{
+	width: 500px;
+}

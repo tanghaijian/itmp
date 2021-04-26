@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblToolInfoMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblToolInfo">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="TOOL_NAME" jdbcType="VARCHAR" property="toolName"/>
+        <result column="TOOL_TYPE" jdbcType="TINYINT" property="toolType"/>
+        <result column="FUNCTION_TYPE" jdbcType="TINYINT" property="functionType"/>
+        <result column="HOME_PATH" jdbcType="VARCHAR" property="homePath"/>
+        <result column="CONTEXT" jdbcType="VARCHAR" property="context"/>
+        <result column="IP" jdbcType="VARCHAR" property="ip"/>
+        <result column="PORT" jdbcType="VARCHAR" property="port"/>
+        <result column="USER_NAME" jdbcType="VARCHAR" property="userName"/>
+        <result column="PASSWORD" jdbcType="VARCHAR" property="password"/>
+        <result column="JENKINS_CREDENTIALS_ID" jdbcType="VARCHAR" property="jenkinsCredentialsId"/>
+        <result column="JENKINS_PLUGIN_NAME" jdbcType="VARCHAR" property="jenkinsPluginName"/>
+        <result column="ACCESS_PROTOCOL" jdbcType="TINYINT" property="accessProtocol"/>
+        <result column="SONAR_API_TOKEN" jdbcType="VARCHAR" property="sonarApiToken"/>
+        <result column="ARTIFACT_REPOSITORY_ID" jdbcType="VARCHAR" property="artifactRepositoryId"/>
+        <result column="GIT_API_TOKEN" jdbcType="VARCHAR" property="gitApiToken"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+        <result column="ENVIRONMENT_TYPE" jdbcType="VARCHAR" property="environmentType"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ID,TOOL_NAME, FUNCTION_TYPE,TOOL_TYPE, HOME_PATH,CONTEXT, IP, PORT, USER_NAME, PASSWORD, JENKINS_CREDENTIALS_ID,
+        JENKINS_PLUGIN_NAME,ARTIFACT_REPOSITORY_ID, ACCESS_PROTOCOL,STATUS, CREATE_BY, CREATE_DATE, SONAR_API_TOKEN,
+        LAST_UPDATE_BY, LAST_UPDATE_DATE,ENVIRONMENT_TYPE,GIT_API_TOKEN
+    </sql>
+
+<!--    根据工具类型查询工具-->
+    <select id="selectBytoolType" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_tool_info
+        where TOOL_TYPE = #{type} and STATUS=1
+    </select>
+    <!--    根据工具类型查询svngit工具-->
+    <select id="selectsSvnGitBytoolType" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_tool_info
+        where (TOOL_TYPE = 1 or TOOL_TYPE = 2) and STATUS=1
+    </select>
+<!--查询工具表-->
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_tool_info
+        where ID = #{id}
+    </select>
+<!--根据工具类型查询工具-->
+    <select id="findType" parameterType="hashmap" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        tbl_tool_info
+        WHERE
+        FUNCTION_TYPE = #{function}
+        AND TOOL_TYPE = #{type}
+        AND `STATUS` = 1
+        ORDER BY ID
+    </select>
+<!--插入-->
+    <insert id="insertTool" parameterType="cn.pioneeruniverse.dev.entity.TblToolInfo">
+        INSERT INTO tbl_tool_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="toolName != null and toolName != ''">
+                TOOL_NAME,
+            </if>
+            <if test="toolType != null and toolType != ''">
+                TOOL_TYPE,
+            </if>
+            <if test="functionType != null and functionType != ''">
+                FUNCTION_TYPE,
+            </if>
+            <if test="homePath != null and homePath != ''">
+                HOME_PATH,
+            </if>
+            <if test="context != null and context != ''">
+                CONTEXT,
+            </if>
+            <if test="ip != null and ip != ''">
+                IP,
+            </if>
+            <if test="port != null and port != ''">
+                PORT,
+            </if>
+            <if test="userName != null and userName != ''">
+                USER_NAME,
+            </if>
+            <if test="password != null and password != ''">
+                PASSWORD,
+            </if>
+            <if test="jenkinsCredentialsId != null and jenkinsCredentialsId != ''">
+                JENKINS_CREDENTIALS_ID,
+            </if>
+            <if test="sonarApiToken != null and sonarApiToken != ''">
+                SONAR_API_TOKEN,
+            </if>
+            <if test="gitApiToken != null and gitApiToken != ''">
+                GIT_API_TOKEN,
+            </if>
+            <if test="jenkinsPluginName != null and jenkinsPluginName != ''">
+                JENKINS_PLUGIN_NAME,
+            </if>
+            <if test="artifactRepositoryId != null and artifactRepositoryId != ''">
+                ARTIFACT_REPOSITORY_ID,
+            </if>
+            <if test="environmentType != null and environmentType != ''">
+                ENVIRONMENT_TYPE,
+            </if>
+            <if test="accessProtocol != null and accessProtocol != ''">
+                ACCESS_PROTOCOL,
+            </if>
+            <if test="status != null">
+                STATUS,
+            </if>
+            <if test="createBy != null">
+                CREATE_BY,
+            </if>
+            <if test="createDate != null">
+                CREATE_DATE,
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY,
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="toolName != null and toolName != ''">
+                #{toolName},
+            </if>
+            <if test="toolType != null and toolType != ''">
+                #{toolType},
+            </if>
+            <if test="functionType != null and functionType != ''">
+                #{functionType},
+            </if>
+            <if test="homePath != null and homePath != ''">
+                #{homePath},
+            </if>
+            <if test="context != null and context != ''">
+                #{context},
+            </if>
+            <if test="ip != null and ip != ''">
+                #{ip},
+            </if>
+            <if test="port != null and port != ''">
+                #{port},
+            </if>
+            <if test="userName != null and userName != ''">
+                #{userName},
+            </if>
+            <if test="password != null and password != ''">
+                #{password},
+            </if>
+            <if test="jenkinsCredentialsId != null and jenkinsCredentialsId != ''">
+                #{jenkinsCredentialsId},
+            </if>
+            <if test="sonarApiToken != null and sonarApiToken !='' ">
+                #{sonarApiToken},
+            </if>
+            <if test="gitApiToken != null and gitApiToken !='' ">
+                #{gitApiToken},
+            </if>
+            <if test="jenkinsPluginName != null and jenkinsPluginName != ''">
+                #{jenkinsPluginName},
+            </if>
+            <if test="artifactRepositoryId != null and artifactRepositoryId != ''">
+                #{artifactRepositoryId},
+            </if>
+            <if test="environmentType != null and environmentType != ''">
+                #{environmentType},
+            </if>
+            <if test="accessProtocol != null and accessProtocol != ''">
+                #{accessProtocol},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdateBy != null">
+                #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+<!--更新工具-->
+    <update id="updateTool" parameterType="cn.pioneeruniverse.dev.entity.TblToolInfo">
+        UPDATE tbl_tool_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="toolName != null">
+                TOOL_NAME = #{toolName},
+            </if>
+            <if test="homePath != null">
+                HOME_PATH = #{homePath},
+            </if>
+            <if test="context != null">
+                CONTEXT = #{context},
+            </if>
+            <if test="ip != null">
+                IP = #{ip},
+            </if>
+            <if test="port != null">
+                PORT = #{port},
+            </if>
+            <if test="userName != null">
+                USER_NAME = #{userName},
+            </if>
+            <if test="password != null">
+                PASSWORD = #{password},
+            </if>
+            <if test="status != null and status != ''">
+                STATUS = #{status},
+            </if>
+            <if test="jenkinsCredentialsId != null">
+                JENKINS_CREDENTIALS_ID = #{jenkinsCredentialsId},
+            </if>
+            <if test="sonarApiToken != null">
+                SONAR_API_TOKEN = #{sonarApiToken},
+            </if>
+            <if test="jenkinsPluginName != null">
+                JENKINS_PLUGIN_NAME = #{jenkinsPluginName},
+            </if>
+            <if test="artifactRepositoryId != null">
+                ARTIFACT_REPOSITORY_ID = #{artifactRepositoryId},
+            </if>
+            <if test="environmentType != null">
+                ENVIRONMENT_TYPE = #{environmentType},
+            </if>
+            <if test="accessProtocol != ''">
+                ACCESS_PROTOCOL = #{accessProtocol},
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="gitApiToken != null">
+                GIT_API_TOKEN = #{gitApiToken,jdbcType=VARCHAR},
+            </if>
+        </trim>
+        WHERE ID = #{id}
+    </update>
+
+    <select id="getMySvnRepositoryLocationInfo" resultType="java.util.HashMap" parameterType="Long">
+        SELECT DISTINCT
+        tti.ACCESS_PROTOCOL AS "accessProtocol",
+        tti.IP AS "ip",
+        tti.PORT AS "port",
+        tti.CONTEXT AS "context",
+        tti.USER_NAME AS "userName",
+        tti.PASSWORD AS "password",
+        tssr.REPOSITORY_NAME AS "repositoryName"
+        FROM
+        tbl_tool_info tti
+        LEFT JOIN tbl_system_scm_repository tssr ON tti.ID = tssr.TOOL_ID
+        LEFT JOIN tbl_system_info tsi ON tsi.ID = tssr.SYSTEM_ID
+        WHERE
+        tsi.ID = #{systemId}
+        AND tssr.SCM_TYPE = 2 AND tssr.STATUS = 1
+        AND tsi.STATUS = 1
+        AND tti.FUNCTION_TYPE = 1
+        AND tti.TOOL_TYPE = 2
+        AND tti.STATUS = 1
+        AND tti.ACCESS_PROTOCOL IS NOT NULL
+        AND tti.IP IS NOT NULL
+        AND tti.PORT IS NOT NULL
+        AND tti.USER_NAME IS NOT NULL
+        AND tti.PASSWORD IS NOT NULL
+        AND tssr.REPOSITORY_NAME IS NOT NULL
+    </select>
+
+    <select id="getSystemGitLabRepositoryLocationInfo" resultType="java.util.HashMap" parameterType="String">
+        SELECT DISTINCT
+        tti.ACCESS_PROTOCOL AS "accessProtocol",
+        tti.IP AS "ip",
+        tti.PORT AS "port",
+        tti.GIT_API_TOKEN AS "gitApiToken",
+        tssr.GIT_REPOSITORY_ID AS "gitRepositoryId",
+        tssr.REPOSITORY_NAME AS "repositoryName",
+        tssr.SYSTEM_ID as "systemId"
+        FROM
+        tbl_tool_info tti
+        LEFT JOIN tbl_system_scm_repository tssr ON tti.ID = tssr.TOOL_ID
+        LEFT JOIN tbl_system_info tsi ON tsi.ID = tssr.SYSTEM_ID
+        WHERE
+        tsi.ID in 
+        <foreach collection="systemIds.split(',')" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        AND tssr.SCM_TYPE = 1 AND tssr.STATUS = 1
+        AND tsi.STATUS = 1
+        AND tti.FUNCTION_TYPE = 1
+        AND tti.TOOL_TYPE = 1
+        AND tti.STATUS = 1
+        AND tti.ACCESS_PROTOCOL IS NOT NULL
+        AND tti.IP IS NOT NULL
+        AND tti.PORT IS NOT NULL
+        AND tssr.GIT_REPOSITORY_ID IS NOT NULL
+    </select>
+
+    <select id="getMySvnToolInfo" resultType="java.util.HashMap">
+        SELECT DISTINCT
+        tti.ACCESS_PROTOCOL AS "accessProtocol",
+        tti.IP AS "ip",
+        tti.TOOL_NAME AS "toolName",
+        tti.TOOL_TYPE as "toolType",
+        tti.PORT as "port"
+        FROM
+        tbl_tool_info tti
+        LEFT JOIN tbl_system_scm_repository tssr ON tti.ID = tssr.TOOL_ID
+        LEFT JOIN tbl_system_info tsi ON tsi.ID = tssr.SYSTEM_ID
+        <!--项目和系统关系 liushan -->
+        LEFT JOIN tbl_project_system  tps ON tsi.ID = tps.SYSTEM_ID AND tps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_info tpi ON tpi.ID = tps.PROJECT_ID
+
+        LEFT JOIN tbl_project_group tpg ON tpg.PROJECT_ID = tpi.ID
+        LEFT JOIN tbl_project_group_user tpgu ON tpgu.PROJECT_GROUP_ID = tpg.ID
+        WHERE
+        tpgu.USER_ID = #{userId}
+        <!-- 加上git 1是git 2是svn -->
+        AND tssr.SCM_TYPE = #{toolType}
+        AND tssr.STATUS = 1
+        AND tsi.STATUS = 1
+        AND tps.STATUS = 1
+        AND tpi.STATUS = 1
+        AND tpg.STATUS = 1
+        AND tpgu.STATUS = 1
+        AND tti.FUNCTION_TYPE = 1
+        <!-- 加上git 1是git 2是svn -->
+        AND tti.TOOL_TYPE =  #{toolType} 
+        AND tti.STATUS = 1
+        AND tti.ACCESS_PROTOCOL IS NOT NULL
+        AND tti.IP IS NOT NULL
+        AND tti.JENKINS_CREDENTIALS_ID IS NOT NULL
+        AND tti.JENKINS_CREDENTIALS_ID != ""
+    </select>
+
+    <select id="getCodeBaseToolInfoByCodeBaseType" resultType="java.util.HashMap" parameterType="java.lang.Integer">
+        SELECT DISTINCT
+        tti.ID AS "id",
+        tti.IP AS "ip",
+        tti.TOOL_NAME AS "toolName"
+        FROM
+        tbl_tool_info tti
+        WHERE
+        tti.FUNCTION_TYPE = 1
+        AND tti.TOOL_TYPE = #{codeBaseType}
+        AND tti.STATUS = 1
+    </select>
+
+    <select id="getSvnToolSuperAdmin" resultType="java.util.HashMap">
+        SELECT
+        tti.USER_NAME AS "superAdminAccount",
+        tti.PASSWORD AS "superAdminPassword"
+        FROM
+        tbl_tool_info tti
+        <where>
+            tti.STATUS = 1
+            AND tti.FUNCTION_TYPE = 1
+            AND tti.TOOL_TYPE = 2
+            <if test="scheme == 'svn'">
+                AND tti.ACCESS_PROTOCOL = 1
+            </if>
+            <if test="scheme == 'git'">
+                AND tti.ACCESS_PROTOCOL = 2
+            </if>
+            <if test="scheme == 'http'">
+                AND tti.ACCESS_PROTOCOL = 3
+            </if>
+            <if test="scheme == 'https'">
+                AND tti.ACCESS_PROTOCOL = 4
+            </if>
+            AND tti.IP = #{host}
+            AND tti.PORT = #{port}
+        </where>
+        LIMIT 1
+    </select>
+<!--查询git工具信息-->
+    <select id="getGitLabToolInfo" resultMap="BaseResultMap">
+        SELECT
+        tti.ID,
+        tti.ACCESS_PROTOCOL,
+        tti.GIT_API_TOKEN
+        FROM
+        tbl_tool_info tti
+        <where>
+            tti.STATUS = 1
+            AND tti.FUNCTION_TYPE = 1
+            AND tti.TOOL_TYPE = 1
+            <if test="scheme == 'svn'">
+                AND tti.ACCESS_PROTOCOL = 1
+            </if>
+            <if test="scheme == 'git'">
+                AND tti.ACCESS_PROTOCOL = 2
+            </if>
+            <if test="scheme == 'http'">
+                AND tti.ACCESS_PROTOCOL = 3
+            </if>
+            <if test="scheme == 'https'">
+                AND tti.ACCESS_PROTOCOL = 4
+            </if>
+            AND tti.IP = #{host}
+            AND tti.PORT = #{port}
+        </where>
+        LIMIT 1
+    </select>
+<!--查询nexus工具信息-->
+    <select id="findNexusType" parameterType="cn.pioneeruniverse.dev.entity.TblToolInfo" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from tbl_tool_info
+        where TOOL_TYPE=6 and STATUS=1
+    </select>
+
+<!--    根据工具类型和环境查询工具信息-->
+    <select id="selectToolByEnv" parameterType="map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_tool_info
+        <where>
+            <if test="toolType!=null and toolType!=''">
+                and TOOL_TYPE=#{toolType,jdbcType=TINYINT}
+            </if>
+            <if test="environmentType!=null and environmentType!=''">
+                <!--  AND ENVIRONMENT_TYPE LIKE CONCAT('%',#{environmentType},'%') -->
+                AND LOCATE( CONCAT(',', #{environmentType}, ',') , CONCAT(',', ENVIRONMENT_TYPE, ','))
+
+
+            </if>
+            and status=1
+        </where>
+    </select>
+<!--查询tool信息-->
+    <select id="getToolEntity" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        tbl_tool_info
+        WHERE
+        ID = #{toolId}
+        AND `STATUS` = 1
+    </select>
+
+</mapper>

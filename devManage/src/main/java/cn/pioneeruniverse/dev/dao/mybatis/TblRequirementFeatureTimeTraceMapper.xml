@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblRequirementFeatureTimeTraceMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblRequirementFeatureTimeTrace">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="REQUIREMENT_FEATURE_ID" jdbcType="BIGINT" property="requirementFeatureId" />
+    <result column="REQUIREMENT_FEATURE_CREATE_TIME" jdbcType="TIMESTAMP" property="requirementFeatureCreateTime" />
+    <result column="DEV_TASK_CREATE_TIME" jdbcType="TIMESTAMP" property="devTaskCreateTime" />
+    <result column="CODE_FIRST_COMMIT_TIME" jdbcType="TIMESTAMP" property="codeFirstCommitTime" />
+    <result column="REQUIREMENT_FEATURE_DEV_COMPLETE_TIME" jdbcType="TIMESTAMP" property="requirementFeatureDevCompleteTime" />
+    <result column="REQUIREMENT_FEATURE_FIRST_TEST_DEPLOY_TIME" jdbcType="TIMESTAMP" property="requirementFeatureFirstTestDeployTime" />
+    <result column="REQUIREMENT_FEATURE_TESTING_TIME" jdbcType="TIMESTAMP" property="requirementFeatureTestingTime" />
+    <result column="REQUIREMENT_FEATURE_TEST_COMPLETE_TIME" jdbcType="TIMESTAMP" property="requirementFeatureTestCompleteTime" />
+    <result column="REQUIREMENT_FEATURE_LAST_PROD_TIME" jdbcType="TIMESTAMP" property="requirementFeatureLastProdTime" />
+    <result column="REQUIREMENT_FEATURE_PROD_COMPLETE_TIME" jdbcType="TIMESTAMP" property="requirementFeatureProdCompleteTime" />
+    <result column="REQUIREMENT_FEATURE_PROD_COMPLETE_TIME" jdbcType="DATE" property="prodCompleteTime" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, REQUIREMENT_FEATURE_ID, REQUIREMENT_FEATURE_CREATE_TIME, DEV_TASK_CREATE_TIME, 
+    CODE_FIRST_COMMIT_TIME, REQUIREMENT_FEATURE_DEV_COMPLETE_TIME, REQUIREMENT_FEATURE_FIRST_TEST_DEPLOY_TIME, 
+    REQUIREMENT_FEATURE_TESTING_TIME, REQUIREMENT_FEATURE_TEST_COMPLETE_TIME, REQUIREMENT_FEATURE_LAST_PROD_TIME, 
+    REQUIREMENT_FEATURE_PROD_COMPLETE_TIME, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, 
+    LAST_UPDATE_DATE
+  </sql>
+  <!-- 获取开发任务时间点追踪信息 -->
+  <select id="selectByReqFeatureId" parameterType="Long" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/>
+  	from tbl_requirement_feature_time_trace
+  	where REQUIREMENT_FEATURE_ID = #{requirementFeatureId}
+  </select>
+  <!-- 记录开发任务上线部署完成时间 -->
+  <update id="updateReqFeatureProdCompleteTime" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeatureTimeTrace">
+  	update tbl_requirement_feature_time_trace
+  	set  REQUIREMENT_FEATURE_PROD_COMPLETE_TIME = #{requirementFeatureProdCompleteTime}
+  	where REQUIREMENT_FEATURE_ID = #{requirementFeatureId}
+  </update>
+  
+  <!-- 记录开发任务最后一次提交上线部署时间 -->
+  <update id="updateReqFeatureLastProdTime" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeatureTimeTrace">
+  	update tbl_requirement_feature_time_trace
+  	set  REQUIREMENT_FEATURE_LAST_PROD_TIME = #{requirementFeatureLastProdTime}
+  	where REQUIREMENT_FEATURE_ID = #{requirementFeatureId}
+  </update>
+  
+  <!-- 记录开发任务对应的测试任务最后变成实施完成时间 -->
+  <update id="updateReqFeatureTestCompleteTime" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeatureTimeTrace">
+  	update tbl_requirement_feature_time_trace
+  	set  REQUIREMENT_FEATURE_TEST_COMPLETE_TIME = #{requirementFeatureTestCompleteTime}
+  	where REQUIREMENT_FEATURE_ID = #{requirementFeatureId}
+  </update>
+  <!-- 记录开发任务对应的测试任务首次变成实施中时间 -->
+  <update id="updateReqFeatureTestingTime" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeatureTimeTrace">
+  	update tbl_requirement_feature_time_trace
+  	set  REQUIREMENT_FEATURE_TESTING_TIME = #{requirementFeatureTestingTime}
+  	where REQUIREMENT_FEATURE_ID = #{requirementFeatureId}
+  </update>
+  
+  <!-- 记录开发任务首次测试环境部署时间 -->
+  <update id="updateReqFeatureFirstTestDeployTime" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeatureTimeTrace">
+  	update tbl_requirement_feature_time_trace
+  	set  REQUIREMENT_FEATURE_FIRST_TEST_DEPLOY_TIME = #{requirementFeatureFirstTestDeployTime}
+  	where REQUIREMENT_FEATURE_ID = #{requirementFeatureId}
+  </update>
+  
+  <!-- 记录开发任务状态变为实施完成时间 -->
+  <update id="updateReqFeatureDevCompleteTime" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeatureTimeTrace">
+  	update tbl_requirement_feature_time_trace
+  	set  REQUIREMENT_FEATURE_DEV_COMPLETE_TIME = #{requirementFeatureDevCompleteTime}
+  	where REQUIREMENT_FEATURE_ID = #{requirementFeatureId}
+  </update>
+  
+  <!-- 记录开发任务首次提交代码时间 -->
+  <update id="updategetCodeFirstCommitTime" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeatureTimeTrace">
+  	update tbl_requirement_feature_time_trace
+  	set  CODE_FIRST_COMMIT_TIME = #{codeFirstCommitTime}
+  	where REQUIREMENT_FEATURE_ID = #{requirementFeatureId}
+  </update>
+  
+  <!-- 记录开发任务首次创建工作任务时间 -->
+  <update id="updateDevTaskCreateTime" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeatureTimeTrace">
+  	update tbl_requirement_feature_time_trace
+  	set  DEV_TASK_CREATE_TIME = #{devTaskCreateTime}
+  	where REQUIREMENT_FEATURE_ID = #{requirementFeatureId}
+  </update>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_requirement_feature_time_trace
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_requirement_feature_time_trace
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insertFeatureTimeTrace" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeatureTimeTrace">
+    insert into tbl_requirement_feature_time_trace (REQUIREMENT_FEATURE_ID, REQUIREMENT_FEATURE_CREATE_TIME,
+      STATUS, CREATE_BY, CREATE_DATE,LAST_UPDATE_BY, LAST_UPDATE_DATE)
+    values (#{requirementFeatureId,jdbcType=BIGINT}, #{requirementFeatureCreateTime,jdbcType=TIMESTAMP},
+      #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeatureTimeTrace">
+    insert into tbl_requirement_feature_time_trace
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="requirementFeatureId != null">
+        REQUIREMENT_FEATURE_ID,
+      </if>
+      <if test="requirementFeatureCreateTime != null">
+        REQUIREMENT_FEATURE_CREATE_TIME,
+      </if>
+      <if test="devTaskCreateTime != null">
+        DEV_TASK_CREATE_TIME,
+      </if>
+      <if test="codeFirstCommitTime != null">
+        CODE_FIRST_COMMIT_TIME,
+      </if>
+      <if test="requirementFeatureDevCompleteTime != null">
+        REQUIREMENT_FEATURE_DEV_COMPLETE_TIME,
+      </if>
+      <if test="requirementFeatureFirstTestDeployTime != null">
+        REQUIREMENT_FEATURE_FIRST_TEST_DEPLOY_TIME,
+      </if>
+      <if test="requirementFeatureTestingTime != null">
+        REQUIREMENT_FEATURE_TESTING_TIME,
+      </if>
+      <if test="requirementFeatureTestCompleteTime != null">
+        REQUIREMENT_FEATURE_TEST_COMPLETE_TIME,
+      </if>
+      <if test="requirementFeatureLastProdTime != null">
+        REQUIREMENT_FEATURE_LAST_PROD_TIME,
+      </if>
+      <if test="requirementFeatureProdCompleteTime != null">
+        REQUIREMENT_FEATURE_PROD_COMPLETE_TIME,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="requirementFeatureId != null">
+        #{requirementFeatureId,jdbcType=BIGINT},
+      </if>
+      <if test="requirementFeatureCreateTime != null">
+        #{requirementFeatureCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="devTaskCreateTime != null">
+        #{devTaskCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="codeFirstCommitTime != null">
+        #{codeFirstCommitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="requirementFeatureDevCompleteTime != null">
+        #{requirementFeatureDevCompleteTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="requirementFeatureFirstTestDeployTime != null">
+        #{requirementFeatureFirstTestDeployTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="requirementFeatureTestingTime != null">
+        #{requirementFeatureTestingTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="requirementFeatureTestCompleteTime != null">
+        #{requirementFeatureTestCompleteTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="requirementFeatureLastProdTime != null">
+        #{requirementFeatureLastProdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="requirementFeatureProdCompleteTime != null">
+        #{requirementFeatureProdCompleteTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeatureTimeTrace">
+    update tbl_requirement_feature_time_trace
+    <set>
+      <if test="requirementFeatureId != null">
+        REQUIREMENT_FEATURE_ID = #{requirementFeatureId,jdbcType=BIGINT},
+      </if>
+      <if test="requirementFeatureCreateTime != null">
+        REQUIREMENT_FEATURE_CREATE_TIME = #{requirementFeatureCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="devTaskCreateTime != null">
+        DEV_TASK_CREATE_TIME = #{devTaskCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="codeFirstCommitTime != null">
+        CODE_FIRST_COMMIT_TIME = #{codeFirstCommitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="requirementFeatureDevCompleteTime != null">
+        REQUIREMENT_FEATURE_DEV_COMPLETE_TIME = #{requirementFeatureDevCompleteTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="requirementFeatureFirstTestDeployTime != null">
+        REQUIREMENT_FEATURE_FIRST_TEST_DEPLOY_TIME = #{requirementFeatureFirstTestDeployTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="requirementFeatureTestingTime != null">
+        REQUIREMENT_FEATURE_TESTING_TIME = #{requirementFeatureTestingTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="requirementFeatureTestCompleteTime != null">
+        REQUIREMENT_FEATURE_TEST_COMPLETE_TIME = #{requirementFeatureTestCompleteTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="requirementFeatureLastProdTime != null">
+        REQUIREMENT_FEATURE_LAST_PROD_TIME = #{requirementFeatureLastProdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="requirementFeatureProdCompleteTime != null">
+        REQUIREMENT_FEATURE_PROD_COMPLETE_TIME = #{requirementFeatureProdCompleteTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeatureTimeTrace">
+    update tbl_requirement_feature_time_trace
+    set REQUIREMENT_FEATURE_ID = #{requirementFeatureId,jdbcType=BIGINT},
+      REQUIREMENT_FEATURE_CREATE_TIME = #{requirementFeatureCreateTime,jdbcType=TIMESTAMP},
+      DEV_TASK_CREATE_TIME = #{devTaskCreateTime,jdbcType=TIMESTAMP},
+      CODE_FIRST_COMMIT_TIME = #{codeFirstCommitTime,jdbcType=TIMESTAMP},
+      REQUIREMENT_FEATURE_DEV_COMPLETE_TIME = #{requirementFeatureDevCompleteTime,jdbcType=TIMESTAMP},
+      REQUIREMENT_FEATURE_FIRST_TEST_DEPLOY_TIME = #{requirementFeatureFirstTestDeployTime,jdbcType=TIMESTAMP},
+      REQUIREMENT_FEATURE_TESTING_TIME = #{requirementFeatureTestingTime,jdbcType=TIMESTAMP},
+      REQUIREMENT_FEATURE_TEST_COMPLETE_TIME = #{requirementFeatureTestCompleteTime,jdbcType=TIMESTAMP},
+      REQUIREMENT_FEATURE_LAST_PROD_TIME = #{requirementFeatureLastProdTime,jdbcType=TIMESTAMP},
+      REQUIREMENT_FEATURE_PROD_COMPLETE_TIME = #{requirementFeatureProdCompleteTime,jdbcType=TIMESTAMP},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  
+  <!-- dashboard任务时间轨迹图sql实现-->
+  <select id="selectBySystemId" parameterType="Long" resultType="cn.pioneeruniverse.dev.entity.TblRequirementFeatureTimeTrace">
+  	SELECT 
+  	t1.`click_date` as cliskDate, 	 	
+  	count(case when DATE_FORMAT(trftt.REQUIREMENT_FEATURE_PROD_COMPLETE_TIME,'%Y-%m-%d') &lt;= t1.click_date 
+  		AND t1.click_date &lt;= now() THEN 1 else null END) as 'onLine',
+	count(case when DATE_FORMAT(trftt.REQUIREMENT_FEATURE_TEST_COMPLETE_TIME,'%Y-%m-%d') &lt;= t1.click_date 
+		AND t1.click_date &lt; DATE_FORMAT(trftt.REQUIREMENT_FEATURE_PROD_COMPLETE_TIME,'%Y-%m-%d') THEN 1 else null END) as 'stayOnline',	
+	count(case when DATE_FORMAT(trftt.REQUIREMENT_FEATURE_TESTING_TIME,'%Y-%m-%d') &lt;= t1.click_date 
+		AND t1.click_date &lt; DATE_FORMAT(trftt.REQUIREMENT_FEATURE_TEST_COMPLETE_TIME,'%Y-%m-%d') THEN 1 else null END) as 'inVerification',
+	count(case when DATE_FORMAT(trftt.REQUIREMENT_FEATURE_FIRST_TEST_DEPLOY_TIME,'%Y-%m-%d') &lt;= t1.click_date 
+		AND t1.click_date &lt; DATE_FORMAT(trftt.REQUIREMENT_FEATURE_TESTING_TIME,'%Y-%m-%d') THEN 1 else null END) as 'waitValid',	
+	count(case when DATE_FORMAT(trftt.REQUIREMENT_FEATURE_DEV_COMPLETE_TIME,'%Y-%m-%d') &lt;= t1.click_date 
+		AND t1.click_date &lt; DATE_FORMAT(trftt.REQUIREMENT_FEATURE_FIRST_TEST_DEPLOY_TIME,'%Y-%m-%d') THEN 1 else null END) as 'achieve',	
+	count(case when DATE_FORMAT(trftt.CODE_FIRST_COMMIT_TIME,'%Y-%m-%d') &lt;= t1.click_date 
+		AND t1.click_date &lt; DATE_FORMAT(trftt.REQUIREMENT_FEATURE_DEV_COMPLETE_TIME,'%Y-%m-%d') THEN 1 else null END) as 'process',	
+	count(case when DATE_FORMAT(trftt.REQUIREMENT_FEATURE_CREATE_TIME,'%Y-%m-%d') &lt;= t1.click_date 
+		AND t1.click_date &lt; DATE_FORMAT(trftt.CODE_FIRST_COMMIT_TIME,'%Y-%m-%d') THEN 1 else null END)  as 'ready'  
+	FROM 
+	(	
+			<!-- SELECT curdate() as click_date union all
+	    	SELECT date_sub(curdate(), interval 1 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 2 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 3 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 4 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 5 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 6 day) as click_date  -->
+		SELECT @s :=@s + 1 as `index`, DATE(DATE_SUB(CURRENT_DATE, INTERVAL @s DAY)) AS `click_date`
+		FROM mysql.help_topic,(SELECT @s := -1) temp
+		WHERE @s &lt; #{day}
+	) 
+	t1 join tbl_requirement_feature_time_trace trftt 
+	LEFT JOIN tbl_requirement_feature trf ON trftt.REQUIREMENT_FEATURE_ID=trf.ID AND trf.`STATUS`=1
+	LEFT JOIN tbl_system_info tsi ON trf.SYSTEM_ID=tsi.ID AND tsi.`STATUS`=1
+	WHERE trftt.`STATUS`=1 AND tsi.ID=#{systemId,jdbcType=BIGINT}
+	GROUP BY t1.`click_date`
+	ORDER BY t1.`click_date` ASC
+  </select>
+  
+  <!-- dashboard任务时间轨迹图算法实现-->
+  <select id="selectBySystemId1" parameterType="Long" resultMap="BaseResultMap1">
+  	SELECT t1.REQUIREMENT_FEATURE_CREATE_TIME,t1.CODE_FIRST_COMMIT_TIME,
+      t1.REQUIREMENT_FEATURE_DEV_COMPLETE_TIME,t1.REQUIREMENT_FEATURE_FIRST_TEST_DEPLOY_TIME,
+      t1.REQUIREMENT_FEATURE_TESTING_TIME,t1.REQUIREMENT_FEATURE_TEST_COMPLETE_TIME,
+      t1.REQUIREMENT_FEATURE_PROD_COMPLETE_TIME
+    FROM tbl_requirement_feature_time_trace t1
+	LEFT JOIN tbl_requirement_feature trf ON t1.REQUIREMENT_FEATURE_ID=trf.ID AND trf.`STATUS` = 1
+	LEFT JOIN tbl_system_info tsi ON trf.SYSTEM_ID=tsi.ID AND tsi.`STATUS` = 1
+    WHERE t1.`STATUS`=1 AND tsi.ID=#{systemId,jdbcType=BIGINT} and trf.REQUIREMENT_FEATURE_STATUS !='00'
+  </select>
+
+  <select id="selectBySystemId2" parameterType="Long" resultMap="BaseResultMap">
+    SELECT t1.ID,t1.REQUIREMENT_FEATURE_ID,t1.REQUIREMENT_FEATURE_CREATE_TIME,
+    t1.REQUIREMENT_FEATURE_PROD_COMPLETE_TIME FROM tbl_requirement_feature_time_trace t1
+    LEFT JOIN tbl_requirement_feature trf ON t1.REQUIREMENT_FEATURE_ID=trf.ID AND trf.`STATUS` = 1
+    LEFT JOIN tbl_system_info tsi ON trf.SYSTEM_ID=tsi.ID AND tsi.`STATUS` = 1
+    WHERE t1.`STATUS`=1 AND tsi.ID=#{systemId,jdbcType=BIGINT}
+    AND trf.REQUIREMENT_FEATURE_STATUS !='00' AND t1.REQUIREMENT_FEATURE_PROD_COMPLETE_TIME is not null
+  </select>
+  
+  <!-- 行转列显示开发任务时间追踪点 -->
+  <select id="findDateById" parameterType="java.lang.Long" resultType="java.util.Date">
+  SELECT t.REQUIREMENT_FEATURE_CREATE_TIME d FROM tbl_requirement_feature_time_trace t  WHERE ID =#{id}
+  UNION ALL
+  SELECT t.DEV_TASK_CREATE_TIME d FROM tbl_requirement_feature_time_trace t  WHERE ID =#{id}
+  UNION ALL
+  SELECT t.CODE_FIRST_COMMIT_TIME d FROM tbl_requirement_feature_time_trace t  WHERE ID =#{id}
+  UNION ALL
+  SELECT t.REQUIREMENT_FEATURE_DEV_COMPLETE_TIME d FROM tbl_requirement_feature_time_trace t  WHERE ID =#{id}
+  UNION ALL
+  SELECT t.REQUIREMENT_FEATURE_TESTING_TIME d FROM tbl_requirement_feature_time_trace t  WHERE ID =#{id}
+  UNION ALL
+  SELECT t.REQUIREMENT_FEATURE_TEST_COMPLETE_TIME d FROM tbl_requirement_feature_time_trace t  WHERE ID =#{id}
+  UNION ALL
+  SELECT t.REQUIREMENT_FEATURE_LAST_PROD_TIME d FROM tbl_requirement_feature_time_trace t  WHERE ID =#{id}
+  UNION ALL
+  SELECT t.REQUIREMENT_FEATURE_PROD_COMPLETE_TIME d FROM tbl_requirement_feature_time_trace t  WHERE ID =#{id}
+  </select>
+
+  <resultMap id="BaseResultMap1" type="cn.pioneeruniverse.dev.entity.TblRequirementFeatureTimeTraceVo">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="REQUIREMENT_FEATURE_ID" jdbcType="BIGINT" property="requirementFeatureId" />
+    <result column="REQUIREMENT_FEATURE_CREATE_TIME" jdbcType="DATE" property="requirementFeatureCreateTime" />
+    <result column="DEV_TASK_CREATE_TIME" jdbcType="DATE" property="devTaskCreateTime" />
+    <result column="CODE_FIRST_COMMIT_TIME" jdbcType="DATE" property="codeFirstCommitTime" />
+    <result column="REQUIREMENT_FEATURE_DEV_COMPLETE_TIME" jdbcType="DATE" property="requirementFeatureDevCompleteTime" />
+    <result column="REQUIREMENT_FEATURE_FIRST_TEST_DEPLOY_TIME" jdbcType="DATE" property="requirementFeatureFirstTestDeployTime" />
+    <result column="REQUIREMENT_FEATURE_TESTING_TIME" jdbcType="DATE" property="requirementFeatureTestingTime" />
+    <result column="REQUIREMENT_FEATURE_TEST_COMPLETE_TIME" jdbcType="DATE" property="requirementFeatureTestCompleteTime" />
+    <result column="REQUIREMENT_FEATURE_LAST_PROD_TIME" jdbcType="DATE" property="requirementFeatureLastProdTime" />
+    <result column="REQUIREMENT_FEATURE_PROD_COMPLETE_TIME" jdbcType="DATE" property="requirementFeatureProdCompleteTime" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+</mapper>

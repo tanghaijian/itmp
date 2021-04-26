@@ -1,0 +1,128 @@
+textarea {
+  resize: none;
+}
+
+.flex {
+  display: flex;
+}
+
+.bor_b {
+  border-bottom: 1px solid rgba(215, 215, 215, 1);
+}
+
+.items_c {
+  align-items: center;
+}
+.redStar {
+  color: red;
+}
+.control-label {
+  font-weight: bold;
+}
+.shadow_none{
+  box-shadow: none;
+}
+.bor_none {
+  border: none;
+}
+.p_t_0{
+  padding-top:0; 
+}
+.bg_f2{
+  background: #f2f2f2 !important;
+}
+.bg_f2 > div{
+  background: #fff;
+  border-radius: 4px;
+}
+.check_tit{
+  font-weight: bold;
+  font-size: 13px;
+  color: #108EE9;
+  margin: 10px 10px 10px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #c9c1c1;
+}
+._Max_dialog{
+  width: 100%;
+  padding: 0;
+}
+._Max_dialog > div{
+  top: 0 !important;
+  bottom: 0 !important;
+}
+._Max_dialog .modal-body{
+  /* padding: 10px; */
+}
+.logDiv_contRemark{
+  word-break: break-all;
+}
+.form-control[disabled]{
+  background-color: #fff;
+}
+.col_black{
+  color: #000;
+}
+.ov_hidden{
+  overflow: hidden;
+}
+.btn_clear{
+  right: 23px;
+}
+.fileTb{
+  width: 600px;
+}
+.fileTb img{
+  padding-bottom: 3px;
+  height: 20px;
+}
+.fileTb_span{
+  cursor: pointer
+}
+.fileTb_span span{
+  color: #428bca !important;
+}
+#project_list>tbody>tr>td:first-child{
+    background-color: white;
+}
+.modal-header, .modal-body, .modal-footer, .modal-lg .modal-content .modal-body{
+  position: absolute !important;
+}
+.modal-content{
+  bottom: 5% !important;
+}
+
+
+
+/************加载更多************/
+
+.content-table div.hide-article-box {
+    width: 100%;
+    background-image: -webkit-gradient(linear,left top, left bottom,from(rgba(255,255,255,0)),color-stop(70%, #fff));
+    background-image: linear-gradient(-180deg,rgba(255,255,255,0) 0%,#fff 70%);
+    padding-bottom: 26px;
+}
+
+.content-table .text-center {
+    text-align: center;
+}
+.content-table .hide-article-pos {
+    position: relative;
+    z-index: 500;
+    padding-top: 50px;
+    bottom: -1px;
+    margin-top: -50px;
+}
+
+.content-table .btn-readmore {
+    cursor: pointer;
+}
+
+
+.ui-jqgrid-bdiv {
+  height: 500px !important;
+}
+
+
+
+

@@ -1,0 +1,203 @@
+.modal_titleFont{
+	padding: 8px 0; 
+}
+#selectdetail [class*="def_col_"] {
+	padding-left: 0px;
+}
+#selectdetail .rowdiv{
+	margin-bottom: 0;
+}
+.file-upload-tb td{
+	height: 30px;
+}
+.fileTb img{ 	
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+}
+.file-bucket,.file-s3Key,.file-url{
+	display: none;
+}
+.def_content{
+	padding:0 30px; 
+}
+.workRemarks{
+	margin-bottom: 10px;
+}
+#tyaskRemark,.new_workRomarksBtn{
+	margin-bottom: 10px; 
+}   
+.new_workRomarksBtn{ 
+	text-align: center;
+}   
+.file-upload-tb> tbody > tr > td:first-child{
+	width: 90%;
+}
+.file-upload-tb>tbody>tr>td:first-child{
+	height: 30px;
+}
+.def_changeTit{
+	font-weight: 500;
+}
+.selectShowUp{
+	min-width: 150px;
+	top:-70px;
+} 
+.red{
+   color:red;
+}
+.titStyle{
+	font-size: 13px;
+    font-weight: bold; 
+    padding: 8px 0;
+}
+.dealLog{
+	display: none;
+}
+
+#reqSource {
+	display:none;
+}
+
+.def_content {
+	padding-bottom: 8px;
+}
+.def_content {
+	padding: 0 20px 10px 0px;
+}
+
+.def_content .form-group {
+	text-align: left;
+}
+
+.def_content .control-label {
+	display: inline-block;
+	line-height: 28px;
+}
+.def_title {
+	padding: 10px 20px 10px;
+	position: relative;
+	font-size: 13px;
+	font-weight: bold;
+	line-height: 16px;
+}
+
+.def_title .fa {
+	font-size: 18px;
+	position: absolute;
+	right: 20px;
+	top: 8px;
+}
+.font_left {
+	text-align: left;
+}
+.fontWeihgt {
+	position: relative;
+	font-weight: bold;
+}
+.allInfo {
+	width: auto;
+	border: 1px solid #D9D9D9;
+	border-radius: 4px;
+	margin: 10px 0 15px;
+	background-color: #F4F4FB;
+}
+.connect_div>div{
+	margin-bottom: 15px;
+}
+
+
+#rejectDiv .rowdiv{
+	margin-bottom: 20px;
+} 
+#rejectDiv textarea{
+	height: 133px;
+} 
+
+.buttonColor{
+	background-color: #999 !important;
+}
+.buttonColor:hover{
+	background-color: #999 !important;
+	cursor: not-allowed !important; 
+}
+.nobg{
+	background-color: inherit;
+	width: 100%;
+}
+
+#canEditField .font_right,#editFieldDiv .font_right{
+	line-height: 30px;
+}
+#canEditField [class*="def_col_"],#editFieldDiv [class*="def_col_"]{
+	margin-bottom: 2px; 
+}
+ 
+.focusInfo{ 	
+	margin-right: 8px;	
+	float: left;  
+	width: 28px;
+	height: 28px;
+	background: url("../../../../systemui/static/images/concern.png") no-repeat;
+	background-position: 0 0;
+	cursor:pointer;
+}
+.noheart{
+	background-position: -28px 0;
+}
+.show-calendar {
+	position: absolute !important;
+}
+
+
+#search_div .dropdown-menu li[class^='selected'] a {
+    background-color: #98c0e2;
+}
+#search_div .dropdown-menu>li>a:hover,
+#search_div  .dropdown-menu>li>a:focus,
+#search_div  .dropdown-menu>.active>a,
+#search_div  .dropdown-menu>.active>a:hover,
+#search_div  .dropdown-menu>.active>a:focus{
+	background-color: #98c0e2 !important;
+	background-image: linear-gradient(rgb(152, 192, 226) 0px, rgb(152, 192, 226) 100%);
+}
+.ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td {
+    padding: 8px 8px 4px 8px !important;
+}
+
+
+.search_list{
+	top: 29px;
+}
+._form-control>._form-control{
+	padding-left: 0;
+}
+._form-control .btn_clear{
+	display:none !important;
+}
+.system_tit{
+	 text-align: center;
+    font-weight: bold;
+    padding-bottom: 5px;
+    color: #2f72d8;
+}
+
+#dropdown_menu a{
+	text-align: center;
+}
+.table-success{
+    background-color: rgba(0, 0, 0, 0.05);
+}
+.collection2 {
+    position: static;
+    display: inline-block;
+    padding-right: 50px;
+    padding-left: 20px;
+}
+
+.search_btn .bootstrap-select{ 
+		width: auto !important;
+		}
+.search_btn .bootstrap-select .btn{
+	width: 100%;
+}

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>测试报表导出</title>
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+<link rel="stylesheet" type="text/css" media="screen"
+	href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/jquery.editable-select.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/component.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/daterangepicker-bs3.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/common/common.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/testManageui/static/css/testReport/testReport.css" />
+
+
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/moment.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/testManageui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/frame/laydate.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/component.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/common.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/common/common.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/testManageui/static/js/exportTestExcel/exportTestExcel.js"></script>
+	<script type="text/ecmascript"
+	src="#springUrl('')/testManageui/static/js/exportTestExcel/exportModal.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/daterangepicker.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/echarts.min.js"></script>
+<script>
+	$.jgrid.defaults.responsive = true;
+	$.jgrid.defaults.styleUI = 'Bootstrap4';
+	$.jgrid.defaults.iconSet = "fontAwesome";
+	var ctxStatic = "${ctxStatic}";
+</script>
+<body>
+	<div class="color1">
+		<div class="container-fluid" id="search_div_test">
+			<div class="row control-row">
+				<div class="col-md-3"></div>
+				<div class="col-md-3">
+					<div class="search_font">
+						<label class="control-label">时间：</label>
+					</div>
+					<div class="search_input">
+						<input type="text" class="form-control" placeholder="请选择时间"
+							id="startDate" name="startDate" value="" />
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="search_font">
+						<label class="control-label">所属子系统：</label>
+					</div>
+					<div class="search_input" id="__parent">
+						<select class="selectpicker" id="systemId" multiple
+							name="systemId">
+							<!-- <option value="">请选择</option> -->
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row control-row search_btn">
+
+				<button type="button" class="btn btn-primary"
+					onclick="queryData()">实时查询</button>
+					<button type="button" class="btn btn-primary"
+					onclick="queryHisByTime()">历史查询</button>
+					<button type="button" class="btn btn-primary"
+					onclick="showConfigModal()">配置系统</button>
+				<button type="button" onclick="clearSearch()"
+					class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+			</div>
+		</div>
+		<div id="downBtn" class="downBtn">
+			<span class="fa fa-caret-up"></span>
+		</div>
+	</div>
+	<div class="main-content">
+		<div class="content-table">
+			<table id="devVertionTable"></table>
+		</div>
+		<div class="content-table">
+			<table id="devSystemTable"></table>
+		</div>
+		<div class="row control-row search_btn hideBlock" id="saveHis">
+				<button type="button" class="btn btn-primary"
+					onclick="exportExcel()">导出</button>
+				<button type="button" class="btn btn-primary"
+					onclick="saveHis()">保存历史</button>
+			</div>
+		<div id="main" style="width: 600px; height: 370px;" class="hideBlock"></div>
+		<div id="main2" style="width: 1200px; height: 500px;"
+			class="hideBlock"></div>
+		<div id="main3" style="width: 1200px; height: 500px;"
+			class="hideBlock"></div>
+		<div id="main4" style="width: 1200px; height: 500px;"
+			class="hideBlock"></div>
+		<div id="main5" style="width: 1200px; height: 500px;"
+			class="hideBlock"></div>
+		<div id="main6" style="width: 600px; height: 370px;" class="hideBlock"></div>
+	</div>
+	<div class="modal fade bs-example-modal-lg" id="configModal"
+		tabindex="-1" role="dialog" aria-labelledby="configModal">
+		<div class="modal-dialog modal-lg modal-user" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<span class="modal-title" id="myModalLabel">系统分配</span>
+				</div>
+				<div class="modal-body">
+					<div class="systemTitle">运维期系统：</div>
+					<div class="assignTableGroup">
+						<div class="oneAssign">
+							<div class="assignBtnGroup">
+								<button type="button" class="btn btn-primary"  onclick="showSystem(2)">增加系统</button>
+								<button type="button" class="btn btn-default" onclick="batchDelete('oamSystemTable')"
+									>移除系统</button>
+							</div>
+							<div class="oamSystemDiv">
+								<table id="oamSystemTable"></table>
+							</div>
+						</div>
+					</div>
+					<div class="systemTitle">新建期系统：</div>
+					<div class="assignTableGroup">
+						<div class="oneAssign">
+							<div class="assignBtnGroup">
+								<button type="button" class="btn btn-primary" onclick="showSystem(1)">增加系统</button>
+								<button type="button" class="btn btn-default" onclick="batchDelete('newSystemTable')"
+									>移除系统</button>
+							</div>
+							<div class="newSystemDiv">
+								<table id="newSystemTable"></table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	##涉及系统弹框
+	<div class="modal fade bs-example-modal-lg" id="selSys" tabindex="-1"
+		role="dialog" aria-labelledby="newPerson">
+		<div class="modal-dialog modal-lg modal-user" role="document">
+			<div class="modal-content modalStyle">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<span class="modal-title" id="">选择系统</span>
+				</div>
+				<div class="modal-body">
+
+					<div class="color1">
+						<div class="container-fluid" id="">
+							<div class="rowdiv control-row">
+								<div class="col-md-2"></div>
+
+								<div class="col-md-4">
+									<div class="search_font">
+										<label class="control-label">系统编码：</label>
+									</div>
+									<div class="search_input">
+										<input type="text" class="form-control" placeholder="请输入"
+											id="SCsystemCode" name="systemCode" value="" />
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="search_font">
+										<label class="control-label">系统名称：</label>
+									</div>
+									<div class="search_input">
+										<input type="text" class="form-control" placeholder="请输入"
+											id="SCsystemName" name="systemName" value="" />
+									</div>
+								</div>
+								<div class="col-md-2"></div>
+							</div>
+							<div class="rowdiv control-row search_btn">
+								<button type="button" class="btn btn-primary" onclick="systemTableShowAll()" id="systemSearch">搜&nbsp;&nbsp;&nbsp;索</button>
+								<button type="button" onclick="clearSearchSys()"
+									class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+							</div>
+
+						</div>
+						<div id="downBtn" class="downBtn">
+							<span class="fa fa-caret-up"></span>
+						</div>
+					</div>
+					<br>
+					<div class="content-table">
+						<div class="wode">
+							<table id="systemTable"></table>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" id="sysbutton" class="btn btn-primary"
+						data-sys="default" onclick="commitSys()">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

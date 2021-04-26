@@ -1,0 +1,1823 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+        namespace="cn.pioneeruniverse.dev.dao.mybatis.TblSystemInfoMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblSystemInfo">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+      <!--   <result column="PROJECT_ID" jdbcType="BIGINT" property="projectId"/> -->
+        <result column="system_name" jdbcType="VARCHAR" property="systemName"/>
+        <result column="TOP_SYSTEM_ID" jdbcType="BIGINT" property="topSystemId"/>
+        <result column="system_code" jdbcType="VARCHAR" property="systemCode"/>
+        <result column="SYSTEM_SHORT_NAME" jdbcType="VARCHAR" property="systemShortName"/>
+        <result column="SYSTEM_TYPE" jdbcType="VARCHAR" property="systemType"/>
+        <result column="group_Id" jdbcType="VARCHAR" property="groupId"/>
+        <result column="artifact_Id" jdbcType="VARCHAR" property="artifactId"/>
+        <result column="architecture_type" jdbcType="TINYINT" property="architectureType"/>
+        <result column="SNAPSHOT_REPOSITORY_NAME" jdbcType="VARCHAR" property="snapshotRepositoryName"/>
+        <result column="RELEASE_REPOSITORY_NAME" jdbcType="VARCHAR" property="releaseRepositoryName"/>
+        <!-- <result column="build_STATUS" jdbcType="TINYINT" property="buildStatus"/> -->
+        <result column="SCM_STRATEGY" jdbcType="TINYINT" property="scmStrategy"/>
+        <result column="DEPLOY_TYPE" jdbcType="TINYINT" property="deployType"/>
+        <result column="PRODUCTION_DEPLOY_TYPE" jdbcType="TINYINT" property="productionDeployType"/>
+        <result column="CODE_REVIEW_STATUS" jdbcType="TINYINT" property="codeReviewStatus"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+        <result column="BUILD_TYPE" jdbcType="TINYINT" property="buildType"/>
+        <result column="CREATE_TYPE" jdbcType="TINYINT" property="createType"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+        <result column="JDK_VERSION" jdbcType="VARCHAR" property="jdkVersion"/>
+        <result column="BUILD_TOOL_VERSION" jdbcType="VARCHAR" property="buildToolVersion"/>
+        <result column="PACKAGE_SUFFIX" jdbcType="VARCHAR" property="packageSuffix"/>
+        <result column="development_mode" jdbcType="VARCHAR" property="developmentMode"/>
+        <result column="CODE_REVIEW_USER_IDS" jdbcType="VARCHAR" property="codeReviewUserIds"/>
+        <result column="COMPILE_COMMAND" jdbcType="VARCHAR" property="compileCommand"/>
+        <result column="SONAR_SCAN_STATUS" jdbcType="TINYINT" property="sonarScanStatus"/>
+        <result column="ENVIRONMENT_TYPE" jdbcType="VARCHAR" property="environmentType"/>
+        <result column="SYSTEM_FLAG" jdbcType="VARCHAR" property="systemFlag"/>
+        <result column="task_message_status" jdbcType="TINYINT" property="taskMessageStatus"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ID id, <!-- PROJECT_ID projectId ,--> BUILD_TYPE buildType,CREATE_TYPE
+        createType, system_name systemName, system_code systemCode, group_Id
+        groupId, artifact_Id artifactId, architecture_type architectureType,
+        SNAPSHOT_REPOSITORY_NAME snapshotRepositoryName, SYSTEM_SHORT_NAME systemShortName,
+        RELEASE_REPOSITORY_NAME releaseRepositoryName,
+        SCM_STRATEGY scmStrategy,DEPLOY_TYPE deployType,
+        PRODUCTION_DEPLOY_TYPE productionDeployType,CODE_REVIEW_STATUS codeReviewStatus,
+        <!-- build_STATUS buildStatus, -->
+        STATUS status, CREATE_BY createBy, CREATE_DATE createDate,
+        LAST_UPDATE_BY lastUpdateBy, LAST_UPDATE_DATE lastUpdateDate,COMPILE_COMMAND compileCommand,SONAR_SCAN_STATUS
+        sonarScanStatus,ENVIRONMENT_TYPE environmentType,SYSTEM_FLAG systemFlag,TOP_SYSTEM_ID topSystemId,task_message_status taskMessageStatus 
+    </sql>
+<!--    查询系统通过id-->
+    <select id="getSystemByPId" parameterType="Long" resultType="cn.pioneeruniverse.dev.entity.TblSystemInfo">
+        <!--SELECT DISTINCT system.ID id, system.SYSTEM_CODE systemCode,system.SYSTEM_NAME systemName
+        FROM tbl_system_info system
+        WHERE system.PROJECT_ID = #{projectId} AND system.STATUS=1-->
+
+        <!--改造项目和系统关系 liushan -->
+        SELECT DISTINCT
+        system.ID id,
+        system.SYSTEM_CODE systemCode,
+        system.SYSTEM_NAME systemName,
+        system.development_mode developmentMode
+        FROM
+        tbl_system_info system
+        LEFT JOIN tbl_project_system tps ON system.ID = tps.SYSTEM_ID AND tps.`STATUS` = 1 AND tps.RELATION_TYPE = 1
+        WHERE
+        tps.PROJECT_ID = #{projectId}
+        AND system. STATUS = 1
+    </select>
+
+   <!--    查询用户所属项目-->
+    <select id="findSystemIdByUserId" parameterType="Long" resultType="Long">
+        <!--SELECT system.ID
+        FROM tbl_system_info system
+        WHERE system.PROJECT_ID IN(
+            SELECT project.ID
+            FROM tbl_project_info project
+            LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = project.ID AND pgroup.STATUS=1
+            LEFT JOIN  tbl_project_group_user guser ON guser.PROJECT_GROUP_ID = pgroup.ID AND guser.STATUS = 1
+            WHERE guser.USER_ID=#{id} AND guser.STATUS=1
+        )-->
+
+        <!--改造项目和系统关系 liushan -->
+        SELECT
+        DISTINCT system.ID
+        FROM
+        tbl_system_info system
+        LEFT JOIN tbl_project_system tps ON system.ID = tps.SYSTEM_ID AND tps.`STATUS` = 1 AND tps.RELATION_TYPE = 1
+        WHERE
+        tps.PROJECT_ID IN (
+        SELECT
+        DISTINCT project.ID
+        FROM
+        tbl_project_info project
+        LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = project.ID AND pgroup. STATUS = 1
+        LEFT JOIN tbl_project_group_user guser ON guser.PROJECT_GROUP_ID = pgroup.ID AND guser. STATUS = 1
+        WHERE
+        guser.USER_ID = #{id}
+        AND guser.STATUS = 1
+        )
+        AND system.STATUS = 1
+    </select>
+
+
+
+<!--查询用户名称    -->
+    <select id="getUserName" parameterType="String" resultType="String">
+        select USER_NAME
+        from tbl_user_info
+        where ID =#{id}
+    </select>
+    <select id="getBatchUserName" resultType="String">
+        SELECT GROUP_CONCAT(USER_NAME) FROM tbl_user_info WHERE ID IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+<!--    查询系统 名称-->
+    <select id="getSystemName" parameterType="Long"
+            resultType="String">
+        select SYSTEM_NAME
+        from tbl_system_info
+        where ID = #{id} and STATUS = 1
+    </select>
+    <!-- 根据id查询系统信息 -->
+    <select id="findById" parameterType="Long"
+            resultType="cn.pioneeruniverse.dev.entity.TblSystemInfo">
+        SELECT system.ID id,system.SYSTEM_CODE systemCode,system.SYSTEM_NAME
+        systemName
+        FROM tbl_system_info system
+        WHERE system.ID =#{id}
+    </select>
+
+
+
+
+<!--  查询所有系统-->
+    <select id="getAllSystemInfoTopPage" parameterType="map"
+            resultType="string">
+
+        select ss.topSystemId from (
+        SELECT DISTINCT system.ID id,
+        system.TOP_SYSTEM_ID topSystemId
+        FROM
+        <choose>
+            <when test="uid!=null and uid!=1 ">
+                (select
+                systeminfo.ID ,
+                systeminfo.system_code,
+                systeminfo.system_name,
+                systeminfo.group_Id,
+                systeminfo.artifact_Id,
+                systeminfo.architecture_type,
+                systeminfo.SYSTEM_SHORT_NAME,
+                systeminfo.TOP_SYSTEM_ID,
+                systeminfo.STATUS
+                from tbl_system_info systeminfo
+                LEFT JOIN tbl_project_system prosys ON prosys.SYSTEM_ID =systemInfo.ID
+                AND prosys.STATUS=1 AND prosys.RELATION_TYPE = 1
+                LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID
+                =prosys.PROJECT_ID AND pgroup.STATUS=1
+                where pgroup.id IN(
+                SELECT guser2.PROJECT_GROUP_ID FROM tbl_project_group_user guser2 WHERE
+                guser2.USER_ID=#{uid} and guser2.STATUS=1
+                )
+                ) system
+            </when>
+            <otherwise>
+                tbl_system_info system
+            </otherwise>
+        </choose>
+        LEFT JOIN tbl_project_system prosys ON prosys.SYSTEM_ID =system.ID AND
+        prosys.STATUS=1 AND prosys.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_info project ON project.ID = prosys.PROJECT_ID AND project.`STATUS` = 1
+        <where>
+            <choose>
+                <when test="systemInfo.status!=null and systemInfo.status!=''">
+                    and system.STATUS = #{systemInfo.status}
+                </when>
+                <otherwise>
+                    and system.STATUS = 1
+                </otherwise>
+            </choose>
+            <if test="projectId != null and projectId != ''">
+                and project.ID = #{projectId}
+            </if>
+
+            <if
+                    test="systemInfo.systemName!=null and systemInfo.systemName!=''">
+                and system.system_name like
+                concat("%",LOWER(#{systemInfo.systemName}),"%")
+            </if>
+            <if
+                    test="systemInfo.systemCode!=null and systemInfo.systemCode!=''">
+                and system.system_code like concat("%",LOWER(
+                #{systemInfo.systemCode}),"%")
+            </if>
+            <if test="systemInfo.architectureType!=null and systemInfo.architectureType!=''">
+                and system.architecture_type = #{systemInfo.architectureType}
+            </if>
+            <if test="systemInfo.projectIds!=null and systemInfo.projectIds!=''">
+                and tps.PROJECT_ID in
+                <foreach collection="systemInfo.projectIds.split(',')" index="index" item="item" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="systemInfo.developmentMode!=null and systemInfo.developmentMode!=''">
+                and system.development_mode = #{systemInfo.developmentMode}
+            </if>
+        </where>
+        GROUP BY system.ID
+        order by system.ID DESC
+        ) ss left join tbl_top_system_info ttsi on ttsi.id=ss.topSystemId    GROUP BY ss.topSystemId DESC
+        <if test="start != null and pageSize != null">
+            limit #{start},#{pageSize}
+        </if>
+    </select>
+
+
+
+    <!-- 根据userId查询所在项目组系统 -->
+    <select id="getSystemsByUserId" parameterType="Long" resultType="cn.pioneeruniverse.dev.entity.TblSystemInfo">
+        <!--select tsi.id,tsi.SYSTEM_NAME as systemName  from tbl_system_info tsi where tsi.PROJECT_ID in
+        (   select tpg.PROJECT_ID from tbl_project_group  tpg where tpg.id in
+         (SELECT tpgu.PROJECT_GROUP_ID from tbl_project_group_user tpgu where tpgu.USER_ID=#{userId} and tpgu.STATUS=1) and tpg.status=1 ) and
+         tsi.status=1-->
+
+        <!--改造项目和系统关系 liushan -->
+        SELECT DISTINCT
+        tsi.id,
+        tsi.SYSTEM_NAME AS systemName
+        FROM
+        tbl_system_info tsi
+        LEFT JOIN tbl_project_system tps ON tsi.ID = tps.SYSTEM_ID AND tps.`STATUS` = 1 AND tps.RELATION_TYPE = 1
+        WHERE
+        tps.PROJECT_ID IN (
+        SELECT
+        DISTINCT tpg.PROJECT_ID
+        FROM
+        tbl_project_group tpg
+        WHERE
+        tpg.id IN (
+        SELECT
+        DISTINCT tpgu.PROJECT_GROUP_ID
+        FROM
+        tbl_project_group_user tpgu
+        WHERE
+        tpgu.USER_ID = #{userId}
+        AND tpgu. STATUS = 1
+        )
+        AND tpg. STATUS = 1
+        )
+        AND tsi. STATUS = 1
+    </select>
+
+    <!-- 根据id修改 新增自定义字段 -->
+    <update id="updateSystemInfo"
+            parameterType="cn.pioneeruniverse.dev.entity.TblSystemScm">
+        UPDATE tbl_system_info systeminfo SET
+        systeminfo.artifact_Id = #{artifactId},
+        systeminfo.group_Id = #{groupId},
+        systeminfo.BUILD_TYPE=#{buildType},
+        systeminfo.CREATE_TYPE=#{createType},
+        ARCHITECTURE_TYPE = #{architectureType},
+        LAST_UPDATE_BY = #{lastUpdateBy},
+        LAST_UPDATE_DATE = #{lastUpdateDate},
+        DEPLOY_TYPE =#{deployType},
+        PRODUCTION_DEPLOY_TYPE =#{productionDeployType},
+        CODE_REVIEW_STATUS =#{codeReviewStatus},
+        SNAPSHOT_REPOSITORY_NAME =#{snapshotRepositoryName},
+        RELEASE_REPOSITORY_NAME =#{releaseRepositoryName},
+        JDK_VERSION=#{jdkVersion},
+        BUILD_TOOL_VERSION=#{buildToolVersion},
+        PACKAGE_SUFFIX=#{packageSuffix},
+        CODE_REVIEW_USER_IDS=#{codeReviewUserIds},
+        development_mode=#{developmentMode},
+        COMPILE_COMMAND=#{compileCommand},
+        SONAR_SCAN_STATUS=#{sonarScanStatus},
+        SYSTEM_NAME=#{systemName},
+        SYSTEM_CODE=#{systemCode},
+        SYSTEM_FLAG=#{systemFlag},
+        task_message_status=#{taskMessageStatus}
+        WHERE systeminfo.ID=#{id}
+    </update>
+    <!-- 查询环境类型 -->
+    <select id="findEnvironmentType" parameterType="hashmap"
+            resultType="cn.pioneeruniverse.dev.entity.TblDataDic">
+        SELECT datadic.TERM_CODE termCode,datadic.VALUE_NAME
+        valueName,datadic.VALUE_CODE valueCode
+        FROM tbl_data_dic datadic
+        <where>
+            <!-- <if test="environment_type!=null and environment_type!=''"> -->
+            and datadic.TERM_CODE = "TBL_SYSTEM_SCM_ENVIRONMENT_TYPE"
+            and datadic.STATUS = 1
+            <!-- </if> -->
+            <if test="typeIds!=null and typeIds.size()>0">
+                and datadic.VALUE_CODE in
+                <foreach collection="typeIds" index="index" item="typeId"
+                         open="(" separator="," close=")">
+                    #{typeId}
+                </foreach>
+
+            </if>
+
+        </where>
+
+    </select>
+    <!-- 根据id获取systeminfo -->
+    <select id="getOneSystemInfo" parameterType="Long" resultType="cn.pioneeruniverse.dev.entity.TblSystemInfo">
+        SELECT
+            system.ID id,
+            system.system_name systemName,
+            system.system_code systemCode,
+            system.artifact_Id artifactId,
+            system.SNAPSHOT_REPOSITORY_NAME snapshotRepositoryName,
+            system.RELEASE_REPOSITORY_NAME releaseRepositoryName,
+            system.DEPLOY_TYPE deployType,
+            system.PRODUCTION_DEPLOY_TYPE productionDeployType,
+            system.CODE_REVIEW_STATUS codeReviewStatus,
+            system.group_Id groupId,
+            system.architecture_type architectureType,
+            system.CREATE_TYPE createType,
+            system.BUILD_TYPE buildType,
+            system.JDK_VERSION jdkVersion,
+            system.BUILD_TOOL_VERSION buildToolVersion,
+            system.PACKAGE_SUFFIX packageSuffix,
+            system.development_mode developmentMode,
+            system.CODE_REVIEW_USER_IDS codeReviewUserIds,
+            system.COMPILE_COMMAND compileCommand,
+            system.SONAR_SCAN_STATUS sonarScanStatus,
+            system.ENVIRONMENT_TYPE environmentType,
+            system.SYSTEM_FLAG systemFlag,
+            system.task_message_status taskMessageStatus
+        FROM
+            tbl_system_info system
+        WHERE
+            system.ID = #{id}
+    </select>
+    <!-- 查询所有系统信息 带条件 不是系统管理员 -->
+    <select id="getAllSystemInfoCondition" parameterType="map" resultType="map">
+        <!--SELECT DISTINCT
+        system.ID id,
+        system.PROJECT_ID projectId,
+        system.system_code systemCode,
+        system.system_name systemName,
+        system.group_Id groupId,
+        system.artifact_Id artifactId,
+        system.architecture_type architectureType,
+        system.SNAPSHOT_REPOSITORY_NAME snapshotRepositoryName,
+        system.RELEASE_REPOSITORY_NAME releaseRepositoryName,
+        system.DEPLOY_TYPE deployType,
+        system.PRODUCTION_DEPLOY_TYPE productionDeployType,
+        system.CODE_REVIEW_STATUS codeReviewStatus,
+        system.STATUS status,
+        system.CREATE_BY createBy,
+        system.CREATE_DATE createDate,
+        system.LAST_UPDATE_BY lastUpdateBy,
+        system.LAST_UPDATE_DATE lastUpdateDate,
+        project.PROJECT_NAME projectName,
+        system.SYSTEM_SHORT_NAME systemShortName,
+        system.BUILD_TYPE buildType,
+        system.CREATE_TYPE createType,
+        system.development_mode developmentMode,
+        system.COMPILE_COMMAND compileCommand,
+        system.SONAR_SCAN_STATUS sonarScanStatus,
+        system.SYSTEM_FLAG systemFlag
+        FROM
+        (select systeminfo.* from tbl_system_info systeminfo
+        LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID =systemInfo.PROJECT_ID AND pgroup.STATUS=1
+        where pgroup.id IN(
+        SELECT guser2.PROJECT_GROUP_ID FROM tbl_project_group_user guser2 WHERE guser2.USER_ID=#{uid} and
+        guser2.STATUS=1
+        )
+        ) system
+        LEFT JOIN tbl_project_info project ON project.ID = system.PROJECT_ID-->
+
+        <!--改造项目和系统关系 liushan -->
+        SELECT DISTINCT
+        system.ID id,
+        GROUP_CONCAT(DISTINCT project.ID) AS projectId,
+        GROUP_CONCAT(
+        DISTINCT project.PROJECT_NAME
+        ) projectName,
+        system.system_code systemCode,
+        system.system_name systemName,
+        system.TOP_SYSTEM_ID topSystemId,
+        system.group_Id groupId,
+        system.artifact_Id artifactId,
+        system.architecture_type architectureType,
+        system.SNAPSHOT_REPOSITORY_NAME snapshotRepositoryName,
+        system.RELEASE_REPOSITORY_NAME releaseRepositoryName,
+        system.DEPLOY_TYPE deployType,
+        system.PRODUCTION_DEPLOY_TYPE productionDeployType,
+        system.CODE_REVIEW_STATUS codeReviewStatus,
+        system.`STATUS` `status`,
+        system.CREATE_BY createBy,
+        system.CREATE_DATE createDate,
+        system.LAST_UPDATE_BY lastUpdateBy,
+        system.LAST_UPDATE_DATE lastUpdateDate,
+        system.SYSTEM_SHORT_NAME systemShortName,
+        system.BUILD_TYPE buildType,
+        system.CREATE_TYPE createType,
+        system.development_mode developmentMode,
+        system.COMPILE_COMMAND compileCommand,
+        system.SONAR_SCAN_STATUS sonarScanStatus,
+        system.SYSTEM_FLAG systemFlag
+        FROM
+        (
+        SELECT
+        systeminfo.*
+        FROM
+        tbl_system_info systeminfo
+        LEFT JOIN tbl_project_system tps ON systeminfo.ID = tps.SYSTEM_ID
+        AND tps.`STATUS` = 1 AND tps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = tps.PROJECT_ID
+        AND pgroup. STATUS = 1
+        WHERE
+        pgroup.id IN (
+        SELECT DISTINCT
+        guser2.PROJECT_GROUP_ID
+        FROM
+        tbl_project_group_user guser2
+        WHERE
+        guser2.USER_ID = #{uid}
+        AND guser2. STATUS = 1
+        )
+        AND systeminfo.`STATUS` = 1
+        ) system
+        LEFT JOIN tbl_project_system tps ON system.ID = tps.SYSTEM_ID AND tps.`STATUS` = 1 AND tps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_info project ON project.ID = tps.PROJECT_ID AND project.`STATUS` = 1
+        <where>
+
+            <if test="projectId != null and projectId != ''">
+                and  project.ID = #{projectId}
+            </if>
+
+            <if test="systemInfo.systemName!=null and systemInfo.systemName!=''">
+                and system.system_name like concat("%",LOWER(#{systemInfo.systemName}),"%")
+            </if>
+            <if test="systemInfo.systemCode!=null and systemInfo.systemCode!=''">
+                and system.system_code like concat("%",LOWER(#{systemInfo.systemCode}),"%")
+            </if>
+            <if test="systemInfo.architectureType!=null and systemInfo.architectureType!=''">
+                and system.architecture_type = #{systemInfo.architectureType}
+            </if>
+            <choose>
+                <when test="systemInfo.status!=null and systemInfo.status!=''">
+                    and system.STATUS = #{systemInfo.status}
+                </when>
+                <otherwise>
+                    and system.STATUS = 1
+                </otherwise>
+            </choose>
+            <if test="systemInfo.projectIds!=null and systemInfo.projectIds!=''">
+                and tps.PROJECT_ID in
+                <foreach collection="systemInfo.projectIds.split(',')" index="index" item="item" open="(" separator="," close=")">
+                	#{item}
+                </foreach>
+            </if>
+            <if test="systemInfo.developmentMode!=null and systemInfo.developmentMode!=''">
+                and system.development_mode = #{systemInfo.developmentMode}
+            </if>
+        </where>
+        GROUP BY
+        system.ID DESC
+        <if test="start != null and pageSize != null">
+            limit #{start},#{pageSize}
+        </if>
+    </select>
+
+
+
+    <!-- 查询所有系统信息 带条件 不是系统管理员 -->
+    <select id="getAllSystemInfoConditionTopPage" parameterType="map" resultType="String">
+
+       select ss.topSystemId from (
+        SELECT DISTINCT
+        system.ID id,
+        system.TOP_SYSTEM_ID topSystemId
+
+        FROM
+        (
+        SELECT
+        systeminfo.*
+        FROM
+        tbl_system_info systeminfo
+        LEFT JOIN tbl_project_system tps ON systeminfo.ID = tps.SYSTEM_ID
+        AND tps.`STATUS` = 1 AND tps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = tps.PROJECT_ID
+        AND pgroup. STATUS = 1
+        WHERE
+        pgroup.id IN (
+        SELECT DISTINCT
+        guser2.PROJECT_GROUP_ID
+        FROM
+        tbl_project_group_user guser2
+        WHERE
+        guser2.USER_ID = #{uid}
+        AND guser2. STATUS = 1
+        )
+        AND systeminfo.`STATUS` = 1
+        ) system
+        LEFT JOIN tbl_project_system tps ON system.ID = tps.SYSTEM_ID AND tps.`STATUS` = 1 AND tps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_info project ON project.ID = tps.PROJECT_ID AND project.`STATUS` = 1
+        <where>
+
+            <if test="projectId != null and projectId != ''">
+                and project.ID = #{projectId}
+            </if>
+
+            <if test="systemInfo.systemName!=null and systemInfo.systemName!=''">
+                and system.system_name like concat("%",LOWER(#{systemInfo.systemName}),"%")
+            </if>
+            <if test="systemInfo.systemCode!=null and systemInfo.systemCode!=''">
+                and system.system_code like concat("%",LOWER(#{systemInfo.systemCode}),"%")
+            </if>
+            <if test="systemInfo.architectureType!=null and systemInfo.architectureType!=''">
+                and system.architecture_type = #{systemInfo.architectureType}
+            </if>
+            <choose>
+                <when test="systemInfo.status!=null and systemInfo.status!=''">
+                    and system.STATUS = #{systemInfo.status}
+                </when>
+                <otherwise>
+                    and system.STATUS = 1
+                </otherwise>
+            </choose>
+            <if test="systemInfo.projectIds!=null and systemInfo.projectIds!=''">
+                and tps.PROJECT_ID in
+                <foreach collection="systemInfo.projectIds.split(',')" index="index" item="item" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="systemInfo.developmentMode!=null and systemInfo.developmentMode!=''">
+                and system.development_mode = #{systemInfo.developmentMode}
+            </if>
+        </where>
+        GROUP BY
+        system.ID DESC
+        )
+
+        ss left join tbl_top_system_info ttsi on ttsi.id=ss.topSystemId   GROUP BY ss.topSystemId desc
+        <if test="start != null and pageSize != null">
+            limit #{start},#{pageSize}
+        </if>
+
+    </select>
+
+    <!-- 系统管理员 -->
+    <select id="getAllSystemInfo" parameterType="map" resultType="map">
+        <!-- SELECT DISTINCT
+         system.ID id,
+         system.PROJECT_ID projectId,
+         system.system_code systemCode,
+         system.system_name systemName,
+         system.group_Id groupId,
+         system.artifact_Id artifactId,
+         system.architecture_type architectureType,
+         system.SNAPSHOT_REPOSITORY_NAME snapshotRepositoryName,
+         system.RELEASE_REPOSITORY_NAME releaseRepositoryName,
+         system.DEPLOY_TYPE deployType,
+         system.PRODUCTION_DEPLOY_TYPE productionDeployType,
+         system.CODE_REVIEW_STATUS codeReviewStatus,
+         system.STATUS status,
+         system.CREATE_BY createBy,
+         system.CREATE_DATE createDate,
+         system.LAST_UPDATE_BY lastUpdateBy,
+         system.LAST_UPDATE_DATE lastUpdateDate,
+         project.PROJECT_NAME projectName,
+         system.SYSTEM_SHORT_NAME systemShortName,
+         system.BUILD_TYPE buildType,
+         system.CREATE_TYPE createType,
+         system.development_mode developmentMode,
+         system.COMPILE_COMMAND compileCommand,
+         system.SONAR_SCAN_STATUS sonarScanStatus,
+         system.SYSTEM_FLAG systemFlag
+         FROM tbl_system_info system
+         LEFT JOIN tbl_project_info project ON project.ID = system.PROJECT_ID-->
+
+        <!--改造项目和系统关系 liushan -->
+        SELECT DISTINCT
+        system.ID id,
+        GROUP_CONCAT(DISTINCT project.ID) AS projectId,
+        GROUP_CONCAT(
+        DISTINCT project.PROJECT_NAME
+        ) projectName,
+        system.system_code systemCode,
+        system.system_name systemName,
+        system.group_Id groupId,
+        system.artifact_Id artifactId,
+        system.TOP_SYSTEM_ID topSystemId,
+        system.architecture_type architectureType,
+        system.SNAPSHOT_REPOSITORY_NAME snapshotRepositoryName,
+        system.RELEASE_REPOSITORY_NAME releaseRepositoryName,
+        system.DEPLOY_TYPE deployType,
+        system.PRODUCTION_DEPLOY_TYPE productionDeployType,
+        system.CODE_REVIEW_STATUS codeReviewStatus,
+        system. STATUS status,
+        system.CREATE_BY createBy,
+        system.CREATE_DATE createDate,
+        system.LAST_UPDATE_BY lastUpdateBy,
+        system.LAST_UPDATE_DATE lastUpdateDate,
+        system.SYSTEM_SHORT_NAME systemShortName,
+        system.BUILD_TYPE buildType,
+        system.CREATE_TYPE createType,
+        system.development_mode developmentMode,
+        system.COMPILE_COMMAND compileCommand,
+        system.SONAR_SCAN_STATUS sonarScanStatus,
+        system.SYSTEM_FLAG systemFlag
+        FROM
+        tbl_system_info system
+        LEFT JOIN tbl_project_system tps ON system.ID = tps.SYSTEM_ID AND tps.`STATUS` = 1 AND tps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_info project ON tps.PROJECT_ID = project.ID  AND project.`STATUS` = 1
+        <where>
+
+            <if test="projectId != null and projectId != ''">
+                and  project.ID = #{projectId}
+            </if>
+
+            <if test="systemInfo.systemName!=null and systemInfo.systemName!=''">
+                and system.system_name like concat("%",LOWER(#{systemInfo.systemName}),"%")
+            </if>
+
+            <if test="notIds!=null and notIds!=''">
+                and system.id not in
+                <foreach collection="notIds.split(',')" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="systemInfo.systemCode!=null and systemInfo.systemCode!=''">
+                and system.system_code like concat("%",LOWER(#{systemInfo.systemCode}),"%")
+            </if>
+            <if test="systemInfo.systemFlag != null and systemInfo.systemFlag != ''">
+                and system.system_flag = #{systemInfo.systemFlag}
+            </if>
+            <if test="systemInfo.architectureType!=null and systemInfo.architectureType!=''">
+                and system.architecture_type = #{systemInfo.architectureType}
+            </if>
+            <choose>
+                <when test="systemInfo.status!=null and systemInfo.status!=''">
+                    and system.STATUS = #{systemInfo.status}
+                </when>
+                <otherwise>
+                    and system.STATUS = 1
+                </otherwise>
+            </choose>
+            <if test="systemInfo.projectIds!=null and systemInfo.projectIds!=''">
+                and tps.PROJECT_ID in
+                <foreach collection="systemInfo.projectIds.split(',')" index="index" item="item" open="(" separator="," close=")">
+                	#{item}
+                </foreach>
+            </if>
+            <if test="systemInfo.developmentMode!=null and systemInfo.developmentMode!=''">
+                and system.development_mode = #{systemInfo.developmentMode}
+            </if>
+        </where>
+        GROUP BY
+        system.ID DESC
+        <if test="start != null and pageSize != null">
+            limit #{start},#{pageSize}
+        </if>
+    </select>
+
+    <select id="getAllSystemInfoTotal" parameterType="map" resultType="java.lang.Integer">
+        SELECT
+        count(DISTINCT system.ID)
+        FROM
+        <choose>
+            <when test="uid!=null and uid!=1 ">
+                <!-- (select systeminfo.* from tbl_system_info systeminfo
+                 LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID =systemInfo.PROJECT_ID AND pgroup.STATUS=1
+                 where pgroup.id IN(
+                 SELECT guser2.PROJECT_GROUP_ID FROM tbl_project_group_user guser2 WHERE guser2.USER_ID=#{uid} and
+                 guser2.STATUS=1
+                 )
+                 ) system-->
+                <!--改造项目和系统关系 liushan -->
+                (
+                SELECT
+                    DISTINCT systeminfo.*
+                FROM
+                tbl_system_info systeminfo
+                LEFT JOIN tbl_project_system tps ON systeminfo.ID = tps.SYSTEM_ID AND tps.`STATUS` = 1 AND tps.RELATION_TYPE = 1
+                LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = tps.PROJECT_ID
+                AND pgroup. STATUS = 1
+                WHERE
+                pgroup.id IN (
+                    SELECT
+                        DISTINCT guser2.PROJECT_GROUP_ID
+                    FROM
+                    tbl_project_group_user guser2
+                    WHERE
+                    guser2.USER_ID = 1
+                    AND guser2. STATUS = 1
+                )
+                AND systeminfo.`STATUS` = 1
+                )system
+            </when>
+            <otherwise>
+                tbl_system_info system
+            </otherwise>
+        </choose>
+        <!--LEFT JOIN tbl_project_info project ON project.ID = system.PROJECT_ID-->
+        LEFT JOIN tbl_project_system tps ON system.ID = tps.SYSTEM_ID AND tps.`STATUS` = 1 AND tps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_info project ON project.ID = tps.PROJECT_ID
+        <where>
+            <if test="systemInfo.systemName!=null and systemInfo.systemName!=''">
+                and system.system_name like concat("%",#{systemInfo.systemName},"%")
+            </if>
+            <if test="systemInfo.systemCode!=null and systemInfo.systemCode!=''">
+                and system.system_code like concat("%",LOWER(
+                #{systemInfo.systemCode}),"%")
+            </if>
+            <if test="systemInfo.architectureType!=null and systemInfo.architectureType!=''">
+                and system.architecture_type = #{systemInfo.architectureType}
+            </if>
+            <choose>
+                <when test="systemInfo.status!=null and systemInfo.status!=''">
+                    and system.STATUS = #{systemInfo.status}
+                </when>
+                <otherwise>
+                    and system.STATUS = 1
+                </otherwise>
+            </choose>
+           <if test="systemInfo.projectIds!=null and systemInfo.projectIds!=''">
+                and tps.PROJECT_ID in
+                <foreach collection="systemInfo.projectIds.split(',')" index="index" item="item" open="(" separator="," close=")">
+                	#{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+<!-- 构建/部署首页系统查询 -->
+    <select id="getAllSystemInfoByBuild" parameterType="map"
+            resultType="map">
+        <!--SELECT system.ID id,system.PROJECT_ID projectId,system.system_code
+        systemCode,system.system_name systemName,system.group_Id
+        groupId,system.artifact_Id artifactId,system.architecture_type
+        architectureType,
+        system.STATUS status,system.CREATE_BY createBy,system.CREATE_DATE
+        createDate,system.LAST_UPDATE_BY lastUpdateBy,system.LAST_UPDATE_BY
+        lastUpdate,project.PROJECT_NAME projectName ,system.BUILD_TYPE
+        buildType,system.CREATE_TYPE createType
+        ,system.BUILD_TYPE buildType,system.CREATE_TYPE createType,system.deploy_type deployType,system.COMPILE_COMMAND
+        compileCommand,system.SONAR_SCAN_STATUS sonarScanStatus,system.SYSTEM_FLAG systemFlag
+        from-->
+        <!--改造项目和系统关系 liushan-->
+        SELECT
+        system.ID id,
+        GROUP_CONCAT(DISTINCT project.ID) AS projectId,
+        GROUP_CONCAT(
+        DISTINCT project.PROJECT_NAME
+        ) projectName,
+        system.system_code systemCode,
+        system.system_name systemName,
+        system.ENVIRONMENT_TYPE environmentType,
+        system.group_Id groupId,
+        system.artifact_Id artifactId,
+        system.architecture_type architectureType,
+        system. STATUS `status`,
+        system.CREATE_BY createBy,
+        system.CREATE_DATE createDate,
+        system.LAST_UPDATE_BY lastUpdateBy,
+        system.LAST_UPDATE_BY lastUpdate,
+        system.BUILD_TYPE buildType,
+        system.CREATE_TYPE createType,
+        system.BUILD_TYPE buildType,
+        system.CREATE_TYPE createType,
+        system.deploy_type deployType,
+        system.COMPILE_COMMAND compileCommand,
+        system.SONAR_SCAN_STATUS sonarScanStatus,
+        system.SYSTEM_FLAG systemFlag
+        FROM
+        <choose>
+            <when test="uid!=null">
+                <!--(select systeminfo.* from tbl_system_info systeminfo
+                LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID =systemInfo.PROJECT_ID AND pgroup.STATUS=1
+                where pgroup.id IN(
+                SELECT guser2.PROJECT_GROUP_ID FROM tbl_project_group_user guser2 WHERE guser2.USER_ID=#{uid} and
+                guser2.STATUS=1
+                )
+                ) system-->
+                (
+                    SELECT
+                        DISTINCT systeminfo.*
+                    FROM
+                        tbl_system_info systeminfo
+                    LEFT JOIN tbl_project_system tps ON systeminfo.ID = tps.SYSTEM_ID AND tps.`STATUS` = 1 AND tps.RELATION_TYPE = 1
+                    LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = tps.PROJECT_ID AND pgroup. STATUS = 1
+                    WHERE
+                    systeminfo.`STATUS` =1
+                    AND	pgroup.id IN (
+                        SELECT DISTINCT
+                            guser2.PROJECT_GROUP_ID
+                        FROM
+                        tbl_project_group_user guser2
+                        WHERE
+                        guser2.USER_ID = #{uid}
+                        AND guser2. STATUS = 1
+                    )
+                )system
+            </when>
+            <otherwise>
+                tbl_system_info system
+            </otherwise>
+        </choose>
+        <!-- 	FROM tbl_system_info system -->
+        <!--LEFT JOIN tbl_project_info project ON project.ID = system.PROJECT_ID-->
+        LEFT JOIN tbl_project_system tps ON system.ID = tps.SYSTEM_ID AND tps.`STATUS` = 1 AND tps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_info project ON project.ID = tps.PROJECT_ID AND project.`STATUS` = 1
+        <where>
+            <if test="systemInfo.systemName!=null and systemInfo.systemName!=''">
+                and system.system_name like concat("%",#{systemInfo.systemName},"%")
+            </if>
+            <if test="systemInfo.systemCode!=null and systemInfo.systemCode!=''">
+                and system.system_code like concat("%",LOWER(#{systemInfo.systemCode}),"%")
+            </if>
+            <if
+                    test="systemInfo.architectureType!=null and systemInfo.architectureType!=''">
+                and system.architecture_type = #{systemInfo.architectureType}
+            </if>
+
+            <if test="systemInfo.createType!=null and systemInfo.createType!=''">
+                and system.create_type = #{systemInfo.createType}
+            </if>
+            <choose>
+                <when test="systemInfo.status!=null and systemInfo.status!=''">
+                    and system.STATUS = #{systemInfo.status}
+                </when>
+                <otherwise>
+                    and system.STATUS = 1
+                </otherwise>
+            </choose>
+           <if test="systemInfo.projectIds!=null and systemInfo.projectIds!=''">
+                and tps.PROJECT_ID in
+                <foreach collection="systemInfo.projectIds.split(',')" index="index" item="item" open="(" separator="," close=")">
+                	#{item}
+                </foreach>
+            </if>
+        </where>
+        and system.architecture_type is not null and
+
+
+        case when system.create_type=1 then true
+        else  (  case when
+        (select COUNT(*) from `tbl_system_jenkins` tsj where tsj.`CREATE_TYPE`=2 and tsj.`SYSTEM_ID`=system.id and tsj.job_type=#{jobType} and tsj.status=1 )>0 then true else false end
+        )
+        end
+
+
+
+        GROUP BY system.id DESC
+        limit #{start},#{pageSize}
+    </select>
+
+    <!--没用到-->
+    <select id="getAllSystemInfoByBuilding" parameterType="map"
+            resultType="map">
+        SELECT system.ID id,system.PROJECT_ID projectId,system.system_code
+        systemCode,system.system_name systemName,system.group_Id
+        groupId,system.artifact_Id artifactId,system.architecture_type
+        architectureType,
+        system.STATUS status,system.CREATE_BY createBy,system.CREATE_DATE
+        createDate,system.LAST_UPDATE_BY lastUpdateBy,system.LAST_UPDATE_BY
+        lastUpdate,project.PROJECT_NAME projectName ,system.BUILD_TYPE
+        buildType,system.CREATE_TYPE createType,system.BUILD_TYPE buildType,system.CREATE_TYPE createType,
+        system.COMPILE_COMMAND compileCommand,system.SONAR_SCAN_STATUS sonarScanStatus,system.SYSTEM_FLAG systemFlag
+        FROM tbl_system_info system
+        LEFT JOIN tbl_project_info project ON project.ID = system.PROJECT_ID
+        where
+        system.id in
+        <foreach item="id" index="index" collection="ids" open="("
+                 separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_system_info
+        where ID = #{id,jdbcType=BIGINT}
+    </select>
+
+<!-- 获取所有有效的系统 -->
+    <select id="selectAll" resultType="cn.pioneeruniverse.dev.entity.TblSystemInfo">
+        <!-- select <include refid="Base_Column_List" /> from tbl_system_info -->
+        SELECT system.ID id,<!-- system.PROJECT_ID projectId, -->system.system_code
+        systemCode,system.system_name systemName,system.group_Id
+        groupId,system.artifact_Id artifactId,system.architecture_type
+        architectureType,system.COMPILE_COMMAND compileCommand,system.SONAR_SCAN_STATUS sonarScanStatus,system.SYSTEM_FLAG systemFlag,
+        system.STATUS status,system.CREATE_BY createBy,system.CREATE_DATE
+        createDate,system.LAST_UPDATE_BY lastUpdateBy,system.LAST_UPDATE_BY
+        lastUpdate
+        FROM tbl_system_info system
+        where STATUS = 1
+
+    </select>
+
+<!--删除-->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from tbl_system_info
+        where ID = #{id,jdbcType=BIGINT}
+    </delete>
+<!--    插入-->
+    <insert id="insert"
+            parameterType="cn.pioneeruniverse.dev.entity.TblSystemInfo">
+        insert into tbl_system_info (ID, PROJECT_ID, system_name,
+        system_code, group_Id, artifact_Id,
+        architecture_type,<!-- build_STATUS, STATUS, -->
+        CREATE_BY, CREATE_DATE, LAST_UPDATE_BY,
+        LAST_UPDATE_DATE)
+        values (#{id,jdbcType=BIGINT}, #{projectId,jdbcType=BIGINT},
+        #{systemName,jdbcType=VARCHAR},
+        #{systemCode,jdbcType=VARCHAR}, #{groupId,jdbcType=VARCHAR}, #{artifactId,jdbcType=VARCHAR},
+        #{architectureType,jdbcType=TINYINT},<!-- #{buildStatus,jdbcType=TINYINT}, -->
+        #{status,jdbcType=TINYINT},
+        #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT},
+        #{lastUpdateDate,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective"
+            parameterType="cn.pioneeruniverse.dev.entity.TblSystemInfo">
+        insert into tbl_system_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="projectId != null">
+                PROJECT_ID,
+            </if>
+            <if test="systemName != null">
+                system_name,
+            </if>
+            <if test="systemCode != null">
+                system_code,
+            </if>
+            <if test="groupId != null">
+                group_Id,
+            </if>
+            <if test="artifactId != null">
+                artifact_Id,
+            </if>
+            <if test="architectureType != null">
+                architecture_type,
+            </if>
+            <!-- <if test="buildStatus != null"> build_STATUS, </if> -->
+            <if test="status != null">
+                STATUS,
+            </if>
+            <if test="createBy != null">
+                CREATE_BY,
+            </if>
+            <if test="createDate != null">
+                CREATE_DATE,
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY,
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="projectId != null">
+                #{projectId,jdbcType=BIGINT},
+            </if>
+            <if test="systemName != null">
+                #{systemName,jdbcType=VARCHAR},
+            </if>
+            <if test="systemCode != null">
+                #{systemCode,jdbcType=VARCHAR},
+            </if>
+            <if test="groupId != null">
+                #{groupId,jdbcType=VARCHAR},
+            </if>
+            <if test="artifactId != null">
+                #{artifactId,jdbcType=VARCHAR},
+            </if>
+            <if test="architectureType != null">
+                #{architectureType,jdbcType=TINYINT},
+            </if>
+            <if test="buildStatus != null">
+                #{buildStatus,jdbcType=TINYINT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdateBy != null">
+                #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective"
+            parameterType="cn.pioneeruniverse.dev.entity.TblSystemInfo">
+        update tbl_system_info
+        <set>
+<!--             <if test="projectId != null"> -->
+<!--                 PROJECT_ID = #{projectId,jdbcType=BIGINT}, -->
+<!--             </if> -->
+            <if test="systemName != null">
+                system_name = #{systemName,jdbcType=VARCHAR},
+            </if>
+            <if test="systemCode != null">
+                system_code = #{systemCode,jdbcType=VARCHAR},
+            </if>
+            <if test="groupId != null">
+                group_Id = #{groupId,jdbcType=VARCHAR},
+            </if>
+            <if test="artifactId != null">
+                artifact_Id = #{artifactId,jdbcType=VARCHAR},
+            </if>
+            <if test="architectureType != null">
+                architecture_type = #{architectureType,jdbcType=TINYINT},
+            </if>
+            <!-- <if test="buildStatus != null"> build_STATUS = #{buildStatus,jdbcType=TINYINT},
+                </if> -->
+            <if test="status != null">
+                STATUS = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="createBy != null">
+                CREATE_BY = #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey"
+            parameterType="cn.pioneeruniverse.dev.entity.TblSystemInfo">
+        update tbl_system_info
+        set PROJECT_ID = #{projectId,jdbcType=BIGINT},
+        system_name = #{systemName,jdbcType=VARCHAR},
+        system_code = #{systemCode,jdbcType=VARCHAR},
+        group_Id = #{groupId,jdbcType=VARCHAR},
+        artifact_Id = #{artifactId,jdbcType=VARCHAR},
+        architecture_type = #{architectureType,jdbcType=TINYINT},
+        <!-- build_STATUS = #{buildStatus,jdbcType=TINYINT}, -->
+        STATUS = #{status,jdbcType=TINYINT},
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+
+<!--查询系统根据系统编码-->
+    <select id="getSystemByCode" parameterType="java.lang.String"
+            resultType="cn.pioneeruniverse.dev.entity.TblSystemInfo">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM tbl_system_info
+        WHERE SYSTEM_CODE = #{systemCode} AND STATUS=1
+    </select>
+
+    <insert id="insertSystem" parameterType="cn.pioneeruniverse.dev.entity.TblSystemInfo"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_system_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="projectId != null">
+                PROJECT_ID,
+            </if>
+            <if test="systemName != null">
+                system_name,
+            </if>
+            <if test="systemCode != null">
+                system_code,
+            </if>
+
+            <if test="systemShortName != null">
+                SYSTEM_SHORT_NAME,
+            </if>
+
+            <if test="systemType != null">
+                SYSTEM_TYPE,
+            </if>
+
+            <if test="groupId != null">
+                group_Id,
+            </if>
+            <if test="artifactId != null">
+                artifact_Id,
+            </if>
+            <if test="architectureType != null">
+                architecture_type,
+            </if>
+            <if test="status != null">
+                STATUS,
+            </if>
+            <if test="createBy != null">
+                CREATE_BY,
+            </if>
+            <if test="createDate != null">
+                CREATE_DATE,
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY,
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="projectId != null">
+                #{projectId,jdbcType=BIGINT},
+            </if>
+            <if test="systemName != null">
+                #{systemName,jdbcType=VARCHAR},
+            </if>
+            <if test="systemCode != null">
+                #{systemCode,jdbcType=VARCHAR},
+            </if>
+
+            <if test="systemShortName != null">
+                #{systemShortName,jdbcType=VARCHAR},
+            </if>
+
+            <if test="systemType != null">
+                #{systemType,jdbcType=VARCHAR},
+            </if>
+
+            <if test="groupId != null">
+                #{groupId,jdbcType=VARCHAR},
+            </if>
+            <if test="artifactId != null">
+                #{artifactId,jdbcType=VARCHAR},
+            </if>
+            <if test="architectureType != null">
+                #{architectureType,jdbcType=TINYINT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdateBy != null">
+                #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateSystemById"
+            parameterType="cn.pioneeruniverse.dev.entity.TblSystemInfo">
+        UPDATE tbl_system_info
+        <set>
+            <if test="systemName != null">
+                system_name = #{systemName,jdbcType=VARCHAR},
+            </if>
+            <if test="systemCode != null">
+                system_code = #{systemCode,jdbcType=VARCHAR},
+            </if>
+
+            <if test="systemShortName != null">
+                SYSTEM_SHORT_NAME = #{systemShortName,jdbcType=VARCHAR},
+            </if>
+
+            <if test="systemType != null">
+                SYSTEM_TYPE = #{systemType,jdbcType=VARCHAR},
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="taskMessageStatus!=null">
+            	task_message_status = #{taskMessageStatus}
+            </if>
+        </set>
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="getAllsystem"
+            parameterType="cn.pioneeruniverse.dev.entity.TblSystemInfo"
+            resultMap="BaseResultMap">
+        SELECT system.id,SYSTEM_NAME,SYSTEM_CODE,SYSTEM_TYPE from
+        tbl_system_info system
+        <!-- LEFT JOIN tbl_project_group_user guser
+        on guser.ID=system.GROUP_ID -->
+        <where>
+            system.STATUS=1
+            <if test="systemName != null and systemName!=''">
+                and system_name LIKE CONCAT('%',#{systemName},'%')
+            </if>
+            <if test="systemCode != null and systemCode!=''">
+                and system_code LIKE CONCAT('%',#{systemCode},'%')
+            </if>
+            <if test="systemType != null">
+                AND SYSTEM_TYPE in
+                <foreach item="item" index="index"
+                         collection="systemTypeList" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+
+            </if>
+        </where>
+    </select>
+    <!--查找系统中的包件信息-->
+    <select id="FindSystemPackage" parameterType="map" resultType="java.util.Map">
+    select * from (
+        select sys.ID id,sys.SYSTEM_CODE systemCode,sys.SYSTEM_NAME systemName,md.ID moduleId,md.MODULE_NAME moduleName,
+        art.ID artifactInfoId,art.ARTIFACT_ID artifactId,art.VERSION version,art.NEXUS_PATH nexusPath,art.LAST_UPDATE_DATE updateDate,
+        GROUP_CONCAT(tag.ENVIRONMENT_TYPE order by tag.ENVIRONMENT_TYPE) environmentType,sys.COMPILE_COMMAND compileCommand, sys.SONAR_SCAN_STATUS sonarScanStatus
+        from tbl_system_module md 
+        left JOIN tbl_system_info sys ON md.SYSTEM_ID=sys.ID
+        LEFT JOIN tbl_artifact_info art ON art.SYSTEM_MODULE_ID = md.ID 
+        LEFT JOIN tbl_artifact_tag tag ON art.ID = tag.ARTIFACT_ID
+        where sys.STATUS=1 and md.STATUS=1 and art.STATUS=1 and sys.ID = #{systemId}
+        and art.REPOSITORY=#{repository} and art.GROUP_ID=#{groupId} 
+        <if test="artifactId != null">
+            and art.ARTIFACT_ID=#{artifactId}
+        </if>
+        <if test="projectId != null">
+            and exists (
+            	select 1 from tbl_project_system tps where tps.STATUS=1 and tps.RELATION_TYPE=1
+            	and tps.SYSTEM_ID=10 and tps.PROJECT_ID=#{projectId}
+            )
+        </if>
+        GROUP BY id,systemCode,systemName,moduleId,moduleName,artifactInfoId,artifactId,version
+	) tmp 
+	<if test="tagList != null">
+	where artifactInfoId in (
+        select distinct art2.ID from tbl_artifact_info art2 
+        left join tbl_artifact_tag tag2 on  art2.ID = tag2.ARTIFACT_ID
+        where art2.STATUS=1 and tag2.STATUS=1  and art2.SYSTEM_ID=#{systemId} 
+        and art2.REPOSITORY=#{repository} and art2.GROUP_ID=#{groupId}
+        <if test="artifactId != null">
+            and art2.ARTIFACT_ID=#{artifactId}
+        </if>
+        and ENVIRONMENT_TYPE in 
+        <foreach collection="tagList" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+	)
+    </if>
+	
+    UNION ALL
+	select * from (
+        SELECT sys.ID id,sys.SYSTEM_CODE systemCode,sys.SYSTEM_NAME systemName,NULL as moduleId,NULL as moduleName,
+        art.ID artifactInfoId,art.ARTIFACT_ID artifactId,art.VERSION version,art.NEXUS_PATH nexusPath,art.LAST_UPDATE_DATE updateDate,
+        GROUP_CONCAT(tag.ENVIRONMENT_TYPE order by tag.ENVIRONMENT_TYPE) environmentType,sys.COMPILE_COMMAND compileCommand,sys.SONAR_SCAN_STATUS sonarScanStatus
+        FROM tbl_system_info sys
+        LEFT JOIN tbl_artifact_info art ON art.SYSTEM_ID = sys.ID 
+        LEFT JOIN tbl_artifact_tag tag ON art.ID = tag.ARTIFACT_ID
+        where sys.STATUS=1 and art.STATUS=1 and sys.ID = #{systemId}
+        and art.REPOSITORY=#{repository} and art.GROUP_ID=#{groupId} 
+        and art.SYSTEM_MODULE_ID IS NULL
+        <if test="artifactId != null">
+            and art.ARTIFACT_ID=#{artifactId}
+        </if>
+        <if test="projectId != null">
+            and exists (
+            	select 1 from tbl_project_system tps where tps.STATUS=1 and tps.RELATION_TYPE=1
+            	and tps.SYSTEM_ID=10 and tps.PROJECT_ID=#{projectId}
+            )
+        </if>
+        GROUP BY id,systemCode,systemName,moduleId,moduleName,artifactInfoId,artifactId,version
+    ) tmp 
+    <if test="tagList != null">
+	where artifactInfoId in (
+        select distinct art2.ID from tbl_artifact_info art2 
+        left join tbl_artifact_tag tag2 on  art2.ID = tag2.ARTIFACT_ID
+        where art2.STATUS=1 and tag2.STATUS=1  and art2.SYSTEM_ID=#{systemId} 
+        and art2.REPOSITORY=#{repository} and art2.GROUP_ID=#{groupId}
+        <if test="artifactId != null">
+            and art2.ARTIFACT_ID=#{artifactId}
+        </if>
+        and ENVIRONMENT_TYPE in 
+        <foreach collection="tagList" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+	)
+	</if>
+	
+    </select>
+
+    <!--根据当前人 查询所属当前项目 所属的系统信息 改造项目和系统关系 zhangtingting-->
+    <select id="findSystemWithProjectByUserId" parameterType="hashmap"
+            resultType="cn.pioneeruniverse.dev.entity.TblSystemInfo">
+
+        <!--SELECT distinct
+        system.ID id,
+        system.PROJECT_ID projectId, 改造项目和系统关系 zhangtingting-->
+
+        <!--改造项目和系统关系 liushan-->
+        SELECT
+        GROUP_CONCAT(DISTINCT system.ID) id,
+        GROUP_CONCAT(DISTINCT project.ID) AS projectIds,
+        GROUP_CONCAT(
+        DISTINCT project.PROJECT_NAME
+        ) projectName,
+        system.system_code systemCode,
+        system.system_name systemName,
+        system.group_Id groupId,
+        system.artifact_Id artifactId,
+        system.architecture_type architectureType,
+        system.SNAPSHOT_REPOSITORY_NAME snapshotRepositoryName,
+        system.RELEASE_REPOSITORY_NAME releaseRepositoryName,
+        system.DEPLOY_TYPE deployType,
+        system.PRODUCTION_DEPLOY_TYPE productionDeployType,
+        system.CODE_REVIEW_STATUS codeReviewStatus,
+        system.COMPILE_COMMAND compileCommand,
+        system.SONAR_SCAN_STATUS sonarScanStatus,
+        system.SYSTEM_FLAG systemFlag,
+        system.STATUS status,
+        system.CREATE_BY createBy,
+        system.CREATE_DATE createDate,
+        system.LAST_UPDATE_BY lastUpdateBy,
+        system.LAST_UPDATE_BY lastUpdate,
+        system.SYSTEM_SHORT_NAME systemShortName,
+        system.BUILD_TYPE buildType,
+        system.CREATE_TYPE createType
+        FROM
+        tbl_system_info system
+        LEFT JOIN tbl_project_system ps on ps.SYSTEM_ID = system.ID and ps.status = 1 and ps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_info project on ps.PROJECT_ID = project.ID
+        LEFT JOIN tbl_project_group pGroup on project.ID = pGroup.PROJECT_ID
+        LEFT JOIN tbl_project_group_user groupUser on pGroup.ID = groupUser.PROJECT_GROUP_ID
+        WHERE
+        groupUser.USER_ID = #{currentUserId}
+        AND system.`STATUS` = 1
+        AND project.`STATUS` = 1
+        AND pGroup.`STATUS` = 1
+        AND groupUser.`STATUS` = 1
+        <if test="_parameter.containsKey('systemInfo')">
+            <if test="systemInfo.systemName!=null and systemInfo.systemName!=''">
+                and system.system_name like concat("%",LOWER(#{systemInfo.systemName}),"%")
+            </if>
+            <if test="systemInfo.systemCode!=null and systemInfo.systemCode!=''">
+                and system.system_code like concat("%",LOWER(#{systemInfo.systemCode}),"%")
+            </if>
+        </if>
+        GROUP BY system.id DESC
+        <if test="_parameter.containsKey('start') and _parameter.containsKey('pageSize') ">
+            <if test="start != null and pageSize != null ">
+                limit #{start},#{pageSize}
+            </if>
+        </if>
+
+    </select>
+
+    <select id="CountFindSystemWithProjectByUserId" parameterType="hashmap" resultType="java.lang.Integer">
+        SELECT
+        count(distinct(system.ID))
+        FROM
+        tbl_system_info system
+        LEFT JOIN tbl_project_system ps on ps.SYSTEM_ID = system.ID and ps.status = 1 and ps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_info project on ps.PROJECT_ID = project.ID
+        LEFT JOIN tbl_project_group pGroup on project.ID = pGroup.PROJECT_ID
+        LEFT JOIN tbl_project_group_user groupUser on pGroup.ID = groupUser.PROJECT_GROUP_ID
+        WHERE
+        groupUser.USER_ID = #{currentUserId}
+        AND system.`STATUS` = 1
+        AND project.`STATUS` = 1
+        AND pGroup.`STATUS` = 1
+        AND groupUser.`STATUS` = 1
+        <if test="_parameter.containsKey('systemInfo')">
+            <if test="systemInfo.systemName!=null and systemInfo.systemName!=''">
+                and system.system_name like concat("%",LOWER(#{systemInfo.systemName}),"%")
+            </if>
+            <if test="systemInfo.systemCode!=null and systemInfo.systemCode!=''">
+                and system.system_code like concat("%",LOWER(#{systemInfo.systemCode}),"%")
+            </if>
+        </if>
+    </select>
+
+    <select id="judgeSystemNeedCodeReview" resultType="java.lang.Boolean">
+        SELECT
+        CASE WHEN  tsi.CODE_REVIEW_STATUS = 1 THEN 1 ELSE 0 END flag
+        FROM tbl_system_info tsi
+        WHERE
+        tsi.STATUS = 1 AND tsi.ID = #{systemId}
+    </select>
+
+    <update id="configEnvironment" parameterType="map">
+        update tbl_system_info set ENVIRONMENT_TYPE = #{envType}, LAST_UPDATE_BY = #{currentUser}, LAST_UPDATE_DATE = #{currentTime}
+        where ID = #{id}
+    </update>
+
+<!--    查询系统所配环境-->
+    <select id="getEnvBySystemId" parameterType="java.lang.Long" resultType="string">
+        select ENVIRONMENT_TYPE from tbl_system_info where ID = #{systemId}
+    </select>
+
+<!--    根据项目组下系统-->
+    <select id="findSystemByProject" resultMap="BaseResultMap" resultType="list">
+        <!--select system.id ,system.SYSTEM_NAME from tbl_system_info system
+        LEFT JOIN
+        tbl_project_info project ON
+        project.ID = system.PROJECT_ID
+        LEFT JOIN
+        tbl_project_group groups ON
+        groups.PROJECT_ID = project.ID
+        LEFT JOIN
+        tbl_project_group_user groupuser ON
+        groupuser.PROJECT_GROUP_ID =
+        groups.ID
+        WHERE groupuser.USER_ID = #{userId}
+        AND groupuser.`STATUS` = 1
+        AND groups.`STATUS` = 1
+        AND system.`STATUS` = 1
+        GROUP BY system.ID-->
+
+        <!-- 改造项目和系统关系 liushan -->
+        SELECT  DISTINCT
+        system.id,
+        system.SYSTEM_NAME
+        FROM
+        tbl_system_info system
+        LEFT JOIN tbl_project_system tps ON system.ID = tps.SYSTEM_ID and tps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_info project ON project.ID = tps.PROJECT_ID
+        LEFT JOIN tbl_project_group groups ON groups.PROJECT_ID = project.ID
+        LEFT JOIN tbl_project_group_user groupuser ON groupuser.PROJECT_GROUP_ID = groups.ID
+        WHERE
+        groupuser.USER_ID = #{userId}
+        AND groupuser.`STATUS` = 1
+        AND groups.`STATUS` = 1
+        AND system.`STATUS` = 1
+        AND tps.`STATUS` = 1
+        GROUP BY
+        system.ID
+    </select>
+
+    <select id="getMySystemList" resultType="java.util.HashMap" parameterType="Long">
+        <!--SELECT
+        DISTINCT
+        tsi.ID AS "id",
+        tsi.SYSTEM_NAME AS "systemName"
+        FROM
+        tbl_system_info tsi
+        LEFT JOIN tbl_project_info tpi ON tpi.ID = tsi.PROJECT_ID
+        LEFT JOIN tbl_project_group tpg ON tpg.PROJECT_ID = tpi.ID
+        LEFT JOIN tbl_project_group_user tpgu ON tpgu.PROJECT_GROUP_ID = tpg.ID
+        WHERE
+        tpgu.USER_ID = #{userId}
+        AND tsi.STATUS = 1
+        AND tpi.STATUS = 1
+        AND tpg.STATUS = 1
+        AND tpgu.STATUS = 1-->
+        <!-- 改造项目和系统关系 liushan -->
+        SELECT DISTINCT
+        tsi.ID AS "id",
+        tsi.SYSTEM_NAME AS "systemName"
+        FROM
+        tbl_system_info tsi
+        LEFT JOIN tbl_project_system tps ON tsi.ID = tps.SYSTEM_ID AND tps.`STATUS` = 1 AND tps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_info tpi ON tpi.ID = tps.PROJECT_ID
+        LEFT JOIN tbl_project_group tpg ON tpg.PROJECT_ID = tpi.ID
+        LEFT JOIN tbl_project_group_user tpgu ON tpgu.PROJECT_GROUP_ID = tpg.ID
+        WHERE
+        tpgu.USER_ID = #{userId}
+        AND tsi. STATUS = 1
+        AND tpi. STATUS = 1
+        AND tpg. STATUS = 1
+        AND tpgu. STATUS = 1
+    </select>
+<!--查询系统-->
+    <select id="getSystems" resultType="java.util.HashMap">
+        SELECT
+        ID AS "id",
+        SYSTEM_NAME AS "systemName"
+        FROM
+        tbl_system_info
+        WHERE
+        STATUS = 1
+    </select>
+
+<!--    查询用户角色-->
+    <select id="getUserRoles" parameterType="java.lang.Long" resultType="string">
+        select role.ROLE_CODE from tbl_role_info role
+        left join tbl_user_role urole on urole.ROLE_ID = role.ID and role.STATUS = 1
+        where urole.USER_ID = #{currentUserId} and urole.STATUS = 1
+    </select>
+<!--查询-->
+    <select id="getSyetemByNameOrCode" resultMap="BaseResultMap" parameterType="String">
+        SELECT
+        tsi.ID AS "id",
+        tsi.SYSTEM_NAME AS "systemName"
+        FROM
+        tbl_system_info tsi
+        <where>
+            <if test="systemName != null ">
+                and tsi.SYSTEM_NAME=#{systemName}
+            </if>
+            <if test="systemCode != null">
+                and tsi.SYSTEM_CODE=#{systemCode}
+            </if>
+            AND tsi.STATUS = 1
+        </where>
+    </select>
+
+    <insert id="insertItmpSystem" parameterType="cn.pioneeruniverse.dev.entity.TblSystemInfo"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_system_info(
+        system_name,
+        system_code,
+        artifact_Id,
+        group_Id,
+        BUILD_TYPE,
+        CREATE_TYPE,
+        ARCHITECTURE_TYPE,
+        DEPLOY_TYPE,
+        PRODUCTION_DEPLOY_TYPE,
+        CODE_REVIEW_STATUS,
+        SNAPSHOT_REPOSITORY_NAME,
+        RELEASE_REPOSITORY_NAME,
+        JDK_VERSION,
+        BUILD_TOOL_VERSION,
+        PACKAGE_SUFFIX,
+        CODE_REVIEW_USER_IDS,
+        development_mode,
+        COMPILE_COMMAND,
+        SONAR_SCAN_STATUS,
+        SYSTEM_FLAG,
+        STATUS,
+        CREATE_BY,
+        CREATE_DATE,
+        LAST_UPDATE_BY,
+        LAST_UPDATE_DATE,
+        TOP_SYSTEM_ID,
+        task_message_status
+        )values(
+        #{systemName},
+        #{systemCode},
+        #{artifactId},
+        #{groupId},
+        #{buildType},
+        #{createType},
+        #{architectureType},
+        #{deployType},
+        #{productionDeployType},
+        #{codeReviewStatus},
+        #{snapshotRepositoryName},
+        #{releaseRepositoryName},
+        #{jdkVersion},
+        #{buildToolVersion},
+        #{packageSuffix},
+        #{codeReviewUserIds},
+        #{developmentMode},
+        #{compileCommand},
+        #{sonarScanStatus},
+        #{systemFlag},
+        #{status,jdbcType=TINYINT},
+        #{createBy,jdbcType=BIGINT},
+        #{createDate,jdbcType=TIMESTAMP},
+        #{lastUpdateBy,jdbcType=BIGINT},
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+         #{topSystemId},
+         #{taskMessageStatus}
+        )
+    </insert>
+
+    <insert id="insertTmpSystem" parameterType="cn.pioneeruniverse.dev.entity.TblSystemInfo">
+        insert into tbl_system_info(
+            ID,
+            SYSTEM_NAME,
+            SYSTEM_CODE,
+            SYSTEM_SHORT_NAME,
+            GROUP_ID,
+            ARTIFACT_ID,
+            BUILD_TYPE,
+            CREATE_TYPE,
+            ARCHITECTURE_TYPE,
+            DEPLOY_TYPE,
+            PRODUCTION_DEPLOY_TYPE,
+            CODE_REVIEW_STATUS,
+            SNAPSHOT_REPOSITORY_NAME,
+            RELEASE_REPOSITORY_NAME,
+            JDK_VERSION,
+            CODE_REVIEW_USER_IDS,
+            development_mode,
+            SYSTEM_TYPE,
+            ENVIRONMENT_TYPE,
+            SCM_STRATEGY,
+            STATUS,
+            CREATE_BY,
+            CREATE_DATE,
+            LAST_UPDATE_BY,
+            LAST_UPDATE_DATE,
+            task_message_status
+        )values(
+            #{id},
+            #{systemName},
+            #{systemCode},
+            #{systemShortName},
+            #{artifactId},
+            #{groupId},
+            #{buildType},
+            #{createType},
+            #{architectureType},
+            #{deployType},
+            #{productionDeployType},
+            #{codeReviewStatus},
+            #{snapshotRepositoryName},
+            #{releaseRepositoryName},
+            #{jdkVersion},
+            #{codeReviewUserIds},
+            #{developmentMode},
+            #{systemType},
+            #{environmentType},
+            #{scmStrategy},
+            #{status,jdbcType=TINYINT},
+            #{createBy,jdbcType=BIGINT},
+            #{createDate,jdbcType=TIMESTAMP},
+            #{lastUpdateBy,jdbcType=BIGINT},
+            #{lastUpdateDate,jdbcType=TIMESTAMP},
+             #{taskMessageStatus}
+        )
+    </insert>
+
+    <update id="updateTmpSystem" parameterType="cn.pioneeruniverse.dev.entity.TblSystemInfo">
+        UPDATE tbl_system_info SET
+            SYSTEM_NAME = #{systemName},
+            SYSTEM_CODE = #{systemCode},
+            SYSTEM_SHORT_NAME = #{systemShortName},
+            ENVIRONMENT_TYPE = #{environmentType},
+            SYSTEM_TYPE = #{systemType},
+            ARTIFACT_ID = #{artifactId},
+            GROUP_ID = #{groupId},
+            SNAPSHOT_REPOSITORY_NAME = #{snapshotRepositoryName},
+            RELEASE_REPOSITORY_NAME = #{releaseRepositoryName},
+            JDK_VERSION = #{jdkVersion},
+            ARCHITECTURE_TYPE = #{architectureType},
+            development_mode = #{developmentMode},
+            BUILD_TYPE = #{buildType},
+            SCM_STRATEGY = #{scmStrategy},
+            CREATE_TYPE = #{createType},
+            DEPLOY_TYPE = #{deployType},
+            CODE_REVIEW_STATUS = #{codeReviewStatus},
+            PRODUCTION_DEPLOY_TYPE = #{productionDeployType},
+            CODE_REVIEW_USER_IDS = #{codeReviewUserIds},
+            LAST_UPDATE_BY = #{lastUpdateBy},
+            LAST_UPDATE_DATE = #{lastUpdateDate},
+            task_message_status=#{taskMessageStatus}
+        WHERE
+            ID = #{id}
+    </update>
+
+    <select id="getEnvTypeById" parameterType="java.lang.Long" resultType="string">
+        select ENVIRONMENT_TYPE from tbl_system_info where ID = #{id}
+    </select>
+
+    <!--根据系统id查询系统信息 liushan-->
+    <select id="getTblSystemInfoById" resultType="cn.pioneeruniverse.dev.entity.TblSystemInfo">
+        SELECT
+        system.ID id,
+        GROUP_CONCAT( DISTINCT tps.PROJECT_ID ) AS projectIds,
+        system.system_code systemCode,
+        system.system_name systemName,
+        system.group_Id groupId,
+        system.artifact_Id artifactId,
+        system.architecture_type architectureType,
+        system.COMPILE_COMMAND compileCommand,
+        system.SONAR_SCAN_STATUS sonarScanStatus,
+        system.SYSTEM_FLAG systemFlag
+        FROM
+        tbl_system_info system
+        LEFT JOIN tbl_project_system tps ON system.ID = tps.SYSTEM_ID AND tps.`STATUS` = 1 AND tps.RELATION_TYPE = 1
+        WHERE
+        system.STATUS = 1
+        and system.ID = #{systemId}
+    </select>
+
+    <!-- 获取项目信息 -->
+    <select id="getProjectListByProjectName"  resultType="cn.pioneeruniverse.dev.vo.TaskProjectVO">
+        SELECT DISTINCT pro.ID AS id,pro.PROJECT_NAME AS projectName,pro.PROJECT_CODE AS projectCode,
+        pro.PROJECT_TYPE as projectType,pro.DEVELOPMENT_MODE AS developmentMode
+        FROM tbl_project_info pro
+        LEFT JOIN tbl_project_system tps ON pro.ID = tps.PROJECT_ID AND tps.`STATUS` = 1
+        LEFT JOIN  tbl_system_info sys ON sys.ID = tps.SYSTEM_ID AND sys.`STATUS` = 1
+        <where>
+            pro.`STATUS` = 1 AND tps.RELATION_TYPE = 1
+        <if test="projectName != null and projectName != ''">
+            AND pro.PROJECT_NAME	like concat("%",LOWER(#{projectName}),"%")
+        </if>
+         <if test="projectCode != null and projectCode != ''">
+             AND pro.PROJECT_CODE	like concat("%",LOWER(#{projectCode}),"%")
+         </if>
+
+        </where>
+        GROUP BY pro.ID DESC
+        <if test="start != null and pageSize != null">
+            limit #{start},#{pageSize}
+        </if>
+    </select>
+
+
+    <!-- 获取项目信息非管理员 -->
+    <select id="getProjectListByNoSystem"  resultType="cn.pioneeruniverse.dev.vo.TaskProjectVO">
+
+        SELECT
+        DISTINCT pro.ID AS id,pro.PROJECT_NAME AS projectName,pro.PROJECT_CODE AS projectCode,
+        pro.PROJECT_TYPE as projectType,pro.DEVELOPMENT_MODE AS developmentMode
+        FROM
+        tbl_project_info pro
+        LEFT JOIN tbl_project_system tps ON pro.ID = tps.PROJECT_ID
+        AND tps.`STATUS` = 1 AND tps.RELATION_TYPE = 1
+        LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = tps.PROJECT_ID
+        AND pgroup. STATUS = 1
+        <where>
+            pgroup.id IN (
+            SELECT DISTINCT
+            guser2.PROJECT_GROUP_ID
+            FROM
+            tbl_project_group_user guser2
+            WHERE
+            guser2.USER_ID = #{uid}
+            AND guser2. STATUS = 1
+            )
+            AND  pro.`STATUS` = 1 AND tps.RELATION_TYPE = 1
+            <if test="projectName != null and projectName != ''">
+                AND pro.PROJECT_NAME	like concat("%",LOWER(#{projectName}),"%")
+            </if>
+            <if test="projectCode != null and projectCode != ''">
+                AND pro.PROJECT_CODE	like concat("%",LOWER(#{projectCode}),"%")
+            </if>
+        </where>
+            GROUP BY pro.ID DESC
+            <if test="start != null and pageSize != null">
+                limit #{start},#{pageSize}
+            </if>
+
+
+    </select>
+
+
+    <!-- 获取项目信息 -->
+    <select id="getProjectListBySprint"  resultType="cn.pioneeruniverse.dev.vo.TaskProjectVO">
+        SELECT DISTINCT pro.ID AS id,pro.PROJECT_NAME AS projectName,pro.PROJECT_CODE AS projectCode,
+        pro.DEVELOPMENT_MODE AS developmentMode,pro.PROJECT_TYPE as projectType
+        FROM tbl_project_info pro
+        LEFT JOIN tbl_project_system tps ON pro.ID = tps.PROJECT_ID AND tps.`STATUS` = 1
+        LEFT JOIN  tbl_system_info sys ON sys.ID = tps.SYSTEM_ID AND sys.`STATUS` = 1
+        <where>
+            1 = 1 AND pro.`STATUS` = 1 AND tps.RELATION_TYPE = 1 AND pro.DEVELOPMENT_MODE != 2
+            <if test="projectName != null and projectName != ''">
+                AND pro.PROJECT_NAME	like concat("%",LOWER(#{projectName}),"%")
+            </if>
+            <if test="projectCode != null and projectCode != ''">
+                AND pro.PROJECT_CODE	like concat("%",LOWER(#{projectCode}),"%")
+            </if>
+        </where>
+        GROUP BY pro.ID DESC
+            UNION ALL
+        SELECT DISTINCT pro.ID AS id,pro.PROJECT_NAME AS projectName,pro.PROJECT_CODE AS projectCode,
+        pro.DEVELOPMENT_MODE AS developmentMode,pro.PROJECT_TYPE as projectType
+        FROM tbl_project_info pro
+        LEFT JOIN tbl_project_system tps ON pro.ID = tps.PROJECT_ID AND tps.`STATUS` = 1
+        LEFT JOIN  tbl_system_info sys ON sys.ID = tps.SYSTEM_ID AND sys.`STATUS` = 1
+        <where>
+            1 = 1 AND pro.`STATUS` = 1 AND tps.RELATION_TYPE = 1 AND pro.DEVELOPMENT_MODE IS NULL
+            <if test="projectName != null and projectName != ''">
+                AND pro.PROJECT_NAME	like concat("%",LOWER(#{projectName}),"%")
+            </if>
+            <if test="projectCode != null and projectCode != ''">
+                AND pro.PROJECT_CODE	like concat("%",LOWER(#{projectCode}),"%")
+            </if>
+        </where>
+        GROUP BY pro.ID DESC
+        <if test="start != null and pageSize != null">
+            limit #{start},#{pageSize}
+        </if>
+    </select>
+	<select id="getGruupId"  resultType="String">
+	SELECT DISTINCT sys.GROUP_ID FROM tbl_system_info sys
+	WHERE sys.ID=#{systemId}
+	and sys.STATUS=1
+	</select>
+	<select id="getModuleGruupId"  resultType="String">
+	SELECT DISTINCT GROUP_ID FROM tbl_system_module 
+	WHERE SYSTEM_ID=#{systemId}
+	and STATUS=1
+	</select>
+	<select id="getArtifactId"  resultType="String">
+	SELECT DISTINCT sys.ARTIFACT_ID FROM tbl_system_info sys
+	WHERE sys.ID=#{systemId} and STATUS=1
+	</select>
+	<select id="getModuleArtifactId"  resultType="String">
+	SELECT DISTINCT ARTIFACT_ID FROM tbl_system_module 
+	WHERE SYSTEM_ID=#{systemId} and STATUS=1
+	</select>
+
+</mapper>

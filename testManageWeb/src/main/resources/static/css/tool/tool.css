@@ -1,0 +1,191 @@
+@CHARSET "UTF-8";
+body{
+  padding: 20px;
+}
+td{
+   padding: 0 5px 8px!important;
+}
+.tableDiv{
+   background-color: #F4F4FB;
+   border: 1px solid #D9D9D9;
+   border-radius: 4px;
+   color: #tableTit;
+   margin-bottom: 10px;
+}
+.tableDiv *{
+   border: 0px !important;
+   font-size: 12px;
+   vertical-align: middle !important;
+}
+.tableTit{
+   font-size: 13px;
+   font-weight: bold;
+   padding:10px 20px;
+}
+/*.tableTit button{
+    float: right;
+}*/
+.tableContent{
+   padding:0 10px 10px 40px;
+}
+.tableContent td{
+   height: 32px;
+}
+.table_Td{
+   width: 100%;
+   height: 100%;
+}
+.fontContent{
+   display: inline-block;
+   height: 100%;
+   line-height: 32px;
+   position: relative;
+   padding: 6px 12px;
+   max-width: 170px;
+   white-space:nowrap;
+   overflow-x:hidden; 
+}
+.fontBold{
+   font-weight: bold;
+   display: inline-block;
+}
+.toolName{
+   padding-right:40px;
+}
+.inputContent{
+   width: 100%;
+   position: absolute;
+   padding: 6px 12px;
+   height: 32px;
+   line-height: 32px;
+   left: 0px;
+   top: 6px;
+   display: none;
+}
+.bottom-container{
+    padding-top: 20px;
+    text-align: center;
+}
+.bottom-container button{
+    margin: 0 8px;
+    width: 90px;
+}
+.saveBtn{
+   background-image: linear-gradient(to bottom,#FF6699 0,#FF6699 100%);
+   display: none;
+ }
+table .btn{
+   font-weight: bold;
+   margin-right: 10px;
+}
+.closeBtn{
+   display: none;
+   padding: 4px 10px;
+   box-sizing: content-box;
+   background-image: none;
+   color: #42429B;
+   line-height: 18px;
+   font-weight: bold;
+   border: 2px solid #42429B !important;
+}
+.modal-dialog{
+   margin-top: 60px;
+}
+.modal-sm{
+   width: 380px;
+   font-size: 13px;
+}
+.colFont{
+   color: #F04134;
+   font-size: 12px;
+}
+.alertStyle{
+	width:24px;
+	height: 24px;
+	position: absolute;
+    left: 55px;
+    top: 45px;
+    color: white;
+    background-color: #FFBF00;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    font-size: 20px;
+}
+.modal-footer{
+    text-align: center;
+    padding: 9px 10px 20px;
+    border-top: none;
+    margin-top: 0;
+}
+.modal-footer button{
+    padding: 4px 12px;
+}
+.modal-body{
+    padding: 40px 60px 10px 90px;
+}
+.serviceLoge {
+    height:30px;
+}
+.Loge {
+    height:30px;
+}
+.token {
+    display: none;
+}
+.jenkinsID {
+    display: none;
+}
+.git {
+    display: none;
+}
+.sonar {
+    display: none;
+}
+.jenkinsPluginName {
+    display: none;
+}
+.jenkinsCredentialsId_cl {
+    display: none;
+}
+.jenkinsPlugin_cl {
+    display: none;
+}
+.sonarApiToken_cl {
+    display: none;
+}
+.control-label span{
+    color:red;
+}
+.btn_clear{
+    display: none;
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    right: 3px;
+    top: 5px;
+    z-index: 5;
+    background: url("//systemui/static/images/btn_clear.png") no-repeat;
+}
+.toolTypeName {
+    text-align: left;
+}
+/*.homePath {
+    min-width:250px;
+}
+.ip {
+    min-width:150px;
+}
+.port {
+    min-width:100px;
+}
+.username {
+    min-width:120px;
+}
+.password {
+    min-width:120px;
+}*/
+/*
+.botton_btn {
+    min-width:100px;
+}*/

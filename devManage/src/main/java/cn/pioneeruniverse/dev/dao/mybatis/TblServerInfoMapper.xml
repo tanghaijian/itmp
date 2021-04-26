@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblServerInfoMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblServerInfo">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="HOST_NAME" jdbcType="VARCHAR" property="hostName" />
+    <result column="IP" jdbcType="VARCHAR" property="ip" />
+    <result column="SSH_PORT" jdbcType="BIGINT" property="sshPort" />
+    <result column="SSH_USER_ACCOUNT" jdbcType="VARCHAR" property="sshUserAccount" />
+    <result column="SSH_USER_PASSWORD" jdbcType="VARCHAR" property="sshUserPassword" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+    <result column="SYSTEM_ID" jdbcType="BIGINT" property="systemId" />
+    <result column="SYSTEM_NAME" jdbcType="BIGINT" property="systemName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    server.ID, HOST_NAME, IP, SSH_PORT, SSH_USER_ACCOUNT, SSH_USER_PASSWORD, server.STATUS, server.CREATE_BY,
+    server.CREATE_DATE,server.LAST_UPDATE_BY, server.LAST_UPDATE_DATE,SYSTEM_ID
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    ,system.SYSTEM_NAME
+    from tbl_server_info server
+    left join tbl_system_info system ON server.SYSTEM_ID=system.ID AND system.STATUS=1
+    where server.ID = #{id,jdbcType=BIGINT} and server.STATUS=1
+  </select>
+  
+<!--  查询服务器根据id-->
+   <select id="selectByIds" parameterType="map"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+     ,system.SYSTEM_NAME
+    from tbl_server_info server
+    left join tbl_system_info system ON server.SYSTEM_ID=system.ID AND system.STATUS=1
+    where server.ID in
+    <foreach item="id" index="index" collection="ids" open="(" separator="," close=")"> 
+      #{id}
+    </foreach>
+    and server.STATUS=1
+  </select>
+  
+<!--  查询服务器根据参数-->
+  <select id="selectByCon" resultMap="BaseResultMap" parameterType="list">
+  	<!--select
+  		<include refid="Base_Column_List" />
+        ,system.SYSTEM_NAME
+  	from tbl_server_info server
+    left join tbl_system_info system ON server.SYSTEM_ID=system.ID 
+    LEFT JOIN
+		tbl_project_info project ON
+		project.ID = system.PROJECT_ID
+		LEFT JOIN
+		tbl_project_group groups ON
+		groups.PROJECT_ID = project.ID
+		LEFT JOIN
+		tbl_project_group_user groupuser ON
+		groupuser.PROJECT_GROUP_ID =
+		groups.ID
+		WHERE (groupuser.USER_ID = #{userId}
+ 		AND groupuser.`STATUS` = 1
+ 		AND groups.`STATUS` = 1
+ 		AND system.`STATUS` = 1
+		or `server`.SYSTEM_ID IS NULL)-->
+
+      <!-- 改造项目和系统关系 liushan -->
+      SELECT DISTINCT
+          SERVER .ID,
+          HOST_NAME,
+          IP,
+          SSH_PORT,
+          SSH_USER_ACCOUNT,
+          SSH_USER_PASSWORD,
+          SERVER . STATUS,
+          SERVER .CREATE_BY,
+          SERVER .CREATE_DATE,
+          SERVER .LAST_UPDATE_BY,
+          SERVER .LAST_UPDATE_DATE,
+          tps.SYSTEM_ID,
+          system.SYSTEM_NAME
+      FROM
+      tbl_server_info SERVER
+      LEFT JOIN tbl_system_info system ON SERVER.SYSTEM_ID = system.ID
+      LEFT JOIN tbl_project_system tps ON system.ID = tps.SYSTEM_ID and tps.RELATION_TYPE = 1
+      LEFT JOIN tbl_project_info project ON project.ID = tps.PROJECT_ID
+      LEFT JOIN tbl_project_group groups ON groups.PROJECT_ID = project.ID
+      LEFT JOIN tbl_project_group_user groupuser ON groupuser.PROJECT_GROUP_ID = groups.ID
+      WHERE
+      (
+          groupuser.USER_ID = #{userId}
+          AND tps.`STATUS` = 1
+          AND groupuser.`STATUS` = 1
+          AND groups.`STATUS` = 1
+          AND system.`STATUS` = 1
+          <if test="tblServerInfo.systemId != null">
+  			and server.SYSTEM_ID = #{tblServerInfo.systemId}
+  		  </if>
+          OR `server`.SYSTEM_ID IS NULL
+      )
+  		<if test="tblServerInfo.hostName != null">
+            and HOST_NAME like CONCAT('%',#{tblServerInfo.hostName,jdbcType=VARCHAR},'%')
+        </if>
+  		<if test="tblServerInfo.ip != null">
+            and IP like CONCAT('%',#{tblServerInfo.ip,jdbcType=VARCHAR},'%')
+        </if>
+  		<if test="haveHost != null">and server.ID not in
+  			<foreach collection="haveHost" item="item" index="index" open="(" separator="," close=")">
+  				#{item}
+  			</foreach>
+  		</if>
+  		<if test="tblServerInfo.status != null">
+  			and server.STATUS = #{tblServerInfo.status}
+  		</if>
+  		<if test="tblServerInfo.systemId != null">
+  			and tps.SYSTEM_ID = #{tblServerInfo.systemId}
+  		</if>
+        GROUP BY server.ID
+  	order by server.ID desc
+  </select>
+<!--查询所有服务器  -->
+  <select id="selectAllServerInfo" resultMap="BaseResultMap" parameterType="list">
+  	select 
+    <include refid="Base_Column_List" />
+    ,system.SYSTEM_NAME
+  	from tbl_server_info server
+    left join tbl_system_info system ON server.SYSTEM_ID=system.ID 
+    
+	WHERE (system.STATUS = 1 or server.SYSTEM_ID IS NULL)
+	<if test="tblServerInfo.hostName != null">
+         and HOST_NAME like CONCAT('%',#{tblServerInfo.hostName,jdbcType=VARCHAR},'%')
+    </if>
+	<if test="tblServerInfo.ip != null">
+         and IP like CONCAT('%',#{tblServerInfo.ip,jdbcType=VARCHAR},'%')
+    </if>
+	<if test="haveHost != null">and server.ID not in
+		<foreach collection="haveHost" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="tblServerInfo.status != null">
+		and server.STATUS = #{tblServerInfo.status}
+	</if>
+	<if test="tblServerInfo.systemId != null">
+		and SYSTEM_ID = #{tblServerInfo.systemId}
+	</if>
+	<!-- 非管理员查询 -->
+	<if test="currentUserId != null">
+		and SYSTEM_ID in (
+			select distinct tps.SYSTEM_ID 
+			from tbl_project_system tps 
+			where tps.PROJECT_ID in (
+		        select distinct tpg.PROJECT_ID FROM tbl_project_group tpg where tpg.id in(
+	                SELECT distinct guser2.PROJECT_GROUP_ID
+	                FROM tbl_project_group_user guser2
+	                WHERE guser2.USER_ID = #{currentUserId} AND guser2. STATUS = 1
+		        )
+			)
+		)
+	</if>
+    GROUP BY server.ID
+  	order by server.ID desc
+  </select>
+  		
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_server_info
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblServerInfo">
+    insert into tbl_server_info (HOST_NAME, IP, SSH_PORT,
+      SSH_USER_ACCOUNT, SSH_USER_PASSWORD, STATUS, 
+      CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, 
+      LAST_UPDATE_DATE,SYSTEM_ID)
+    values (#{hostName,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, #{sshPort,jdbcType=BIGINT}, 
+      #{sshUserAccount,jdbcType=VARCHAR}, #{sshUserPassword,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
+      #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, 
+      #{lastUpdateDate,jdbcType=TIMESTAMP},#{systemId,jdbcType=BIGINT})
+  </insert>
+<!--    更新-->
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblServerInfo">
+    update tbl_server_info
+    <set>
+      <if test="hostName != null">
+        HOST_NAME = #{hostName,jdbcType=VARCHAR},
+      </if>
+      <if test="ip != null">
+        IP = #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="sshPort != null">
+        SSH_PORT = #{sshPort,jdbcType=BIGINT},
+      </if>
+      <if test="sshUserAccount != null">
+        SSH_USER_ACCOUNT = #{sshUserAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="sshUserPassword != null">
+        SSH_USER_PASSWORD = #{sshUserPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="sshUserPassword != null">
+        SSH_USER_PASSWORD = #{sshUserPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+          SYSTEM_ID = #{systemId,jdbcType=BIGINT},
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+<!--  查询服务器根据多个服务器id-->
+  <select id="selectByManyId" resultMap="BaseResultMap" resultType="list">
+  		select
+  		<include refid="Base_Column_List"/>
+        ,system.SYSTEM_NAME
+  		from tbl_server_info server
+        left join tbl_system_info system ON server.SYSTEM_ID=system.ID AND system.STATUS=1
+  		where server.ID in
+  		<foreach collection="array" item="item" index="index" open="(" separator="," close=")">
+  			#{item}
+  		</foreach>
+        and server.STATUS=1
+  </select>
+<!--    查询用户所属服务器信息-->
+    <select id="selectByUserId" parameterType="java.lang.Long" resultType="java.lang.String">
+	select tps.`SYSTEM_ID` 
+	from `tbl_project_system` tps 
+	where tps.`PROJECT_ID` in (
+		select distinct tpg.PROJECT_ID FROM tbl_project_group tpg where tpg.id in(
+			SELECT distinct guser2.PROJECT_GROUP_ID
+			FROM tbl_project_group_user guser2
+			WHERE guser2.USER_ID = #{currentUserId} AND guser2. STATUS = 1
+		)
+	)
+
+</select>
+</mapper>

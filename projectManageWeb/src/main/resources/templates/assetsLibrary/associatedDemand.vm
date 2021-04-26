@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head> 
+	<title>系统层级维护</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <META HTTP-EQUIV="pragma" CONTENT="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="no-cache,IE=edge,Chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" /> 
+    </head>
+	<body> 
+		<div class="color1">
+            <div class="container-fluid" id="">
+                <div class="row control-row">
+                    <div class="col-md-4">
+                        <div class="search_font">
+                            <label class="control-label">需求编号：</label>
+                        </div>
+                        <div class="search_input">
+                            <input type="text" class="form-control" placeholder="请输入" id="reqCode"
+                                   name="reqCode"/>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="search_font">
+                            <label class="control-label">需求名称：</label>
+                        </div>
+                        <div class="search_input">
+                            <input type="text" class="form-control" placeholder="请输入" id="reqName"
+                                   name="reqName"/>
+                        </div>
+                    </div>
+                    <div class="col-md-4 ">
+                        <div class="search_font">
+                            <label class="control-label">需求状态：</label>
+                        </div>
+                        <div class="search_input">
+                            <select class="selectpicker" id="reqStatus" name="reqStatus"
+                                    data-live-search="true">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row control-row search_btn">
+                    <button type="button" class="btn btn-primary" id="reqSearch">
+                        搜&nbsp;&nbsp;&nbsp;索
+                    </button>
+                    <button type="button" class="btn btn-default" onclick="clearSearchReq()">重&nbsp;&nbsp;&nbsp;置</button>
+                </div>
+            </div>
+            <div id="downBtn" class="downBtn">
+                <span class="fa fa-caret-up"></span>
+            </div>
+        </div>
+        <br/>
+        <div class="content-table">
+            <div class="wode">
+                <table id="listReq"></table>
+                <div id="pagerReq"></div>
+            </div>
+        </div>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script> 
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>  
+	    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script> 
+	    <script type="text/ecmascript" src="#springUrl('')/projectManageui/static/js/assetsLibrary/associatedDemand.js"></script>   
+	</body> 
+</html>

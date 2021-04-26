@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <title>$title</title> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css"/>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script src="#springUrl('')/systemui/static/js/serverPagination.js"></script>
+    <script src="#springUrl('')/systemui/static/js/inputLimit.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+	<style>
+		.loadContent {
+            display: none;
+            padding: 15px 40px;
+        }
+
+        .loadContent .row {
+            margin-bottom: 10px;
+        }
+
+        .loadContent .row > div {
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="loadContent" id="loadContent2">
+    <form id="uploadForm2" enctype="multipart/form-data">
+        <div class=row>
+            <div class="col-md-3">文件上传：</div>
+            <div class="col-md-9">
+                <input type="file" id="file" name="files"/>
+            </div>
+        </div>
+    </form>
+</div> 
+</body>
+<script type="text/javascript">
+$(function () { 
+	uploadHandBook();
+});
+var type = $!type;
+
+function uploadHandBook() {
+    layer.open({
+        type: 1,
+        title: "上传", 
+        content: $('#loadContent2'), 
+        btn: '确认上传',
+        yes: function () {
+            var formData = new FormData( $('#uploadForm2')[0] ); 
+             if($("#file").val() == '' || $("#file").val() == null){
+            	layer.alert('请选择文件', {
+            		icon: 7,
+            		title: "提示"
+            		});
+            	return;
+            } 
+            $.ajax({
+                type: 'post',
+                url: type == 1?"/zuul/system/handBook/uploadHandBook":"/zuul/system/taskPlugin/uploadPlugin",
+                data: formData,
+                dataType: "json",
+                cache: false,
+                processData: false,
+                contentType: false,
+                beforeSend: function () {
+                    $("#loading").css('display', 'block');
+                },
+                
+                success: function (msg) {
+                    $("#loading").css('display', 'none');
+                    if (msg.flag) {
+                    	layer.alert('上传成功', {
+                    		icon: 1,
+                    		title: "提示"
+                    		});
+                        document.getElementById('uploadForm2').reset();
+                        /* layer.closeAll(); */
+                    } else {
+                        layer.alert("文件上传失败，失败原因：" + msg.data.message, {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $("#loading").css('display', 'none');
+                    if (XMLHttpRequest.status != 999) {
+                        layer.alert("服务器异常，请联系管理员", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                    }
+                }
+            });
+        }
+    });
+}
+ 
+</script>
+</html>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.assetLibrary.ASystemDirectoryDocumentYiRanDao">
+
+    <!-- 系统目录文档查看 -->
+    <select id="selectSystemDirectoryDocumentById" resultType="cn.pioneeruniverse.project.vo.SystemDirectoryDocumentVO">
+        SELECT DOCUMENT_NAME AS  documentName,CHECKOUT_STATUS AS  checkoutStatus,CHECKOUT_USER_ID AS  checkoutUserId,DOCUMENT_S3_KEY AS documentS3Key,DOCUMENT_TEMP_S3_KEY AS documentTempS3Key, DOCUMENT_S3_BUCKET AS documentS3Bucket,
+          CREATE_BY AS createBy,CREATE_DATE AS createDate,LAST_UPDATE_BY AS lastUpdateBy,LAST_UPDATE_DATE AS lastUpdateDate
+          FROM tbl_system_directory_document
+          WHERE  ID = #{id} AND STATUS = 1
+    </select>
+
+    <!-- id查询用户名 -->
+    <select id="getUserNameById" resultType="String">
+        SELECT USER_NAME FROM tbl_user_info WHERE ID = #{id}
+    </select>
+
+    <!-- 目录文档章节签出 -->
+    <select id="systemDirectoryDocumentSignOffById" resultType="cn.pioneeruniverse.project.vo.SystemDirectoryDocumentVO">
+       SELECT
+        CHAPTERS_NAME AS chaptersName,
+        CHECKOUT_STATUS AS checkoutStatus,
+        CHECKOUT_USER_ID AS checkoutUserId,
+        CHAPTERS_S3_BUCKET AS chaptersS3Bucket,
+        CHAPTERS_S3_KEY AS chaptersS3Key,
+        CHAPTERS_VERSION as chaptersVersion,
+        CHAPTERS_TEMP_S3_KEY AS chaptersTempS3Key,
+        CHAPTERS_TEMP_MONGO_KEY AS documentTempMongoKey
+        FROM tbl_system_directory_document_chapters
+        WHERE ID = #{id}
+    </select>
+
+    <!-- 签出状态改变 -->
+    <update id="updateDirectoryDocumentSignOffStatusById">
+        UPDATE tbl_system_directory_document_chapters
+        SET CHECKOUT_STATUS = 1, CHECKOUT_USER_ID = #{userId}
+        WHERE  ID = #{id}
+    </update>
+
+    <!-- 暂存 -->
+    <update id="addTemporaryStorageById" parameterType="cn.pioneeruniverse.project.vo.SystemDirectoryDocumentVO">
+        UPDATE tbl_system_directory_document_chapters
+        SET CHECKOUT_STATUS = 1, CHAPTERS_S3_BUCKET = #{chaptersS3Bucket},CHECKOUT_USER_ID = #{lastUpdateBy},
+        CHAPTERS_TEMP_S3_KEY = #{chaptersTempS3Key},CHAPTERS_TEMP_S3_KEY2 = #{chaptersTempS3Key2},
+        LAST_UPDATE_BY = #{lastUpdateBy}, LAST_UPDATE_DATE = #{lastUpdateDate}
+        WHERE ID = #{id}
+    </update>
+
+    <!--  提交  -->
+    <select id="directoryDocumentSubmitById" parameterType="cn.pioneeruniverse.project.vo.SystemDirectoryDocumentVO">
+        UPDATE tbl_system_directory_document_chapters
+        SET DOCUMENT_VERSION = DOCUMENT_VERSION +1, CHAPTERS_VERSION = CHAPTERS_VERSION+1, CHECKOUT_STATUS = 2,
+        CHAPTERS_S3_BUCKET = #{chaptersS3Bucket},CHECKOUT_USER_ID = #{lastUpdateBy},
+        CHAPTERS_S3_KEY = #{chaptersS3Key},CHAPTERS_S3_KEY2 = #{chaptersS3Key2},
+        CHAPTERS_TEMP_S3_KEY = #{chaptersTempS3Key},CHAPTERS_TEMP_S3_KEY2 = #{chaptersTempS3Key2},
+        LAST_UPDATE_BY = #{lastUpdateBy}, LAST_UPDATE_DATE = #{lastUpdateDate}
+        WHERE ID = #{id}
+    </select>
+
+    <!-- 获取系统目录文档章节信息 -->
+    <select id="getDirectoryDocumentChaptersById" resultType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters">
+     SELECT
+        ID AS id,SYSTEM_DIRECTORY_DOCUMENT_ID AS systemDirectoryDocumentId,DOCUMENT_VERSION AS documentVersion,
+        CHAPTERS_NAME AS chaptersName, CHAPTERS_LEVEL AS chaptersLevel,CHAPTERS_ORDER AS chaptersOrder,CHAPTERS_VERSION AS chaptersVersion,CHECKOUT_USER_ID AS checkoutUserId,CHAPTERS_S3_BUCKET AS chaptersS3Bucket,
+        CHAPTERS_S3_KEY AS chaptersS3Key, CHAPTERS_S3_KEY2 AS chaptersS3Key2,
+        CHAPTERS_MONGO_KEY AS chaptersMongoKey,CHAPTERS_CONTENT_MD5 AS chaptersContentMd5,
+        CHAPTERS_TEMP_S3_KEY AS chaptersTempS3Key,CHAPTERS_TEMP_S3_KEY2 AS chaptersTempS3Key2,
+        CHAPTERS_TEMP_MONGO_KEY AS chaptersTempMongoKey,CHAPTERS_TEMP_CONTENT_MD5 AS chaptersTempContentMd5,
+        PARENT_ID AS parentId,PARENT_IDS AS parentIds,STATUS AS status,CREATE_BY AS createBy,CREATE_DATE AS createDate,
+        LAST_UPDATE_BY AS lastUpdateBy,LAST_UPDATE_DATE AS lastUpdateDate
+       FROM tbl_system_directory_document_chapters WHERE ID = #{id}
+    </select>
+
+    <!--  历史数据增加 -->
+    <insert id="insertDirectoryDocumentHistory" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentChapters">
+        INSERT INTO tbl_system_directory_document_chapters_history(
+        SYSTEM_DIRECTORY_DOCUMENT_ID, DOCUMENT_VERSION, SYSTEM_DIRECTORY_DOCUMENT_CHAPTERS_ID,
+        CHAPTERS_NAME,CHAPTERS_LEVEL,CHAPTERS_ORDER,CHAPTERS_VERSION,CHECKOUT_USER_ID,CHAPTERS_S3_BUCKET,
+        CHAPTERS_S3_KEY,CHAPTERS_S3_KEY2,
+        CHAPTERS_MONGO_KEY,CHAPTERS_CONTENT_MD5,
+        CHAPTERS_TEMP_S3_KEY,CHAPTERS_TEMP_S3_KEY2,CHAPTERS_TEMP_MONGO_KEY,
+        CHAPTERS_TEMP_CONTENT_MD5,PARENT_ID,PARENT_IDS,STATUS,CREATE_BY,CREATE_DATE,LAST_UPDATE_BY,LAST_UPDATE_DATE)
+        VALUES(
+        #{systemDirectoryDocumentId}, #{documentVersion}, #{id},
+        #{chaptersName},#{chaptersLevel},#{chaptersOrder},#{chaptersVersion},#{checkoutUserId},#{chaptersS3Bucket},
+        #{chaptersS3Key}, #{chaptersS3Key2},
+        #{chaptersMongoKey},#{chaptersContentMd5},
+        #{chaptersTempS3Key},#{chaptersTempS3Key2},#{chaptersTempMongoKey},
+        #{chaptersTempContentMd5},#{parentId},#{parentIds},#{status},#{createBy},#{createDate},#{lastUpdateBy},#{lastUpdateDate}
+        )
+    </insert>
+
+    <!-- 取消 -->
+    <update id="cancelById">
+        UPDATE tbl_system_directory_document_chapters
+        SET CHECKOUT_STATUS = 2
+        WHERE  ID = #{id}
+    </update>
+
+    <!-- 获取文档版本 -->
+    <select id="selectDocumentVersionById" resultType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument">
+        SELECT ID AS id, DOCUMENT_NAME AS documentName, DOCUMENT_VERSION AS documentVersion,
+                DOCUMENT_TYPE AS documentType, SAVE_TYPE AS saveType, CHECKOUT_USER_ID AS checkoutUserId,
+                DOCUMENT_S3_BUCKET AS documentS3Bucket, DOCUMENT_S3_KEY AS documentS3Key,
+                STATUS AS status, CREATE_BY AS createBy, CREATE_DATE AS createDate,
+                LAST_UPDATE_BY AS lastUpdateBy, LAST_UPDATE_DATE AS lastUpdateDate
+          FROM tbl_system_directory_document
+          WHERE ID = #{systemDirectoryDocumentId}
+    </select>
+
+    <!-- 提交文档文档版本+1-->
+    <update id="updateDocumentVersionById">
+       UPDATE tbl_system_directory_document
+          SET DOCUMENT_VERSION = DOCUMENT_VERSION+1, LAST_UPDATE_BY = #{lastUpdateId}, LAST_UPDATE_DATE = #{lastUpdateDate}
+          WHERE  ID = #{systemDirectoryDocumentId}
+    </update>
+
+    <!--系统目录文档历史增加 -->
+    <insert id="insertSystemDirectoryDocumentHistory" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument">
+      INSERT INTO tbl_system_directory_document_history(
+        SYSTEM_DIRECTORY_DOCUMENT_ID, DOCUMENT_NAME, DOCUMENT_VERSION, DOCUMENT_TYPE,
+        SAVE_TYPE, CHECKOUT_USER_ID, DOCUMENT_S3_BUCKET, DOCUMENT_S3_KEY, STATUS,
+        CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+      )VALUES(
+        #{id}, #{documentName}, #{documentVersion}, #{documentType},
+        #{saveType}, #{checkoutUserId}, #{documentS3Bucket}, #{documentS3Key}, #{status},
+        #{createBy}, #{createDate}, #{lastUpdateBy}, #{lastUpdateDate}
+      )
+    </insert>
+
+
+
+</mapper>
+
+

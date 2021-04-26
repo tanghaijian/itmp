@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>开发任务管理</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css "> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/jquery.editable-select.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css"/> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css"/> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css"/> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css"/>  
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css"/>
+    <link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/requirement/requirementCheck.css "/>
+    <style>
+   		body{
+			padding-right: 10px !important;
+		}
+		.left_div{
+		flex: 1;
+		}
+    </style>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/jquery.js"></script> 
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery-editable-select.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/component.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+	<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+
+	<script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/def-jquery-ui.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common.js"></script>
+   
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/projectManageui/static/js/requirement/requirementDetail.js"></script>
+    
+    <script>
+   		var reqAttUrl = '$reqAttUrl';
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap4';
+        $.jgrid.defaults.iconSet = "fontAwesome"; 
+        $(function () {
+            $("[data-toggle='tooltip']").tooltip();
+        });
+    </script> 
+</head>
+
+<body class="rowdiv">
+<div id="details" >
+	<div class="head">
+        
+        
+    </div>
+    <div class="defectBody">
+	     <input type="hidden" id = "itcdReqId"/>
+	     <select style="display: none;" id="devTaskStatus">
+			#foreach($dictMap in ${dict.getDictMap(
+	   		 "TBL_DEV_TASK_DEV_TASK_STATUS").entrySet()})
+	    	<option value="${dictMap.key}">${dictMap.value}</option>
+			#end
+		</select>  
+		<div class="left_div def_col_24">
+			<div class="allInfo">
+				<div class="def_title">
+					<span>基本信息</span>  
+				</div>
+				<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="SCfeatureStatus">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_FEATURE_REQUIREMENT_FEATURE_STATUS").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							
+				<div class="def_content">
+					<div class="rowdiv">
+						<div class="form-group col-md-12">
+							<pre class="def_pre" id="requirementOverviewDetails">22</pre>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="reqSource">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_REQUIREMENT_SOURCE").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt col-md-3">需求来源:</label> 
+							<label class="control-label font_left col-md-9"> <span id="reqSourceNameDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="reqType">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_REQUIREMENT_TYPE").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt col-md-3">需求类型:</label> 
+							<label class="control-label font_left col-md-9"> <span id="reqTypeNameDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="reqPriority">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_REQUIREMENT_PRIORITY").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt col-md-3">优先级:</label> 
+							<label class="control-label font_left col-md-9"> <span id="reqPriorityNameDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="reqPlan">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_REQUIREMENT_PLAN").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt col-md-3">需求计划:</label> 
+							<label class="control-label font_left col-md-9"><span id="reqPlanNameDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="reqStatus1">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_REQUIREMENT_STATUS").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt col-md-3">需求状态:</label> 										
+							<label class="control-label font_left col-md-9"><span id="reqStatusNameDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">期望上线:</label> 
+							<label class="control-label font_left col-md-9"><span id="expectOnlineDateDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">计划上线:</label> 
+							<label class="control-label font_left col-md-9"><span id="planOnlineDateDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">实际上线:</label>
+							 <label class="control-label font_left col-md-9"><span id="actualOnlineDateDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">提出人:</label>
+						    <label class="control-label font_left col-md-9"><span id="userNameDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">归属部门:</label> 
+							<label class="control-label font_left col-md-9"><span id="deptNameDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">开发处室:</label> 
+							<label class="control-label font_left col-md-9"><span id="devDeptNameDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-12">
+							<label class="control-label fontWeihgt col-md-1">父需求:</label> 
+							<label class="control-label font_left"><span id="relevancyDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">创建日期:</label> 
+							<label class="control-label font_left col-md-9"><span id="createDateDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">更新日期:</label> 
+							<label class="control-label font_left col-md-9"><span id="lastUpdateDateDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">开始日期:</label> 
+							<label class="control-label font_left col-md-9"><span id="openDateDetails"></span></label>
+						</div>
+					</div> 
+					
+					<div class="rowdiv">
+						<div class="form-group col-md-12">
+							<label class="control-label fontWeihgt col-md-1">关联需求:</label> 
+							<label class="control-label font_left "><span id="checkReqs"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-12"> 
+							<label class="control-label fontWeihgt col-md-1">关闭时间:</label> 
+							<label class="control-label font_left "><span id="checkCloseTime"></span></label>
+						</div> 
+					</div>
+					<div id="checkSysModal">
+						 
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">模块:</label> <label
+								class="control-label font_left"><span
+								id="checkMod"></span></label>
+						</div> 
+					</div>
+					<div class="rowdiv" id="checkEditField"></div>
+					<div class="rowdiv">
+						<div class="form-group col-md-12">
+							<label class="control-label fontWeihgt col-md-1">相关附件:</label> 									
+							<label class="control-label font_left"><a class="a_style" onclick="showFile()">查看附件</a></label>
+						</div>
+					</div>
+					
+						
+				</div>
+			</div>
+		
+			<div class="allInfo">
+				<div class="def_title">
+					<span>重点需求相关</span>  
+				</div>
+				<div class="def_content">
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="impReqStatus">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_IMPORTANT_REQUIREMENT_STATUS").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt col-md-3">重点需求:</label>
+							<label class="control-label font_left col-md-9"><span id="impReqStatusNameDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="impReqType">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_IMPORTANT_REQUIREMENT_TYPE").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt col-md-4">重点需求类型:</label>								
+							<label class="control-label font_left col-md-8"><span id="impReqTypeDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="impReqDelay">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_IMPORTANT_REQUIREMENT_DELAY").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt col-md-3">是否延期:</label>
+							<label class="control-label font_left col-md-9"><span id="impReqDelayStatusNameDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">计划上线:</label>
+							<label class="control-label font_left col-md-9"><span id="impReqOnlineQuarterDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-8">
+							<label class="control-label fontWeihgt col-md-2">需求延误原因:</label>
+							<label class="control-label font_left col-md-10"><span id="impReqDelayReasonDetails"></span></label>
+						</div>
+					</div>
+				</div>						 						 
+			</div>
+			
+			<div class="allInfo">
+				<div class="def_title">
+					<span>成本与收益</span>  
+				</div>
+				<div class="def_content">
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">直接收益:</label>
+							<label class="control-label font_left col-md-9"><span id="directIncomeDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">远期收益:</label>
+							<label class="control-label font_left col-md-9"><span id="forwardIncomeDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">隐性收益:</label>
+							<label class="control-label font_left col-md-9"><span id="recessiveIncomeDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">直接节约:</label>
+							<label class="control-label font_left col-md-9"><span id="directCostReductionDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">远期节约:</label>
+							<label class="control-label font_left col-md-9"><span id="forwardCostReductionDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">预计收益:</label>
+							<label class="control-label font_left col-md-9"><span id="anticipatedIncomeDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">预估成本:</label>
+							<label class="control-label font_left col-md-9"><span id="estimateCostDetails"></span></label>
+						</div>
+					</div>
+				</div>  
+			</div>
+				
+			<div class="allInfo">
+				<div class="def_title">
+					<span>其他信息</span>  
+				</div>
+				<div class="def_content">
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="hangupStatus">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_HANGUP_STATUS").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt col-md-3">挂起状态:</label>
+							<label class="control-label font_left col-md-9"><span id="hangupStatusNameDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">挂起时间:</label>
+							<label class="control-label font_left col-md-9"><span id="hangupDateDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">变更次数:</label>
+							<label class="control-label font_left col-md-9"><span id="changeCountDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">开发管理:</label>
+							<label class="control-label font_left col-md-9"><span id="devManageUserNameDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">需求管理:</label>
+							<label class="control-label font_left col-md-9"><span id="reqManageUserNameDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">业务验收:</label>
+							<label class="control-label font_left col-md-9"><span id="reqAcceptanceUserNameDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="reqProperty">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_REQUIREMENT_PROPERTY").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt col-md-3">需求性质:</label>
+							<label class="control-label font_left col-md-9"><span id="requirementPropertyDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="reqClassify">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_REQUIREMENT_CLASSIFY").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt col-md-3">需求分类:</label>
+							<label class="control-label font_left col-md-9"><span id="requirementClassifyDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="reqSubdivision">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_REQUIREMENT_SUBDIVISION").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt col-md-3">细分类型:</label>
+							<label class="control-label font_left col-md-9"><span id="requirementSubdivisionDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-6">
+							<label class="control-label fontWeihgt col-md-3">计划联调时间:</label>
+							<label class="control-label font_left col-md-9"><span id="planIntegrationTestDateDetails"></span></label>
+						</div>
+						<div class="form-group col-md-6">
+							<label class="control-label fontWeihgt col-md-3">实际联调时间:</label>
+							<label class="control-label font_left col-md-9"><span id="actualIntegrationTestDateDetails"></span></label>
+						</div>
+					</div>
+		
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">验收描述:</label>
+							<label class="control-label font_left col-md-9"><span id="acceptanceDescriptionDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-3">验收时效:</label>
+							<label class="control-label font_left col-md-9"><span id="acceptanceTimelinessDetails">非及时</span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="dataMigration">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_DATA_MIGRATION_STATUS").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt col-md-3">迁移数据:</label>
+							<label class="control-label font_left col-md-9"><span id="dataMigrationStatusNameDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt col-md-4">开发工作量:</label>
+							<label class="control-label font_left col-md-8"><span id="workloadDetails"></span></label>
+						</div>
+					</div>
+				</div> 
+			</div>
+		</div>
+		<div class="def_col_12">
+			<div class="allInfo">
+				<div class="def_title">
+					<span>下属开发与工作任务</span> 
+				</div>
+				<div id="connectDiv">
+		
+				</div>						
+			</div> 
+		</div> 
+    </div>
+</div>
+
+<div id="loading"> 
+		<img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+   </div> 
+</body>
+</html>

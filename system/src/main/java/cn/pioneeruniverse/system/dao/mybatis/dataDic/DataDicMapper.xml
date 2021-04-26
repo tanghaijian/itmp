@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.pioneeruniverse.system.dao.mybatis.dataDic.DataDicDao">
+
+    <!-- 通过数据字典编码获取数据字典信息 -->
+    <select id="getDataDicByTerm" parameterType="String" resultMap="dataDicMap">
+	    SELECT * FROM TBL_DATA_DIC  WHERE TERM_CODE = #{termCode} ORDER BY VALUE_SEQ
+    </select>
+    
+    <!-- 分页查询数据字典 -->
+    <select id="selectDataDicPage" parameterType="cn.pioneeruniverse.common.dto.TblDataDicDTO"
+            resultMap="dataDicDTOMap">
+        SELECT @row_number := @row_number+1 as ID,a.*
+        FROM (
+        SELECT
+        TERM_NAME,
+        TERM_CODE,
+        min(STATUS) STATUS
+        FROM TBL_DATA_DIC
+        GROUP BY TERM_CODE,TERM_NAME
+        ) a,
+        (select @row_number := 0) tmp_row_number
+        <where>
+            <if test="termName != null and termName != ''">
+                AND a.TERM_NAME LIKE CONCAT(CONCAT('%',#{termName},'%'))
+            </if>
+            <if test="termCode != null and termCode != ''">
+                AND LOWER(a.TERM_CODE) LIKE CONCAT(CONCAT('%',LOWER(#{termCode}),'%'))
+            </if>
+            <if test="status != null and status != ''">
+                AND STATUS = #{status}
+            </if>
+        </where>
+        ORDER BY a.TERM_CODE
+    </select>
+
+    <!--添加一条数据字典-->
+    <insert id="addDataDict" parameterType="cn.pioneeruniverse.system.entity.TblDataDic" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO tbl_data_dic(
+         TERM_NAME,
+         TERM_CODE,
+         VALUE_NAME,
+         VALUE_CODE,
+         VALUE_SEQ,
+         STATUS,
+         CREATE_BY,
+         CREATE_DATE,
+         LAST_UPDATE_BY,
+         LAST_UPDATE_DATE
+        ) VALUES (
+        #{termName},
+        #{termCode},
+        #{valueName},
+        #{valueCode},
+        #{valueSeq},
+        #{status},
+        #{createBy},
+        #{createDate},
+        #{lastUpdateBy},
+        #{lastUpdateDate}
+        )
+    </insert>
+
+  <!-- 更新数据字典 -->
+    <update id="updateDataDict" parameterType="cn.pioneeruniverse.system.entity.TblDataDic">
+        UPDATE tbl_data_dic
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="termName != null and termName != ''">
+                TERM_NAME = #{termName},
+            </if>
+            <if test="termCode != null and termCode != ''">
+                TERM_CODE = #{termCode},
+            </if>
+            <if test="valueName != null and valueName != ''">
+                VALUE_NAME = #{valueName},
+            </if>
+            <if test="valueCode != null and valueCode != ''">
+                VALUE_CODE = #{valueCode},
+            </if>
+            <if test="valueSeq != null and valueSeq != ''">
+                VALUE_SEQ = #{valueSeq},
+            </if>
+            <if test="status != null and status != ''">
+                STATUS = #{status},
+            </if>
+            LAST_UPDATE_BY = #{lastUpdateBy},
+            LAST_UPDATE_DATE = #{lastUpdateDate}
+            WHERE
+            ID = #{id}
+        </trim>
+    </update>
+
+<!-- 更新数据字典：逻辑删除 -->
+    <update id="delDataDict" parameterType="cn.pioneeruniverse.system.entity.TblDataDic">
+        UPDATE tbl_data_dic SET
+        STATUS = #{status},
+        LAST_UPDATE_BY = #{lastUpdateBy},
+        LAST_UPDATE_DATE = #{lastUpdateDate}
+        WHERE ID = #{id}
+    </update>
+<!-- 更新数据一个编码下的所有数据字典 -->
+    <update id="updateStatusByTermCode" parameterType="cn.pioneeruniverse.system.entity.TblDataDic">
+        UPDATE tbl_data_dic SET
+        STATUS = #{status},
+        LAST_UPDATE_BY = #{lastUpdateBy},
+        LAST_UPDATE_DATE = #{lastUpdateDate}
+        WHERE TERM_CODE = #{termCode}
+    </update>
+
+
+    <resultMap type="cn.pioneeruniverse.system.entity.TblDataDic" id="dataDicMap">
+        <id column="ID" property="id"/>
+        <result column="TERM_NAME" property="termName"/>
+        <result column="TERM_CODE" property="termCode"/>
+        <result column="VALUE_NAME" property="valueName"/>
+        <result column="VALUE_CODE" property="valueCode"/>
+        <result column="VALUE_SEQ" property="valueSeq"/>
+        <result column="STATUS" property="status"/>
+        <result column="CREATE_BY" property="createBy"/>
+        <result column="CREATE_DATE" property="createDate"/>
+        <result column="LAST_UPDATE_BY" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate"/>
+    </resultMap>
+
+    <resultMap type="cn.pioneeruniverse.common.dto.TblDataDicDTO" id="dataDicDTOMap" extends="dataDicMap">
+    </resultMap>
+</mapper>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+ 
+<!-- Mybatis 反向工程文件：根据存在的数据库表生成对应的Bean和Mapper.xml文件。 
+	通过项目运行Maven build:mvn mybatis-generator:generate执行生成
+-->
+<generatorConfiguration>
+<classPathEntry    location="C:/Users/dark/.m2/repository/mysql/mysql-connector-java/5.1.39/mysql-connector-java-5.1.39.jar"/>
+	<context id="testTables" targetRuntime="MyBatis3">
+		<commentGenerator>
+			<!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+			<property name="suppressAllComments" value="true" />
+		</commentGenerator>
+		<!--数据库连接的信息：驱动类、连接地址、用户名、密码 -->
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+			connectionURL="jdbc:mysql://192.168.1.211:3306/tmp_db" userId="root"
+			password="123456">
+		</jdbcConnection>
+		<!-- 默认false，把JDBC DECIMAL 和 NUMERIC 类型解析为 Integer，为 true时把JDBC DECIMAL 和 
+			NUMERIC 类型解析为java.math.BigDecimal -->
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="false" />
+		</javaTypeResolver>
+ 
+		<!-- targetProject:生成PO类的位置 -->
+		<javaModelGenerator targetPackage="cn.pioneeruniverse.dev.entity" targetProject="testManage\src\main\java">
+			<!-- enableSubPackages:是否让schema作为包的后缀 -->
+			<property name="enableSubPackages" value="false" />
+			<!-- 从数据库返回的值被清理前后的空格 -->
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+        <!-- targetProject:mapper映射文件生成的位置 -->
+		<sqlMapGenerator targetPackage="cn.pioneeruniverse.dev.dao.mybatis" targetProject="testManage\src\main\java">
+			<!-- enableSubPackages:是否让schema作为包的后缀 -->
+			<property name="enableSubPackages" value="false" />
+		</sqlMapGenerator>
+		<!-- targetPackage：mapper接口生成的位置 -->
+		<javaClientGenerator type="XMLMAPPER" targetPackage="cn.pioneeruniverse.dev.dao.mybatis" targetProject="testManage\src\main\java">
+			<!-- enableSubPackages:是否让schema作为包的后缀 -->
+			<property name="enableSubPackages" value="false" />
+		</javaClientGenerator>
+		<!-- 指定数据库表 -->
+		
+		
+		<!-- <table schema="general" tableName="tbl_requirement_feature"  
+		    enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+ 		    enableSelectByExample="false" selectByExampleQueryId="false" >
+ 		</table> 
+		
+		<table schema="general" tableName="tbl_requirement_feature_attachement" 
+		    enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+		    enableSelectByExample="false" selectByExampleQueryId="false" >
+		</table>
+		<table schema="general" tableName="tbl_test_task" 
+		    enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+		    enableSelectByExample="false" selectByExampleQueryId="false" >
+		</table>
+		<table schema="general" tableName="tbl_test_task_attachement" 
+		    enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+		    enableSelectByExample="false" selectByExampleQueryId="false" >
+		</table>
+		<table schema="general" tableName="tbl_test_task_log" 
+		    enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+		    enableSelectByExample="false" selectByExampleQueryId="false" >
+		     <columnOverride column="LOG_DETAIL" javaType="java.lang.String" jdbcType="VARCHAR" />
+		</table>
+		 -->
+		<!-- <table schema="general" tableName="tbl_user_info" 
+		    enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+		    enableSelectByExample="false" selectByExampleQueryId="false" >
+		     <columnOverride column="EMAIL" javaType="java.lang.String" jdbcType="VARCHAR" />
+		</table>
+		<table schema="general" tableName="`tbl_commissioning_window`" 
+		    enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+		    enableSelectByExample="false" selectByExampleQueryId="false" >
+		</table>
+		
+		<table schema="general" tableName="tbl_system_info" 
+		    enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+		    enableSelectByExample="false" selectByExampleQueryId="false" >
+		</table>
+		<table schema="general" tableName="tbl_project_info" 
+		    enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+		    enableSelectByExample="false" selectByExampleQueryId="false" >
+		</table>
+		<table schema="general" tableName="tbl_requirement_info" 
+		    enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+		    enableSelectByExample="false" selectByExampleQueryId="false" >
+		    <columnOverride column="REQUIREMENT_OVERVIEW" javaType="java.lang.String" jdbcType="VARCHAR" />
+		    
+		</table> -->
+		<table schema="general" tableName="tbl_test_set_excute_round_user" 
+		    enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+		    enableSelectByExample="false" selectByExampleQueryId="false" >
+		</table>
+		
+
+	</context>
+</generatorConfiguration>

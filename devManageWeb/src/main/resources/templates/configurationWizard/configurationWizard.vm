@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>dashBoard</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/daterangepicker-bs3.css" /> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />  
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/configurationWizard/configurationWizard.css">
+</head>
+<style type="text/css"> 
+</style>
+<body>  
+
+<input type="hidden" id="sysTemId" name="" value='' />
+<input type="hidden" id="architectureType" value='' />
+<input type="hidden" id="createType" value='' />
+
+<div class="stepCont stepCont1"> 
+	<div class='ystep-container ystep-lg ystep-blue'></div> 
+	<div class="pageCont">
+		<div id="page1" class="stepPage">
+			<div class="title">
+				第一步：新建及配置系统
+			</div>
+			<div class="newBuildSuccess"> 
+				<div class="successP"><span class="picStatus"> </span><span class="fonts">操作成功！</span>点击下方按钮可以对配置信息进行修改。</div><br />
+				<button type="button" class="btn btn-primary buildBtn" id="startBuild">点击开始新建</button><br /><br />
+				<button type="button" class="btn btn-primary buildBtn" id="chooseSystem">点击选择系统</button>
+			</div>
+		</div>
+		<div id="page2" class="stepPage">
+			<div class="title">
+				第二步：新建及配置子模块
+			</div>
+			<div class="newChildBuild"> 
+				<div class="successP"><span class="picStatus"> </span><span class="fonts">操作成功！</span>已新建子模块如下，点击【修改】可以进行修改。</div><br />
+				<div class="childModalDiv rowdiv" id="childModalDiv"> 
+				</div>
+				<button type="button" class="btn btn-primary buildBtn" id="startChildBuild">点击开始新建及配置</button>
+				<div class="remindInfo">
+					注：单模块架构无法配置子模块，多模块架构可以配置子模块。如果需要配置，请回到第一步修改配置信息。
+				</div>
+				<div class="scriptText">
+					<span class="exclamationMark"></span>
+					如跳过此步，可以在 [配置管理 - 系统配置] 页面中点击相应系统右侧的【新增模块】按钮继续新增模块或子系统，并可以点击模块右侧的【配置】按钮进行相关配置。
+				</div>
+			</div>
+		</div>
+		<div id="page3" class="stepPage">
+			<div class="title">
+				第三步：新建源代码库
+			</div>
+			<div class="newBuild"> 
+				<div class="successP"><span class="picStatus"> </span><span class="fonts">操作成功！</span>已代码库如下，点击【修改】可以进行修改。</div><br />
+				<div class="childModalDiv rowdiv" id="codeBaseDiv">
+					 
+				</div>
+				<button type="button" class="btn btn-primary buildBtn" id="buildCodeBase">点击开始新建</button>
+				<div class="scriptText">
+					<span class="exclamationMark"></span>
+					迁移完成、建立分支后，可以在 [配置管理 - 代码库管理] 页面中对代码提交控制、项目成员读写权限等进行配置。<br />如跳过此步，可以在上述页面中新建代码库。
+				</div>
+			</div>
+		</div>
+		<div id="page4" class="stepPage">
+			<div class="title">
+				第四步：环境配置
+			</div>
+			<div class="newBuild"> 
+				<br />
+				<div class="successP"><span class="picStatus"> </span><span class="fonts">操作成功！</span>点击下方按钮可以对配置信息进行修改。</div>
+				<button type="button" class="btn btn-primary buildBtn" id="environmentConfig">点击开始新建</button>
+				<div class="scriptText">
+					<span class="exclamationMark"></span>
+					如跳过此步，可以在 [配置管理 - 系统配置] 页面中点击相应系统右侧的【环境配置】按钮进行相关配置。
+				</div>
+			</div>
+		</div>
+		<div id="page5" class="stepPage">
+			<div class="title">
+				第五步：系统/环境/源码库配置
+			</div>
+			<div class="newBuild"> 
+				<div class="successP"><span class="picStatus"> </span><span class="fonts">操作成功！</span>点击下方按钮可以对配置信息进行修改。</div><br />
+				<button type="button" class="btn btn-primary buildBtn" id="codeConfig">点击开始新建</button>
+				<div class="scriptText">
+					<span class="exclamationMark"></span>
+					如跳过此步，可以在 [配置管理 - 系统配置] 页面中点击相应系统右侧的【源码配置】按钮进行相关配置。
+				</div>
+			</div>
+		</div>
+		<div id="page6" class="stepPage">
+			<div class="title">
+				第六步：自动化部署配置
+			</div>
+			<div class="newBuild"> 
+				<div class="successP"><span class="picStatus"> </span><span class="fonts">操作成功！</span>点击下方按钮可以对配置信息进行修改。</div><br />
+				<button type="button" class="btn btn-primary buildBtn" id="autoDeployConfigBtn">点击开始配置</button>
+				<div class="remindInfo">
+					注：手动创建无法进行自动化部署配置，自动创建可以进行自动化部署配置。如果需要进行自动化部署配置，请回到第一步修改配置信息。
+				</div>
+				<div class="scriptText">
+					<span class="exclamationMark"></span>
+					如跳过此步，可以在 [配置管理 - 系统配置] 页面中点击相应系统右侧的【部署-部署配置】按钮进行相关配置。
+				</div>
+			</div>
+		</div>
+		<div id="page7" class="stepPage">
+			<div class="title">
+				第七步：自动化测试配置
+			</div>
+			<div class="newBuild"> 
+				<div class="successP"><span class="picStatus"> </span><span class="fonts">操作成功！</span>点击下方按钮可以对配置信息进行修改。</div><br />
+				<button type="button" class="btn btn-primary buildBtn" id="autoTestConfigBtn">点击开始配置</button>
+				<div class="remindInfo">
+					注：手动创建无法进行自动化测试配置，自动创建可以进行自动化测试配置。如果需要进行自动化测试配置，请回到第一步修改配置信息。
+				</div>
+				<div class="scriptText">
+					<span class="exclamationMark"></span>
+					如跳过此步，可以在 [配置管理 - 系统配置] 页面中点击相应系统右侧的【部署-自动化测试配置】按钮进行相关配置。
+				</div>
+			</div>
+		</div>
+		<div id="page8" class="stepPage">
+			<div class="title">
+				完成
+			</div>
+			<div class="newBuildSuccess textAlignC"> 
+				 <span class="vbig"></span><br /><br />
+				 <span class="vFont">配置成功</span>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 新增子系统弹窗 -->
+<div class="modal fade bs-example-modal-lg" id="addSystem" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+       <div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title">新增子系统</h4>
+			</div>
+			<div class="modal-body">
+               <form class="form-horizontal" id="addSyatemForm">
+	           	  <div class="rowdiv">
+	               	 <div class="form-group">
+						<label class="def_col_7 fontLeft"><span>*</span>子系统名称：</label>
+						<div class="def_col_29">
+	                    	<input id="addSystemName" name="addSystemName" class="form-control tableInput " placeholder="请输入" type="text" />
+						</div>
+					 </div>		
+	              </div>  
+	              <div class="rowdiv">
+		              <div class="form-group">
+	                      <label class="def_col_7 fontLeft"><span>*</span>子系统编号：</label>
+	                      <div class="def_col_29">
+						      <input id="addSystemCode" name="addSystemCode" class="form-control tableInput " placeholder="请输入" type="text" />
+	                      </div>
+	                  </div>
+	              </div> 
+			   </form>
+			</div>
+			<div class="modal-footer">
+				<div class="bottom-container">
+					<button type="button" id="userbutton" class="btn btn-primary" data-user="default" onclick="addSystem()">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--涉及子系统弹框  -->
+<div class="modal fade bs-example-modal-lg" id="selSys" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg modal-user" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <span class="modal-title" id="">选择子系统</span>
+            </div>
+            <div class="modal-body">
+
+                <div class="color1">
+                    <div class="container-fluid" id="">
+                        <div class="rowdiv control-row">
+                            <div class="col-md-2">
+
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">子系统名称：</label></div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入" id="SCsystemName"
+                                           name="systemName" value=""/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">子系统编码：</label></div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入" id="SCsystemCode"
+                                           name="systemCode" value=""/>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+
+                            </div>
+                        </div>
+                        <div class="rowdiv control-row search_btn">
+                            <button type="button" class="btn btn-primary" id="systemSearch">搜&nbsp;&nbsp;&nbsp;索</button>
+                            <button type="button" onclick="clearSearchSys()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                        </div>
+
+                    </div>
+                    <div id="downBtn2" class="downBtn">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br>
+                <div class="content-table">
+                    <div class="wode">
+                        <table id="systemTable"></table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="sysbutton" class="btn btn-primary" data-sys="default" onclick="commitSys()">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 新建代码库 -->
+<div class="modal fade" id="createCodeBaseModel" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+			<div class="modal-header">
+			    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+			    </button>
+			    <span class="modal-title" id="microChildService">新建代码库</span>
+			</div>
+			<div class="modal-body">
+			    <div class="rowdiv">
+			        <div class="form-group">
+			            <label class="def_col_8 control-label font_right fontWeihgt">代码库类型：</label>
+			            <div class="def_col_26 control-label" id="codeBaseType">
+			                <div class="def_col_18">
+			                 	<input type="radio" name="codeBaseType" value="1"> 
+			                	<img class="Img_Git" src="#springUrl('')/devManageui/static/images/codeBase/git.png"/>
+			                    Git
+			                </div>
+			                <div class="def_col_18">
+			                	<input type="radio" name="codeBaseType" value="2">
+				                <img class="Img_SVN" src="#springUrl('')/devManageui/static/images/codeBase/svn.jpg"/>
+				                SVN
+				            </div>
+			            </div>
+			        </div>
+			    </div>
+			    <div class="rowdiv">
+			        <div class="form-group">
+			            <label class="def_col_8 control-label font_right fontWeihgt">代码库地址：</label>
+			            <div class="def_col_26 control-label">
+			                <select class="selectpicker" id="codeBaseAddr" name="codeBaseAddr">
+			                    <option value="">请选择</option>
+			                </select>
+			            </div>
+			        </div>
+			    </div>
+			    <div class="rowdiv">
+			        <div class="form-group">
+			            <label class="def_col_8 control-label font_right fontWeihgt">代码库名称：</label>
+			            <div class="def_col_26 control-label">
+			                <input type="text" class="form-control" placeholder="请填写发布仓库名称"
+			                       id="microServiceReleaseRepositoryName" name="releaseRepositoryName"
+			                       data-bv-field="releaseRepositoryName">
+			            </div>
+			        </div>
+			    </div>
+			    <div class="rowdiv">
+			    	 <label class="def_col_8 control-label font_right fontWeihgt"></label>
+			    	<div class="def_col_26 remarks">
+			    		<span class="exclMark"></span>
+				   		向导设置完成后，系统会建立一个空的代码库，项目组可以线下将代码库迁移至该库中。<br />
+	迁移完成、建立分支后，可以在 [配置管理 - 代码库管理] 页面中对代码提交控制、项目成员读写权限等进行配置。
+				   	</div>
+			    </div> 
+			</div>
+			<div class="modal-footer">
+			    <button type="button" class="btn btn-primary" onclick="submitAddCodeBase()">确定</button>
+			    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			</div>
+        </div>
+    </div>
+</div>
+
+<!-- 环境配置弹窗 -->
+<div class="modal fade bs-example-modal-lg" id="environmentModal" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg modal-user" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">配置环境</h4>
+            </div>
+            <div class="modal-body">
+                   <div class="content-table">
+                        <div class="wode">
+                            <table id="environmentTable"></table>
+                            <div id="userPage"></div>
+                        </div>
+                    </div>
+                    
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="userbutton" class="btn btn-primary" data-user="default" onclick="commitEnvironment()">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div> 
+<div id="loading"> 
+	<img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+</div> 
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>   
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script> 
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script> 
+<script type="text/ecmascript" src="#springUrl('')/devManageui/static/js/configurationWizard/setStep.js"></script> 
+<script type="text/ecmascript" src="#springUrl('')/devManageui/static/js/configurationWizard/configurationWizard.js"></script>  
+</body>
+</html>

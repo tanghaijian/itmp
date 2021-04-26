@@ -1,0 +1,38 @@
+textarea {
+  resize: none;
+}
+
+.table-bordered>thead>tr>td:last-child,
+.table tbody>tr>td:last-child,
+.ui-jqgrid .ui-jqgrid-htable thead th {
+  text-align: center;
+}
+.ui-jqgrid .ui-pager-control .ui-pager-table td:last-child{
+  text-align:right;
+}
+
+.label_tit {
+  color: #2d8af6;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.redStar {
+  color: red;
+}
+.add_body,
+.add_group_body {
+  padding-top: 10px;
+}
+.ui-jqgrid .ui-jqgrid-htable thead th,
+.ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td{
+  border: 1px solid #E9E9E9;
+  border-left:none;
+  border-top: none;
+}
+.ui-jqgrid .ui-jqgrid-htable{
+  background: #F4F4F4;
+}
+._hide{
+  display:none;
+}

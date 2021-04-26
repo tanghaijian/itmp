@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.assetLibrary.SystemDirectoryDocumentAttachmentDao">
+
+<!-- 通过文档ID获取文档附件，并且返回前Number条数据 -->
+    <select id="getNumOfAttachmentsByDocumentId" resultMap="systemDirectoryDocumentAttachmentMap"
+            resultType="java.util.List">
+        SELECT
+        ID,
+        SYSTEM_DIRECTORY_DOCUMENT_ID,
+        ATTACHMENT_NAME_NEW,
+        ATTACHMENT_NAME_OLD,
+        ATTACHMENT_TYPE,
+        ATTACHMENT_S3_BUCKET,
+        ATTACHMENT_S3_KEY,
+        ATTACHMENT_IMAGE_URL
+        FROM
+        tbl_system_directory_document_attachment
+        WHERE
+        SYSTEM_DIRECTORY_DOCUMENT_ID = #{documentId}
+        AND STATUS = 1
+        ORDER BY LAST_UPDATE_DATE DESC
+        <if test="number != null">
+            LIMIT #{number}
+        </if>
+    </select>
+
+    <resultMap id="systemDirectoryDocumentAttachmentMap"
+               type="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentAttachment">
+        <id column="ID" property="id"/>
+        <result column="SYSTEM_DIRECTORY_DOCUMENT_ID" property="systemDirectoryDocumentId"/>
+        <result column="ATTACHMENT_NAME_NEW" property="attachmentNameNew"/>
+        <result column="ATTACHMENT_NAME_OLD" property="attachmentNameOld"/>
+        <result column="ATTACHMENT_TYPE" property="attachmentType"/>
+        <result column="ATTACHMENT_S3_BUCKET" property="attachmentS3Bucket"/>
+        <result column="ATTACHMENT_S3_KEY" property="attachmentS3Key"/>
+        <result column="ATTACHMENT_IMAGE_URL" property="attachmentImageUrl"/>
+        <result column="STATUS" property="status"/>
+        <result column="CREATE_BY" property="createBy"/>
+        <result column="CREATE_DATE" property="createDate"/>
+        <result column="LAST_UPDATE_BY" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate"/>
+    </resultMap>
+
+</mapper>

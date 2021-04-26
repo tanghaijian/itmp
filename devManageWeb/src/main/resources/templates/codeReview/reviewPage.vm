@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>代码评审管理</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/codeReview/codemirror.css"/>
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/codeReview/eclipse.css"/>
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/codeReview/mergely.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css"/>
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/codeReview/codeReview.css"/>
+
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/codeReview/wicked-ui.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/codeReview/jquery.tipsy.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/codeReview/codemirror.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/codeReview/mode/clike/clike.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/codeReview/mode/xml/xml.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/codeReview/mergely.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/devManageui/static/js/codeReview/editor.min.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/Tdrag.js" type="text/javascript"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script src="#springUrl('')/systemui/static/js/template-debug.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+</head>
+<body>
+    #set( $devTaskDetail = $codeReview.getDevTaskDetailByDevTaskId($devTaskId))
+<div class="leftJob">
+    <div class="cont">
+        <div class="contTop">
+            <div class="fileIcon">
+                <img src="#springUrl('')/devManageui/static/images/codeReview/file.png" onclick="hideLeft()">
+            </div>
+            <div class="contTopFont">
+                    <span>
+                        $!devTaskDetail.devTaskCode &nbsp;&nbsp; $!devTaskDetail.devTaskName
+                    </span>
+                <img src="#springUrl('')/devManageui/static/images/codeReview/leftShrink.png" onclick="hideLeft()">
+            </div>
+        </div>
+        <div class="contBody">
+            <div class="testDes">
+                 <span>
+                     $!devTaskDetail.devTaskOverview
+                 </span>
+                <div class="developer">
+                    开发人：$!devTaskDetail.devUserName
+                </div>
+            </div>
+            <div class="fileDiv">
+                <div class="fileLable">
+                    待评审文件列表：
+                </div>
+                <div class="fileList">
+                    #if($!scmType == 1)
+                        #foreach($reviewFile in ${codeReview.getReviewFilesByDevTaskScmId($!devTaskScmId)})
+                            <div class="oneFile"
+                                 onclick="onFileClick(this,$reviewFile.id,'$reviewFile.scmUrl','$reviewFile.commitFile',$reviewFile.commitNumber,$reviewFile.lastCommitNumber);showFileComments($reviewFile.id)">
+                                <div class="filesIcon">
+                                    #if($reviewFile.operateType == $ADD_FILE)
+                                        <img src="#springUrl('')/devManageui/static/images/codeReview/newFile.png"
+                                             title="$reviewFile.scmUrl$reviewFile.commitFile"/>
+                                    #elseif($reviewFile.operateType == $DEL_FILE)
+                                        <img src="#springUrl('')/devManageui/static/images/codeReview/deleteFile.png"
+                                             title="$reviewFile.scmUrl$reviewFile.commitFile"/>
+                                    #elseif($reviewFile.operateType == $UPDATE_FILE_CONTENT || $reviewFile.operateType == $UPDATE_FILE_ATTR || $reviewFile.operateType == $UPDATE_FILE_CONTENT_ATTR)
+                                        <img src="#springUrl('')/devManageui/static/images/codeReview/modFile.png"
+                                             title="$reviewFile.scmUrl$reviewFile.commitFile"/>
+                                    #end
+                                </div>
+                                <div class="fileName">$reviewFile.commitFile.substring($math.add($reviewFile.commitFile.lastIndexOf(
+                                    '/'),1))</div>
+                                <div class="filesInfo" fileId="$reviewFile.id">
+                                    #getCommentsCount($reviewFile.id,$!scmType)
+                                </div>
+                            </div>
+                        #end
+                    #elseif($!scmType == 2)
+                        #foreach($reviewGitFile in ${codeReview.getReviewGitFilesByDevTaskScmId($!devTaskScmId)})
+                            #set( $gitFileInfo = $codeReview.getGitFileInfo($reviewGitFile.toolId.longValue(),$reviewGitFile.gitRepositoryId.longValue(),$reviewGitFile.gitBranch))
+                            <div class="oneFile"
+                                 onclick="onGitFileClick(this,$reviewGitFile.id,$reviewGitFile.toolId,$reviewGitFile.gitRepositoryId,'$reviewGitFile.commitFile','$!reviewGitFile.beforeRenameFile','$reviewGitFile.commitNumber','$reviewGitFile.lastCommitNumber');showFileComments($reviewGitFile.id)">
+                                <div class="filesIcon">
+                                    #if($reviewGitFile.operateType == $GIT_ADD_FILE)
+                                        <img src="#springUrl('')/devManageui/static/images/codeReview/newFile.png"
+                                             title="$gitFileInfo.scmUrl$reviewGitFile.commitFile"/>
+                                    #elseif($reviewGitFile.operateType == $GIT_DEL_FILE)
+                                        <img src="#springUrl('')/devManageui/static/images/codeReview/deleteFile.png"
+                                             title="$gitFileInfo.scmUrl$reviewGitFile.commitFile"/>
+                                    #elseif($reviewGitFile.operateType == $GIT_MODIFY_FILE)
+                                        <img src="#springUrl('')/devManageui/static/images/codeReview/modFile.png"
+                                             title="$gitFileInfo.scmUrl$reviewGitFile.commitFile"/>
+                                    #elseif($reviewGitFile.operateType.indexOf($GIT_RENAME_FILE) == 0)
+                                        <img src="#springUrl('')/devManageui/static/images/codeReview/rename.png"
+                                             title="$gitFileInfo.scmUrl$reviewGitFile.commitFile"/>
+                                    #end
+                                </div>
+                                <div class="fileName">$reviewGitFile.commitFile.substring($math.add($reviewGitFile.commitFile.lastIndexOf(
+                                    '/'),1))</div>
+                                <div class="filesInfo" fileId="$reviewGitFile.id">
+                                    #getCommentsCount($reviewGitFile.id,$!scmType)
+                                </div>
+                            </div>
+                        #end
+                    #end
+                </div>
+            </div>
+        </div>
+        <div class="contFoot">
+            #if($codeReviewOrViewResult == 1)
+                <button type="button" class="btn btn-success"
+                        onclick="updateCodeReviewResult($devTaskDetail.devTaskId,2)">
+                    评审通过
+                </button>
+                <button type="button" class="btn btn-danger"
+                        onclick="updateCodeReviewResult($devTaskDetail.devTaskId,3)">
+                    评审不通过
+                </button>
+                <button type="button" class="btn btn-default"
+                        onclick="javaScript:history.back(-1);">返回
+                </button>
+            #elseif($codeReviewOrViewResult == 2)
+                <button type="button" class="btn btn-default"
+                        onclick="javaScript:history.back(-1);">
+                    返回
+                </button>
+            #end
+        </div>
+    </div>
+</div>
+<div class="centerCode">
+    <div class="cont">
+        <div class="contTop" name="contTopTitle">
+            <div class="def_col_16 titleConter">
+                <span class="codeTitLeble fontWeihgt" name="codeFileName"></span>
+            </div>
+            <div class="def_col_12">
+                <div class="def_col_14 font_right fontWeihgt">编码集：</div>
+                <div class="def_col_22">
+                    <select class="selectpicker" id="codeFileCharset" onchange="changeFileCharset()">
+                        <option value="UTF-8">UTF-8</option>
+                        <option value="GBK">GBK</option>
+                    </select>
+                </div>
+            </div>
+            <div class="def_col_8 myPadding">
+                <button type="button" class="btn btn-primary" onclick="startOrEndFileCompare(this)">版本比对
+                </button>
+            </div>
+        </div>
+        <div class="contBody" id="commntBody">
+            <div class="mergelyDiv">
+                <div class="mergelyDivTit">
+                    <div class="def_col_1"></div>
+                    <div class="def_col_16 hoverLable" name="compareFileOldVersion">
+                    </div>
+                    <div class="def_col_2"></div>
+                    <div class="def_col_16 hoverLable" name="compareFileNewVersion">
+                    </div>
+                    <div class="def_col_1"></div>
+                </div>
+                <div id="mergely">
+                </div>
+            </div>
+            <div class="codeDiv">
+                <textarea class="form-control" id="code" name="code"></textarea>
+            </div>
+            <div class="commentIconDiv" id="commentIconDiv" ondblclick="hideRight()">
+                <img src="#springUrl('')/devManageui/static/images/codeReview/chat.png">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="rightComment" id="rightComment">
+    <div class="cont">
+        <div class="contTop">
+            <div class="contTopFont">
+                    <span class="codeTitLeble">
+                        代码评审
+                    </span>
+                <img src="#springUrl('')/devManageui/static/images/codeReview/rightShrink.png" onclick="hideRight()">
+            </div>
+        </div>
+        <div class="contentBody">
+        </div>
+        <div class="contFoot">
+            <textarea class="form-control mySuggest" style="resize:none" placeholder="请输入意见"></textarea>
+            <button type="button" class="btn btn-primary" onclick="sendComment()">发送</button>
+        </div>
+    </div>
+</div>
+<div id="loading">
+    <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif"/>
+</div>
+<script src="#springUrl('')/devManageui/static/js/codeReview/codeReview.js" type="text/javascript"></script>
+<script id="commentTemplate" type="text/html">
+    {{each data}}
+    {{if index == data.length-1}}
+    <div class="suggestDiv noBorder">
+        {{else}}
+        <div class="suggestDiv">
+            {{/if}}
+
+            <div class="suggestTit">
+                <div class="headPortrait">
+                    <img src="#springUrl('')/devManageui/static/images/codeReview/headImage/headImage1.png"/>
+                </div>
+                <span class="suggestPreson">
+             From {{$value.reviewUserName}}
+            </span>
+                <span class="suggestTime">
+             {{$value.createDate}}
+            </span>
+            </div>
+            <div class="suggestBody">
+                {{#$value.reviewComment}}
+            </div>
+        </div>
+        {{/each}}
+</script>
+<script>
+    var fileScmType;
+        #if($scmType)
+        fileScmType = $scmType;
+        #end
+</script>
+</body>
+</html>

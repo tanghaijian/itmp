@@ -1,0 +1,1172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.RequirementMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblRequirementInfo">
+    <id column="ID" jdbcType="BIGINT" property="id" />   
+    <result column="ITCD_REQUIREMENT_ID" jdbcType="BIGINT" property="itcdRequirementId"/>
+    <result column="REQUIREMENT_NAME" jdbcType="VARCHAR" property="requirementName"/>
+	<result column="REQUIREMENT_CODE" jdbcType="VARCHAR" property="requirementCode"/>
+	<result column="REQUIREMENT_STATUS" jdbcType="VARCHAR" property="requirementStatus"/>
+	<result column="REQUIREMENT_SOURCE" jdbcType="VARCHAR" property="requirementSource"/>
+	<result column="REQUIREMENT_TYPE" jdbcType="VARCHAR" property="requirementType"/>
+	<result column="APPLY_USER_ID" jdbcType="BIGINT" property="applyUserId"/>
+	<result column="APPLY_DEPT_ID" jdbcType="BIGINT" property="applyDeptId"/>
+	<result column="DEVELOPMENT_MANAGE_USER_ID" jdbcType="BIGINT" property="developmentManageUserId"/>
+	<result column="DEVELOPMENT_DEPT_ID" jdbcType="BIGINT" property="developmentDeptId"/>
+	<result column="REQUIREMENT_MANAGE_USER_ID" jdbcType="BIGINT" property="requirementManageUserId"/>
+	<result column="REQUIREMENT_ACCEPTANCE_USER_ID" jdbcType="BIGINT" property="requirementAcceptanceUserId"/>
+	<result column="REQUIREMENT_OVERVIEW" jdbcType="VARCHAR" property="requirementOverview"/>
+	<result column="REQUIREMENT_PRIORITY" jdbcType="VARCHAR" property="requirementPriority"/>
+	<result column="REQUIREMENT_PLAN" jdbcType="VARCHAR" property="requirementPlan"/>
+	<result column="EXPECT_ONLINE_DATE" jdbcType="DATE" property="expectOnlineDate"/>
+	<result column="PLAN_ONLINE_DATE" jdbcType="DATE" property="planOnlineDate"/>
+	<result column="ACTUAL_ONLINE_DATE" jdbcType="DATE" property="actualOnlineDate"/>
+	<result column="PLAN_INTEGRATION_TEST_DATE" jdbcType="DATE" property="planIntegrationTestDate"/>
+	<result column="ACTUAL_INTEGRATION_TEST_DATE" jdbcType="DATE" property="actualIntegrationTestDate"/>
+	<result column="OPEN_DATE" jdbcType="DATE" property="openDate"/>
+	<result column="IMPORTANT_REQUIREMENT_STATUS" jdbcType="VARCHAR" property="importantRequirementStatus"/>
+	<result column="IMPORTANT_REQUIREMENT_DELAY_STATUS" jdbcType="VARCHAR" property="importantRequirementDelayStatus"/>
+	<result column="IMPORTANT_REQUIREMENT_TYPE" jdbcType="VARCHAR" property="importantRequirementType"/>
+	<result column="IMPORTANT_REQUIREMENT_ONLINE_QUARTER" jdbcType="VARCHAR" property="importantRequirementOnlineQuarter"/>
+	<result column="IMPORTANT_REQUIREMENT_DELAY_REASON" jdbcType="VARCHAR" property="importantRequirementDelayReason"/>
+	<result column="DIRECT_INCOME" jdbcType="TINYINT" property="directIncome"/>
+	<result column="FORWARD_INCOME" jdbcType="TINYINT" property="forwardIncome"/>
+	<result column="RECESSIVE_INCOME" jdbcType="TINYINT" property="recessiveIncome"/>
+	<result column="DIRECT_COST_REDUCTION" jdbcType="TINYINT" property="directCostReduction"/>
+	<result column="FORWARD_COST_REDUCTION" jdbcType="TINYINT" property="forwardCostReduction"/>
+	<result column="ANTICIPATED_INCOME" jdbcType="VARCHAR" property="anticipatedIncome"/>
+	<result column="ESTIMATE_COST" jdbcType="VARCHAR" property="estimateCost"/>
+	<result column="HANGUP_STATUS" jdbcType="VARCHAR" property="hangupStatus"/>
+	<result column="HANGUP_DATE" jdbcType="DATE" property="hangupDate"/>
+	<result column="CHANGE_COUNT" jdbcType="TINYINT" property="changeCount"/>
+	<result column="REQUIREMENT_PROPERTY" jdbcType="VARCHAR" property="requirementProperty"/>
+	<result column="REQUIREMENT_CLASSIFY" jdbcType="VARCHAR" property="requirementClassify"/>
+	<result column="REQUIREMENT_SUBDIVISION" jdbcType="VARCHAR" property="requirementSubdivision"/>
+	<result column="ACCEPTANCE_DESCRIPTION" jdbcType="VARCHAR" property="acceptanceDescription"/>
+	<result column="ACCEPTANCE_TIMELINESS" jdbcType="VARCHAR" property="acceptanceTimeliness"/>
+	<result column="DATA_MIGRATION_STATUS" jdbcType="VARCHAR" property="dataMigrationStatus"/>
+	<result column="WORKLOAD" jdbcType="DOUBLE" property="workload"/>
+	<result column="PARENT_ID" jdbcType="BIGINT" property="parentId"/>
+	<result column="PARENT_IDS" jdbcType="VARCHAR" property="parentIds"/>
+	<result column="close_time" jdbcType="TIMESTAMP" property="closeTime"/>
+	<result column="requirement_ids" jdbcType="VARCHAR" property="requirementIds"/>
+	<result column="FIELD_TEMPLATE" jdbcType="VARCHAR" property="fieldTemplate" />
+	<result column="STATUS" jdbcType="TINYINT" property="status"/>
+	<result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+	<result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+	<result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+	<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    tri.ID,tri.REQUIREMENT_NAME,tri.REQUIREMENT_CODE,tri.REQUIREMENT_STATUS,tri.REQUIREMENT_SOURCE,
+    tri.REQUIREMENT_TYPE,tri.REQUIREMENT_PRIORITY,tri.APPLY_USER_ID,tri.APPLY_DEPT_ID,tri.close_time,tri.requirement_ids
+  </sql>
+  
+  <sql id="Base_Column_List1">
+    tri.ID,
+    tri.REQUIREMENT_NAME,
+    tri.REQUIREMENT_CODE,
+    tri.REQUIREMENT_STATUS,
+    tri.REQUIREMENT_SOURCE,
+    tri.REQUIREMENT_TYPE,
+    tri.APPLY_USER_ID,
+	tri.APPLY_DEPT_ID,
+	tri.DEVELOPMENT_MANAGE_USER_ID,
+	tri.DEVELOPMENT_DEPT_ID,
+	tri.REQUIREMENT_MANAGE_USER_ID,
+	tri.REQUIREMENT_ACCEPTANCE_USER_ID,
+	tri.REQUIREMENT_OVERVIEW,
+	tri.REQUIREMENT_PRIORITY,
+	tri.REQUIREMENT_PLAN,
+	tri.EXPECT_ONLINE_DATE,
+	tri.PLAN_ONLINE_DATE,
+	tri.ACTUAL_ONLINE_DATE,
+	tri.PLAN_INTEGRATION_TEST_DATE,
+	tri.ACTUAL_INTEGRATION_TEST_DATE,
+	tri.OPEN_DATE,
+	tri.IMPORTANT_REQUIREMENT_STATUS,
+	tri.IMPORTANT_REQUIREMENT_DELAY_STATUS,
+	tri.IMPORTANT_REQUIREMENT_TYPE,
+	tri.IMPORTANT_REQUIREMENT_ONLINE_QUARTER,
+	tri.IMPORTANT_REQUIREMENT_DELAY_REASON,
+	tri.DIRECT_INCOME,tri.FORWARD_INCOME,
+	tri.RECESSIVE_INCOME,
+	tri.DIRECT_COST_REDUCTION,
+	tri.FORWARD_COST_REDUCTION,
+	tri.ANTICIPATED_INCOME,
+	tri.ESTIMATE_COST,
+	tri.HANGUP_STATUS,
+	tri.HANGUP_DATE,
+	tri.CHANGE_COUNT,
+	tri.REQUIREMENT_PROPERTY,
+	tri.REQUIREMENT_CLASSIFY,
+	tri.REQUIREMENT_SUBDIVISION,
+	tri.ACCEPTANCE_DESCRIPTION,
+	tri.ACCEPTANCE_TIMELINESS,
+	tri.DATA_MIGRATION_STATUS,
+	tri.WORKLOAD,
+	tri.PARENT_ID,
+	tri.PARENT_IDS,
+	tri.close_time,
+	tri.requirement_ids,
+	tri.STATUS,
+	tri.CREATE_BY,
+	tri.CREATE_DATE,
+	tri.LAST_UPDATE_BY,
+	tri.LAST_UPDATE_DATE
+  </sql>
+  <!-- 获取该需求所在系统所在项目的项目管理岗 ztt -->
+  <select id="getProManageUserIds" parameterType="Long" resultType="String">
+  	SELECT GROUP_CONCAT(DISTINCT tpgu.USER_ID)
+	FROM tbl_project_group_user tpgu
+	LEFT JOIN tbl_project_group tpg ON tpg.ID = tpgu.PROJECT_GROUP_ID AND tpg.STATUS  =1
+	LEFT JOIN tbl_project_info tpi ON tpi.ID = tpg.PROJECT_ID AND tpi.STATUS = 1
+	LEFT JOIN tbl_project_system tps ON tps.PROJECT_ID = tpi.ID AND tps.STATUS =1
+	LEFT JOIN tbl_requirement_system trs ON trs.SYSTEM_ID = tps.SYSTEM_ID AND trs.status = 1
+	LEFT JOIN tbl_requirement_info tri ON tri.ID = trs.REQUIREMENT_ID AND tri.STATUS =1
+	WHERE trs.REQUIREMENT_ID = #{requirementId} AND tpgu.USER_POST = 1 AND tpgu.STATUS = 1
+  </select>
+	<!-- 查询需求数量  bootstrap-->
+  <select id="getAllRequirementCount" parameterType="cn.pioneeruniverse.project.entity.TblRequirementInfo" resultType="int">
+  		SELECT COUNT(*) FROM (SELECT ID id
+		FROM tbl_requirement_info tri
+		<where>
+			<if test="requirementStatus != null and requirementStatus != ''">
+				AND tri.REQUIREMENT_STATUS = #{requirementStatus}
+			</if>
+			<if test="requirementCode != null and requirementCode != ''">
+				AND tri.REQUIREMENT_CODE LIKE CONCAT('%',#{requirementCode},'%')
+			</if>
+			<if test="requirementName != null and requirementName != ''">
+				AND tri.REQUIREMENT_NAME LIKE CONCAT('%',#{requirementName},'%')
+			</if>
+		and STATUS=1	
+	</where>) table_count
+  </select>
+	<!-- 查询需求  bootstrap-->
+  <select id="getAllReq" parameterType="cn.pioneeruniverse.project.entity.TblRequirementInfo" resultType="map">
+	SELECT 
+		(select tdd.VALUE_NAME from tbl_data_dic tdd where tdd.VALUE_CODE=REQUIREMENT_STATUS
+			AND tdd.TERM_CODE = "TBL_REQUIREMENT_INFO_REQUIREMENT_STATUS") reqStatusName,
+		(select tdd.VALUE_NAME from tbl_data_dic tdd where tdd.VALUE_CODE=REQUIREMENT_SOURCE
+			AND tdd.TERM_CODE = "TBL_REQUIREMENT_INFO_REQUIREMENT_SOURCE") reqSourceName,
+		(select tdd.VALUE_NAME from tbl_data_dic tdd where tdd.VALUE_CODE=REQUIREMENT_TYPE 
+			AND tdd.TERM_CODE = "TBL_REQUIREMENT_INFO_REQUIREMENT_TYPE") reqTypeName,			
+		 ID id,REQUIREMENT_NAME,REQUIREMENT_CODE
+	FROM tbl_requirement_info tri	
+	<where>
+		<if test="requirement.requirementStatus != null and requirement.requirementStatus != ''">
+			AND tri.REQUIREMENT_STATUS = #{requirement.requirementStatus}
+		</if>			
+		<if test="requirement.requirementCode != null and requirement.requirementCode != ''">
+			AND tri.REQUIREMENT_CODE LIKE CONCAT('%',#{requirement.requirementCode},'%')
+		</if>	
+		<if test="requirement.requirementName != null and requirement.requirementName != ''">
+			AND tri.REQUIREMENT_NAME LIKE CONCAT('%',#{requirement.requirementName},'%')
+		</if>
+		and STATUS=1	
+	</where>
+	limit #{start},#{pageSize}
+  </select>
+
+	<!-- 根据当前登陆用户获取需求信息-->
+  <select id="getAllRequirement" parameterType="map" resultMap="BaseResultMap">
+		SELECT
+		(select tdi.DEPT_NAME from TBL_DEPT_INFO tdi where tdi.ID= tri.APPLY_DEPT_ID AND tdi.STATUS=1) deptName,
+		(select tui.USER_NAME from tbl_user_info tui where tui.ID= tri.APPLY_USER_ID AND tui.STATUS=1) userName,
+		(select IFNULL(SUM(FUNCTION_COUNT),0) from tbl_requirement_system trs where trs.REQUIREMENT_ID=tri.ID AND trs.STATUS=1) funCount,
+		<include refid="Base_Column_List" /> FROM
+	  		tbl_requirement_info tri
+	  	RIGHT JOIN
+		  	(SELECT tri1.* FROM tbl_requirement_info tri1
+		  	WHERE tri1.DEVELOPMENT_MANAGE_USER_ID IN(
+		  		SELECT DISTINCT tpgu1.USER_ID FROM(
+		  			SELECT tpg.ID FROM tbl_project_group_user tpgu
+		  			LEFT JOIN tbl_project_group tpg ON tpgu.PROJECT_GROUP_ID = tpg.ID
+		  			WHERE tpgu.USER_ID = #{req.userId} AND tpgu.STATUS = 1 AND tpg.STATUS = 1
+		  		) tpg1
+		  		LEFT JOIN tbl_project_group_user tpgu1 ON tpgu1.PROJECT_GROUP_ID = tpg1.ID
+		  		WHERE tpgu1.STATUS = 1
+		  	) OR tri1.APPLY_USER_ID = #{req.userId} OR tri1.REQUIREMENT_MANAGE_USER_ID = #{req.userId}
+		  	OR tri1.REQUIREMENT_ACCEPTANCE_USER_ID = #{req.userId} OR tri1.CREATE_BY = #{req.userId}
+		  	union all
+		  	SELECT tri2.* FROM tbl_requirement_info tri2
+		  	LEFT JOIN tbl_requirement_system trs2 ON trs2.REQUIREMENT_ID = tri2.ID
+		  	LEFT JOIN tbl_system_info tsi2 ON trs2.SYSTEM_ID = tsi2.ID
+	  		LEFT JOIN tbl_project_system tps ON tps.SYSTEM_ID = tsi2.ID
+		  	LEFT JOIN tbl_project_info tpi2 ON tps.PROJECT_ID = tpi2.ID
+		  	LEFT JOIN tbl_project_group tpg2 ON tpg2.PROJECT_ID = tpi2.ID
+		  	LEFT JOIN tbl_project_group_user tpgu2 ON tpgu2.PROJECT_GROUP_ID = tpg2.ID
+		  	WHERE trs2.STATUS = 1 AND tpgu2.USER_ID = #{req.userId}
+		  	AND tri2.STATUS =1 AND trs2.STATUS = 1 AND tsi2.STATUS = 1
+		  	AND tpi2.STATUS = 1 AND tpg2.STATUS = 1 AND tpgu2.STATUS = 1
+		  	GROUP BY tri2.ID
+		  	) tri3 ON tri.ID = tri3.ID
+	  	<if test="featureIds != null and featureId != '' and (systemIds == null or systemIds == '') ">
+			LEFT JOIN tbl_requirement_feature trf ON tri.ID=trf.REQUIREMENT_ID
+		</if>
+	  	<if test="systemIds != null and systemIds != ''" >
+			LEFT JOIN tbl_requirement_feature trf ON tri.ID=trf.REQUIREMENT_ID
+			LEFT JOIN tbl_system_info tsi ON trf.SYSTEM_ID=tsi.ID
+		</if>
+		<where>
+			<if test="req.requirementCode != null and req.requirementCode != ''">
+				AND tri.REQUIREMENT_CODE LIKE CONCAT('%',#{req.requirementCode},'%')
+			</if>
+			<if test="req.requirementName != null and req.requirementName != ''">
+				AND tri.REQUIREMENT_NAME LIKE CONCAT('%',#{req.requirementName},'%')
+			</if>
+			<if test="struts != null and struts != ''">
+				AND tri.REQUIREMENT_STATUS IN
+				<foreach item="item" index="index" collection="struts" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="devManageIds != null and devManageIds != ''">
+				AND tri.DEVELOPMENT_MANAGE_USER_ID IN
+				<foreach item="item" index="index" collection="devManageIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="reqManageIds != null and reqManageIds != ''">
+				AND tri.REQUIREMENT_MANAGE_USER_ID IN
+				<foreach item="item" index="index" collection="reqManageIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="featureIds != null and featureIds != ''">
+				AND trf.ID IN
+				<foreach item="item" index="index" collection="featureIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+				AND trf.STATUS=1
+			</if>
+			<if test="systemIds != null and systemIds != ''">
+				AND tsi.ID  IN
+				<foreach item="item" index="index" collection="systemIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+				AND tsi.STATUS=1
+			</if>
+			AND tri.STATUS=1
+		</where>
+		GROUP BY tri.ID
+		ORDER BY tri.ID DESC
+		Limit #{pageIndex},#{pageSize}
+  </select>
+	<!-- 根据当前登陆用户获取需求数量-->
+  <select id="getCountRequirement" parameterType="map" resultType="int">
+  		SELECT COUNT(*) FROM(
+	  	SELECT tri.id FROM
+	  		tbl_requirement_info tri
+	  	RIGHT JOIN
+	  		(SELECT tri1.* FROM tbl_requirement_info tri1
+	  		WHERE tri1.DEVELOPMENT_MANAGE_USER_ID IN(
+	  			SELECT DISTINCT tpgu1.USER_ID FROM(
+	  				SELECT tpg.ID FROM tbl_project_group_user tpgu
+	  				LEFT JOIN tbl_project_group tpg ON tpgu.PROJECT_GROUP_ID = tpg.ID
+	  				WHERE tpgu.USER_ID = #{req.userId} AND tpgu.STATUS = 1 AND tpg.STATUS = 1
+	  			) tpg1
+	  			LEFT JOIN tbl_project_group_user tpgu1 ON tpgu1.PROJECT_GROUP_ID = tpg1.ID
+	  			WHERE tpgu1.STATUS = 1
+	  		) OR tri1.APPLY_USER_ID = #{req.userId} OR tri1.REQUIREMENT_MANAGE_USER_ID = #{req.userId}
+	  		OR tri1.REQUIREMENT_ACCEPTANCE_USER_ID = #{req.userId} OR tri1.CREATE_BY = #{req.userId}
+	  		union all
+		  	SELECT tri2.* FROM tbl_requirement_info tri2
+		  	LEFT JOIN tbl_requirement_system trs2 ON trs2.REQUIREMENT_ID = tri2.ID
+		  	LEFT JOIN tbl_system_info tsi2 ON trs2.SYSTEM_ID = tsi2.ID
+	  		LEFT JOIN tbl_project_system tps ON tps.SYSTEM_ID = tsi2.ID
+	  		LEFT JOIN tbl_project_info tpi2 ON tps.PROJECT_ID = tpi2.ID
+		  	LEFT JOIN tbl_project_group tpg2 ON tpg2.PROJECT_ID = tpi2.ID
+		  	LEFT JOIN tbl_project_group_user tpgu2 ON tpgu2.PROJECT_GROUP_ID = tpg2.ID
+		  	WHERE trs2.STATUS = 1 AND tpgu2.USER_ID = #{req.userId}
+		  	AND tri2.STATUS =1 AND trs2.STATUS = 1 AND tsi2.STATUS = 1
+		  	AND tpi2.STATUS = 1 AND tpg2.STATUS = 1 AND tpgu2.STATUS = 1
+		  	GROUP BY tri2.ID
+		  	) tri3 ON tri.ID = tri3.ID
+	  	<if test="featureIds != null and featureId != '' and (systemIds == null or systemIds == '') ">
+		  	LEFT JOIN tbl_requirement_feature trf ON tri.ID=trf.REQUIREMENT_ID
+	  	</if>
+	  	<if test="systemIds != null and systemIds != ''" >
+		  	LEFT JOIN tbl_requirement_feature trf ON tri.ID=trf.REQUIREMENT_ID
+		  	LEFT JOIN tbl_system_info tsi ON trf.SYSTEM_ID=tsi.ID
+	  	</if>
+	  	<where>
+			<if test="req.requirementCode != null and req.requirementCode != ''">
+				AND tri.REQUIREMENT_CODE LIKE CONCAT('%',#{req.requirementCode},'%')
+			</if>	
+			<if test="req.requirementName != null and req.requirementName != ''">
+				AND tri.REQUIREMENT_NAME LIKE CONCAT('%',#{req.requirementName},'%')
+			</if>				
+			<if test="struts != null and struts != ''">
+				AND tri.REQUIREMENT_STATUS IN 
+				<foreach item="item" index="index" collection="struts" open="(" separator="," close=")">
+					#{item}
+				</foreach> 
+			</if>
+			<if test="devManageIds != null and devManageIds != ''">
+				AND tri.DEVELOPMENT_MANAGE_USER_ID IN
+				<foreach item="item" index="index" collection="devManageIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="reqManageIds != null and reqManageIds != ''">
+				AND tri.REQUIREMENT_MANAGE_USER_ID IN
+				<foreach item="item" index="index" collection="reqManageIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="featureIds != null and featureIds != ''">
+				AND trf.ID IN
+				<foreach item="item" index="index" collection="featureIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+				AND trf.STATUS=1
+			</if>
+			<if test="systemIds != null and systemIds != ''">
+				AND tsi.ID  IN
+				<foreach item="item" index="index" collection="systemIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+				AND tsi.STATUS=1
+			</if>
+			AND tri.STATUS=1
+		</where>
+		GROUP BY tri.ID
+	) tris
+  </select>
+	<!-- 根据当前登陆用户获取导出需求信息-->
+  <select id="excelRequirement" parameterType="map" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List1" /> FROM
+	  		tbl_requirement_info tri
+	  	RIGHT JOIN
+		  	(SELECT tri1.* FROM tbl_requirement_info tri1
+		  	WHERE tri1.DEVELOPMENT_MANAGE_USER_ID IN(
+		  		SELECT DISTINCT tpgu1.USER_ID FROM(
+		  			SELECT tpg.ID FROM tbl_project_group_user tpgu
+		  			LEFT JOIN tbl_project_group tpg ON tpgu.PROJECT_GROUP_ID = tpg.ID
+		  			WHERE tpgu.USER_ID = #{req.userId} AND tpgu.STATUS = 1 AND tpg.STATUS = 1
+		  		) tpg1
+		  		LEFT JOIN tbl_project_group_user tpgu1 ON tpgu1.PROJECT_GROUP_ID = tpg1.ID
+		  		WHERE tpgu1.STATUS = 1
+		  	) OR tri1.APPLY_USER_ID = #{req.userId} OR tri1.REQUIREMENT_MANAGE_USER_ID = #{req.userId}
+		  	OR tri1.REQUIREMENT_ACCEPTANCE_USER_ID = #{req.userId} OR tri1.CREATE_BY = #{req.userId}
+		  	union all
+		  	SELECT tri2.* FROM tbl_requirement_info tri2
+		  	LEFT JOIN tbl_requirement_system trs2 ON trs2.REQUIREMENT_ID = tri2.ID
+		  	LEFT JOIN tbl_system_info tsi2 ON trs2.SYSTEM_ID = tsi2.ID
+	  		LEFT JOIN tbl_project_system tps ON tps.SYSTEM_ID = tsi2.ID
+	  		LEFT JOIN tbl_project_info tpi2 ON tps.PROJECT_ID = tpi2.ID
+		  	LEFT JOIN tbl_project_group tpg2 ON tpg2.PROJECT_ID = tpi2.ID
+		  	LEFT JOIN tbl_project_group_user tpgu2 ON tpgu2.PROJECT_GROUP_ID = tpg2.ID
+		  	WHERE trs2.STATUS = 1 AND tpgu2.USER_ID = #{req.userId}
+		  	AND tri2.STATUS =1 AND trs2.STATUS = 1 AND tsi2.STATUS = 1
+		  	AND tpi2.STATUS = 1 AND tpg2.STATUS = 1 AND tpgu2.STATUS = 1
+		  	GROUP BY tri2.ID
+		  	) tri3 ON tri.ID = tri3.ID
+	  	<if test="featureIds != null and featureId != '' and (systemIds == null or systemIds == '') ">
+		  	LEFT JOIN tbl_requirement_feature trf ON tri.ID=trf.REQUIREMENT_ID
+	  	</if>
+	  	<if test="systemIds != null and systemIds != ''" >
+		  	LEFT JOIN tbl_requirement_feature trf ON tri.ID=trf.REQUIREMENT_ID
+		  	LEFT JOIN tbl_system_info tsi ON trf.SYSTEM_ID=tsi.ID
+	  	</if>
+		<where>
+			<if test="req.requirementCode != null and req.requirementCode != ''">
+				AND tri.REQUIREMENT_CODE LIKE CONCAT('%',#{req.requirementCode},'%')
+			</if>
+			<if test="req.requirementName != null and req.requirementName != ''">
+				AND tri.REQUIREMENT_NAME LIKE CONCAT('%',#{req.requirementName},'%')
+			</if>
+			<if test="struts != null and struts != ''">
+				AND tri.REQUIREMENT_STATUS IN
+				<foreach item="item" index="index" collection="struts" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="devManageIds != null and devManageIds != ''">
+				AND tri.DEVELOPMENT_MANAGE_USER_ID IN
+				<foreach item="item" index="index" collection="devManageIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="reqManageIds != null and reqManageIds != ''">
+				AND tri.REQUIREMENT_MANAGE_USER_ID IN
+				<foreach item="item" index="index" collection="reqManageIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="featureIds != null and featureIds != ''">
+				AND trf.ID IN
+				<foreach item="item" index="index" collection="featureIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+				AND trf.STATUS=1
+			</if>
+			<if test="systemIds != null and systemIds != ''">
+				AND tsi.ID  IN
+				<foreach item="item" index="index" collection="systemIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+				AND tsi.STATUS=1
+			</if>
+		AND tri.STATUS=1
+	</where>	
+	GROUP BY tri.ID
+	ORDER BY tri.ID DESC
+  </select>
+
+	<!-- 获取需求信息 管理员-->
+  <select id="getAllRequirement1" parameterType="map" resultMap="BaseResultMap">
+		SELECT 
+		(select tdi.DEPT_NAME from TBL_DEPT_INFO tdi where tdi.ID= APPLY_DEPT_ID AND tdi.STATUS=1) deptName,
+		(select tui.USER_NAME from tbl_user_info tui where tui.ID= APPLY_USER_ID AND tui.STATUS=1) userName,
+		(select IFNULL(SUM(FUNCTION_COUNT),0) from tbl_requirement_system trs where trs.REQUIREMENT_ID=tri.ID AND trs.STATUS=1) funCount,
+		<include refid="Base_Column_List" /> FROM tbl_requirement_info tri
+		<if test="featureIds != null and featureId != '' and (systemIds == null or systemIds == '') ">
+			LEFT JOIN tbl_requirement_feature trf ON tri.ID=trf.REQUIREMENT_ID
+		</if>
+		<if test="systemIds != null and systemIds != ''" >
+			LEFT JOIN tbl_requirement_feature trf ON tri.ID=trf.REQUIREMENT_ID
+			LEFT JOIN tbl_system_info tsi ON trf.SYSTEM_ID=tsi.ID
+		</if>
+		
+		<where>
+			<if test="req.requirementCode != null and req.requirementCode != ''">
+				AND tri.REQUIREMENT_CODE LIKE CONCAT('%',#{req.requirementCode},'%')
+			</if>
+			<if test="req.requirementName != null and req.requirementName != ''">
+				AND tri.REQUIREMENT_NAME LIKE CONCAT('%',#{req.requirementName},'%')
+			</if>
+			<if test="struts != null and struts != ''">
+				AND tri.REQUIREMENT_STATUS IN
+				<foreach item="item" index="index" collection="struts" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="devManageIds != null and devManageIds != ''">
+				AND tri.DEVELOPMENT_MANAGE_USER_ID IN
+				<foreach item="item" index="index" collection="devManageIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="reqManageIds != null and reqManageIds != ''">
+				AND tri.REQUIREMENT_MANAGE_USER_ID IN
+				<foreach item="item" index="index" collection="reqManageIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="featureIds != null and featureIds != ''">
+				AND trf.ID IN
+				<foreach item="item" index="index" collection="featureIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+				AND trf.STATUS=1
+			</if>
+			<if test="systemIds != null and systemIds != ''">
+				AND tsi.ID  IN
+				<foreach item="item" index="index" collection="systemIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+				AND tsi.STATUS=1
+			</if>
+			AND tri.STATUS=1
+		</where>
+		GROUP BY tri.ID
+		ORDER BY tri.ID DESC
+		Limit #{pageIndex},#{pageSize}
+	</select>
+	<!-- 获取需求数量 管理员-->
+  <select id="getCountRequirement1" parameterType="map" resultType="int">
+		SELECT COUNT(*) FROM(
+		SELECT tri.id FROM tbl_requirement_info tri
+		<if test="featureIds != null and featureId != '' and (systemIds == null or systemIds == '') ">
+			LEFT JOIN tbl_requirement_feature trf ON tri.ID=trf.REQUIREMENT_ID
+		</if>
+		<if test="systemIds != null and systemIds != ''" >
+			LEFT JOIN tbl_requirement_feature trf ON tri.ID=trf.REQUIREMENT_ID
+			LEFT JOIN tbl_system_info tsi ON trf.SYSTEM_ID=tsi.ID
+		</if>
+		<where>
+			<if test="req.requirementCode != null and req.requirementCode != ''">
+				AND tri.REQUIREMENT_CODE LIKE CONCAT('%',#{req.requirementCode},'%')
+			</if>
+			<if test="req.requirementName != null and req.requirementName != ''">
+				AND tri.REQUIREMENT_NAME LIKE CONCAT('%',#{req.requirementName},'%')
+			</if>
+			<if test="struts != null and struts != ''">
+				AND tri.REQUIREMENT_STATUS IN
+				<foreach item="item" index="index" collection="struts" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="devManageIds != null and devManageIds != ''">
+				AND tri.DEVELOPMENT_MANAGE_USER_ID IN
+				<foreach item="item" index="index" collection="devManageIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="reqManageIds != null and reqManageIds != ''">
+				AND tri.REQUIREMENT_MANAGE_USER_ID IN
+				<foreach item="item" index="index" collection="reqManageIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="featureIds != null and featureIds != ''">
+				AND trf.ID IN
+				<foreach item="item" index="index" collection="featureIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+				AND trf.STATUS=1
+			</if>
+			<if test="systemIds != null and systemIds != ''">
+				AND tsi.ID  IN
+				<foreach item="item" index="index" collection="systemIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+				AND tsi.STATUS=1
+			</if>
+			AND tri.STATUS=1
+		</where>
+		GROUP BY tri.ID
+		) tris
+	</select>
+	<!-- 获取导出需求信息 管理员-->
+  <select id="excelRequirement1" parameterType="map" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List1" /> FROM tbl_requirement_info tri
+		<if test="featureIds != null and featureId != '' and (systemIds == null or systemIds == '') ">
+			LEFT JOIN tbl_requirement_feature trf ON tri.ID=trf.REQUIREMENT_ID
+		</if>
+		<if test="systemIds != null and systemIds != ''" >
+			LEFT JOIN tbl_requirement_feature trf ON tri.ID=trf.REQUIREMENT_ID
+			LEFT JOIN tbl_system_info tsi ON trf.SYSTEM_ID=tsi.ID
+		</if>
+		<where>
+			<if test="req.requirementCode != null and req.requirementCode != ''">
+				AND tri.REQUIREMENT_CODE LIKE CONCAT('%',#{req.requirementCode},'%')
+			</if>
+			<if test="req.requirementName != null and req.requirementName != ''">
+				AND tri.REQUIREMENT_NAME LIKE CONCAT('%',#{req.requirementName},'%')
+			</if>
+			<if test="struts != null and struts != ''">
+				AND tri.REQUIREMENT_STATUS IN
+				<foreach item="item" index="index" collection="struts" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="devManageIds != null and devManageIds != ''">
+				AND tri.DEVELOPMENT_MANAGE_USER_ID IN
+				<foreach item="item" index="index" collection="devManageIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="reqManageIds != null and reqManageIds != ''">
+				AND tri.REQUIREMENT_MANAGE_USER_ID IN
+				<foreach item="item" index="index" collection="reqManageIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="featureIds != null and featureIds != ''">
+				AND trf.ID IN
+				<foreach item="item" index="index" collection="featureIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+				AND trf.STATUS=1
+			</if>
+			<if test="systemIds != null and systemIds != ''">
+				AND tsi.ID  IN
+				<foreach item="item" index="index" collection="systemIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+				AND tsi.STATUS=1
+			</if>
+			AND tri.STATUS=1
+		</where>
+		GROUP BY tri.ID
+		ORDER BY tri.ID DESC
+	</select>
+
+  <select id="findRequirementById" parameterType="Long" resultMap="BaseResultMap">
+	select
+		tri.* ,		
+		tui1.USER_NAME userName,
+		tui2.USER_NAME devManageUserName,
+		tui3.USER_NAME reqManageUserName,
+		tui4.USER_NAME reqAcceptanceUserName,
+		tdi1.DEPT_NAME deptName,
+		tdi2.DEPT_NAME devDeptName	
+	from tbl_requirement_info tri					
+	left join tbl_user_info tui1 on tui1.ID =tri.APPLY_USER_ID
+	left join tbl_user_info tui2 on tui2.ID =tri.DEVELOPMENT_MANAGE_USER_ID
+	left join tbl_user_info tui3 on tui3.ID =tri.REQUIREMENT_MANAGE_USER_ID
+	left join tbl_user_info tui4 on tui4.ID =tri.REQUIREMENT_ACCEPTANCE_USER_ID		
+	left join tbl_dept_info tdi1 on tdi1.ID =tri.APPLY_DEPT_ID
+	left join tbl_dept_info tdi2 on tdi2.ID =tri.DEVELOPMENT_DEPT_ID				
+	where tri.ID = #{id} AND tri.STATUS=1
+  </select>
+  
+   <!-- 根据name值查询 -->
+  <select id="findRequirementByName" parameterType="cn.pioneeruniverse.project.entity.TblRequirementInfo" 
+    resultType="cn.pioneeruniverse.project.entity.TblRequirementInfo">
+  	SELECT * FROM tbl_requirement_info tri
+	<where>		
+		<if test="id != null and id != ''">
+			AND tri.ID!=#{id}
+		</if>
+		<if test="requirementName != null and requirementName != ''">
+			AND tri.REQUIREMENT_NAME = #{requirementName}
+		</if>
+		AND tri.STATUS=1
+	</where>		
+  </select>
+  
+  <!--查询最大的需求编号-->
+  <select id="selectMaxRqeuirementCode" resultType="String">
+    SELECT MAX(REQUIREMENT_CODE) FROM tbl_requirement_info tri
+    WHERE tri.REQUIREMENT_CODE LIKE CONCAT('REQ%') AND tri.STATUS=1
+  </select>
+
+	<!-- 获取父需求信息-->
+  <select id="findFatherReq" parameterType="Long" resultMap="BaseResultMap"> 
+	select REQUIREMENT_CODE,REQUIREMENT_NAME from tbl_requirement_info tri
+	where tri.ID= #{parentId} AND tri.STATUS=1
+  </select>
+
+	<!-- 获取子需求信息-->
+  <select id="findSonReq" parameterType="Long" resultMap="BaseResultMap"> 
+	select REQUIREMENT_CODE,REQUIREMENT_NAME from tbl_requirement_info tri
+	where tri.PARENT_ID=#{id} AND tri.STATUS=1
+  </select>
+   
+  <select id="getRequirementInByCode"  resultType="cn.pioneeruniverse.project.entity.TblRequirementInfo" parameterType="String">		
+	SELECT * FROM tbl_requirement_info tri WHERE tri.REQUIREMENT_CODE = #{requirementCode} AND tri.STATUS=1
+  </select>
+  
+  <select id="findRequirementById1" parameterType="Long" resultMap="BaseResultMap">
+	select tri.* from tbl_requirement_info tri where tri.ID = #{id} AND tri.STATUS=1
+  </select>
+  
+  <!-- 需求同步 -->
+  <update id="updateRequirementData" parameterType="cn.pioneeruniverse.project.entity.TblRequirementInfo">
+    update tbl_requirement_info
+	<set>
+		<if test="requirementName != null and requirementName !='' ">
+			REQUIREMENT_NAME = #{requirementName ,jdbcType= VARCHAR},
+		</if>
+		<if test="requirementStatus != null and requirementStatus !='' ">
+			REQUIREMENT_STATUS = #{requirementStatus ,jdbcType= VARCHAR},
+		</if>
+		<if test="requirementSource != null and requirementSource !='' ">
+			REQUIREMENT_SOURCE = #{requirementSource ,jdbcType= VARCHAR},
+		</if>
+		<if test="requirementType != null and requirementType !='' ">
+			REQUIREMENT_TYPE = #{requirementType ,jdbcType= VARCHAR},
+		</if>
+		<if test="applyUserId != null and applyUserId !='' ">
+			APPLY_USER_ID = #{applyUserId ,jdbcType= BIGINT},
+		</if>
+		<if test="applyDeptId != null and applyDeptId !='' ">
+			APPLY_DEPT_ID = #{applyDeptId ,jdbcType= BIGINT},
+		</if>
+		<if test="developmentManageUserId != null and developmentManageUserId !='' ">
+			DEVELOPMENT_MANAGE_USER_ID = #{developmentManageUserId ,jdbcType= BIGINT},
+		</if>
+		<if test="developmentDeptId != null and developmentDeptId !='' ">
+			DEVELOPMENT_DEPT_ID = #{developmentDeptId ,jdbcType= BIGINT},
+		</if>
+		<if test="requirementManageUserId != null and requirementManageUserId !='' ">
+			REQUIREMENT_MANAGE_USER_ID = #{requirementManageUserId ,jdbcType= BIGINT},
+		</if>
+		<if test="requirementAcceptanceUserId != null and requirementAcceptanceUserId !='' ">
+			REQUIREMENT_ACCEPTANCE_USER_ID = #{requirementAcceptanceUserId ,jdbcType= BIGINT},
+		</if>
+		<if test="requirementOverview != null and requirementOverview !='' ">
+			REQUIREMENT_OVERVIEW = #{requirementOverview ,jdbcType= VARCHAR},
+		</if>
+		<if test="requirementPriority != null and requirementPriority !='' ">
+			REQUIREMENT_PRIORITY = #{requirementPriority ,jdbcType= VARCHAR},
+		</if>
+		<if test="requirementPlan != null and  requirementPlan!='' ">
+			REQUIREMENT_PLAN = #{requirementPlan ,jdbcType= VARCHAR},
+		</if>
+		<if test="expectOnlineDate != null">
+			EXPECT_ONLINE_DATE = #{expectOnlineDate ,jdbcType= DATE},
+		</if>
+		<if test="planOnlineDate != null">
+			PLAN_ONLINE_DATE = #{planOnlineDate ,jdbcType= DATE},
+		</if>
+		<if test="actualOnlineDate != null">
+			ACTUAL_ONLINE_DATE = #{actualOnlineDate ,jdbcType= DATE},
+		</if>
+		<if test="planIntegrationTestDate != null">
+			PLAN_INTEGRATION_TEST_DATE = #{planIntegrationTestDate ,jdbcType= DATE},
+		</if>
+		<if test="actualIntegrationTestDate != null">
+			ACTUAL_INTEGRATION_TEST_DATE = #{actualIntegrationTestDate ,jdbcType= DATE},
+		</if>
+		<if test="openDate != null">
+			OPEN_DATE = #{openDate ,jdbcType= DATE},
+		</if>
+		<if test="importantRequirementStatus != null and importantRequirementStatus !='' ">
+			IMPORTANT_REQUIREMENT_STATUS = #{importantRequirementStatus ,jdbcType= VARCHAR},
+		</if>
+		<if test="importantRequirementDelayStatus != null and importantRequirementDelayStatus !='' ">
+			IMPORTANT_REQUIREMENT_DELAY_STATUS = #{importantRequirementDelayStatus ,jdbcType= VARCHAR},
+		</if>
+		<if test="importantRequirementType != null and importantRequirementType !='' ">
+			IMPORTANT_REQUIREMENT_TYPE = #{importantRequirementType ,jdbcType= VARCHAR},
+		</if>
+		<if test="importantRequirementOnlineQuarter != null and importantRequirementOnlineQuarter !='' ">
+			IMPORTANT_REQUIREMENT_ONLINE_QUARTER = #{importantRequirementOnlineQuarter ,jdbcType= VARCHAR},
+		</if>
+		<if test="importantRequirementDelayReason != null and importantRequirementDelayReason !='' ">
+			IMPORTANT_REQUIREMENT_DELAY_REASON = #{importantRequirementDelayReason ,jdbcType= VARCHAR},
+		</if>
+		<if test="directIncome != null and directIncome !='' ">
+			DIRECT_INCOME = #{directIncome ,jdbcType= TINYINT},
+		</if>
+		<if test="forwardIncome != null and forwardIncome !='' ">
+			FORWARD_INCOME = #{forwardIncome ,jdbcType= TINYINT},
+		</if>
+		<if test="recessiveIncome != null and recessiveIncome !='' ">
+			RECESSIVE_INCOME = #{recessiveIncome ,jdbcType= TINYINT},
+		</if>
+		<if test="directCostReduction != null and directCostReduction !='' ">
+			DIRECT_COST_REDUCTION = #{directCostReduction ,jdbcType= TINYINT},
+		</if>
+		<if test="forwardCostReduction != null and forwardCostReduction !='' ">
+			FORWARD_COST_REDUCTION = #{forwardCostReduction ,jdbcType= TINYINT},
+		</if>
+		<if test="anticipatedIncome != null and anticipatedIncome !='' ">
+			ANTICIPATED_INCOME = #{anticipatedIncome ,jdbcType= VARCHAR},
+		</if>
+		<if test="estimateCost != null and estimateCost !='' ">
+			ESTIMATE_COST = #{estimateCost ,jdbcType= VARCHAR},
+		</if>
+		<if test="hangupStatus != null and hangupStatus !='' ">
+			HANGUP_STATUS = #{hangupStatus ,jdbcType= VARCHAR},
+		</if>
+		<if test="hangupDate != null">
+			HANGUP_DATE = #{hangupDate ,jdbcType= DATE},
+		</if>
+		<if test="changeCount != null and changeCount !='' ">
+			CHANGE_COUNT = #{changeCount ,jdbcType= TINYINT},
+		</if>
+		<if test="requirementProperty != null and requirementProperty !='' ">
+			REQUIREMENT_PROPERTY = #{requirementProperty ,jdbcType= VARCHAR},
+		</if>
+		<if test="requirementClassify != null and requirementClassify !='' ">
+			REQUIREMENT_CLASSIFY = #{requirementClassify ,jdbcType= VARCHAR},
+		</if>
+		<if test="requirementSubdivision != null and requirementSubdivision !='' ">
+			REQUIREMENT_SUBDIVISION = #{requirementSubdivision ,jdbcType= VARCHAR},
+		</if>
+		<if test="acceptanceDescription != null and acceptanceDescription !='' ">
+			ACCEPTANCE_DESCRIPTION = #{acceptanceDescription ,jdbcType= VARCHAR},
+		</if>
+		<if test="acceptanceTimeliness != null and acceptanceTimeliness !='' ">
+			ACCEPTANCE_TIMELINESS = #{acceptanceTimeliness ,jdbcType= VARCHAR},
+		</if>
+		<if test="dataMigrationStatus != null and dataMigrationStatus !='' ">
+			DATA_MIGRATION_STATUS = #{dataMigrationStatus ,jdbcType= VARCHAR},
+		</if>
+		<if test="workload != null">
+			WORKLOAD = #{workload ,jdbcType= DOUBLE},
+		</if>
+		<if test="parentId != null and parentId !='' ">
+			PARENT_ID = #{parentId ,jdbcType= BIGINT},
+		</if>
+		<if test="parentIds != null and parentIds !='' ">
+			PARENT_IDS = #{parentIds ,jdbcType= VARCHAR},
+		</if>
+		<if test="status != null and status !='' ">
+			STATUS = #{status ,jdbcType= TINYINT},
+		</if>
+		<if test="lastUpdateBy != null and lastUpdateBy !='' ">
+			LAST_UPDATE_BY = #{lastUpdateBy ,jdbcType= BIGINT},
+		</if>
+		<if test="lastUpdateDate != null">
+			LAST_UPDATE_DATE = #{lastUpdateDate ,jdbcType= TIMESTAMP},
+		</if>
+	</set>
+	WHERE ID = #{id,jdbcType=BIGINT} 	
+  </update>
+  
+  <!-- 需求修改 -->
+  <update id="updateRequirement" parameterType="cn.pioneeruniverse.project.entity.TblRequirementInfo">
+    update tbl_requirement_info
+	<set>
+		<if test="requirementName != null and requirementName !='' ">
+			REQUIREMENT_NAME = #{requirementName ,jdbcType= VARCHAR},
+		</if>
+		<if test="requirementCode != null and requirementCode !='' ">
+			REQUIREMENT_CODE = #{requirementCode ,jdbcType= VARCHAR},
+		</if>
+		<if test="requirementStatus != null and requirementStatus !='' ">
+			REQUIREMENT_STATUS = #{requirementStatus ,jdbcType= VARCHAR},
+		</if>
+		<if test="requirementSource != null and requirementSource !='' ">
+			REQUIREMENT_SOURCE = #{requirementSource ,jdbcType= VARCHAR},
+		</if>
+		<if test="requirementType != null and requirementType !='' ">
+			REQUIREMENT_TYPE = #{requirementType ,jdbcType= VARCHAR},
+		</if>
+		<if test="applyUserId != null and applyUserId !='' ">
+			APPLY_USER_ID = #{applyUserId ,jdbcType= BIGINT},
+		</if>
+		<if test="applyDeptId != null and applyDeptId !='' ">
+			APPLY_DEPT_ID = #{applyDeptId ,jdbcType= BIGINT},
+		</if>
+		<if test="developmentManageUserId != null and developmentManageUserId !='' ">
+			DEVELOPMENT_MANAGE_USER_ID = #{developmentManageUserId ,jdbcType= BIGINT},
+		</if>
+<!-- 开发处室 -->
+			DEVELOPMENT_DEPT_ID = #{developmentDeptId ,jdbcType= BIGINT},
+		<if test="requirementManageUserId != null and requirementManageUserId !='' ">
+			REQUIREMENT_MANAGE_USER_ID = #{requirementManageUserId ,jdbcType= BIGINT},
+		</if>
+		<if test="requirementAcceptanceUserId != null and requirementAcceptanceUserId !='' ">
+			REQUIREMENT_ACCEPTANCE_USER_ID = #{requirementAcceptanceUserId ,jdbcType= BIGINT},
+		</if>
+		<if test="requirementOverview != null and requirementOverview !='' ">
+			REQUIREMENT_OVERVIEW = #{requirementOverview ,jdbcType= VARCHAR},
+		</if>
+		<if test="requirementPriority != null and requirementPriority !='' ">
+			REQUIREMENT_PRIORITY = #{requirementPriority ,jdbcType= VARCHAR},
+		</if>
+		<if test="requirementPlan != null and  requirementPlan!='' ">
+			REQUIREMENT_PLAN = #{requirementPlan ,jdbcType= VARCHAR},
+		</if>
+		<if test="expectOnlineDate != null">
+			EXPECT_ONLINE_DATE = #{expectOnlineDate ,jdbcType= DATE},
+		</if>
+		<if test="planOnlineDate != null">
+			PLAN_ONLINE_DATE = #{planOnlineDate ,jdbcType= DATE},
+		</if>
+		<if test="actualOnlineDate != null">
+			ACTUAL_ONLINE_DATE = #{actualOnlineDate ,jdbcType= DATE},
+		</if>
+		<if test="planIntegrationTestDate != null">
+			PLAN_INTEGRATION_TEST_DATE = #{planIntegrationTestDate ,jdbcType= DATE},
+		</if>
+		<if test="actualIntegrationTestDate != null">
+			ACTUAL_INTEGRATION_TEST_DATE = #{actualIntegrationTestDate ,jdbcType= DATE},
+		</if>
+		<if test="openDate != null and openDate !='' ">
+			OPEN_DATE = #{openDate ,jdbcType= DATE},
+		</if>		
+<!-- 是否重点需求 -->
+			IMPORTANT_REQUIREMENT_STATUS = #{importantRequirementStatus ,jdbcType= VARCHAR},		
+		<if test="importantRequirementDelayStatus != null and importantRequirementDelayStatus !='' ">
+			IMPORTANT_REQUIREMENT_DELAY_STATUS = #{importantRequirementDelayStatus ,jdbcType= VARCHAR},
+		</if>
+		<if test="importantRequirementType != null and importantRequirementType !='' ">
+			IMPORTANT_REQUIREMENT_TYPE = #{importantRequirementType ,jdbcType= VARCHAR},
+		</if>
+		<if test="importantRequirementOnlineQuarter != null and importantRequirementOnlineQuarter !='' ">
+			IMPORTANT_REQUIREMENT_ONLINE_QUARTER = #{importantRequirementOnlineQuarter ,jdbcType= VARCHAR},
+		</if>
+		<if test="importantRequirementDelayReason != null and importantRequirementDelayReason !='' ">
+			IMPORTANT_REQUIREMENT_DELAY_REASON = #{importantRequirementDelayReason ,jdbcType= VARCHAR},
+		</if>
+		<if test="directIncome != null and directIncome !='' ">
+			DIRECT_INCOME = #{directIncome ,jdbcType= TINYINT},
+		</if>
+		<if test="forwardIncome != null and forwardIncome !='' ">
+			FORWARD_INCOME = #{forwardIncome ,jdbcType= TINYINT},
+		</if>
+		<if test="recessiveIncome != null and recessiveIncome !='' ">
+			RECESSIVE_INCOME = #{recessiveIncome ,jdbcType= TINYINT},
+		</if>
+		<if test="directCostReduction != null and directCostReduction !='' ">
+			DIRECT_COST_REDUCTION = #{directCostReduction ,jdbcType= TINYINT},
+		</if>
+		<if test="forwardCostReduction != null and forwardCostReduction !='' ">
+			FORWARD_COST_REDUCTION = #{forwardCostReduction ,jdbcType= TINYINT},
+		</if>
+		<if test="anticipatedIncome != null and anticipatedIncome !='' ">
+			ANTICIPATED_INCOME = #{anticipatedIncome ,jdbcType= VARCHAR},
+		</if>
+		<if test="estimateCost != null and estimateCost !='' ">
+			ESTIMATE_COST = #{estimateCost ,jdbcType= VARCHAR},
+		</if>
+		<if test="hangupStatus != null and hangupStatus !='' ">
+			HANGUP_STATUS = #{hangupStatus ,jdbcType= VARCHAR},
+		</if>
+		<if test="hangupDate != null">
+			HANGUP_DATE = #{hangupDate ,jdbcType= DATE},
+		</if>
+<!-- 变更次数 -->
+			CHANGE_COUNT = #{changeCount ,jdbcType= TINYINT},		
+		<if test="requirementProperty != null and requirementProperty !='' ">
+			REQUIREMENT_PROPERTY = #{requirementProperty ,jdbcType= VARCHAR},
+		</if>
+		<if test="requirementClassify != null and requirementClassify !='' ">
+			REQUIREMENT_CLASSIFY = #{requirementClassify ,jdbcType= VARCHAR},
+		</if>
+		<if test="requirementSubdivision != null and requirementSubdivision !='' ">
+			REQUIREMENT_SUBDIVISION = #{requirementSubdivision ,jdbcType= VARCHAR},
+		</if>
+<!-- 验收描述 -->
+			ACCEPTANCE_DESCRIPTION = #{acceptanceDescription ,jdbcType= VARCHAR},
+		<if test="acceptanceTimeliness != null and acceptanceTimeliness !='' ">
+			ACCEPTANCE_TIMELINESS = #{acceptanceTimeliness ,jdbcType= VARCHAR},
+		</if>
+		<if test="dataMigrationStatus != null and dataMigrationStatus !='' ">
+			DATA_MIGRATION_STATUS = #{dataMigrationStatus ,jdbcType= VARCHAR},
+		</if>	
+<!-- 工作量 -->	
+			WORKLOAD = #{workload ,jdbcType= DOUBLE},		
+		<if test="parentId != null and parentId !='' ">
+			PARENT_ID = #{parentId ,jdbcType= BIGINT},
+		</if>
+		<if test="parentIds != null and parentIds !='' ">
+			PARENT_IDS = #{parentIds ,jdbcType= VARCHAR},
+		</if>
+		<if test="status != null and status !='' ">
+			STATUS = #{status ,jdbcType= TINYINT},
+		</if>
+		<if test="createBy != null and createBy !='' ">
+			CREATE_BY = #{createBy ,jdbcType= BIGINT},
+		</if>
+		<if test="createDate != null">
+			CREATE_DATE = #{createDate ,jdbcType= TIMESTAMP},
+		</if>
+		<if test="lastUpdateBy != null and lastUpdateBy !='' ">
+			LAST_UPDATE_BY = #{lastUpdateBy ,jdbcType= BIGINT},
+		</if>
+		<if test="lastUpdateDate != null">
+			LAST_UPDATE_DATE = #{lastUpdateDate ,jdbcType= TIMESTAMP},
+		</if>
+		<if test="fieldTemplate!= null ">
+                FIELD_TEMPLATE =#{fieldTemplate},
+        </if>
+		close_time = #{closeTime ,jdbcType= TIMESTAMP},
+		requirement_ids = #{requirementIds ,jdbcType= VARCHAR},
+	</set>
+	WHERE ID = #{id,jdbcType=BIGINT} 
+  </update>
+  <insert id="insertRequirement" parameterType="cn.pioneeruniverse.project.entity.TblRequirementInfo" useGeneratedKeys="true" keyProperty="id">
+   	insert into tbl_requirement_info (
+   		ITCD_REQUIREMENT_ID,
+		REQUIREMENT_NAME,
+		REQUIREMENT_CODE,
+		REQUIREMENT_STATUS,
+		REQUIREMENT_SOURCE,
+		REQUIREMENT_TYPE,
+		APPLY_USER_ID,
+		APPLY_DEPT_ID,
+		DEVELOPMENT_MANAGE_USER_ID,
+		DEVELOPMENT_DEPT_ID,
+		REQUIREMENT_MANAGE_USER_ID,
+		REQUIREMENT_ACCEPTANCE_USER_ID,
+		REQUIREMENT_OVERVIEW,
+		REQUIREMENT_PRIORITY,
+		REQUIREMENT_PLAN,
+		EXPECT_ONLINE_DATE,
+		PLAN_ONLINE_DATE,
+		ACTUAL_ONLINE_DATE,
+		PLAN_INTEGRATION_TEST_DATE,
+		ACTUAL_INTEGRATION_TEST_DATE,
+		OPEN_DATE,
+		IMPORTANT_REQUIREMENT_STATUS,
+		IMPORTANT_REQUIREMENT_DELAY_STATUS,
+		IMPORTANT_REQUIREMENT_TYPE,
+		IMPORTANT_REQUIREMENT_ONLINE_QUARTER,
+		IMPORTANT_REQUIREMENT_DELAY_REASON,
+		DIRECT_INCOME,
+		FORWARD_INCOME,
+		RECESSIVE_INCOME,
+		DIRECT_COST_REDUCTION,
+		FORWARD_COST_REDUCTION,
+		ANTICIPATED_INCOME,
+		ESTIMATE_COST,
+		HANGUP_STATUS,
+		HANGUP_DATE,
+		CHANGE_COUNT,
+		REQUIREMENT_PROPERTY,
+		REQUIREMENT_CLASSIFY,
+		REQUIREMENT_SUBDIVISION,
+		ACCEPTANCE_DESCRIPTION,
+		ACCEPTANCE_TIMELINESS,
+		DATA_MIGRATION_STATUS,
+		WORKLOAD,
+		PARENT_ID,
+		PARENT_IDS,
+		close_time,
+		requirement_ids,
+		STATUS,
+		CREATE_BY,
+		CREATE_DATE,
+		LAST_UPDATE_BY,
+		LAST_UPDATE_DATE,
+		FIELD_TEMPLATE
+	)values(		
+		#{itcdRequirementId ,jdbcType= BIGINT},
+		#{requirementName ,jdbcType= VARCHAR},
+		#{requirementCode ,jdbcType= VARCHAR},
+		#{requirementStatus ,jdbcType= VARCHAR},
+		#{requirementSource ,jdbcType= VARCHAR},
+		#{requirementType ,jdbcType= VARCHAR},
+		#{applyUserId ,jdbcType= BIGINT},
+		#{applyDeptId ,jdbcType= BIGINT},
+		#{developmentManageUserId ,jdbcType= BIGINT},
+		#{developmentDeptId ,jdbcType= BIGINT},
+		#{requirementManageUserId ,jdbcType= BIGINT},
+		#{requirementAcceptanceUserId ,jdbcType= BIGINT},
+		#{requirementOverview ,jdbcType= VARCHAR},
+		#{requirementPriority ,jdbcType= VARCHAR},
+		#{requirementPlan ,jdbcType= VARCHAR},
+		#{expectOnlineDate ,jdbcType= DATE},
+		#{planOnlineDate ,jdbcType= DATE},
+		#{actualOnlineDate ,jdbcType= DATE},
+		#{planIntegrationTestDate ,jdbcType= DATE},
+		#{actualIntegrationTestDate ,jdbcType= DATE},
+		#{openDate ,jdbcType= DATE},
+		#{importantRequirementStatus ,jdbcType= VARCHAR},
+		#{importantRequirementDelayStatus ,jdbcType= VARCHAR},
+		#{importantRequirementType ,jdbcType= VARCHAR},
+		#{importantRequirementOnlineQuarter ,jdbcType= VARCHAR},
+		#{importantRequirementDelayReason ,jdbcType= VARCHAR},
+		#{directIncome ,jdbcType= TINYINT},
+		#{forwardIncome ,jdbcType= TINYINT},
+		#{recessiveIncome ,jdbcType= TINYINT},
+		#{directCostReduction ,jdbcType= TINYINT},
+		#{forwardCostReduction ,jdbcType= TINYINT},
+		#{anticipatedIncome ,jdbcType= VARCHAR},
+		#{estimateCost ,jdbcType= VARCHAR},
+		#{hangupStatus ,jdbcType= VARCHAR},
+		#{hangupDate ,jdbcType= DATE},
+		#{changeCount ,jdbcType= TINYINT},
+		#{requirementProperty ,jdbcType= VARCHAR},
+		#{requirementClassify ,jdbcType= VARCHAR},
+		#{requirementSubdivision ,jdbcType= VARCHAR},
+		#{acceptanceDescription ,jdbcType= VARCHAR},
+		#{acceptanceTimeliness ,jdbcType= VARCHAR},
+		#{dataMigrationStatus ,jdbcType= VARCHAR},
+		#{workload ,jdbcType= DOUBLE},
+		#{parentId ,jdbcType= BIGINT},
+		#{parentIds ,jdbcType= VARCHAR},
+		#{closeTime ,jdbcType= TIMESTAMP},
+		#{requirementIds ,jdbcType= VARCHAR},
+		#{status ,jdbcType= TINYINT},
+		#{createBy ,jdbcType= BIGINT},
+		#{createDate ,jdbcType= TIMESTAMP},
+		#{lastUpdateBy ,jdbcType= BIGINT},
+		#{lastUpdateDate ,jdbcType= TIMESTAMP},
+		#{fieldTemplate,jdbcType= VARCHAR}
+	)
+  </insert>
+  
+  <update id="deleteRequirement" parameterType="java.lang.Long">
+    update tbl_requirement_info set status=2
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="getRequirementByItcd" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select * from tbl_requirement_info tri where tri.ITCD_REQUIREMENT_ID = #{itcdId,jdbcType=BIGINT}
+  	AND tri.STATUS=1
+  </select>
+
+  <select id="selectIdsByName" parameterType="java.lang.String" resultType="long">
+  	select ID from tbl_requirement_info where  REQUIREMENT_NAME like concat("%",#{requirementName,jdbcType=VARCHAR},"%")
+  </select>
+  
+  <select id="selectRequirementById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select * 
+  	from tbl_requirement_info where ID = #{requirementId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="getRelationrequirementNames" parameterType="java.lang.String" resultType="string">
+  	select REQUIREMENT_CODE from tbl_requirement_info where ID in
+  		<foreach collection="requirement_ids.split(',')" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+  </select>
+  
+  <select id="getDevTaskFieldTemplateById" resultType="String">
+  	SELECT JSON_UNQUOTE(JSON_EXTRACT(FIELD_TEMPLATE,REPLACE(
+		JSON_UNQUOTE(JSON_SEARCH(FIELD_TEMPLATE ,'one',#{fieldName})),'fieldName','valueName')))
+		FROM tbl_requirement_info req
+    	WHERE req.ID=#{id} and  req.STATUS=1
+  </select>
+  
+  <select id="getUserIdsBySystemIds" parameterType="java.lang.String" resultType="long">
+  	SELECT DISTINCT pgu.USER_ID
+	FROM tbl_project_group_user pgu
+	LEFT JOIN tbl_project_group pg ON pgu.PROJECT_GROUP_ID = pg.ID AND pgu.`STATUS` = 1
+	LEFT JOIN tbl_project_info pro ON pg.PROJECT_ID = pro.ID AND pg.`STATUS` = 1
+	LEFT JOIN tbl_project_system tps ON tps.PROJECT_ID = pro.ID
+	LEFT JOIN tbl_system_info sys ON tps.SYSTEM_ID = sys.ID AND pro.`STATUS` = 1
+	WHERE sys.ID in 
+			<foreach collection="systemIds.split(',')" item="id" open="(" close=")" separator=",">
+            #{id}
+        	</foreach>
+		AND pgu.STATUS = 1 AND pg.STATUS = 1 AND pro.STATUS = 1
+	  	AND tps.STATUS = 1 AND sys.STATUS = 1
+  </select>
+  
+  <select id="getCodeById" parameterType="java.lang.Long" resultType="string">
+  	select REQUIREMENT_CODE from tbl_requirement_info where Id = #{id}
+  </select>
+
+	<select id="findRequirementByFeatureIds" parameterType="Long" resultMap="BaseResultMap">
+		SELECT tri.ID,tri.REQUIREMENT_NAME,tri.REQUIREMENT_CODE FROM tbl_requirement_info tri
+		LEFT JOIN tbl_requirement_feature trf ON trf.REQUIREMENT_ID=tri.ID AND trf.STATUS=1
+		WHERE tri.STATUS = 1 AND trf.ID IN
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		GROUP BY tri.ID
+	</select>
+
+
+
+<!--通过系统查询需求-->
+	<select id="getReqidBysystemId" parameterType="map" resultType="java.util.HashMap">
+		select distinct  trs.REQUIREMENT_ID,tri.REQUIREMENT_NAME  from tbl_requirement_system trs
+		left  join tbl_requirement_info tri on tri.id=trs.REQUIREMENT_ID
+		where trs.status=1
+		<if test="systemIds!=null and systemIds.length>0 ">
+
+			and trs.system_id in
+			<foreach item="systemId" index="index" collection="systemIds" open="(" separator="," close=")">
+				#{systemId}
+			</foreach>
+		</if>
+		<if test="requirementIds != null and requirementIds.length>0  ">
+			and trs.REQUIREMENT_ID in
+			<foreach item="item" index="index" collection="requirementIds" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+
+		</if>
+		<if test="reqTaskIds!=null and reqTaskIds.length>0">
+			and exists (select trf.id from tbl_requirement_feature trf where trs.REQUIREMENT_ID=trf.REQUIREMENT_ID and
+			trf.status=1
+			and trf.id in
+			<foreach item="reqTaskId" index="index" collection="reqTaskIds" open="(" separator="," close=")">
+				#{reqTaskId}
+			</foreach>
+
+			)
+		</if>
+
+	</select>
+
+	<select id="getSystemByReqId" parameterType="java.lang.Long" resultType="java.util.HashMap">
+  	select distinct tsi.id ,tsi.system_name as systemName from tbl_requirement_system trs
+  	left join tbl_system_info tsi on trs.SYSTEM_ID=tsi.id and trs.status=1
+  	where trs.REQUIREMENT_ID=#{requireId}
+  </select>
+  
+  <select id="getRequirementsByIds" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select requirement.*, user.USER_NAME devManageUserName from tbl_requirement_info requirement
+  		left join tbl_user_info user on user.ID = requirement.DEVELOPMENT_MANAGE_USER_ID
+  	 	where requirement.ID in
+  			<foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+				#{id}
+			</foreach>
+  </select>
+  
+</mapper>

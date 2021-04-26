@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <title>$title</title>
+    <link rel="shortcut icon" type="image/x-icon" href="#springUrl('')/systemui/static/images/icon.png" media="screen">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/assets/css/jquery.gritter.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/assets/css/bootstrap.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/assets/css/ace.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/assets/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/assets/css/jquery-ui-1.10.3.full.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/assets/css/datepicker.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/assets/css/defindStyle.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css"/>
+    <link rel="stylesheet" media="screen"
+    href="#springUrl('')/systemui/static/assets/css/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/main.css"/>
+    <style>
+    .alert-warning{
+        background: url( '#springUrl('')/systemui/static/images/index/info.png' ) no-repeat 4px 4px;
+        background-color: rgba( 0,0,0,0.6 );
+    }
+
+    .navbar{
+    	min-height: 30px;
+    	height: 30px;
+    	line-height: 30px;
+    }
+    .navbar .navbar-brand{
+    	font-size: 20px;
+    	padding: 3px;
+    }
+    .topBtn{
+    	height: 30px;
+    	line-height: 30px;
+    }
+    .user-info {
+    	line-height: 30px;
+    }
+    .ace-nav>li{
+    	line-height: 30px;
+        height: 30px;
+    }
+    .ace-nav>li>a, .ace-nav>li.light-blue>a{
+    	height: 30px;
+    }
+    </style>
+</head>
+<body>
+<input type="hidden" id="savedMenuId" value="$!savedMenuId">
+<input type="hidden" id="userId" value="$!user.id">
+<input type="hidden" id="userName" value="$user.userName" name="userName"/>
+<!-- 系统公告 -->
+<div id="announcement"></div>  
+<div class="navbar navbar-default" id="navbar">
+    <script type="text/javascript">
+        try {
+            ace.settings.check('navbar', 'fixed')
+        } catch (e) {
+        }
+    </script>
+    <form name="form1" class="form-signin" method='post'> 
+        <input type="hidden" value="$token" name="token"/>
+        <div class="navbar-container" id="navbar-container">
+            <div class="navbar-header pull-left">
+                <a href="#" class="navbar-brand">
+                    <small>
+                        <img class="logo" src="#springUrl('')/systemui/static/images/logo_DD.png"/>
+                        $title
+                    </small>
+                </a><!-- /.brand -->
+            </div><!-- /.navbar-header -->
+          <!-- 顶部导航栏 -->
+            <div class="navbar-header pull-right" role="navigation">
+                <ul class="nav ace-nav">
+                    <li class="light-blue">
+                        <a data-toggle="dropdown" href="#" class="dropdown-toggle" style="width:190px">
+                            <img class="nav-user-photo" src="#springUrl('')/systemui/static/assets/avatars/avatar2.png"
+                                 alt="Jason's Photo"/>
+                            <span class="user-info" style="max-width: 190px">
+                              $user.userName ($user.userAccount)
+									</span>
+                            <span class="user-info"></span>
+
+
+                            <i class="icon-caret-down"></i>
+                        </a>
+
+                        <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close"
+                            style="min-width: 190px">
+
+
+                            <li>
+                                <a href="#" id="mpass1">
+                                    <i class="icon-cog"></i>
+                                    修改代码库密码
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" id="setDefaultPage">
+                                    <i class="icon-cog"></i>
+                                    设置默认页面
+                                </a>
+                            </li>
+                            <!-- <li>
+                               <a href="#">
+                                   <i class="icon-user"></i>
+                                   个人资料
+                               </a>
+                           </li>
+
+                            <li class="divider"></li>  -->
+
+                            <li>
+                                #if($auth.hasRole("$token","user"))
+                                    <a id="logout" href="#springUrl('')/systemui/logout">
+                                        <i class="icon-off"></i>
+                                        退出
+                                    </a>
+                                #end
+                            </li>
+                        </ul>
+                    </li>
+                </ul><!-- /.ace-nav -->
+            </div><!-- /.navbar-header -->
+            #if($auth.hasPermission("$token","devManageui:dashBoard:toDashBoard"))
+                #set( $dashBoardMenu = $system.getMenuByCode("devManageui:dashBoard:toDashBoard"))
+                <div class="navbar-header pull-left" role="navigation">
+                    <div class='topBtn' id="dashBoardId" onclick="toPage(this)" value='$dashBoardMenu.id'
+                         url='$dashBoardMenu.url'>
+                        <div class='scrollDiv'></div>
+                        <i class='icon-cloud'></i> <span class='fonts'>DashBoard</span>
+                    </div>
+                </div>
+            #end
+            #if($auth.hasPermission("$token","devManageui:dashBoard:toWorkDesk"))
+                #set( $workDeskMenu = $system.getMenuByCode("devManageui:dashBoard:toWorkDesk"))
+                <div class="navbar-header pull-left" role="navigation">
+                    <div class='topBtn' id="workDeskId" onclick="toPage(this)" value='$workDeskMenu.id'
+                         url='$workDeskMenu.url'>
+                        <div class='scrollDiv'></div>
+                        <i class='icon-home'></i> <span class='fonts'>个人工作台</span>
+                    </div>
+                </div>
+            #end
+        #* #if($auth.hasPermission("$token","system:taskPlugin:uploadPlugin"))
+            <div class="navbar-header pull-left" role="navigation">
+                <div class='topBtn' id="upload" onclick="uploadEclipsePlugin()">
+                    <div class='scrollDiv'></div>
+                    <i class='icon-upload-alt'></i> <span class='fonts'>eclipse插件上传</span>
+                </div>
+            </div>
+        #end*#
+            #if($auth.hasPermission("$token","system:taskPlugin:downloadPlugin"))
+                <div class="navbar-header pull-left" role="navigation">
+                    <div class='topBtn' id="downLoad" onclick="downloadEclipsePlugin()">
+                        <div class='scrollDiv'></div>
+                        <i class='icon-download-alt'></i> <span class='fonts'>eclipse插件下载</span>
+                    </div>
+                </div>
+            #end
+            <!-- #if($auth.hasPermission("$token","system:manual:uploadHandBook"))
+                <div class="navbar-header pull-left" role="navigation">
+                    <div class='topBtn' id="upload" onclick="uploadHandBook()">
+                        <div class='scrollDiv'></div>
+                        <i class='icon-upload-alt'></i> <span class='fonts'>操作手册上传</span>
+                    </div>
+                </div>
+            #end -->
+            #if($auth.hasPermission("$token","system:manual:downloadHandBook"))
+                <div class="navbar-header pull-left" role="navigation">
+                    <div class='topBtn' id="downLoad" onclick="downloadHandBook()">
+                        <div class='scrollDiv'></div>
+                        <i class='icon-download-alt'></i> <span class='fonts'>操作手册下载</span>
+                    </div>
+                </div>
+            #end
+            
+##            <div class="navbar-header pull-right" role="navigation"  style="width:300px">
+##                <div class='topBtn' style="width:400px;right: 100px"  id="workDeskId">
+##                    <div class='scrollDiv'></div>
+##
+##                </div>
+##            </div>
+        </div>
+    </form>
+</div>
+
+<div class="main-container" id="main-container">
+    <script type="text/javascript">
+        try {
+            ace.settings.check('main-container', 'fixed')
+        } catch (e) {
+        }
+    </script>
+
+    <div class="main-container-inner">
+        <div class="sidebar" id="sidebar">
+            <script type="text/javascript">
+                try {
+                    ace.settings.check('sidebar', 'fixed')
+                } catch (e) {
+                }
+            </script>
+            <!-- 左侧菜单栏 -->
+            <ul class="nav nav-list">
+                #foreach($data in ${system.getMyMenuList($!user.id)})
+                    <li>
+                        <!-- 第一层 -->
+                        #if($data.childMenu.size() > 0)
+                            <a href="#" name="$!data.id" class="dropdown-toggle">
+                                <i class="$data.css"></i>
+                                <span class="menu-text">$!data.menuButtonName </span>
+                                <b class="arrow icon-angle-down"></b>
+                            </a>
+                            <!-- 第二层 -->
+                            <ul class="submenu">
+                                #foreach($subdata in $data.childMenu)
+                                    <li>
+                                        #if($subdata.childMenu.size() > 0)
+                                            <a href="#" name="$!subdata.id" class="dropdown-toggle">
+                                                <i class="$subdata.css"></i>
+                                                <span class="menu-text">$!subdata.menuButtonName </span>
+                                                <b class="arrow icon-angle-down"></b>
+                                            </a>
+                                            <!-- 第三层 -->
+                                            <ul class="submenu">
+                                                #foreach($thirddata in $subdata.childMenu)
+                                                    <li>
+                                                        <a id="menu_$!thirddata.id" name="$!thirddata.id" href="#"
+                                                           contenturl='$!thirddata.url' style="text-decoration:none;">
+                                                            <i class="$thirddata.css"></i>
+                                                            $thirddata.menuButtonName
+                                                        </a>
+                                                    </li>
+                                                #end
+                                            </ul>
+                                        #else
+                                            <a id="menu_$!data.id" name="$!subdata.id" href="#"
+                                               contenturl='$!subdata.url'>
+                                                <i class="$subdata.css"></i>
+                                                $subdata.menuButtonName
+                                            </a>
+                                        #end
+                                    </li>
+                                #end
+                            </ul>
+                        #else
+                            <a id="menu_$!data.id" name="$!data.id" href="#" contenturl='$!data.url'>
+                                <i class="$data.css"></i>
+                                <span class="menu-text">$data.menuButtonName</span>
+                            </a>
+                        #end
+
+                    </li>
+                #end
+            </ul><!-- /.nav-list -->
+
+            <div class="sidebar-collapse" id="sidebar-collapse">
+                <i class="icon-double-angle-left" data-icon1="icon-double-angle-left"
+                   data-icon2="icon-double-angle-right"></i>
+            </div>
+
+            <script type="text/javascript">
+                try {
+                    ace.settings.check('sidebar', 'collapsed')
+                } catch (e) {
+                }
+            </script>
+        </div>
+
+        <div class="main-content">
+            <div class="contentNav">
+            </div>
+            <div class="iframeGroup"></div>
+        </div>
+
+    </div><!-- /.main-container -->
+</div>
+<div class="coverScreen">
+    <div class="rightClickDiv">
+
+    </div>
+</div>
+
+<div id="loading">
+    <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif"/>
+</div>
+
+<div class="modal fade bs-example-modal-lg" id="updateSvnPasswordModal" tabindex="-1" role="dialog"
+     aria-labelledby="newPerson">
+    <div class="modal-dialog  modal-user" role="document" style="margin-top:10px;">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+## 设置默认菜单页面
+<div class="modal fade bs-example-modal-lg" id="defaultMenuModal" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+<div class="loadContent" id="loadContent">
+    <form id="uploadForm" enctype="multipart/form-data">
+        <div class=row>
+            <div class="col-md-3">文件上传：</div>
+            <div class="col-md-9">
+                <input type="file" name="eclipsePluginFile"/>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- <div class="loadContent" id="loadContent2">
+    <form id="uploadForm2" enctype="multipart/form-data">
+        <div class=row>
+            <div class="col-md-3">文件上传：</div>
+            <div class="col-md-9">
+                <input type="file" name="files"/>
+            </div>
+        </div>
+    </form>
+</div>  -->
+<script>
+    var dashBoardPower =$auth.hasPermission("$token","devManageui:dashBoard:toDashBoard");
+    var workDeskPower =$auth.hasPermission("$token","devManageui:dashBoard:toWorkDesk");
+    ## var currentUserId = $userId;
+    var announcementObj = {
+        arr: [],
+        timer: {},
+        title:'系统公告'
+    };
+</script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+<script src="#springUrl('')/systemui/static/assets/js/jquery-ui-1.10.3.full.min.js"></script>
+<script src="#springUrl('')/systemui/static/assets/js/jquery.ui.touch-punch.min.js"></script>
+<script src="#springUrl('')/systemui/static/assets/js/jquery.datepicker.zh-CN.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+<script src="#springUrl('')/systemui/static/assets/js/ace.min.js"></script>
+<script src="#springUrl('')/systemui/static/assets/js/ace-extra.min.js"></script>
+<script src="#springUrl('')/systemui/static/assets/js/jquery.gritter.min.js"></script>
+<script src="#springUrl('')/systemui/static/js/serverPagination.js"></script>
+<script src="#springUrl('')/systemui/static/js/inputLimit.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/assets/js/bootstrap-datetimepicker.js"
+    charset="UTF-8"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/assets/js/locales/bootstrap-datetimepicker.zh-CN.js"
+    charset="UTF-8"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/js/common/notice.js"
+    charset="UTF-8"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        /* getHeight(); */
+        $(".main-content").bind("contextmenu", function () {
+            return false;
+        });
+        $(".coverScreen").bind("contextmenu", function () {
+            return false;
+        });
+        $(".rightClickDiv").mousedown(function (e) {
+            stopDefaultEvent(e);
+        })
+        $(".coverScreen").mousedown(function () {
+            $(".coverScreen").css("display", "none");
+        })
+
+        ## if (dashBoardPower) {
+        ##     $("#dashBoardId").click();
+        ## } else if (workDeskPower) {
+        ##     $("#workDeskId").click();
+        ## }
+        defaultMenu_handle();
+        //公告信息框随着菜单缩小放大 
+        $.ajax({
+			type: "post", 
+			url: "/devManage/notice/getAllValidSystemNotice",
+			dataType:"json", 
+			success : function(data) {
+                if(!data.list) return;
+				 showAnnouncement( data.list);
+			},
+			/* error:function(){ 
+	            layer.alert("系统内部错误，请联系管理员！！！", { icon: 2});
+	        } */
+		});
+        
+        
+        if( !$("#sidebar").hasClass( "menu-min" ) ){
+        	$("#announcement").addClass( "leftAnnoun" )
+        }  
+        $("#sidebar").bind("click",function(){
+        	if( !$("#sidebar").hasClass( "menu-min" ) ){
+            	$("#announcement").addClass( "leftAnnoun" )
+            }else{
+            	$("#announcement").removeClass( "leftAnnoun" )
+            }
+        	
+        })
+        $(window).scroll(function(event){ 
+        	if( $('#announcement').offset().top - $(window).scrollTop() < 8 ){
+        		$('#announcement').css( "position","fixed" );
+        		$('#announcement').css("top","8px");
+        	}
+        	if( $(window).scrollTop() < 92 ){
+        		$('#announcement').css( "position","absolute" );
+        		$('#announcement').css("top","92px");
+        	}
+        }); 
+    });
+	
+    $("#updateSvnPasswordModal").on("hidden.bs.modal", function () {
+        $(this).removeData("bs.modal");
+    });
+
+    $("#defaultMenuModal").on("hidden.bs.modal", function () {
+        $(this).removeData("bs.modal");
+    })
+
+    $("a[id^='menu_']").unbind("click").bind("click", function () {
+        var id = $(this).attr("name");
+        //获取a标签里面的文本值 并去掉空格
+        var titTag = $(this).text().replace(/(^\s*)|(\s*$)/g, "");
+        var curl = $(this).attr('contenturl');
+        if ($(".iframeGroup #iframe" + id).length === 1) {
+            $(".iframeGroup iframe").css("display", "none");
+            $(".contentNav .navTitle").removeClass("nav_active");
+            $(".contentNav .navTitle[name='navTag_" + id + "']").addClass("nav_active");
+            $(".iframeGroup iframe[id='iframe" + id + "']").css("display", "block");
+            $("#sidebar").find("li[class='open active']").removeClass("open active");
+            $(this).parents("li").addClass("open active");
+            $(this).parents("ul.submenu").attr("style", "");
+        } else {
+            if ($(".contentNav .navTitle").length <= 8) {
+                $(".iframeGroup iframe").css("display", "none");
+                $(".contentNav .navTitle").removeClass("nav_active");
+                if ($(".contentNav .navTitle").length == 0) {
+                    $(".contentNav").append("<div name='navTag_" + id + "' val='" + id + "' onclick='turnIframe(" + id + ",this)' class='navTitle nav_active'><span class='nav_tit '>" + titTag + "</span><span class='titIcon' onclick='closeIframe(" + id + ",this,event)'></span></div>");
+                    $(".contentNav div[name='navTag_" + id + "']").mousedown(function (event) {
+                        rightClick(id, event);
+                    });
+                    $(".iframeGroup").append("<iframe src='" + curl + "' height='100%' width='100%' frameborder='no' id='iframe" + id + "'></iframe>");
+                } else {
+                    $(".contentNav").append("<div name='navTag_" + id + "' val='" + id + "'  onclick='turnIframe(" + id + ",this,event)' class='navTitle nav_active'><span class='nav_tit '>" + titTag + "</span><span class='titIcon' onclick='closeIframe(" + id + ",this,event)'></span></div>");
+                    $(".contentNav div[name='navTag_" + id + "']").mousedown(function (event) {
+                        rightClick(id, event);
+                    });
+                    $(".iframeGroup").append("<iframe src='" + curl + "' width='100%' scrolling='yes' frameborder='no' id='iframe" + id + "'></iframe>");
+                }
+                $("#sidebar").find("li[class='open active']").removeClass("open active");
+                $(this).parents("li").addClass("open active");
+                $(this).parents("ul.submenu").attr("style", "");
+            } else {
+                alert("请先尝试关闭一些页面，再打开新页面!");
+            }
+        }
+    });
+
+    //显示默认的tab页，在登录后自动展开
+    function defaultMenu_handle(){
+        $.ajax({
+            type: "POST",
+            url: "/system/role/getDefaultPage",
+            dataType: "json",
+            beforeSend: function () {
+                $("#loading").css('display', 'block');
+            },
+            success: function (msg) {
+                if (msg.status == 1) {
+                    if(msg.data.length){
+                        msg.data.sort(function(a,b){
+                            return b.menuOrder - a.menuOrder
+                        })
+                        ##msg.data.map(function(val,idx){
+                        for(var i = 0;i < msg.data.length; i ++ ){
+                            (function(i){
+                                setTimeout(function(){
+                                	$(".contentNav").append("<div name='navTag_" + msg.data[i].menuButtonId + "' val='" + msg.data[i].menuButtonId + "' onclick='turnIframe(" + msg.data[i].menuButtonId + ",this,event)' class='navTitle nav_active'><span class='nav_tit '>" + msg.data[i].menuButtonName + "</span><span class='titIcon' onclick='closeIframe(" + msg.data[i].menuButtonId + ",this,event)'></span></div>");
+                                    $(".contentNav div[name='navTag_" + msg.data[i].menuButtonId + "']").mousedown(function (event) {
+                                        rightClick(msg.data[i].menuButtonId, event);
+                                    });
+                                    $(".iframeGroup").append("<iframe src='" + msg.data[i].url + "' width='100%' style='min-height:500px;' scrolling='yes' frameborder='no' id='iframe" + msg.data[i].menuButtonId + "'></iframe>");
+                                    $(".contentNav div").removeClass('nav_active');
+                                    $(".contentNav div:last-child").addClass('nav_active');
+                                },1000*i);
+                            })(i);
+                        }
+                     }
+                    
+                } else {
+                }
+                $("#loading").css('display', 'none');
+            },
+            error: function () {
+            }
+        });
+    }
+
+    //获取页面高度
+    /* function getHeight() {
+        if ($(window).height() > 600) {
+            $(".iframeGroup").height($(document).height() - ($("#navbar").height() + $(".contentNav").height() + 10));
+        } else {
+            $(".iframeGroup").height(510);
+        }
+    } */
+    //选择子页面
+    function turnIframe(idValue) {
+        $(".contentNav .navTitle").removeClass("nav_active");
+        $(".contentNav .navTitle[name='navTag_" + idValue + "']").addClass("nav_active");
+        $(".iframeGroup iframe").css("display", "none");
+        $(".iframeGroup iframe[id='iframe" + idValue + "']").css("display", "block"); 
+        
+        
+        let Id = $("#iframe" + idValue).contents().find('.ui-jqgrid').attr('id');
+        let _src = $("#iframe" + idValue).attr('src');
+        if(_src.indexOf('devtask/toDevTask') != -1){
+        	return;
+        }
+        if(Id){
+        	let selector = Id.split('gbox_')[1];
+			$("#iframe" + idValue).contents().find("#gview_"+selector).find(".ui-jqgrid-bdiv").css({"width":"2050px!important"}); 
+           	$("#iframe" + idValue).contents().find("#gbox_"+selector).css({"width":"2050px!important"});
+           	$("#iframe" + idValue).contents().find("#gbox_"+selector).css("width","2050px!important");
+           	$("#iframe" + idValue).contents().find("#gview_"+selector).css("width","2050px!important");
+           	$("#iframe" + idValue).contents().find("#gview_"+selector).find(".ui-jqgrid-hdiv").css("width","2050px!important");
+           	$("#iframe" + idValue).contents().find("#gview_"+selector).find(".ui-jqgrid-bdiv").css("width","2050px!important");
+           	$("#iframe" + idValue).contents().find("#gview_"+selector).find(".ui-jqgrid-hbox").css({"width":"2050px!important"});
+           	$("#iframe" + idValue).contents().find("#gview_"+selector).find(".ui-jqgrid-htable").css("width","2050px!important");
+           	$("#iframe" + idValue).contents().find("#gbox_"+selector).find("#pager2").css("width","2050px"); 
+        }
+    }
+    //关闭单个子页面
+    function closeIframe(idValue, This, e) {
+        if ($(".contentNav div[name='navTag_" + idValue + "']").hasClass("nav_active")) {
+            if ($(".contentNav .navTitle").length >= 2) {
+                if ($(".contentNav div[name='navTag_" + idValue + "']").next().length === 0) {
+                    $(".contentNav div[name='navTag_" + idValue + "']").prev().addClass("nav_active");
+                    $(".iframeGroup iframe[id='iframe" + idValue + "']").prev().css("display", "block");
+                } else {
+                    $(".contentNav div[name='navTag_" + idValue + "']").next().addClass("nav_active");
+                    $(".iframeGroup iframe[id='iframe" + idValue + "']").next().css("display", "block");
+                }
+            }
+        }
+        $(".contentNav div[name='navTag_" + idValue + "']").remove();
+        $(".iframeGroup iframe[id='iframe" + idValue + "']").remove();
+        $(".coverScreen").css("display", "none");
+        sessionStorage.clear();
+        stopDefaultEvent(e);
+    }
+    //关闭其他子页面
+    function closeOtherIframe(idValue) {
+        if (!$(".contentNav div[name='navTag_" + idValue + "']").hasClass("nav_active")) {
+            $(".contentNav div[name='navTag_" + idValue + "']").addClass("nav_active");
+            $(".iframeGroup iframe[id='iframe" + idValue + "']").css("display", "block");
+        }
+        $(".contentNav .navTitle").not(".navTitle[name='navTag_" + idValue + "']").remove();
+        $(".iframeGroup iframe").not(".iframeGroup iframe[id='iframe" + idValue + "']").remove();
+        $(".coverScreen").css("display", "none");
+    }
+    //关闭所有子页面
+    function closeAllIframe() {
+        $(".contentNav .navTitle").remove();
+        $(".iframeGroup iframe").remove();
+        $(".coverScreen").css("display", "none");
+    }
+    //右键显示菜单
+    function rightClick(id, event) {
+        event = event || window.event;
+        if (3 == event.which) {
+            var x = event.pageX;
+            var y = event.pageY;
+            $(".rightClickDiv").empty();
+            $(".rightClickDiv").css({"left": x, "top": y});
+            $(".rightClickDiv").attr('name', id);
+            $(".rightClickDiv").append("<ul><li onclick='refreshThisPage(" + id + ")'><a>刷新</a></li><li  onclick='closeIframe(" + id + ",event)'><a>关闭这个页面</a></li><li onclick='closeOtherIframe(" + id + ")'><a>关闭其它页面</a></li><li onclick='closeAllIframe()'><a>关闭所有页面</a></li></ul>")
+            $(".coverScreen").css("display", "block");
+        }
+    }
+
+    //TODO 修改密码页面
+    $("#mpass1").unbind("click").bind("click", function () {
+        //模态窗口
+        $('#updateSvnPasswordModal').modal({
+            'show': true,
+            'remote': '/systemui/toModifyMySvnPassword'
+        });
+    })
+
+    //设置默认菜单页面
+    $("#setDefaultPage").unbind("click").bind("click", function () {
+        //模态窗口
+        $('#defaultMenuModal').modal({
+            'show': true,
+            'remote': '/systemui/toDefaultMenu'
+        });
+    })
+
+    //刷新页面
+    function refreshThisPage(id) {
+        $(".iframeGroup iframe[id='iframe" + id + "']")[0].contentWindow.location.reload(true);
+        $(".coverScreen").css("display", "none");
+    }
+    //阻止事件冒泡
+    function stopDefaultEvent(e) {
+        if (e && e.stopPropagation) {
+            e.stopPropagation();
+        } else if (window.event) {
+            window.event.cancelBubble = true;
+        }
+    }
+
+    var savedMenuId = $("#savedMenuId").val();
+    if (savedMenuId != "")
+        $("#" + savedMenuId).trigger('click');
+
+    var token = "$token";
+
+    //点击左侧菜单后展示的页面，以iframe形式展示
+    function toPage(This) {
+        var id = $(This).attr('value');
+        var curl = $(This).attr('url');
+        var titTag = $(This).text().replace(/(^\s*)|(\s*$)/g, "");
+        if ($(".iframeGroup #iframe" + id).length === 1) {
+            $(".iframeGroup iframe").css("display", "none");
+            $(".contentNav .navTitle").removeClass("nav_active");
+            $(".contentNav .navTitle[name='navTag_" + id + "']").addClass("nav_active");
+            $(".iframeGroup iframe[id='iframe" + id + "']").css("display", "block");
+            $("#sidebar").find("li[class='open active']").removeClass("open active");
+            $(this).parents("li").addClass("open active");
+            $(this).parents("ul.submenu").attr("style", "");
+        } else {
+            if ($(".contentNav .navTitle").length <= 8) {//最多只能显示8个tab页面
+                $(".iframeGroup iframe").css("display", "none");
+                $(".contentNav .navTitle").removeClass("nav_active");
+                if ($(".contentNav .navTitle").length == 0) {
+                    $(".contentNav").append("<div name='navTag_" + id + "' val='" + id + "' onclick='turnIframe(" + id + ",this)' class='navTitle nav_active'><span class='nav_tit '>" + titTag + "</span><span class='titIcon' onclick='closeIframe(" + id + ",this,event)'></span></div>");
+                    $(".contentNav div[name='navTag_" + id + "']").mousedown(function (event) {
+                        rightClick(id, event);
+                    });
+                    $(".iframeGroup").append("<iframe src='" + curl + "' height='100%' width='100%' frameborder='no' id='iframe" + id + "'></iframe>");
+                } else {
+                    $(".contentNav").append("<div name='navTag_" + id + "' val='" + id + "'  onclick='turnIframe(" + id + ",this,event)' class='navTitle nav_active'><span class='nav_tit '>" + titTag + "</span><span class='titIcon' onclick='closeIframe(" + id + ",this,event)'></span></div>");
+                    $(".contentNav div[name='navTag_" + id + "']").mousedown(function (event) {
+                        rightClick(id, event);
+                    });
+                    $(".iframeGroup").append("<iframe src='" + curl + "' width='100%' scrolling='yes' frameborder='no' id='iframe" + id + "'></iframe>");
+                }
+                $("#sidebar").find("li[class='open active']").removeClass("open active");
+                $(this).parents("li").addClass("open active");
+                $(this).parents("ul.submenu").attr("style", "");
+            } else {
+                alert("请先尝试关闭一些页面，再打开新页面!");
+            }
+        }
+    }
+
+    //上传eclipse插件
+    function uploadEclipsePlugin() {
+        layer.open({
+            type: 1,
+            title: "上传",
+            area: ['400px', '170px'],
+            content: $('#loadContent'),
+            zIndex: 99,
+            btn: '确认上传',
+            yes: function () {
+                var formData = new FormData($('#uploadForm')[0]);
+                $.ajax({
+                    type: 'post',
+                    url: "/zuul/system/taskPlugin/uploadPlugin",
+                    data: formData,
+                    dataType: "json",
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function () {
+                        $("#loading").css('display', 'block');
+                    },
+                    success: function (msg) {
+                        $("#loading").css('display', 'none');
+                        if (msg.flag) {
+                            document.getElementById('uploadForm').reset();
+                            layer.closeAll();
+                        } else {
+                            layer.alert("插件上传失败，失败原因：" + msg.data.message, {
+                                icon: 2,
+                                title: "提示信息"
+                            });
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        $("#loading").css('display', 'none');
+                        if (XMLHttpRequest.status != 999) {
+                            layer.alert("服务器异常，请联系管理员", {
+                                icon: 2,
+                                title: "提示信息"
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    //下载eclipse插件
+    function downloadEclipsePlugin() {
+        window.location.href = "/system/taskPlugin/downloadPlugin"
+    }
+
+    /*  function uploadHandBook() {
+         layer.open({
+             type: 1,
+             title: "上传",
+             area: ['400px', '170px'],
+             content: $('#loadContent2'),
+             zIndex: 99,
+             btn: '确认上传',
+             yes: function () {
+                 var formData = new FormData($('#uploadForm2')[0]);
+                 $.ajax({
+                     type: 'post',
+                     url: "/zuul/system/handBook/uploadHandBook",
+                     data: formData,
+                     dataType: "json",
+                     cache: false,
+                     processData: false,
+                     contentType: false,
+                     beforeSend: function () {
+                         $("#loading").css('display', 'block');
+                     },
+                     success: function (msg) {
+                         $("#loading").css('display', 'none');
+                         if (msg.flag) {
+                             document.getElementById('uploadForm2').reset();
+                             layer.closeAll();
+                         } else {
+                             layer.alert("文件上传失败，失败原因：" + msg.data.message, {
+                                 icon: 2,
+                                 title: "提示信息"
+                             });
+                         }
+                     },
+                     error: function (XMLHttpRequest, textStatus, errorThrown) {
+                         $("#loading").css('display', 'none');
+                         if (XMLHttpRequest.status != 999) {
+                             layer.alert("服务器异常，请联系管理员", {
+                                 icon: 2,
+                                 title: "提示信息"
+                             });
+                         }
+                     }
+                 });
+             }
+         });
+     }
+      */
+      
+      //下载操作手册
+    function downloadHandBook() {
+        window.location.href = "/system/handBook/downloadHandBook"
+    }
+
+</script>
+</body>
+
+
+</html>
+

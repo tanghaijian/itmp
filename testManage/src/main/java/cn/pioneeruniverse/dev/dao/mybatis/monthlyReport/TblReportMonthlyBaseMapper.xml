@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.monthlyReport.TblReportMonthlyBaseMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlyBase">
+        <id column="ID" jdbcType="BIGINT"  property="id" />
+        <result column="YEAR_MONTH" jdbcType="VARCHAR" property="yearMonth"/>
+        <result column="PLAN_WINDOWS_NUMBER" jdbcType="INTEGER" property="planWindowsNumber"/>
+        <result column="TEMP_WINDOWS_NUMBER" jdbcType="INTEGER" property="tempWindowsNumber" />
+        <result column="TEMP_ADD_TASK_NUMBER" jdbcType="INTEGER" property="tempAddTaskNumber" />
+        <result column="TEMP_DEL_TASK_NUMBER" jdbcType="INTEGER" property="tempDelTaskNumber" />
+        <result column="TOTAL_TASK_NUMBER" jdbcType="INTEGER" property="totalTaskNumber" />
+        <result column="REQUIREMENT_NUMBER" jdbcType="INTEGER" property="requirementNumber" />
+        <result column="DEFECT_NUMBER" jdbcType="INTEGER" property="defectNumber" />
+        <result column="CHANGE_PERCENT" jdbcType="DOUBLE" property="changePercent" />
+        <result column="BASE_STATUS" jdbcType="TINYINT" property="baseStatus" />
+        <result column="AUDIT_STATUS" jdbcType="TINYINT" property="auditStatus" />
+        <result column="UNDETECTED_NUMBER" jdbcType="INTEGER" property="undetectedNumber" />
+        <result column="DETECTED_RATE" jdbcType="DOUBLE" property="detectedRate" />
+        <result column="REPAIR_ROUND" jdbcType="INTEGER" property="repairRound" />
+        <result column="REPAIRED_DEFECT_NUMBER" jdbcType="INTEGER" property="repairedDefectNumber" />
+        <result column="AVG_REPAIR_ROUND" jdbcType="DOUBLE" property="avgRepairRound" />
+        <result column="AGILE_SYSTEMNUM" jdbcType="INTEGER" property="agileSystemNum" />
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    reportMonthlyBase. ID id,
+    reportMonthlyBase. `YEAR_MONTH` yearMonth,
+    reportMonthlyBase. PLAN_WINDOWS_NUMBER planWindowsNumber,
+    reportMonthlyBase. TEMP_WINDOWS_NUMBER tempWindowsNumber,
+    reportMonthlyBase. TEMP_ADD_TASK_NUMBER tempAddTaskNumber,
+    reportMonthlyBase. TEMP_DEL_TASK_NUMBER tempDelTaskNumber,
+    reportMonthlyBase. TOTAL_TASK_NUMBER totalTaskNumber,
+    reportMonthlyBase. REQUIREMENT_NUMBER requirementNumber,
+    reportMonthlyBase. DEFECT_NUMBER defectNumber,
+    reportMonthlyBase. CHANGE_PERCENT changePercent,
+    reportMonthlyBase. BASE_STATUS baseStatus,
+    reportMonthlyBase. AUDIT_STATUS auditStatus,
+    reportMonthlyBase. UNDETECTED_NUMBER undetectedNumber,
+    reportMonthlyBase. DETECTED_RATE detectedRate,
+    reportMonthlyBase. REPAIR_ROUND repairRound,
+    reportMonthlyBase. REPAIRED_DEFECT_NUMBER repairedDefectNumber,
+    reportMonthlyBase. AVG_REPAIR_ROUND avgRepairRound,
+    reportMonthlyBase. AGILE_SYSTEMNUM agileSystemNum,
+    reportMonthlyBase. CREATE_BY createBy,
+    reportMonthlyBase. CREATE_DATE createDate,
+    reportMonthlyBase. LAST_UPDATE_BY lastUpdateBy,
+    reportMonthlyBase. LAST_UPDATE_DATE lastUpdateDate,
+    reportMonthlyBase. `STATUS` status
+    </sql>
+
+    <select id="findByYearMonth" resultType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlyBase">
+    select <include refid="Base_Column_List" />,userInfo.USER_NAME userName
+    FROM tbl_report_monthly_base reportMonthlyBase
+    LEFT JOIN tbl_report_monthly_config config ON config.USER_TYPE =1
+    LEFT JOIN tbl_user_info userInfo ON userInfo. ID = config.USER_ID
+    WHERE reportMonthlyBase.`YEAR_MONTH` = #{date}
+    </select>
+
+    <update id="updateByYearMonth" parameterType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlyBase">
+        update tbl_report_monthly_base reportMonthlyBase
+        <set>
+            <if test="planWindowsNumber !=null">
+                PLAN_WINDOWS_NUMBER = #{planWindowsNumber,jdbcType=INTEGER},
+            </if>
+            <if test="tempWindowsNumber !=null">
+                TEMP_WINDOWS_NUMBER = #{tempWindowsNumber,jdbcType=INTEGER},
+            </if>
+            <if test="totalTaskNumber !=null">
+                TOTAL_TASK_NUMBER = #{totalTaskNumber,jdbcType=INTEGER},
+            </if>
+            <if test="requirementNumber !=null">
+                REQUIREMENT_NUMBER = #{requirementNumber,jdbcType=INTEGER},
+            </if>
+            <if test="defectNumber !=null">
+                DEFECT_NUMBER = #{defectNumber,jdbcType=INTEGER},
+            </if>
+            <if test="changePercent !=null">
+                CHANGE_PERCENT = #{changePercent,jdbcType=DOUBLE},
+            </if>
+            <if test="baseStatus !=null">
+                BASE_STATUS = #{baseStatus,jdbcType=TINYINT},
+            </if>
+            <if test="auditStatus !=null">
+                AUDIT_STATUS = #{auditStatus,jdbcType=TINYINT},
+            </if>
+            <if test="repairRound !=null">
+                REPAIR_ROUND = #{repairRound,jdbcType=INTEGER},
+            </if>
+            <if test="repairedDefectNumber !=null">
+                REPAIRED_DEFECT_NUMBER = #{repairedDefectNumber,jdbcType=INTEGER},
+            </if>
+            <if test="avgRepairRound !=null">
+                AVG_REPAIR_ROUND = #{avgRepairRound,jdbcType=DOUBLE},
+            </if>
+            <if test="agileSystemNum !=null">
+                AGILE_SYSTEMNUM = #{agileSystemNum,jdbcType=INTEGER},
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="tempAddTaskNumber !=null">
+                TEMP_ADD_TASK_NUMBER = #{tempAddTaskNumber,jdbcType=INTEGER},
+            </if>
+            <if test="tempDelTaskNumber !=null">
+                TEMP_DEL_TASK_NUMBER =#{tempDelTaskNumber,jdbcType=INTEGER}
+            </if>
+        </set>
+        where reportMonthlyBase.YEAR_MONTH = #{yearMonth}
+    </update>
+
+    <select id="jugeHis" resultType="java.lang.Integer">
+        select count(id) from tbl_report_monthly_base
+		where `YEAR_MONTH` = #{yearMonth}
+    </select>
+
+    <delete id="deleteByYearMonth">
+		delete from tbl_report_monthly_base
+		where `YEAR_MONTH` = #{yearMonth}
+    </delete>
+
+    <insert id="batchInsert" >
+        insert into tbl_report_monthly_base (`YEAR_MONTH`,
+        PLAN_WINDOWS_NUMBER,
+        TEMP_WINDOWS_NUMBER, TEMP_ADD_TASK_NUMBER, TEMP_DEL_TASK_NUMBER,
+        TOTAL_TASK_NUMBER, REQUIREMENT_NUMBER, DEFECT_NUMBER,
+        CHANGE_PERCENT, CREATE_BY, CREATE_DATE,
+        LAST_UPDATE_BY, LAST_UPDATE_DATE,BASE_STATUS,AUDIT_STATUS,UNDETECTED_NUMBER,
+        DETECTED_RATE,REPAIR_ROUND,REPAIRED_DEFECT_NUMBER,AVG_REPAIR_ROUND,
+        AGILE_SYSTEMNUM,status
+        ) values
+            ( #{yearMonth,jdbcType=VARCHAR},
+            #{planWindowsNumber,jdbcType=INTEGER},
+            #{tempWindowsNumber,jdbcType=INTEGER},
+            #{tempAddTaskNumber,jdbcType=INTEGER},
+            #{tempDelTaskNumber,jdbcType=INTEGER},
+            #{totalTaskNumber,jdbcType=INTEGER},
+            #{requirementNumber,jdbcType=INTEGER},
+            #{defectNumber,jdbcType=INTEGER},
+            #{changePercent,jdbcType=DOUBLE},
+            #{createBy,jdbcType=BIGINT},
+            #{createDate,jdbcType=TIMESTAMP},
+            #{lastUpdateBy,jdbcType=BIGINT},
+            #{lastUpdateDate,jdbcType=TIMESTAMP},
+            #{baseStatus,jdbcType=TINYINT},
+            #{auditStatus,jdbcType=TINYINT},
+            #{undetectedNumber,jdbcType=INTEGER},
+            #{detectedRate,jdbcType=DOUBLE},
+            #{repairRound,jdbcType=INTEGER},
+            #{repairedDefectNumber,jdbcType=INTEGER},
+            #{avgRepairRound,jdbcType=DOUBLE},
+            #{agileSystemNum,jdbcType=INTEGER},
+            #{status,jdbcType=TINYINT}
+            )
+    </insert>
+    <insert id="insertMonthBase">
+        insert into tbl_report_monthly_base (`YEAR_MONTH`,
+         CREATE_BY, CREATE_DATE, LAST_UPDATE_BY,
+         LAST_UPDATE_DATE,BASE_STATUS,AUDIT_STATUS,status
+        ) values
+            ( #{yearMonth,jdbcType=VARCHAR},
+            #{createBy,jdbcType=BIGINT},
+            #{createDate,jdbcType=TIMESTAMP},
+            #{lastUpdateBy,jdbcType=BIGINT},
+            #{lastUpdateDate,jdbcType=TIMESTAMP},
+            #{baseStatus,jdbcType=TINYINT},
+            #{auditStatus,jdbcType=TINYINT},
+            #{status,jdbcType=TINYINT}
+            )
+    </insert>
+
+    <select id="findUndetectedNumberByYear" resultMap="BaseResultMap">
+        select reportMonthlyBase.YEAR_MONTH,
+        IFNULL(reportMonthlyBase.UNDETECTED_NUMBER,0) UNDETECTED_NUMBER
+        from tbl_report_monthly_base reportMonthlyBase
+        where  `YEAR_MONTH`
+		BETWEEN #{startYearMonth} AND #{endYearMonth}
+		ORDER BY `YEAR_MONTH`
+    </select>
+
+
+    <update id="updateMonthlyBase">
+        update tbl_report_monthly_base reportMonthlyBase
+        <set>
+            <if test="planWindowsNumber !=null">
+                reportMonthlyBase.PLAN_WINDOWS_NUMBER = #{planWindowsNumber,jdbcType=INTEGER},
+            </if>
+            <if test="tempWindowsNumber !=null">
+                reportMonthlyBase.TEMP_WINDOWS_NUMBER = #{tempWindowsNumber,jdbcType=INTEGER},
+            </if>
+            <if test="tempAddTaskNumber !=null">
+                reportMonthlyBase.TEMP_ADD_TASK_NUMBER = #{tempAddTaskNumber,jdbcType=INTEGER},
+            </if>
+            <if test="tempDelTaskNumber !=null">
+                reportMonthlyBase.TEMP_DEL_TASK_NUMBER =#{tempDelTaskNumber,jdbcType=INTEGER},
+            </if>
+            <if test="lastUpdateBy != null">
+                reportMonthlyBase.LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                reportMonthlyBase.LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+            </if>
+        </set>
+        where reportMonthlyBase.ID = #{id}
+    </update>
+    <update id="updateMonthlyBaseAuditStatus">
+        update tbl_report_monthly_base reportMonthlyBase
+        <set>
+            <if test="auditStatus !=null">
+                reportMonthlyBase.AUDIT_STATUS = #{auditStatus,jdbcType=TINYINT},
+            </if>
+            <if test="lastUpdateBy != null">
+                reportMonthlyBase.LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                reportMonthlyBase.LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+            </if>
+        </set>
+        where reportMonthlyBase.ID = #{id}
+
+    </update>
+
+    <select id="findVersionsNumberByYear"
+            resultType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlyBase">
+        SELECT  base.ID id,base.`YEAR_MONTH` yearMonth,
+        base.PLAN_WINDOWS_NUMBER planWindowsNumber,
+        base.TEMP_WINDOWS_NUMBER tempWindowsNumber,
+        (base.PLAN_WINDOWS_NUMBER + base.TEMP_WINDOWS_NUMBER) countWindowsNumber
+        FROM tbl_report_monthly_base base
+        WHERE `YEAR_MONTH`
+		BETWEEN #{startYearMonth} AND #{YearMonth}
+        ORDER BY `YEAR_MONTH`
+    </select>
+
+    <select id="findVersionsChangeRateByYear"
+            resultType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlyBase">
+        SELECT  base.ID id,base.`YEAR_MONTH` yearMonth,
+        base.TEMP_ADD_TASK_NUMBER tempAddTaskNumber,
+        base.TEMP_DEL_TASK_NUMBER tempDelTaskNumber,
+        base.TOTAL_TASK_NUMBER totalTaskNumber,
+        base.CHANGE_PERCENT  changePercent
+        FROM tbl_report_monthly_base base
+        WHERE `YEAR_MONTH`
+		BETWEEN #{startYearMonth} AND #{YearMonth}
+        ORDER BY `YEAR_MONTH`
+
+    </select>
+
+    <update id="updateUndefectedNumber">
+        UPDATE tbl_report_monthly_base base
+        INNER JOIN
+        (SELECT SUM(LASTMONTH_UNDEFECTED_NUMBER) undefectedNumber,
+        SUM(DEFECT_NUMBER)/ (SUM(DEFECT_NUMBER)+SUM(LASTMONTH_UNDEFECTED_NUMBER))*100 detectedRate
+        FROM tbl_report_monthly_system_data
+        WHERE `YEAR_MONTH` = #{date}  ) systemData
+        ON base.`YEAR_MONTH` = #{date}
+        SET base.UNDETECTED_NUMBER = systemData.undefectedNumber,
+        base.DETECTED_RATE = systemData.detectedRate
+    </update>
+
+
+
+
+</mapper>

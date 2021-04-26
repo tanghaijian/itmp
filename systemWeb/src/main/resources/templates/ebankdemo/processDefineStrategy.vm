@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>流程处理</title>
+    <link rel="stylesheet" type="text/css" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css">
+
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/echarts.common.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/laydate.js"></script>
+    <script src="#springUrl('')/systemui/static/js/template-debug.js"></script>
+    <style>
+        body {
+            padding: 15px;
+            font-size: 12px;
+        }
+
+        .bottonGroup .btn {
+            margin: 18px 0;
+            margin-right: 30px;
+            font-size: 13px !important;
+            padding: 15px 45px;
+            height: auto;
+            background-color: #169BD5 !important;
+        }
+
+        .titleOne {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .titleTwo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .fontOne {
+            font-size: 13px;
+        }
+
+        [class*="def_col_"] {
+            padding-left: 0;
+        }
+    </style>
+</head>
+<body>
+<p class="titleOne">非功能测试流程</p>
+<br>
+<p class="titleTwo">2.确定测试策略</p>
+<p class="fontOne"><input type="checkbox" id="relateRule" onchange="changeButton(this)"> 关联规则</p>
+<div class="">
+    <div class="rowdiv">
+        <div class="form-group def_col_10">
+            <label class="def_col_12 control-label fontWeihgt">系统级别：</label>
+            <div class="def_col_24">
+                <select class="selectpicker" id="systemLevel">
+                    <option value="">请选择</option>
+                    <option value="1">A</option>
+                    <option value="2">B</option>
+                    <option value="3">C</option>
+                </select>
+            </div>
+        </div>
+        <div class="def_col_2">
+        </div>
+        <div class="form-group def_col_10">
+            <label class="def_col_12 control-label fontWeihgt">系统用户规模：</label>
+            <div class="def_col_24">
+                <input type="text" class="form-control" placeholder="请输入" id="systemUserScale"/>
+            </div>
+        </div>
+    </div>
+    <div class="rowdiv">
+        <div class="form-group def_col_10">
+            <label class="def_col_12 control-label fontWeihgt">是否动账交易：</label>
+            <div class="def_col_24">
+                <select class="selectpicker" id="whetherMoveAccounutTrade">
+                    <option value="">请选择</option>
+                    <option value="1">是</option>
+                    <option value="2">否</option>
+                </select>
+            </div>
+        </div>
+        <div class="def_col_2">
+        </div>
+        <div class="form-group def_col_10">
+            <label class="def_col_12 control-label fontWeihgt">日联机交易量：</label>
+            <div class="def_col_24">
+                <input type="text" class="form-control" placeholder="请输入" id="dailyTradeNum"/>
+            </div>
+        </div>
+    </div>
+    <div class="rowdiv">
+        <div class="form-group def_col_10">
+            <label class="def_col_12 control-label fontWeihgt">是否试运行：</label>
+            <div class="def_col_24">
+                <select class="selectpicker" id="whetherTestRun">
+                    <option value="">请选择</option>
+                    <option value="1">是</option>
+                    <option value="2">否</option>
+                </select>
+            </div>
+        </div>
+        <div class="def_col_2">
+        </div>
+        <div class="form-group def_col_10">
+            <label class="def_col_12 control-label fontWeihgt">系统类别：</label>
+            <div class="def_col_24">
+                <select class="selectpicker" id="systemType">
+                    <option value="">请选择</option>
+                    <option value="1">平稳</option>
+                    <option value="2">震荡</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="rowdiv">
+        <div class="form-group def_col_10">
+            <label class="def_col_12 control-label fontWeihgt">投产时间：</label>
+            <div class="def_col_24">
+                <input type="text" class="form-control" placeholder="请输入" id="commissioningTime"/>
+            </div>
+        </div>
+        <div class="def_col_2">
+        </div>
+        <div class="form-group def_col_10">
+            <label class="def_col_12 control-label fontWeihgt">投产紧迫类型：</label>
+            <div class="def_col_24">
+                <select class="selectpicker" id="commissioningUrgentType">
+                    <option value="">请选择</option>
+                    <option value="1">监管</option>
+                    <option value="2">总经理室</option>
+                    <option value="3">无</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="rowdiv">
+        <div class="form-group def_col_10">
+            <label class="def_col_12 control-label fontWeihgt">测试窗口：</label>
+            <div class="def_col_24">
+                <input type="text" class="form-control" placeholder="请输入" id="testWindow"/>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="bottonGroup">
+
+</div>
+
+<script id="buttonGroup1" type="text/html">
+    <botton class="btn btn-primary" type="button"
+            onclick="window.location.href='/systemui/testProcess/processHandle/end?testType=postphone'">延期测试
+    </botton>
+    <botton class="btn btn-primary" type="button"
+            onclick="window.location.href='/systemui/testProcess/processHandle/surveyAndPrepare?testType=standard'">标准测试
+    </botton>
+    <botton class="btn btn-primary" type="button"
+            onclick="window.location.href='/systemui/testProcess/processHandle/surveyAndPrepare?testType=agile'">敏捷测试
+    </botton>
+</script>
+
+<script id="buttonGroup2" type="text/html">
+    <botton class="btn btn-primary" type="button" onclick="nextStep()"> 下一步
+    </botton>
+</script>
+
+<script>
+    var storage = window.localStorage;
+
+    $(function () {
+        changeButton($("#relateRule"));
+        //常规用法
+        laydate.render({
+            elem: '#commissioningTime'
+        });
+
+    });
+
+    function changeButton(obj) {
+        var statu = $(obj).is(':checked');
+        if (statu) {
+            $(".bottonGroup").html(template("buttonGroup2", {}));
+        } else {
+            $(".bottonGroup").html(template("buttonGroup1", {}));
+        }
+    }
+
+    function nextStep() {
+        var systemLevel = $("#systemLevel").val();
+        if (systemLevel == "") {
+            layer.alert("系统级别为空", {
+                icon: 2,
+                title: "提示信息"
+            });
+            return false;
+        }
+
+        var systemUserScale = $("#systemUserScale").val();
+        if (systemUserScale == "") {
+            layer.alert("系统用户规模为空", {
+                icon: 2,
+                title: "提示信息"
+            });
+            return false;
+        }
+
+        var dailyTradeNum = $("#dailyTradeNum").val();
+        if (dailyTradeNum == "") {
+            layer.alert("日联机交易量为空", {
+                icon: 2,
+                title: "提示信息"
+            });
+            return false;
+        }
+
+        var whetherMoveAccounutTrade = $("#whetherMoveAccounutTrade").val();
+        if (whetherMoveAccounutTrade == "") {
+            layer.alert("是否动账交易为空", {
+                icon: 2,
+                title: "提示信息"
+            });
+            return false;
+        }
+
+        var whetherTestRun = $("#whetherTestRun").val();
+        if (whetherTestRun == "") {
+            layer.alert("是否试运行为空", {
+                icon: 2,
+                title: "提示信息"
+            });
+            return false;
+        }
+
+        var systemType = $("#systemType").val();
+        if (systemType == "") {
+            layer.alert("是否系统类别为空", {
+                icon: 2,
+                title: "提示信息"
+            });
+            return false;
+        }
+
+        if ($("#commissioningTime").val() == "") {
+            layer.alert("投产时间为空", {
+                icon: 2,
+                title: "提示信息"
+            });
+            return false;
+        }
+        //当前时间-投产时间
+        var commissioningTime = new Date(new Date($("#commissioningTime").val().replace(/-/g, "/")).toLocaleDateString());
+        var nowTime = new Date(new Date().toLocaleDateString());
+        var num = (nowTime - commissioningTime) / (1000 * 3600 * 24);
+        var days = parseInt(Math.ceil(num));
+
+        var commissioningUrgentType = $("#commissioningUrgentType").val();
+        if (commissioningUrgentType == "") {
+            layer.alert("投产紧迫类型为空", {
+                icon: 2,
+                title: "提示信息"
+            });
+            return false;
+        }
+
+        var testWindow = $("#testWindow").val();
+        if (testWindow == "") {
+            layer.alert("测试窗口为空", {
+                icon: 2,
+                title: "提示信息"
+            });
+            return false;
+        }
+        var postphoneTestRules = JSON.parse(storage.getItem("postphoneTestRules"));
+        var agileTestRules = JSON.parse(storage.getItem("agileTestRules"));
+        //TODO 计算判断
+        var ruleValueArray = [{rule: "1", value: systemLevel},
+            {rule: "2", value: systemUserScale},
+            {rule: "3", value: dailyTradeNum},
+            {rule: "4", value: whetherMoveAccounutTrade},
+            {rule: "5", value: whetherTestRun},
+            {rule: "6", value: systemType},
+            {rule: "7", value: days},
+            {rule: "8", value: commissioningUrgentType},
+            {rule: "9", value: testWindow}
+        ];
+        var postphoneTest = true;
+        for (var j in ruleValueArray) {
+            postphoneTest = ruleCompute(ruleValueArray[j], postphoneTestRules) && postphoneTest;
+        }
+        var agileTest = true;
+        for (var k in ruleValueArray) {
+            agileTest = ruleCompute(ruleValueArray[k], agileTestRules) && agileTest;
+        }
+        if (postphoneTest) {
+            window.location.href = "/systemui/testProcess/processHandle/end?testType=postphone";
+        } else if (agileTest) {
+            window.location.href = "/systemui/testProcess/processHandle/surveyAndPrepare?testType=agile";
+        } else {
+            window.location.href = "/systemui/testProcess/processHandle/surveyAndPrepare?testType=standard";
+        }
+
+    }
+
+    function ruleCompute(ruleValue, rulesArray) {
+        var flag = true;
+        for (var i in rulesArray) {
+            if (rulesArray[i].name == ruleValue.rule && rulesArray[i].operator != "" && rulesArray[i].number != "") {
+                flag = compute(parseInt(rulesArray[i].number), parseInt(ruleValue.value), rulesArray[i].operator) && flag;
+            }
+        }
+        return flag;
+    }
+
+    function compute(number, value, operate) {
+        switch (operate) {
+            case "1":
+                return value == number;
+            case"2":
+                return value != number;
+            case"3":
+                return value <= number;
+            case "4":
+                return value >= number;
+            case "5":
+                return value < number;
+            case"6":
+                return value > number;
+        }
+    }
+
+</script>
+
+</body>
+</html>

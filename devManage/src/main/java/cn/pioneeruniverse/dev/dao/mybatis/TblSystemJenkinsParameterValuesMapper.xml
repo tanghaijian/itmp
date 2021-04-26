@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblSystemJenkinsParameterValuesMapper">
+	<resultMap id="BaseResultMap"
+			   type="cn.pioneeruniverse.dev.entity.TblSystemJenkinsParameterValues">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="SYSTEM_JENKINS_PARAMETER_ID" jdbcType="BIGINT" property="systemJenkinsParameterId" />
+		<result column="PARAMETER_VALUE" jdbcType="VARCHAR" property="parameterValue" />
+		<result column="VALUE_SEQ" jdbcType="INTEGER" property="valueSeq" />
+		<result column="SYSTEM_JENKINS_ID" jdbcType="VARCHAR" property="systemJenkinsId" />
+		<result column="STATUS" jdbcType="TINYINT" property="status" />
+   		<result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    	<result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    	<result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    	<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+	</resultMap>
+	 <sql id="Base_Column_List">
+    	ID , SYSTEM_JENKINS_PARAMETER_ID,PARAMETER_VALUE,VALUE_SEQ,SYSTEM_JENKINS_ID,
+    	STATUS,CREATE_BY,CREATE_DATE,LAST_UPDATE_BY,LAST_UPDATE_DATE
+ 	 </sql>
+<!--	插入jenkions参数枚举值-->
+	<insert id="insertParameterValues"  parameterType="map">
+  	insert into tbl_system_jenkins_parameter_values(SYSTEM_JENKINS_PARAMETER_ID, PARAMETER_VALUE,
+  	 VALUE_SEQ, SYSTEM_JENKINS_ID,STATUS,CREATE_BY, 
+    CREATE_DATE)values
+    <foreach collection="list" item="item" index="index" separator=",">
+             (#{systemJenkinsParameterId},
+              #{item.parameterValue},
+              #{item.valueSeq},
+              #{item.systemJenkinsId},
+              1,
+              #{createBy},
+              CURRENT_TIMESTAMP
+              )
+        </foreach>
+  </insert>
+
+<!--	通过参数id查询详细枚举值-->
+	<select id="selectParameterValuesById"  resultMap="BaseResultMap">
+		SELECT 
+		<include refid="Base_Column_List"/>
+		 FROM tbl_system_jenkins_parameter_values
+		WHERE SYSTEM_JENKINS_PARAMETER_ID=#{systemJenkinsParameterId}	
+		and STATUS=1
+		ORDER BY VALUE_SEQ ASC
+	</select>
+
+
+    <select id="selectParameterValuesByMap"  parameterType="map"  resultMap="BaseResultMap">
+
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM tbl_system_jenkins_parameter_values
+        WHERE SYSTEM_JENKINS_PARAMETER_ID=#{systemJenkinsParamId} and   FIND_IN_SET(#{systemJenkinsId,jdbcType=VARCHAR}, SYSTEM_JENKINS_ID)
+        and STATUS=1
+        ORDER BY VALUE_SEQ
+    </select>
+	
+	
+	<insert id="insertParameterValuesOne"  parameterType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsParameterValues">
+  	insert into tbl_system_jenkins_parameter_values(SYSTEM_JENKINS_PARAMETER_ID, PARAMETER_VALUE,
+  	 VALUE_SEQ, SYSTEM_JENKINS_ID,STATUS,CREATE_BY,
+    CREATE_DATE)values
+   	          (#{systemJenkinsParameterId},
+              #{parameterValue},
+              #{valueSeq},
+              #{systemJenkinsId},
+              1,
+              #{createBy},
+              CURRENT_TIMESTAMP
+              )
+  </insert>
+  
+<!--  更新-->
+  <update id="updateParameterValues" parameterType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsParameterValues">
+  	 update tbl_system_jenkins_parameter_values
+        <set>
+            <if test="parameterValue != null and parameterValue != ''">
+                PARAMETER_VALUE = #{parameterValue},
+            </if>
+            <if test="valueSeq != null and valueSeq != ''">
+                VALUE_SEQ = #{valueSeq},
+            </if>
+             <if test="systemJenkinsId != null and systemJenkinsId != ''">
+                SYSTEM_JENKINS_ID = #{systemJenkinsId},
+            </if>
+            <if test="status != null">
+                STATUS = #{status},
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY = #{lastUpdateBy},
+            </if>
+                LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
+        </set>
+        where ID=#{id}
+  </update>
+	
+<!--	删除枚举值-->
+  <update id="deleteParameterValues"  >
+  		update tbl_system_jenkins_parameter_values
+  		<set> 
+          STATUS=2
+        </set> 
+        where ID IN
+         <foreach collection="list" index="index" item="item" separator=","  open="(" close=")">
+	        #{item}
+	    </foreach>
+        
+  </update>
+  
+</mapper>

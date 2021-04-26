@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblSystemDeployScriptTemplateMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblSystemDeployScriptTemplate">
+<!--    <id column="ID" jdbcType="BIGINT" property="id" />-->
+<!--    <result column="SYSTEM_DEPLOY_ID" jdbcType="BIGINT" property="systemDeployId" />-->
+<!--    <result column="STEP_ORDER" jdbcType="INTEGER" property="stepOrder" />-->
+<!--    <result column="OPERATE_TYPE" jdbcType="TINYINT" property="operateType" />-->
+<!--    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />-->
+<!--    <result column="PASSWORD" jdbcType="VARCHAR" property="password" />-->
+<!--    <result column="WAIT_TIME" jdbcType="INTEGER" property="waitTime" />-->
+<!--    <result column="SCRIPT" jdbcType="LONGVARCHAR" property="script" />-->
+<!--    <result column="STATUS" jdbcType="TINYINT" property="status" />-->
+<!--    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />-->
+<!--    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />-->
+<!--    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />-->
+<!--    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />-->
+
+    <result column="STEP_ORDER" jdbcType="INTEGER" property="stepOrder" />
+    <result column="OPERATE_TYPE" jdbcType="TINYINT" property="operateType" />
+    <result column="TEMPLATE_TYPE" jdbcType="TINYINT" property="templateType" />
+    <result column="WAIT_TIME" jdbcType="INTEGER" property="waitTime" />
+    <result column="SCRIPT" jdbcType="LONGVARCHAR" property="script" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, STEP_ORDER, OPERATE_TYPE, WAIT_TIME,SCRIPT,STATUS, TEMPLATE_TYPE,
+    CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_system_deploy_script_templateType
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByBatchIds">
+  	delete from tbl_system_deploy_script_templateType
+  	where ID in
+  	<foreach collection="list" item="item" open="(" separator="," close=")">
+  		#{item}
+  	</foreach>
+  </delete>
+  <insert id="insertScriptTemplate" parameterType="cn.pioneeruniverse.dev.entity.TblSystemDeployScriptTemplate">
+    insert into tbl_system_deploy_script_templateType ( TEMPLATE_TYPE,STEP_ORDER,
+      OPERATE_TYPE,
+      WAIT_TIME, STATUS, CREATE_BY, 
+      CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE, 
+      SCRIPT)
+    values ( #{templateType,jdbcType=TINYINT},#{stepOrder,jdbcType=INTEGER},
+      #{operateType,jdbcType=TINYINT},
+      #{waitTime,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP}, 
+      #{script,jdbcType=LONGVARCHAR})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblSystemDeployScriptTemplate">
+    update tbl_system_deploy_script_templateType
+    <set>
+      <if test="templateType != null">
+        TEMPLATE_TYPE = #{templateType,jdbcType=TINYINT},
+      </if>
+      <if test="stepOrder != null">
+        STEP_ORDER = #{stepOrder,jdbcType=INTEGER},
+      </if>
+      <if test="operateType != null">
+        OPERATE_TYPE = #{operateType,jdbcType=TINYINT},
+      </if>
+
+      <if test="waitTime != null">
+        WAIT_TIME = #{waitTime,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="script != null">
+        SCRIPT = #{script,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+</mapper>

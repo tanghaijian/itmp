@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <META HTTP-EQUIV="pragma" CONTENT="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="no-cache,IE=edge,Chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>业务/系统树新需求更改页面</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/zTreeStyleCopy.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+    <link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/businessSystemTree/businessSystemTreeUpdate.css" />
+
+
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/component.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.core.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.excheck.min.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.exhide.js"></script>
+
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/businessSystemTree/fileOpt.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/businessSystemTree/businessSystemTreeUpdate.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/businessSystemTree/businessSystemTreeOpt.js"></script>
+    <script type="text/javascript" src="#springUrl('')/projectManageui/static/js/businessSystemTree/treeFormValidator.js"></script>
+
+    <script>
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap4';
+        $.jgrid.defaults.iconSet = "fontAwesome";
+
+        if($!type == 1){
+            var jsOpt = {
+                assetTreeUrl:"/projectManage/assetTree/",
+                BusinessSystemTreeUrl:"/projectManage/business/",
+                BusinessSystemTreeWebUrl:"/projectManageui/business/",
+                errorMessage:"系统内部错误，请联系管理员 ！！！",
+                successMessage:"操作成功",
+                noPermission:"没有操作权限 ！！！",
+                assetTreeType:1
+            };
+            var editPer = $auth.hasPermission("$token","testManage:businessTree:edit"); // 编辑
+            var splitPer = $auth.hasPermission("$token","testManage:businessTree:split"); // 拆分下一级条目
+            var updateStatusNoPer = $auth.hasPermission("$token","testManage:businessTree:updateStatusNo"); // 置为无效
+            var updateStatusPer = $auth.hasPermission("$token","testManage:businessTree:updateStatus"); // 置为有效
+
+        } else if($!type == 2){
+            var jsOpt = {
+                assetTreeUrl:"/projectManage/assetTree/",
+                BusinessSystemTreeUrl:"/projectManage/systemTree/",
+                BusinessSystemTreeWebUrl:"/projectManageui/systemTree/",
+                errorMessage:"系统内部错误，请联系管理员 ！！！",
+                successMessage:"操作成功",
+                noPermission:"没有操作权限 ！！！",
+                assetTreeType:2
+            };
+
+            var editPer = $auth.hasPermission("$token","testManage:systemTree:edit"); // 编辑
+            var splitPer = $auth.hasPermission("$token","testManage:systemTree:split"); // 拆分下一级条目
+            var updateStatusNoPer = $auth.hasPermission("$token","testManage:systemTree:updateStatusNo"); // 置为无效
+            var updateStatusPer = $auth.hasPermission("$token","testManage:systemTree:updateStatus"); // 置为有效
+        }
+
+    </script>
+</head>
+<body>
+<div class="bigBox">
+    <div class="left-box">
+        <div id="tree" class="ztree"></div>
+    </div>
+    <div class="right-box">
+        <div class="color1">
+            <div class="container-fluid" id="search_div">
+                <div class="row control-row">
+                    <div class="col-md-3">
+                        <div class="search_font"><label class="control-label">条目名称：</label></div>
+                        <div class="search_input">
+                            <input type="text" class="form-control" placeholder="请输入" id="businessTreeName" name="businessTreeName" value="" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="search_font"><label class="control-label">条目编码：</label></div>
+                        <div class="search_input">
+                            <input type="text" class="form-control" placeholder="请输入" id="businessTreeCode" name="businessTreeCode" value="" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="search_font"><label class="control-label">说明：</label></div>
+                        <div class="search_input">
+                            <input id="submitUserId" type="hidden">
+                            <input type="text" class="form-control" placeholder="请输入" id="remark" name="remark"/>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="search_font"><label class="control-label">状态：</label></div>
+                        <div class="search_input">
+                            <select class="selectpicker" name="businessTreeStatus" id="businessTreeStatus">
+                                <option value="">请选择</option>
+                                <option value="1">有效</option>
+                                <option value="2">无效</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row control-row search_btn">
+                    <button type="button" class="btn btn-primary" onclick="searchInfo()">搜&nbsp;&nbsp;&nbsp;索</button>
+                    <button type="button" onclick="resetSelect()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                #*<div class="collection" onclick="collection()">
+                    <span class="fa fa-heart-o"></span>&nbsp;收藏此次筛选
+                </div>*#
+                </div>
+            </div>
+            <div id="downBtn" class="downBtn">
+                <span class="fa fa-caret-up"></span>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="table-content">
+                <div id="toolbar">
+                    <div class="btn-group">
+                        #if($!type == 1)
+                            #if($auth.hasPermission("$token","testManage:businessTree:addTier"))
+                                <button type="button" class="btn btn-primary addTier" onclick="addTier('新建条目')" id="save_tier">新建条目</button>
+                            #end
+                            #if($auth.hasPermission("$token","testManage:businessTree:importTier"))
+                                <button type="button" class="btn btn-primary editTier" onclick="importTier()" id="importTier">导入条目</button>
+                            #end
+                            #if($auth.hasPermission("$token","testManage:businessTree:deleteTier"))
+                                <button type="button" class="btn btn-default editTier" onclick="deleteTiers()">删除条目</button>
+                            #end
+                            #if($auth.hasPermission("$token","testManage:businessTree:export"))
+                                <button type="button" class="btn btn-default editTier" onclick="exportOutTier()">导出条目</button>
+                            #end
+                        #elseif($!type == 2)
+                            #if($auth.hasPermission("$token","testManage:systemTree:addTier"))
+                                <button type="button" class="btn btn-primary addTier" onclick="addTier('新建条目')" id="save_tier">新建条目</button>
+                            #end
+                            #if($auth.hasPermission("$token","testManage:systemTree:importTier"))
+                                <button type="button" class="btn btn-primary editTier" onclick="importTier()" id="importTier">导入条目</button>
+                            #end
+                            #if($auth.hasPermission("$token","testManage:systemTree:deleteTier"))
+                                <button type="button" class="btn btn-default editTier" onclick="deleteTiers()">删除条目</button>
+                            #end
+                            #if($auth.hasPermission("$token","testManage:systemTree:export"))
+                                <button type="button" class="btn btn-default" onclick="exportOutTier()">导出条目</button>
+                            #end
+                        #end
+
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="treeTable"></table>
+                    <div id="ListPager"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+#*新增条目*#
+<div class="modal fade optModal" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addTierModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel"></h4>
+            </div>
+            <div class="modal-body">
+                <form id="addModalForm" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"><span class="sp_red">*</span>条目名称：</label>
+                        <div class="col-md-8">
+                            <input id="add_businessTreeName" name="businessTreeName" class="form-control tableInput " placeholder="请输入" type="text" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">条目简称：</label>
+                        <div class="col-md-8">
+                            <input id="add_businessTreeShortName" name="businessTreeShortName" class="form-control tableInput " placeholder="请输入" type="text" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">条目编码：</label>
+                        <div class="col-md-8">
+                            <input id="add_businessTreeCode" name="businessTreeCode" class="form-control tableInput " placeholder="请输入" type="text" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">说明：</label>
+                        <div class="col-md-8">
+                            <textarea id="add_remark" name="remark" class="form-control tableTextarea"  placeholder="请输入"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="confirmAddOrEditTier()">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+#*拆分下级条目*#
+<div class="modal fade optModal" id="addNextModal" tabindex="-1" role="dialog" aria-labelledby="addTierModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">拆分下级条目</h4>
+            </div>
+            <div class="modal-body">
+                <form id="addNextModalForm" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"><span class="sp_red">*</span>条目名称：</label>
+                        <div class="col-md-8">
+                            <input id="addNext_businessTreeName" name="businessTreeName" class="form-control tableInput " placeholder="请输入" type="text" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">条目简称：</label>
+                        <div class="col-md-8">
+                            <input id="addNext_businessTreeShortName" name="businessTreeShortName" class="form-control tableInput " placeholder="请输入" type="text" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">条目编码：</label>
+                        <div class="col-md-8">
+                            <input id="addNext_businessTreeCode" name="businessTreeCode" class="form-control tableInput " placeholder="请输入" type="text" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">说明：</label>
+                        <div class="col-md-8">
+                            <textarea id="addNext_remark" name="remark" class="form-control tableTextarea"  placeholder="请输入"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="confirmSplitInsertNextTier()">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade optModal" id="importModal" tabindex="-1" role="dialog" aria-labelledby="addTierModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">导入条目</h4>
+            </div>
+            <div class="modal-body">
+                <form id="importModalForm" class="form-horizontal">
+                    #*<div class="">
+                        <label class="col-md-3 control-label">下载模板：</label>
+
+                    </div>*#
+                    <div class="rowdiv form-group">
+                        <div class="def_col_8 font_right fontWeihgt">下载模板：</div>
+                        <div class="def_col_12">
+                            #if($!type == 1)
+                                <a onclick="exportTemplet()">业务树层级条目导入模板</a>
+                            #elseif($!type == 2)
+                                <a onclick="exportTemplet()">系统树层级条目导入模板</a>
+                            #end
+                        </div>
+                    </div>
+                    <div class="rowdiv form-group">
+                        <div class="def_col_8 font_right fontWeihgt">选择文件：</div>
+                        <div class="def_col_12">
+                            <div class="file-upload-select_file">
+                                <input type="file" class="upload-files" id="opt_uploadFile" />
+                            </div>
+                            <div class="file-upload-list">
+                                <table class="file-upload-tb" id="optFileTable">
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="importTierTree()">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="loading">
+    <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+</div>
+</body>
+</html>

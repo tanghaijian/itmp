@@ -1,0 +1,433 @@
+/*  commonn  */
+.btn {
+	height: 28px;
+	padding: 5px 12px;
+}
+
+.btn-primary {
+	background-color: #108EE9 !important;
+}
+
+/* 閺堫剟銆夐棃锟� */
+body {
+	display: flex;
+	flex-direction: row;
+	background-color: #F2F2F2;
+	font-size: 12px;
+}
+
+[class*="def_col_"] {
+	padding-left: 0px;
+}
+
+.bootstrap-select .btn {
+	margin: 0;
+}
+
+.left {
+	width: 30%;
+	padding: 10px;
+}
+
+.left_top {
+	width: 100%;
+	background-color: white;
+	border-radius: 4px;
+}
+
+.left_top_title {
+	height: 55px;
+	padding: 13px 8px;
+	border-bottom: 1px solid #E4E4E4;
+}
+
+.left_top_title button {
+	float: right;
+}
+
+.titleFont {
+	font-size: 16px;
+	line-height: 28px;
+	font-weight: bold;
+	color: #333333;
+}
+
+.left_top_search {
+	width: 100%;
+	padding: 8px;
+}
+
+.input_search {
+	position: relative;
+	margin-bottom: 8px;
+}
+
+.input_search input {
+	border: none;
+	box-shadow: none;
+	border-radius: 0;
+	padding: 6px 25px 6px 6px;
+	border-bottom: 1px solid #CCCCCC;
+}
+
+.input_search input:focus {
+	box-shadow: none;
+}
+
+.input_search .fa-search {
+	position: absolute;
+	right: 8px;
+	top: 8px;
+	color: #999999;
+	font-size: 14px;
+}
+
+.border_right {
+	height: 28px;
+	border-right: 1px solid #E4E4E4;
+}
+
+.left_bottom {
+	margin-top: 10px;
+	width: 100%;
+	max-height: 390px;
+	overflow-y: auto;
+}
+
+.testTask {
+	margin-bottom: 10px;
+	background-color: white;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.testTask .taskBottom {
+	display: none;
+}
+
+.taskTop {
+	padding: 8px;
+	position: relative;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 36px;
+}
+
+.taskTop img {
+	position: absolute;
+	left: 8px;
+	top: 7px;
+}
+
+.taskName {
+	margin-left: 30px;
+	line-height: 22px;
+	font-size: 13px;
+	color: #333333;
+}
+
+.taskStatus {
+	display: inline-block;
+	color: white;
+	background-color: #33CC99;
+	padding: 4px 18px;
+	font-size: 12px;
+	line-height: 12px;
+	border-radius: 4px;
+	margin-bottom: 10px;
+}
+
+.taskInfo {
+	padding: 0 10px 4px 38px;
+	border-bottom: 1px solid #E4E4E4;
+}
+
+.taskContent {
+	padding: 10px 10px 0;
+}
+
+.testName {
+	padding-left: 20px;
+	background: url("../../images/testSet/show.png") no-repeat 0 1px;
+}
+
+.testContent {
+	border-left: 1px solid #D8D8D8;
+	padding: 0px 15px 12px 10px;
+	margin-left: 7px;
+}
+
+.testSuit {
+	padding: 2px;
+}
+
+.testSuit:hover {
+	background-color: #F2F2F2;
+}
+
+.testSuitName {
+	padding: 0 8px 0 30px;
+	background: url("../../images/testSet/project.png") no-repeat 10px 3px;
+	line-height: 24px;
+}
+
+.testSuitContent {
+	margin-left: 22px;
+	height: 20px;
+}
+
+.testContent_border {
+	padding: 6px 0;
+	border-bottom: 1px solid #D8D8D8;
+}
+
+.right {
+	width: 70%;
+	padding: 10px;
+	padding-left: 0;
+	display: none;
+}
+
+.right_div {
+	height: 100%;
+	border-radius: 4px;
+	background-color: white;
+}
+
+.right_div_tit {
+	height: 55px;
+	border-bottom: 1px solid #E4E4E4;
+	padding: 0 10px 0 20px;
+	display: flex;
+	flex-direction: row;
+}
+
+.right_div_titRight {
+	flex: 1;
+	display: flex;
+	flex-direction: row-reverse;
+}
+
+.right_div_titDiv {
+	display: flex;
+	flex-direction: row;
+	padding: 0 10px;
+}
+
+.right_div_titFont {
+	line-height: 55px;
+	font-size: 13px;
+	font-weight: bold;
+	color: #333333;
+}
+
+.right_div_titFont2 {
+	line-height: 55px;
+}
+
+.right_div_titFont3 {
+	font-size: 28px;
+	color: #108EE9;
+	font-weight: bold;
+	line-height: 55px;
+}
+
+.right_div_titRight .btn-group {
+	margin-top: 11px;
+	margin-left: 10px;
+	height: 32px;
+}
+
+.right_div_titRight .btn-group>.btn .caret {
+	margin-left: 20px;
+}
+
+.right_div_titRight .btn-group .dropdown-menu {
+	right: 0;
+	left: auto;
+	min-width: 90px;
+}
+
+.right_div_titRight .btn-group>.btn {
+	height: 32px !important;
+	padding: 6px 10px 6px 20px;
+}
+
+.right_div_titRight .btn-group .dropdown-menu>li>a {
+	color: #108EE9;
+	padding: 6px 20px;
+	font-size: 12px;
+	text-align: center;
+}
+
+.right_div_titRight .btn-group .dropdown-menu>li>a:hover {
+	color: white;
+	font-size: 12px;
+	text-align: center;
+}
+
+.searchDiv {
+	padding: 10px 30px 10px 10px;
+}
+
+.caseTableDiv {
+	padding: 10px 15px 20px;
+	padding-top: 0;
+	border-bottom: 1px solid #E4E4E4;
+}
+
+.caseTitle {
+	color: #108EE9;
+	padding: 0 20px 6px 26px;
+	font-weight: bold;
+	font-size: 13px;
+	line-height: 24px;
+	background: url("../../images/testSet/project2.png") no-repeat 2px 0;
+	border-bottom: 1px solid #CCCCCC;
+}
+
+.caseBtnGroup {
+	padding: 10px 25px 0 25px;
+}
+
+.caseBtnGroup .btn {
+	margin: 0 10px 10px 0;
+}
+
+.caseTableArea {
+	padding: 0 25px;
+}
+
+.right_btnGroup {
+	text-align: center;
+}
+
+.right_btnGroup .btn {
+	font-size: 14px !important;
+	margin: 4px 15px 0;
+	line-height: 20px;
+	padding: 6px 25px !important;
+	font-weight: bold;
+	height: 32px;
+}
+
+.right_btnGroup .btn-default {
+	color: #666666;
+}
+
+.assignModalTit {
+	font-size: 13px;
+	padding: 10px 0 20px;
+	font-weight: bold;
+}
+
+.assignTableGroup {
+	padding: 10px 35px;
+}
+
+.assignNo {
+	font-size: 12px;
+	font-weight: bold;
+	line-height: 28px;
+	border-bottom: 1px solid #CCCCCC;
+}
+
+.assignBtnGroup .btn {
+	margin: 10px 10px 10px 0;
+}
+
+.hideAll>* {
+	display: none;
+}
+
+#commitBug .rowdiv {
+	margin-bottom: 15px;
+}
+
+.rightModal {
+	margin-bottom: 10px;
+}
+
+.tagTitle {
+	padding: 8px 0;
+	font-size: 13px;
+	font-weight: bold;
+	position: relative;
+}
+
+#editCaseSteps td {
+	position: relative;
+}
+
+.def_tableDiv2 {
+	position: absolute;
+	left: 6px;
+	right: 6px;
+	top: 2px;
+	bottom: 3px;
+}
+
+#newTestCaseInfo .def_content {
+	border-top: 1px solid #D9D9D9;
+	padding: 15px 0;
+	background: #FFF;
+}
+
+#newTestCaseInfo .form-group {
+	margin: 0;
+}
+
+#newTestCaseInfo .content-table {
+	margin: 0 !important;
+}
+
+.caseTitleFont {
+	font-size: 13px;
+	margin-bottom: 8px;
+}
+
+.caseLable {
+	text-align: right;
+	padding-right: 8px;
+	line-height: 30px;
+}
+
+.showCaseLable{
+	text-align: left;
+	padding-right: 8px;
+	line-height: 30px;
+}
+
+.haveNoFont {
+	margin-top: 5%;
+	text-align: center;
+	font-weight: bold;
+	font-size: 15px;
+}
+
+.right_blank {
+	width: 70%;
+	padding: 10px;
+	padding-left: 0;
+}
+
+.haveNoFontRight{
+	text-align: center;
+    font-weight: bold;
+    font-size: 15px;
+    padding-top: 2%;
+}
+
+#addCaseSteps>tbody>tr{
+	height:102px;
+}
+#editCaseSteps>tbody>tr{
+	height:102px;
+}
+#addCaseSteps textarea.form-control{
+	height:94px;
+}
+#editCaseSteps textarea.form-control{
+	height:94px;
+} 

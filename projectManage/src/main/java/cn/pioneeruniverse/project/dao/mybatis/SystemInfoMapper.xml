@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.SystemInfoMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblSystemInfo">
+  	<id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="SYSTEM_NAME" jdbcType="VARCHAR" property="systemName" />
+    <result column="SYSTEM_CODE" jdbcType="VARCHAR" property="systemCode" />
+    <result column="SYSTEM_SHORT_NAME" jdbcType="VARCHAR" property="systemShortName" />
+    <result column="SYSTEM_TYPE" jdbcType="VARCHAR" property="systemType" />
+    <result column="GROUP_ID" jdbcType="VARCHAR" property="groupId" />
+    <result column="ARTIFACT_ID" jdbcType="VARCHAR" property="artifactId" />
+    <result column="ARCHITECTURE_TYPE" jdbcType="TINYINT" property="architectureType" />
+    <result column="BUILD_TYPE" jdbcType="TINYINT" property="buildType" />
+    <result column="SCM_STRATEGY" jdbcType="TINYINT" property="scmStrategy" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+    
+  </resultMap>
+  <sql id="Base_Column_List">
+  	ID, SYSTEM_NAME, SYSTEM_CODE, SYSTEM_SHORT_NAME, SYSTEM_TYPE, GROUP_ID, ARTIFACT_ID, ARCHITECTURE_TYPE, BUILD_TYPE, SCM_STRATEGY, STATUS, CREATE_BY, 
+  		CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+	<!--查询系统数据-->
+ 	<select id="selectSystemInfo" parameterType="map" resultMap="BaseResultMap">
+ 		select
+ 			<include refid="Base_Column_List" />
+ 			from tbl_system_info
+ 			<where>
+ 				<if test="tblSystemInfo.systemName != null">
+ 					and SYSTEM_NAME like concat("%",#{tblSystemInfo.systemName,jdbcType=VARCHAR},"%")
+ 				</if>
+ 				<if test="tblSystemInfo.systemCode !=null">
+ 					and SYSTEM_CODE like concat("%",#{tblSystemInfo.systemCode,jdbcType=VARCHAR},"%")
+ 				</if>
+ 				<if test="systemIds != null">
+				<foreach collection="systemIds" item="systemId">
+					and ID != #{systemId,jdbcType=BIGINT}
+				</foreach>
+				</if>
+ 				and STATUS = 1 <!-- and PROJECT_ID is null -->
+ 			</where>
+ 			limit #{start},#{pageSize}
+ 	</select>
+	<!--修改-->
+	<update id="updateSystemInfo" parameterType="map">
+		update tbl_system_info set PROJECT_ID = #{projectId,jdbcType=BIGINT}
+								where ID in
+								<foreach collection="systemIds" index="index" item="systemId" separator="," open="(" close=")">
+  	 								#{systemId,jdbcType=BIGINT}
+  	 							</foreach>
+								
+	</update>
+	<!--修改-->
+	<update id="updateSystem" parameterType="map">
+		update tbl_system_info set PROJECT_ID = #{projectId,jdbcType=BIGINT}
+								where ID in
+								<foreach collection="systemIds" index="index" item="systemId" separator="," open="(" close=")">
+  	 								#{systemId}
+  	 							</foreach>
+								
+	</update>
+	<!--查询项目下的系统名称-->
+	<select id="selectSystemName" parameterType="java.lang.Long" resultType="string">
+		select SYSTEM_NAME from tbl_system_info where PROJECT_ID = #{id,jdbcType=BIGINT}
+	</select>
+	<!--清除系统对应的项目（不再使用）-->
+ 	<update id="updateSystemInfoBySystemName" parameterType="java.lang.String">
+ 		update tbl_system_info set PROJECT_ID = null , STATUS = 1 where SYSTEM_NAME = #{systemName,jdbcType=VARCHAR}
+ 	</update>
+	<!--清除系统对应的项目（不再使用）-->
+ 	<update id="untyingSystem" parameterType="java.lang.Long">
+ 		update tbl_system_info set PROJECT_ID = null , STATUS = 1 where PROJECT_ID = #{id,jdbcType=BIGINT}
+ 	</update>
+ 	
+ 	<select id="selectSystems" parameterType="java.lang.Long" resultMap="BaseResultMap">
+ 		select
+ 			<include refid="Base_Column_List" />
+ 			from tbl_system_info where PROJECT_ID = #{id,jdbcType=BIGINT}
+ 	</select>
+ 	
+ 	<select id="selectSystemNameById" parameterType="java.lang.Long" resultType="string">
+ 		select SYSTEM_NAME from tbl_system_info where ID = #{systemId,jdbcType=BIGINT}
+ 	</select>
+ 	
+ 	<select id="findSystemIdBySystemCode" parameterType="java.lang.String" resultType="Long">
+ 		select ID from tbl_system_info tsi WHERE tsi.SYSTEM_CODE=#{systemCode,jdbcType=VARCHAR}
+ 		AND STATUS=1
+ 	</select>
+ 	
+ 	<select id="getSystemsByProjectId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+ 		select DISTINCT sys.* from tbl_system_info sys 
+			left join tbl_project_system prosys on prosys.SYSTEM_ID = sys.ID
+			where prosys.PROJECT_ID = #{id} and prosys.`STATUS` = 1 and sys.`STATUS` = 1
+ 	</select>
+ 	
+ 	<select id="getSystemsByWindowId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+ 		select DISTINCT sys.* from tbl_system_info sys
+ 			left join tbl_requirement_feature reqfea on sys.ID = reqfea.SYSTEM_ID
+ 			where reqfea.COMMISSIONING_WINDOW_ID = #{windowId} and reqfea.STATUS = 1 and sys.STATUS = 1
+ 	</select>
+ 	
+</mapper>

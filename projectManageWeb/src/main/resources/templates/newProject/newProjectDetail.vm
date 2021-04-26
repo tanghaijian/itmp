@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+		<title>项目主页</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/zTreeStyleCopy.css"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css"/>
+		<link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/newProject/Detail.css"/>
+
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/projectManageui/static/js/echarts/echarts.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/projectManageui/static/js/echarts/ecStat.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.all.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/common/notice.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+		<script type="text/javascript" src="#springUrl('')/projectManageui/static/js/newProject/newProjectDetail.js"></script>
+		<script>
+				## $.jgrid.defaults.responsive = true;
+				## $.jgrid.defaults.styleUI = 'Bootstrap4';
+				## $.jgrid.defaults.iconSet = "fontAwesome";
+				// var userPost = $auth.hasPermission("$token", "projectManage:project:userPost");
+		</script>
+		<style>
+		#announcement .alert-dismissible{
+			background: url(/systemui/static/images/index/info.png) no-repeat 4px 4px;
+    	background-color: rgba( 0,0,0,0.6 );
+		}
+		</style>
+</head>
+
+<body>
+		<input type="hidden" id="detail_id" name="" value="$!id"/>
+		<input type="hidden" id="detail_type" name="" value="$!type"/>
+
+		<!-- 项目公告 -->
+		<div id="announcement"></div>
+
+		<!-- 导航 -->
+		<div class="p_15 flex bor_b justify_c_b p_t_5">
+				<div class="flex items_c">
+						<img class="img" id="u504_img" src="#springUrl('')/projectManageui/static/images/detail/u504.png">
+						<h5 class="bold p_l_10 projectName"></h5>
+				</div>
+				<div class="nav_bar flex">
+						<div class="">
+							<div class="nav_tit titActive">主页</div>
+							<div class="nav_item  home myActive" id="home"></div>
+						</div>
+						<div class="">
+							<div class="nav_tit">计划</div>
+							<div class="nav_item  plan" id="plan"></div>
+						</div>
+						<div class="">
+							<div class="nav_tit">团队</div>
+							<div class="nav_item  team" id="team"></div>
+						</div>				
+						#if($!type == 1)
+							<div class="">
+								<div class="nav_tit">冲刺</div>
+								<div class="nav_item  sprint" id="sprint"></div>
+							</div>
+							<div class="">
+								<div class="nav_tit">看板</div>
+								<div class="nav_item  board" id="board"></div>
+							</div>
+						#end
+						<div class="">
+							<div class="nav_tit">任务</div>
+							<div class="nav_item  job" id="job"></div>
+						</div>
+						<div class="">
+							<div class="nav_tit">风险</div>
+							<div class="nav_item  risk" id="risk"></div>
+						</div>
+						<div class="">
+							<div class="nav_tit">问题</div>
+							<div class="nav_item  problem" id="problem"></div>
+						</div>
+						<div class="">
+							<div class="nav_tit">变更</div>
+							<div class="nav_item  change" id="change"></div>
+						</div>
+						<div class="">
+							<div class="nav_tit">文档</div>
+							<div class="nav_item  doc" id="doc"></div>
+						</div>
+						<div class="">
+							<div class="nav_tit">公告</div>
+							<div class="nav_item  notice" id="notice"></div>
+						</div>
+				</div>
+		</div>
+
+		<!-- 主体 -->
+		<div class="rowdiv m_10">
+				<!-- 项目概览 -->
+				<div class="def_col_10 bg_fff bor p_l_0 " id="project_Overview">
+						<h5 class="bold font_left bor_b p_15 m_0">项目概览</h5>
+						<div class="p_10">
+								<div class="">
+										<span id="projectCode"></span>
+										<h5 class="projectName font_12"></h5>
+										<div class="p_10_0 bor_b p_t_0" id="all_status"></div>
+								</div>
+								<div class="">
+										<h5 class="p_t_0">关联子系统</h5>
+										<ul class="p_10_0 bor_b p_t_0 p_l_10 min_h80" id="interactedSystem"></ul>
+								</div>
+
+								<div class="">
+										<h5 class="p_t_0">基本情况</h5>
+										<div class="p_10_0 bor_b rowdiv p_t_0">
+												<p class="def_col_18">
+														<span>项目类型：</span>
+														<span id="projectType"></span></p>
+												<p class="def_col_18">
+														<span>项目经理：</span>
+														<span id="projectManager"></span></p>
+												<p class="def_col_35">
+														<span>项目周期：</span>
+														<span id="projectWeek"></span></p>
+												<p class="def_col_35">
+														<span>预算编号：</span>
+														<span id="budgetCode"></span></p>
+										</div>
+								</div>
+
+								<div class="">
+										<h5 class="p_t_0">周边子系统</h5>
+										<ul class="p_10_0 bor_b p_t_0 p_l_10 min_h80" id="rimSystem"></ul>
+								</div>
+
+								<div class="">
+										<h5 class="flex_b p_t_0">项目成员</h5>
+										<ol class="p_10 rowdiv p_t_0" id="projectUsers"></ol>
+								</div>
+						</div>
+				</div>
+
+				<!-- 任务实施情况 -->
+				<div class="def_col_16" id="falls">
+						<div class="bg_fff bor">
+								<h5 class="bold font_left bor_b p_15 m_0" id="sprint_tit">任务实施情况</h5>
+								<div class="work_body flex justify_c_c" style="overflow: auto;"></div>
+						</div>
+						<!-- 变更--风险 -->
+						<div class="rowdiv m_t_10  flex">
+								<div class="bg_fff bor work flex_c p_t_20" id="update_work"></div>
+								<div class="bg_fff bor work flex_c p_t_20 m_l_10" id="risk_work"></div>
+						</div>
+						<!-- 里程碑情况 -->
+						<div class="bg_fff bor m_t_10">
+								<h5 class="bold font_left bor_b p_15 m_0" id="milestone_tit">当前里程碑情况</h5>
+								<div class="p_10 min_h300" id="milestone_body"></div>
+						</div>
+				</div>
+
+				<!-- 项目动态 -->
+				<div class="def_col_10">
+						<div class="bg_fff bor">
+								<h5 class="bold font_left bor_b p_15 m_0">项目动态</h5>
+								<ol class="p_l_0" id="dynamic_body"></ol>
+						</div>
+				</div>
+		</div>
+
+		## 字典区域
+		<div class="_hide">
+				## 状态
+				<select class="_hide" id="_STATUS">
+						<option value=""></option>
+						#foreach($dictMap in ${dict.getDictMap("TBL_PROJECT_INFO_PROJECT_SCHEDULE_STATUS").entrySet()})
+								<option value="${dictMap.key}">${dictMap.value}</option>
+						#end
+				</select>
+				## 项目状态
+				<select class="_hide" id="PROJECT_STATUS">
+						<option value=""></option>
+						#foreach($dictMap in ${dict.getDictMap("TBL_PROJECT_INFO_PROJECT_STATUS").entrySet()})
+								<option value="${dictMap.key}">${dictMap.value}</option>
+						#end
+				</select>
+				## 项目开发模式
+				<select class="_hide" id="DEVELOPMENT_MODE">
+						<option value=""></option>
+						#foreach($dictMap in ${dict.getDictMap("TBL_PROJECT_INFO_DEVELOPMENT_MODE").entrySet()})
+								<option value="${dictMap.key}">${dictMap.value}</option>
+						#end
+				</select>
+				## 项目类型
+				<select class="_hide" id="PROJECT_TYPE">
+						<option value=""></option>
+						#foreach($dictMap in ${dict.getDictMap("TBL_PROJECT_INFO_PROJECT_CLASS").entrySet()})
+								<option value="${dictMap.key}">${dictMap.value}</option>
+						#end
+				</select>
+		</div>
+
+		<div id="loading">
+				<img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif"/>
+		</div>
+
+</body>
+
+</html>

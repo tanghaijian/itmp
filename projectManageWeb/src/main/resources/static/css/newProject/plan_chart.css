@@ -1,0 +1,302 @@
+*{
+  box-sizing: border-box;
+}
+body{
+  background: #f2f2f2;
+  overflow: hidden;
+}
+.resEdit {
+  padding: 15px;
+}
+
+.resLine {
+  width: 95%;
+  padding: 3px;
+  margin: 5px;
+  border: 1px solid #d0d0d0;
+}
+
+.ganttButtonBar h1 {
+  color: #000000;
+  font-weight: bold;
+  font-size: 28px;
+  margin-left: 10px;
+}
+/*******自定义*********/
+.bor_b_r{
+  display: flex;
+  height: 100%;
+  align-items: center;
+  border-right: 1px solid #DDD;
+  min-width: 40px;
+  justify-content: center;
+}
+.w_200{
+  width: 139px;
+}
+.w_70{
+  width: 70px;
+}
+.fa-pencil{
+  cursor: pointer;
+}
+.btn{
+  height: 30px;
+  margin-left: 10px;
+  width: 90px;
+  margin: 0 10px 0;
+  padding: 6px 11px;
+  font-size: 12px !important;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+.ganttButtonBar  .btn-default{
+  border: 1px solid #42429B;
+  color:#42429B;
+  background: #fff;
+}
+.btn-primary{
+  border: 1px solid #42429B;
+  color:#fff;
+  background: #42429B;
+}
+.Pro_status{
+  width: 15px;
+  height: 15px;
+  background: red;
+  border-radius: 50%;
+  margin-left: 10px;
+  background: green;
+}
+.Pro_status1{
+  background: yellowgreen;
+}
+.progress{
+  background-color: #1f59a0;
+  color: #fff;
+  margin-top: 4px;
+  height: 60%;
+}
+.progress0{
+  background-color: red;
+}
+.progress1{
+  background-color: yellowgreen;
+}
+.a_s{
+  position: absolute;
+    color: red;
+    top: 0;
+}
+.red{
+  color: red;
+}
+.p_t_100{
+  padding-top: 100px;
+}
+.p_10{
+  padding: 10px;
+}
+.flex{
+  display: flex;
+}
+.bor_b{
+  border-bottom: 1px solid rgba(215, 215, 215, 1);
+}
+.justify_c_b{
+  justify-content: space-between;
+}
+.items_c{
+  align-items: center;
+}
+.nav_bar img{
+  width: 25px;
+  height: 25px;
+  margin: 0 auto;
+  display: block;
+}
+#u504_img {
+  width:20px;
+  height:18px;
+}
+.p_l_10{
+  padding-left: 10px;
+}
+.p_l_0{
+  padding-left: 0px;
+}
+/**修改计划**/
+textarea{
+  resize: none;
+}
+.p_l_20{
+  padding-left: 20px;
+}
+.text_d{
+  text-decoration: underline;
+}
+
+/*****默认菜单设置*****/
+#defaultMenuModal>.modal-dialog{
+  width: 100%;
+  padding: 0;
+}
+#defaultMenuModal .modal-content{
+  height: 100%;
+}
+#defaultMenuModal .modal-footer{
+  padding-top: 10px;
+  padding-bottom: 30px;
+  text-align: center;
+}
+#defaultMenuModal .btn {
+  padding: 4px 12px;
+}
+#defaultMenu_body {
+  margin: 0 auto;
+  width: 800px;
+  border-radius: 5px;
+}
+._flex_c{
+  display: flex;
+  align-items: center;
+  border-bottom: none;
+}
+._hide{
+  display: none;
+}
+.p_l_5{
+  padding-left: 5px !important;
+}
+.p_l_30{
+  padding-left: 30px !important;
+}
+.p_l_60{
+  padding-left: 60px !important;
+}
+#defaultMenu_body .arrows_{
+  width:0px;
+  height:0px;
+  border:5px solid transparent;
+}
+#defaultMenu_body .arrows_right{
+    border-left:5px solid #597cd3;
+}
+#defaultMenu_body .arrows_bottom{
+    border-top:5px solid #597cd3;
+}
+#defaultMenu_body .menu_order{
+  border-radius: 4px !important;
+}
+#defaultMenu_body tbody>tr>td:first-child {
+  border-right: none;
+  border-left: none;
+  border-bottom: none;
+}
+/****************/
+.blue{
+  color: rgb(24, 144, 255);
+}
+.lab_tit{
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+}
+.allInfo{
+  padding: 0 20px;
+}
+.allInfo .def_title{
+  padding-left: 0;
+  padding-right: 0;
+}
+.m_20{
+  margin: 0 20px;
+}
+.font_14{
+  font-size: 14px;
+}
+.bold{
+  font-weight: bold;
+}
+.relative{
+  position: relative;
+}
+.absolute{
+  position: absolute;
+}
+li,ul{
+  list-style: none;
+}
+#show_version_logs{
+  right: 0;
+  top: 20px;
+  padding-left: 0;
+  background: #fff;
+  display: none;
+  z-index: 999;
+  border-radius: 4px;
+  border: 1px solid rgb(16, 142, 233);
+}
+#show_version_logs>li{
+  cursor: pointer;
+  padding: 5px 15px;
+  color: rgb(16, 142, 233);
+}
+#show_version_logs>li:hover{
+  background: rgb(16, 142, 233);
+  color: #fff;
+}
+.redStar {
+  color: red;
+}
+#TWGanttArea{
+  height: 600px !important;
+}
+/* 审批情况 */
+#defectBaseInfo{
+  background: #fff;
+  border: none;
+}
+.modal-footer .btn {
+  padding: 8px 20px;
+}
+.form-horizontal .control-label{
+  padding-top: 0px;
+}
+.btn_close{
+  border: 1px solid #ccc;
+}
+#defectBaseInfo .table{
+  border-left: none;
+  border-right: none;
+}
+.w_150_block{
+	width: 150px;
+    display: inline-block;
+}
+/***弹窗覆盖样式*/
+.modalPopup.inIframe {
+  background-color: rgba(21, 19, 19, 0.6);
+}
+.modalPopup.inIframe .bwinPopupd{
+  box-shadow:none;
+  width: 1000px !important;
+  border-radius: 5px;
+}
+.inline{
+  display: inline;
+}
+.ganttTaskEditor .table tbody>tr>td{
+  border-top: none;
+  display: flex;
+  align-items: center;
+}
+.calBox{
+  cursor: pointer;
+}
+.pointStyle{
+  cursor: pointer;
+}
+.search_list{
+  padding-left: 0;
+}

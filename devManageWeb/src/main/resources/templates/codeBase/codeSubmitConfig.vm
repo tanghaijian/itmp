@@ -1,0 +1,1348 @@
+##代码提交配置 弹窗内容
+
+#set($codeSubmitConfigList = $codeBase.getSystemScmSubmitConfigs($systemId,$scmType))
+<script>
+	$("#loading").show();
+</script>
+<script type="test/javascript" src="#springUrl('')/systemui/static/js/template-debug.js"></script>
+<script type="text/javascript" src="#springUrl('')/devManageui/static/js/common/fuzzy_serach.js"></script>
+<div id="loading">
+    <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif"/>
+</div>
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+    </button>
+    <span class="modal-title" id="microChildService">代码提交配置</span>
+</div>
+<div class="modal-body">
+    <div class="rowdiv">
+         <div class="form-group def_col_18 waitTime">
+             <label class="def_col_5 control-label font_right fontWeihgt">分组标签：</label>
+             <div class="def_col_21">
+                 <select class="selectpicker" id="group_label_serach">
+                     <option value="">请选择</option>
+                 </select>
+             </div>
+         </div>
+    </div>
+    <div class="allInfo autoInfo">
+        <div class="def_title">
+            <span>配置项</span>
+            <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+        </div>
+        <div class="def_content">
+            <div class="dataEntry microServiceData">
+                <div class="singleData singleTit">
+                    <div class="singleDataCheckbox">
+                        <input type="checkbox" onclick="CodeSubmitConfigModal.allCheck(this)"/>
+                    </div>
+                    <div class="singleDataDiv">
+                        <div class="singleDataFont">关联仓库</div>
+                    </div>
+                    #if($scmType == 1)
+                        <div class="singleDataDiv">
+                            <div class="singleDataFont">分支名称</div>
+                        </div>
+                    #end
+                    <div class="singleDataDiv w_10">
+                        <div class="singleDataFont">是否提交</div>
+                    </div>
+                    <div class="singleDataDiv w_15">
+                        <div class="singleDataFont">子系统版本</div>
+                    </div>
+                    <div class="singleDataDiv w_15">
+                        <div class="singleDataFont">投产窗口</div>
+                    </div>
+                    #if($scmType == 1)
+	                    <div class="singleDataDiv w_21">
+	                        <div class="singleDataFont">提交管理人</div>
+	                    </div>
+	                    <div class="singleDataDiv">
+	                        <div class="singleDataFont">分组标签</div>
+	                    </div>
+	                    <div class="singleDataDiv w_75">
+	                    	<div class="singleDataFont">提交用户</div>
+	                    </div>
+                    #end
+                    #if($scmType == 2)
+                    	<div class="singleDataDiv w_21">
+                        	<div class="singleDataFont">提交管理人</div>
+                    	</div>
+                    	<div class="singleDataDiv w_45">
+	                    	<div class="singleDataFont">提交用户</div>
+	                    </div>
+                        <div class="singleDataDiv w_70_url">
+                            <div class="singleDataFont">源代码地址</div>
+                        </div>
+                        <div class="singleDataDiv w_13 p_t_10">
+	                        <div class="singleDataFont">分组标签</div>
+	                    </div>
+                    #end
+                    
+                </div>
+                <div id="singDivCont">
+                    <div class="singleData">
+                        <div class="singcheckBox">
+                            <input type="checkbox">
+                        </div>
+                        <div class="singleDataDiv">
+                            <div class="search_input entrySelect">
+                                <select class="selectpicker" name="systemScmRepository"
+                                    #if($scmType == 2)
+                                        onchange="CodeSubmitConfigModal.generateScmUrl(this)"
+                                    #end
+                                >
+                                    <option value="">请选择</option>
+                                </select>
+                            </div>
+                        </div>                    
+                        #if($scmType == 1)
+                            <div class="singleDataDiv">
+                                <div class="search_input entrySelect">
+                                    <input type="text" class="form-control" name="scmBranch" placeholder="请输入"
+                                           onmouseover="this.title=this.value"/>
+                                    <span onclick='CodeSubmitConfigModal.clearContent(this)' class='btn_clear'></span>
+                                </div>
+                            </div>
+                        #end
+                        <div class="singleDataDiv w_10">
+                            <div class="search_input entrySelect">
+                                <select class="selectpicker" name="submitStatus">
+                                    <option value="">请选择</option>
+                                    <option value="1">是</option>
+                                    <option value="2">否</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="singleDataDiv w_15">
+                            <div class="search_input entrySelect">
+                                <select class="selectpicker" name="systemVersion">
+                                    <option value="">请选择</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="singleDataDiv w_15">
+                            <div class="search_input entrySelect">
+                                <select class="selectpicker" name="commissioningWindow">
+                                    <option value="">请选择</option>
+                                </select>
+                            </div>
+                        </div>
+                        #if($scmType == 1)
+                        <div class="singleDataDiv w_21">
+                            <div class="search_input entrySelect2">
+                                <input type="hidden" name="submitSuperUsers"/>
+                                <input type="text" class="form-control" placeholder="请输入关键字搜索" 
+                                       onmouseover="this.title=this.value"  />
+                            </div>
+                        </div>
+                        <div class="singleDataDiv w_21">
+                            <div class="search_input entrySelect">
+                            	<input type="text" class="form-control" name="groupLabel" placeholder="请输入分组标签"
+                                           onmouseover="this.title=this.value"/>
+                            </div>
+                        </div>
+                        <div class="singleDataDiv w_75">
+                            <div class="search_input entrySelect2">
+                                <input type="hidden" name="submitUsers"/>
+                                <input type="text" class="form-control" placeholder="请输入关键字搜索" 
+                                       onmouseover="this.title=this.value" />
+                            </div>
+                        </div>
+                        #end
+                        #if($scmType == 2)
+                        <div class="singleDataDiv w_21">
+                            <div class="search_input entrySelect2">
+                                <input type="hidden" name="submitSuperUsers"/>
+                                <input type="text" class="form-control" placeholder="请输入关键字搜索" 
+                                       onmouseover="this.title=this.value"  />
+                            </div>
+                        </div>
+                        <div class="singleDataDiv w_35">
+                            <div class="search_input entrySelect2">
+                                <input type="hidden" name="submitUsers"/>
+                                <input type="text" class="form-control" placeholder="请输入关键字搜索" 
+                                       onmouseover="this.title=this.value" />
+                            </div>
+                        </div>
+                        <div class="singleDataDiv w_70_url">
+                             <div class="search_input entrySelect">
+                                 <input type="text" class="form-control" name="scmUrl" placeholder="请输入"
+                                           onmouseover="this.title=this.value"/>
+                                 <span onclick='CodeSubmitConfigModal.clearContent(this)' class='btn_clear'></span>
+                             </div>
+                        </div>
+                        <div class="singleDataDiv w_13 p_t_10">
+                            <div class="search_input entrySelect">
+                            	<input type="text" class="form-control" name="groupLabel" placeholder="请输入分组标签"
+                                           onmouseover="this.title=this.value"/>
+                            </div>
+                        </div>
+                        #end
+                        <div class="delSingData" onclick="CodeSubmitConfigModal.cleanConfigValue(this)"><a
+                                class="delFont">清空</a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="def_btnGroup">
+                <button type="button" onclick="CodeSubmitConfigModal.addConfig()" class="btn btn-primary">新增配置</button>
+                <button type="button" onclick="CodeSubmitConfigModal.selectIsSubmit()" class="btn btn-primary">批量选择是否提交</button>
+                <button type="button" onclick="CodeSubmitConfigModal.selectVersion()" class="btn btn-primary">批量选择版本</button>
+                <button type="button" onclick="CodeSubmitConfigModal.selectWindow()" class="btn btn-primary">批量选择投产窗口</button>
+            </div>
+        </div>
+    </div>
+    #if($scmType == 2)
+        <div class="allInfo autoInfo">
+            <div class="def_title">
+                <span>通配符</span>
+                <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+            </div>
+            <div class="def_content">
+                <div class="wildcardArea">
+                    <div class="rowdiv">
+                        <div class="form-group def_col_12 waitTime">
+                            <label class="def_col_15 control-label font_right fontWeihgt">关联仓库：</label>
+                            <div class="def_col_21">
+                                <select class="selectpicker" name="systemScmRepository">
+                                    <option value="">请选择</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group def_col_21 waitTime">
+                            <label class="def_col_8 control-label font_right fontWeihgt">提交用户：</label>
+                            <div class="def_col_28">
+                                <input type="hidden" name="submitUsers"/>
+                                <input type="text" class="form-control" placeholder="请输入关键字搜索" data-bv-field="waitTime"
+                                     onmouseover="this.title=this.value"/>
+                            </div>
+                        </div>
+                        <div class="def_col_3 font_center delFont2"><a
+                                onclick="CodeSubmitConfigModal.delConfigRegex(this)">删除</a></div>
+                        <div class="form-group def_col_36 scriptTop">
+                            <label class="def_col_5 control-label font_right fontWeihgt">通配符：</label>
+                            <div class="def_col_28">
+                            <textarea name="regexScript"
+                                      class="def_textarea"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="def_btnGroup">
+                    <button type="button" class="btn btn-primary" onclick="CodeSubmitConfigModal.addConfigRegex()">增加通配符
+                    </button>
+                </div>
+            </div>
+        </div>
+    #end
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" onclick="CodeSubmitConfigModal.submitCodeSubmitConfig()">提交</button>
+    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+</div>
+
+<script>
+    var accessProtocol = {1: "svn://", 2: "git://", 3: "http://", 4: "https://"};
+
+    var label_search_arr = [];
+    var SystemVersions_arr = [], CommissioningWindows_arr = [], CodeBases_arr = [];
+    
+
+    ## $('.selectpicker').selectpicker('refresh');
+    
+    
+
+    var CodeSubmitConfigModal = {
+    		
+    	//全选
+        allCheck: function (obj) {
+        	var search_txt = '';
+            $('#group_label_serach').find('option').each(function(i,v){
+                if($(v).val() == $('#group_label_serach').val()){
+                    search_txt = $(v).text();
+                }
+            })
+        	if($('#group_label_serach').val()){
+                $('#singDivCont').find(".singleData").each(function(i,v){
+                    if($(v).find('input[name="groupLabel"]').val() == search_txt){
+                    	if ($(obj).is(':checked')) {
+                    		$(v).find("input:checkbox").prop("checked", true);
+                        } else {
+                        	$(v).find("input:checkbox").prop("checked", false);
+                        }
+                    }
+                })
+        	}else{
+        		if ($(obj).is(':checked')) {
+        			$(".singleData :checkbox:not(:eq(0))").prop("checked", true);
+                } else {
+                	$(".singleData :checkbox:not(:eq(0))").prop("checked", false);
+                }
+        	}
+        },
+        //清空配置项
+        cleanConfigValue: function (obj) {
+            $(obj).parent("div.singleData").find("input").val("");
+            $(obj).parent("div.singleData").find(".selectpicker").selectpicker("val", "");
+        },
+        //添加配置项
+        addConfig: function () {
+            var html = $(template("codeSubmitConfigTemplate", {}));
+            $("#singDivCont").append(html);
+            
+            var _parent = $("#singDivCont").find('.singleData').last();
+            var _index =  new Date().getTime().toString().substr(5);
+            var ele_id = 'submitSuperUsers_id'+ _index;
+            var ele = 'submitSuperUsers'+ _index;
+            var ele_id2 = 'submitUsers_id'+ _index;
+            var ele2 = 'submitUsers'+ _index;
+            _parent.find("input[name='submitSuperUsers']").attr('id',ele_id);
+            _parent.find("input[name='submitSuperUsers']").next("input:text").attr('id',ele);
+            _parent.find("input[name='submitUsers']").attr('id',ele_id2);
+            _parent.find("input[name='submitUsers']").next("input:text").attr('id',ele2);
+            CodeSubmitConfigModal.fuzzy_search_setting(ele,ele_id);
+            CodeSubmitConfigModal.fuzzy_search_setting(ele2,ele_id2);
+            
+            CodeSubmitConfigModal.commissioningWindowBindCreateOptions($("#singDivCont").find("div.singleData:last").find("select[name='commissioningWindow']"));
+            CodeSubmitConfigModal.versionBindCreateOptions($("#singDivCont").find("div.singleData:last").find("select[name='systemVersion']"));
+            #if($scmType == 2)
+                $("#singDivCont").find("div.singleData:last").find("select[name='systemScmRepository']").on('shown.bs.select', function () {
+                    CodeSubmitConfigModal.scmRepositoryBindCreateOptions(this, undefined, CodeSubmitConfigModal.adjustScmUrlAftercmRepositoryBindCreateOptions);
+                });
+            #end
+            #if($scmType == 1)
+                $("#singDivCont").find("div.singleData:last").find("select[name='systemScmRepository']").on('shown.bs.select', function () {
+                    CodeSubmitConfigModal.scmRepositoryBindCreateOptions(this);
+                });
+            #end
+            $('.selectpicker').selectpicker('refresh');
+        },
+        //选择子系统版本
+        selectVersion: function () {
+        	CodeSubmitConfigModal.versionBindCreateOptions('#selVersion');
+            $("#versionSelModal").modal('show');
+        },
+        //是否提交
+        selectIsSubmit: function () {
+            $("#isSubmitModal").modal('show');
+        },
+        //选择投产窗口
+        selectWindow: function () {
+        	CodeSubmitConfigModal.commissioningWindowBindCreateOptions('#select_AllWindow');
+            $("#selectWindowModal").modal('show');
+        },
+        //删除配置
+        delConfig: function (obj) {
+            if ($(obj).parent("div.singleData").attr("id") != undefined) {
+                layer.confirm("确认删除该条已生效的配置?", {
+                    btn: ['确定', '取消'], //按钮
+                    title: "提示信息"
+                }, function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "/devManage/version/delCodeSubmitConfig",
+                        dataType: "json",
+                        data: {
+                            id: $(obj).parent("div.singleData").attr("id")
+                        },
+                        contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+                        beforeSend: function () {
+                            layer.closeAll('dialog');
+                        },
+                        success: function (msg) {
+                            if (msg.flag) {
+                                $(obj).parent("div.singleData").remove();
+                            } else {
+                                layer.alert("删除已生效配置失败", {
+                                    icon: 2,
+                                    title: "提示信息"
+                                });
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            if (XMLHttpRequest.status != 999) {
+                                layer.alert("系统异常，请联系管理员", {
+                                    icon: 2,
+                                    title: "提示信息"
+                                });
+                            }
+                        }
+                    });
+                });
+            } else {
+                $(obj).parent("div.singleData").remove();
+            }
+        },
+        
+        //加载系统版本下拉框选项
+        main_select_options: function(){
+        	$.ajax({
+                type: "POST",
+                url: "/devManage/version/getSystemVersions",
+                dataType: "json",
+                data: {
+                    systemId:$systemId
+                },
+                async:false,
+                contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+                beforeSend: function () {
+                    $('#loading').show();
+                },
+                success: function (msg) {
+                    if (msg.flag) {
+                    	SystemVersions_arr = msg.data;
+                    } else {
+                        layer.alert("加载系统版本选项失败", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                    }
+                   // $('#loading').hide();
+                }
+        	})
+        	
+        	//加载投产窗口
+        	$.ajax({
+                type: "POST",
+                url: "/devManage/version/getCommissioningWindows",
+                dataType: "json",
+                async:false,
+                contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+                beforeSend: function () {
+                	$('#loading').show();
+                },
+                success: function (msg) {
+                    if (msg.flag) {
+                    	CommissioningWindows_arr = msg.data;         
+                    } else {
+                        layer.alert("加载投产窗口选项失败", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                    }
+                   // $('#loading').hide();
+                },
+        	})
+        	//加载仓库选项
+        	$.ajax({
+                type: "POST",
+                url: "/devManage/version/getCodeBases",
+                dataType: "json",
+                data: {
+                    systemId:$systemId,
+                    scmType:$scmType
+                },
+                async:false,
+                contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+                beforeSend: function () {
+                	$('#loading').show();
+                },
+                success: function (msg) {
+                    if (msg.flag) {
+                    	CodeBases_arr = msg.data;
+                    } else {
+                        layer.alert("加载仓库选项失败", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                    }
+                   // $('#loading').hide();
+                },
+        	})
+        },
+        //选择子系统版本下拉框
+        versionBindCreateOptions: function (object, selectedValue) {
+            var oldValue = "";
+            var obj = $(object);
+            
+            oldValue = obj.val();
+            obj.find("option").not(":first").remove();
+            
+            var msg = {
+            		data: SystemVersions_arr
+            }
+            for (var i in msg.data) {
+                obj.append('<option value="' + msg.data[i].id + '">' + msg.data[i].version + '</option>');
+            }
+            
+            
+            if (selectedValue != undefined) {
+                obj.selectpicker("val", selectedValue);
+            } else {
+                obj.selectpicker("val", oldValue);
+            }
+            obj.selectpicker('refresh');
+        },
+        //初始化投产窗口下拉框
+        commissioningWindowBindCreateOptions: function (object, selectedValue) {
+            var oldValue = "";
+            var obj = $(object);
+            
+            oldValue = obj.val();
+            obj.find("option").not(":first").remove();
+            
+            var msg = {
+            		data: CommissioningWindows_arr
+            }
+            for (var i in msg.data) {
+                obj.append('<option value="' + msg.data[i].id + '">' + msg.data[i].windowName + '</option>');
+            }
+            
+            
+            if (selectedValue != undefined) {
+                obj.selectpicker("val", selectedValue);
+            } else {
+                obj.selectpicker("val", oldValue);
+            }
+            obj.selectpicker('refresh');
+        },
+        //组装关联仓库下拉框
+        scmRepositoryBindCreateOptions: function (object, selectedValue, func) {
+            var oldValue = "";
+            var obj = $(object);
+            
+            oldValue = obj.val();
+            obj.find("option").not(":first").remove();
+            
+            var msg = {
+            		data:CodeBases_arr
+            }
+            
+            for (var i in msg.data) {
+                var scmUrl = accessProtocol[msg.data[i].accessProtocol] + msg.data[i].ip + ":" + msg.data[i].port;
+                if (msg.data[i].context != undefined) {
+                    scmUrl += msg.data[i].context;
+                }
+                scmUrl += ("/" + msg.data[i].repositoryName + "/");
+                obj.append('<option value="' + msg.data[i].id + '" scmUrl="' + scmUrl + '">' + msg.data[i].repositoryName + '</option>');
+            }
+            
+            if (selectedValue != undefined) {
+                obj.selectpicker("val", selectedValue);
+            } else {
+                var optionNum = obj.find("option").length;
+                if (optionNum == 2) {
+                    oldValue = oldValue == "" ? (obj.find("option").eq(1).val()) : oldValue;
+                }
+                obj.selectpicker("val", oldValue);
+                if (func != undefined && typeof func === "function") {
+                    func(obj);
+                }
+            }            
+            obj.selectpicker('refresh');
+        },
+        #if($scmType == 2)
+            generateScmUrl: function (obj) {
+                var scmUrl = $(obj).find("option:selected").attr('scmUrl');
+                $(obj).parents("div.singleDataDiv").next().find("input[name='scmUrl']").eq(0).val(scmUrl);
+            },
+            //代码提交配置保存
+            submitCodeSubmitConfig: function () {
+                var configData = [];
+                var configRegexData = [];
+                var flag = true;
+                $("#singDivCont").find("div.singleData").each(function (index) {
+                    var config = {};
+                    if ($(this).attr("id") != undefined) {
+                        config.id = $(this).attr("id");
+                    }
+                    config.systemId =$systemId;
+                    //仓库名称必填
+                    var systemScmRepositoryId = $(this).find("select[name='systemScmRepository']").selectpicker('val');
+                    if (systemScmRepositoryId == "") {
+                        layer.alert("配置项第" + (index + 1) + "行关联仓库为空！", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                        flag = false;
+                        return false;
+                    }
+                    var scmRepositoryName = $(this).find("select[name='systemScmRepository']").find("option:selected").text();
+                    //源代码地址必填
+                    var scmUrl = $(this).find("input[name='scmUrl']").val();
+                    if (scmUrl == "") {
+                        layer.alert("配置项第" + (index + 1) + "行源代码地址为空！", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                        flag = false;
+                        return false;
+                    }
+                    var RegUrl = new RegExp();
+                    RegUrl.compile("^(((https|http|svn)?:\/\/)|(git@))[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]");
+                    if (!RegUrl.test(scmUrl)) {
+                        layer.alert("配置项第" + (index + 1) + "行源代码地址格式错误！", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                        flag = false;
+                        return false;
+                    }
+                    //端口号未填则补上
+                    if (!scmUrl.startsWith("git") && scmUrl.match(/.+:(\d{1,5})/) == null) {
+                        var scmUrlArray_1 = scmUrl.split("://", 2);
+                        var scmUrlArray_2 = scmUrlArray_1[1].split("/");
+                        if (scmUrl.startsWith("svn")) {
+                            scmUrlArray_2[0] = scmUrlArray_2[0] + ":3690";
+                        } else if (scmUrl.startsWith("http") || scmUrl.startsWith("https")) {
+                            scmUrlArray_2[0] = scmUrlArray_2[0] + ":80";
+                        }
+                        scmUrl = scmUrlArray_1[0] + "://" + scmUrlArray_2.join("/");
+                    }
+                    //末尾不是以/结尾自动补上
+                    if (!scmUrl.endsWith("/")) {
+                        scmUrl += "/"
+                    }
+                    //svn关联仓库+源代码地址不得重复
+                    var existReposScmUrl = configData.find(function (value, i) {
+                        return value["systemScmRepositoryId"] == systemScmRepositoryId &&
+                                value["scmUrl"] == scmUrl;
+                    });
+                    if (existReposScmUrl != undefined) {
+                        layer.alert("配置项第" + (index + 1) + "行存在重复的关联仓库及源代码地址！", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                        flag = false;
+                        return false;
+                    }
+                    config.systemScmRepositoryId = systemScmRepositoryId;
+                    config.scmRepositoryName = scmRepositoryName;
+                    config.scmUrl = scmUrl;
+                    //是否提交必填
+                    var submitStatus = $(this).find("select[name='submitStatus']").val();
+                    if (submitStatus == "") {
+                        layer.alert("配置项第" + (index + 1) + "行是否提交为空！", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                        flag = false;
+                        return false;
+                    }
+                    config.submitStatus = submitStatus;
+                    var systemVersionId = $(this).find("select[name='systemVersion']").val();
+                    if (systemVersionId != "") {
+                        config.systemVersionId = systemVersionId;
+                    }
+                    var commissioningWindowId = $(this).find("select[name='commissioningWindow']").val();
+                    if (commissioningWindowId != "") {
+                        config.commissioningWindowId = commissioningWindowId;
+                    }
+                    var submitSuperUserNames = $(this).find("input[name='submitSuperUsers']").val();
+                    if (submitSuperUserNames != "") {
+                        config.submitSuperUserNames = submitSuperUserNames;
+                    }
+                    var submitUserNames = $(this).find("input[name='submitUsers']").val();
+                    if (submitUserNames != "") {
+                        config.submitUserNames = submitUserNames;
+                    }
+                    var group_label = $(this).find("input[name='groupLabel']").val();
+                    config.groupFlag = group_label;
+                    
+                    configData.push(config);
+                });
+                $("div.wildcardArea").find("div.rowdiv").each(function (index) {
+                    var configRegex = {};
+                    //仓库名称必填
+                    if ($(this).attr("id") != undefined) {
+                        configRegex.id = $(this).attr("id");
+                    }
+                    configRegex.systemId =$systemId;
+                    configRegex.systemScmRepositoryId = $(this).find("select[name='systemScmRepository']").selectpicker('val');
+                    configRegex.scmRepositoryName = $(this).find("select[name='systemScmRepository']").find("option:selected").text();
+                    configRegex.submitUserNames = $(this).find("input[name='submitUsers']").val();
+                    configRegex.regex = $.trim($(this).find("textarea[name='regexScript']").val());
+                    if (configRegex.systemScmRepositoryId == "" && configRegex.submitUserNames == "" && configRegex.regex == "") {
+                        return true;
+                    }
+                    if (configRegex.systemScmRepositoryId == "") {
+                        layer.alert("通配符配置项第" + (index + 1) + "行关联仓库为空！", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                        flag = false;
+                        return false;
+                    }
+                    if (configRegex.submitUserNames == "") {
+                        layer.alert("通配符配置项第" + (index + 1) + "行提交用户为空！", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                        flag = false;
+                        return false;
+                    }
+                    if (configRegex.regex == "") {
+                        layer.alert("通配符配置项第" + (index + 1) + "行通配符为空！", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                        flag = false;
+                        return false;
+                    }
+                    
+                    configRegexData.push(configRegex);
+                });
+                if (!flag) {
+                    return false;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/devManage/version/saveCodeSubmitConfig",
+                    data: JSON.stringify({
+                        tblSystemScmSubmitList: configData,
+                        tblSystemScmSubmitRegexList: configRegexData
+                    }),
+                    dataType: "json",
+                    contentType: "application/json;charset=UTF-8",
+                    beforeSend: function () {
+                        $("#loading").css('display', 'block');
+                    },
+                    success: function (msg) {
+                        $("#loading").css('display', 'none');
+                        if (msg.flag) {
+                            layer.alert("保存代码提交配置成功", {
+                                icon: 1,
+                                title: "提示信息"
+                            });
+                            $("#codeSubmitConfigModel").modal("hide");
+                        } else {
+                            layer.alert("保存代码提交配置失败", {
+                                icon: 2,
+                                title: "提示信息"
+                            });
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        $("#loading").css('display', 'none');
+                        if (XMLHttpRequest.status != 999) {
+                            layer.alert("系统异常，请联系管理员", {
+                                icon: 2,
+                                title: "提示信息"
+                            });
+                        }
+                    }
+                });
+            },
+            adjustScmUrlAftercmRepositoryBindCreateOptions: function (obj) {
+                var oldScmUrl = $(obj).parents("div.singleDataDiv").next().find("input[name='scmUrl']").eq(0).val();
+                if ($(obj).val() == null) {
+                    $(obj).parents("div.singleDataDiv").next().find("input[name='scmUrl']").eq(0).val("");
+                } else {
+                    if (oldScmUrl != "") {
+                        $(obj).parents("div.singleDataDiv").next().find("input[name='scmUrl']").eq(0).val(oldScmUrl);
+                    } else {
+                        $(obj).parents("div.singleDataDiv").next().find("input[name='scmUrl']").eq(0).val(obj.find("option:selected").attr('scmUrl'));
+                    }
+                }
+            },
+            //删除通配符
+            delConfigRegex: function (obj) {
+                if ($(obj).parents("div.rowdiv").attr("id") != undefined) {
+                    layer.confirm("确认删除该条已生效的配置?", {
+                        btn: ['确定', '取消'], //按钮
+                        title: "提示信息"
+                    }, function () {
+                        $.ajax({
+                            type: "POST",
+                            url: "/devManage/version/delCodeSubmitRegexConfig",
+                            dataType: "json",
+                            data: {
+                                id: $(obj).parents("div.rowdiv").attr("id")
+                            },
+                            contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+                            beforeSend: function () {
+                                layer.closeAll('dialog');
+                            },
+                            success: function (msg) {
+                                if (msg.flag) {
+                                    $(obj).parents("div.rowdiv").remove();
+                                } else {
+                                    layer.alert("删除已生效配置失败", {
+                                        icon: 2,
+                                        title: "提示信息"
+                                    });
+                                }
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                if (XMLHttpRequest.status != 999) {
+                                    layer.alert("系统异常，请联系管理员", {
+                                        icon: 2,
+                                        title: "提示信息"
+                                    });
+                                }
+                            }
+                        });
+                    });
+                } else {
+                    $(obj).parents("div.rowdiv").remove();
+                }
+            },
+            //添加通配符
+            addConfigRegex: function () {
+                var html = $(template("codeSubmitRegexConfigTemplate", {}));
+                $("div.wildcardArea").append(html);
+                
+                var _parent = $("div.wildcardArea").children().last();
+                var _index = _parent.index();
+                var ele_id = 'Users_id'+ _index;
+                var ele = 'Users'+ _index;
+                _parent.find("input[name='submitUsers']").attr('id',ele_id);
+                _parent.find("input[name='submitUsers']").next("input:text").attr('id',ele);
+                CodeSubmitConfigModal.fuzzy_search_setting(ele,ele_id);
+                
+                $('.selectpicker').selectpicker('refresh');
+                $("div.wildcardArea").find("div.rowdiv:last").find("select[name='systemScmRepository']").on('shown.bs.select', function () {
+                    CodeSubmitConfigModal.scmRepositoryBindCreateOptions(this);
+                });
+            },
+        #end
+        #if($scmType == 1)
+            submitCodeSubmitConfig: function () {
+                var configData = [],configRegexData = [];
+                var flag = true;
+                $("#singDivCont").find("div.singleData").each(function (index) {
+                    var config = {};
+                    if ($(this).attr("id") != undefined) {
+                        config.id = $(this).attr("id");
+                    }
+                    config.systemId =$systemId;
+                    //仓库名称必填
+                    var systemScmRepositoryId = $(this).find("select[name='systemScmRepository']").selectpicker('val');
+                    if (systemScmRepositoryId == "") {
+                        layer.alert("第" + (index + 1) + "行关联仓库为空！", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                        flag = false;
+                        return false;
+                    }
+                    var scmRepositoryName = $(this).find("select[name='systemScmRepository']").find("option:selected").text();
+                    //分支名称必填
+                    var scmBranch = $(this).find("input[name='scmBranch']").val();
+                    if (scmBranch == "") {
+                        layer.alert("第" + (index + 1) + "行分支名称为空！", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                        flag = false;
+                        return false;
+                    }
+                    //gitlab关联仓库+分支不得重复
+                    var existReposScmBranch = configData.find(function (value, i) {
+                        return value["systemScmRepositoryId"] == systemScmRepositoryId &&
+                                value["scmBranch"] == scmBranch;
+                    });
+                    if (existReposScmBranch != undefined) {
+                        layer.alert("第" + (index + 1) + "行存在重复的关联仓库及分支名称！", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                        flag = false;
+                        return false;
+                    }
+                    config.systemScmRepositoryId = systemScmRepositoryId;
+                    config.scmRepositoryName = scmRepositoryName;
+                    config.scmBranch = scmBranch;
+                    //是否提交必填
+                    var submitStatus = $(this).find("select[name='submitStatus']").val();
+                    if (submitStatus == "") {
+                        layer.alert("第" + (index + 1) + "行是否提交为空！", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                        flag = false;
+                        return false;
+                    }
+                    config.submitStatus = submitStatus;
+                    var systemVersionId = $(this).find("select[name='systemVersion']").val();
+                    if (systemVersionId != "") {
+                        config.systemVersionId = systemVersionId;
+                    }
+                    var commissioningWindowId = $(this).find("select[name='commissioningWindow']").val();
+                    if (commissioningWindowId != "") {
+                        config.commissioningWindowId = commissioningWindowId;
+                    }
+                    var submitSuperUserNames = $(this).find("input[name='submitSuperUsers']").val();
+                    if (submitSuperUserNames != "") {
+                        config.submitSuperUserNames = submitSuperUserNames;
+                    }
+                    var submitUserNames = $(this).find("input[name='submitUsers']").val();
+                    if (submitUserNames != "") {
+                        config.submitUserNames = submitUserNames;
+                    }
+                    config.groupFlag = $.trim($(this).find("input[name='groupLabel']").val());
+                    configData.push(config);
+                });
+                $("div.wildcardArea").find("div.rowdiv").each(function (index) {
+                    var configRegex = {};
+                    //仓库名称必填
+                    if ($(this).attr("id") != undefined) {
+                        configRegex.id = $(this).attr("id");
+                    }
+                    configRegex.systemId =$systemId;
+                    configRegex.systemScmRepositoryId = $(this).find("select[name='systemScmRepository']").selectpicker('val');
+                    configRegex.scmRepositoryName = $(this).find("select[name='systemScmRepository']").find("option:selected").text();
+                    configRegex.submitUserNames = $(this).find("input[name='submitUsers']").val();
+                    configRegex.regex = $.trim($(this).find("textarea[name='regexScript']").val());
+                    if (configRegex.systemScmRepositoryId == "" && configRegex.submitUserNames == "" && configRegex.regex == "") {
+                        return true;
+                    }
+                    if (configRegex.systemScmRepositoryId == "") {
+                        layer.alert("通配符配置项第" + (index + 1) + "行关联仓库为空！", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                        flag = false;
+                        return false;
+                    }
+                    if (configRegex.submitUserNames == "") {
+                        layer.alert("通配符配置项第" + (index + 1) + "行提交用户为空！", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                        flag = false;
+                        return false;
+                    }
+                    if (configRegex.regex == "") {
+                        layer.alert("通配符配置项第" + (index + 1) + "行通配符为空！", {
+                            icon: 2,
+                            title: "提示信息"
+                        });
+                        flag = false;
+                        return false;
+                    }
+                    
+                    configRegexData.push(configRegex);
+                });
+                if (!flag) {
+                    return false;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/devManage/version/saveCodeSubmitConfig",
+                    //data: JSON.stringify(configData),
+                    data: JSON.stringify({
+                        tblSystemScmSubmitList: configData,
+                        tblSystemScmSubmitRegexList: configRegexData
+                    }),
+                    dataType: "json",
+                    contentType: "application/json;charset=UTF-8",
+                    beforeSend: function () {
+                        $("#loading").css('display', 'block');
+                    },
+                    success: function (msg) {
+                        $("#loading").css('display', 'none');
+                        if (msg.flag) {
+                            layer.alert("保存代码提交配置成功", {
+                                icon: 1,
+                                title: "提示信息"
+                            });
+                            $("#codeSubmitConfigModel").modal("hide");
+                        } else {
+                            layer.alert("保存代码提交配置失败", {
+                                icon: 2,
+                                title: "提示信息"
+                            });
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        $("#loading").css('display', 'none');
+                        if (XMLHttpRequest.status != 999) {
+                            layer.alert("系统异常，请联系管理员", {
+                                icon: 2,
+                                title: "提示信息"
+                            });
+                        }
+                    }
+                });
+            },
+        #end
+        commitVersion: function () {
+            var version = $("#selVersion").selectpicker('val');
+            $(".singleData :checkbox:checked").parents('.singleData').find("select[name=systemVersion]").selectpicker('val', version);
+            $('.selectpicker').selectpicker('refresh');
+            $("#versionSelModal").modal('hide');
+        },
+        commitAllSubmit: function () {
+            var version = $("#submit_AllStatus").selectpicker('val');
+            $(".singleData :checkbox:checked").parents('.singleData').find("select[name=submitStatus]").selectpicker('val', version);
+            $('.selectpicker').selectpicker('refresh');
+            $("#isSubmitModal").modal('hide');
+        },
+        commitselect_AllWindow: function () {
+            var version = $("#select_AllWindow").selectpicker('val');
+            $(".singleData :checkbox:checked").parents('.singleData').find("select[name=commissioningWindow]").selectpicker('val', version);
+            $('.selectpicker').selectpicker('refresh');
+            $("#selectWindowModal").modal('hide');
+        },
+        clearContent: function (obj) {
+            $(obj).parent().children('input').val("");
+        },
+        createFirstRow: function (obj) {
+        	
+        },
+        fuzzy_search_setting: function(ele,ele_id,ids,idsName){
+        		fuzzy_search_checkbox({
+                    'ele': ele,
+                    'url': '/projectManage/plan/selectUserInfoVagueInProject',
+                    'params': {
+                      'userAndAccount': '',
+                      'ids': '',
+                      'systemId': $systemId,
+                    },
+                    'name': 'userName',
+                    'id': 'id',
+                    'top': '28px',
+                    'userId': $("#"+ele_id),
+                });
+        		if(ids && ids.length > 0){
+                      var _list = [];
+                	  var _names = idsName.split(',');
+                	  var _ids = ids.split(',');
+                	  _ids.map(function(v,idx){
+                          _list.push({
+                           'id' : v, 
+                           'name' : _names[idx]
+                          })
+                      })
+                	  $('#'+ele).val('');
+                	  $('#'+ele).parent().addClass('_flex_c  _form-control');
+                	  $('#'+ele).removeAttr('class').addClass('bor_no ' + ele);
+                      var id_join = '';
+                      if (_list != null && _list.length > 0) {
+                        $.each(_list, function (index, element) {
+                           id_join += element['id'] + ',';
+                           element && $('#'+ele).before('<span class="'+ele+'_tag_item input_tit _show _margin_4" '+
+                        		   ' data-id="'+element['id']+'">'+element['name']+'</span>');
+                        })
+                        id_join && $('#'+ele_id).val(id_join.substr(0, id_join.length - 1)).change();//存多选id
+                     }
+                }
+        },
+        create_label_search: function(id,val){
+        	if(val){
+                if(label_search_arr.includes(val)){
+                }else{
+                    label_search_arr.push(val);
+                    $('#group_label_serach').append('<option value="'+id+'">'+val+'</option>');
+                }
+        	}
+        }
+    };
+
+</script>
+<script>
+    $(document).ready(function () {
+    	CodeSubmitConfigModal.main_select_options();
+        #if($codeSubmitConfigList && $codeSubmitConfigList.size()>0)
+            #foreach($codeSubmitConfig in $codeSubmitConfigList)
+            	$("#loading").show();
+                #set($index = $math.sub($velocityCount,1))
+                #if($index>0)
+                    var html = $(template("codeSubmitConfigTemplate", {}));
+                    $("#singDivCont").append(html);                   
+                #end
+                $("#singDivCont").find("div.singleData").eq($index).attr("id",$!codeSubmitConfig.id);
+                #if($scmType == 2)
+                    $("#singDivCont").find("input[name='scmUrl']").eq($index).val("$!codeSubmitConfig.scmUrl");
+                    CodeSubmitConfigModal.scmRepositoryBindCreateOptions($("#singDivCont").find("select[name='systemScmRepository']").eq($index),$!codeSubmitConfig.systemScmRepositoryId , CodeSubmitConfigModal.adjustScmUrlAftercmRepositoryBindCreateOptions);
+                #end
+                #if($scmType == 1)
+                    $("#singDivCont").find("input[name='scmBranch']").eq($index).val("$!codeSubmitConfig.scmBranch");
+                    CodeSubmitConfigModal.scmRepositoryBindCreateOptions($("#singDivCont").find("select[name='systemScmRepository']").eq($index),$!codeSubmitConfig.systemScmRepositoryId);
+                #end
+                $("#singDivCont").find("select[name='submitStatus']").eq($index).selectpicker('val', $codeSubmitConfig.submitStatus);
+                CodeSubmitConfigModal.versionBindCreateOptions($("#singDivCont").find("select[name='systemVersion']").eq($index),$!codeSubmitConfig.systemVersionId);
+                CodeSubmitConfigModal.commissioningWindowBindCreateOptions($("#singDivCont").find("select[name='commissioningWindow']").eq($index),$!codeSubmitConfig.commissioningWindowId);
+                $("#singDivCont").find("input[name='groupLabel']").eq($index).val("$!codeSubmitConfig.groupFlag");
+                
+                CodeSubmitConfigModal.create_label_search("$!codeSubmitConfig.id","$!codeSubmitConfig.groupFlag");
+                
+                var ele_id = 'submitSuperUsers_id' + $index;
+                var ele = 'submitSuperUsers' + $index;
+                var ele_id2 = 'submitUsers_id' + $index;
+                var ele2 = 'submitUsers' + $index;
+                $("#singDivCont").find("input[name='submitSuperUsers']").eq($index).attr('id',ele_id);
+                $("#singDivCont").find("input[name='submitSuperUsers']").eq($index).next("input:text").attr('id',ele);
+                $("#singDivCont").find("input[name='submitUsers']").eq($index).attr('id',ele_id2);
+                $("#singDivCont").find("input[name='submitUsers']").eq($index).next("input:text").attr('id',ele2);
+                var _ids = '$!codeSubmitConfig.submitSuperUserNames';
+                var _ids_name = '$!codeSubmitConfig.submitSuperUserRealNames';
+                
+                var _ids2 = '$!codeSubmitConfig.submitUserNames';
+                var _ids2_name = '$!codeSubmitConfig.submitUserRealNames';
+                
+                CodeSubmitConfigModal.fuzzy_search_setting(ele,ele_id,_ids,_ids_name);
+                CodeSubmitConfigModal.fuzzy_search_setting(ele2,ele_id2,_ids2,_ids2_name);
+                
+            #end
+            ##$('.selectpicker').selectpicker('refresh');
+            $('#group_label_serach').selectpicker('refresh');
+        #else
+            #if($scmType == 2)
+                CodeSubmitConfigModal.scmRepositoryBindCreateOptions($("#singDivCont").find("select[name='systemScmRepository']"), undefined, CodeSubmitConfigModal.adjustScmUrlAftercmRepositoryBindCreateOptions);
+            #end
+            #if($scmType == 1)
+                CodeSubmitConfigModal.scmRepositoryBindCreateOptions($("#singDivCont").find("select[name='systemScmRepository']"));
+            #end
+            CodeSubmitConfigModal.versionBindCreateOptions($("#singDivCont").find("select[name='systemVersion']"));
+            CodeSubmitConfigModal.commissioningWindowBindCreateOptions($("#singDivCont").find("select[name='commissioningWindow']"));
+            
+            var _idx = 0;
+            var ele_id = 'submitSuperUsers_id' + _idx;
+            var ele = 'submitSuperUsers' + _idx;
+            var ele_id2 = 'submitUsers_id' + _idx;
+            var ele2 = 'submitUsers' + _idx;
+            $("#singDivCont").find("input[name='submitSuperUsers']").eq(_idx).attr('id',ele_id);
+            $("#singDivCont").find("input[name='submitSuperUsers']").eq(_idx).next("input:text").attr('id',ele);
+            $("#singDivCont").find("input[name='submitUsers']").eq(_idx).attr('id',ele_id2);
+            $("#singDivCont").find("input[name='submitUsers']").eq(_idx).next("input:text").attr('id',ele2);
+            var _ids = '$!codeSubmitConfig.submitSuperUserNames';
+            var _ids_name = '$!codeSubmitConfig.submitSuperUserRealNames';
+            
+            var _ids2 = '$!codeSubmitConfig.submitUserNames';
+            var _ids2_name = '$!codeSubmitConfig.submitUserRealNames';
+            
+            CodeSubmitConfigModal.fuzzy_search_setting(ele,ele_id,_ids,_ids_name);
+            CodeSubmitConfigModal.fuzzy_search_setting(ele2,ele_id2,_ids2,_ids2_name);
+        #end
+        $.ajax({
+            type: "POST",
+            url: "/devManage/version/getSystemScmSubmitRegexConfigList",
+            dataType: "json",
+            data: {
+                systemId:$systemId
+            },
+            async : false,
+            beforeSend: function(){
+            	$("#loading").show();
+            },
+            contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+            success: function (msg) {
+                if (msg.flag) {
+                    if (msg.data.length > 0) {
+                        for (var i in msg.data) {
+                            if (i > 0) {
+                                var html = $(template("codeSubmitRegexConfigTemplate", {}));
+                                $("div.wildcardArea").append(html);
+                                
+                            }
+                            $("div.wildcardArea").find("div.rowdiv").eq(i).attr("id", msg.data[i].id);
+                            if (msg.data[i].systemScmRepositoryId != null && msg.data[i].systemScmRepositoryId != "") {
+                                CodeSubmitConfigModal.scmRepositoryBindCreateOptions($("div.wildcardArea").find("select[name='systemScmRepository']").eq(i), msg.data[i].systemScmRepositoryId);
+                            }
+                            
+                            var _parent = $("div.wildcardArea");
+                            var ele_id = 'Users_id'+ i;
+                            var ele = 'Users'+ i;
+                            _parent.find("input[name='submitUsers']").eq(i).attr('id',ele_id);
+                            _parent.find("input[name='submitUsers']").eq(i).next("input:text").attr('id',ele);
+                           
+                            CodeSubmitConfigModal.fuzzy_search_setting(ele,ele_id,msg.data[i].submitUserNames,msg.data[i].submitUserRealNames);
+                            
+                            $("div.wildcardArea").find("textarea[name='regexScript']").eq(i).val(msg.data[i].regex);
+                        }
+                        
+                    }else{
+                    	var _parent = $("div.wildcardArea").children();
+                        var _index = _parent.index();
+                        var ele_id = 'Users_id'+ _index;
+                        var ele = 'Users'+ _index;
+                        _parent.find("input[name='submitUsers']").attr('id',ele_id);
+                        _parent.find("input[name='submitUsers']").next("input:text").attr('id',ele);
+                        CodeSubmitConfigModal.fuzzy_search_setting(ele,ele_id);
+                    }
+                    $('.selectpicker').selectpicker('refresh');
+                } else {
+                    layer.alert("加载通配符配置项失败", {
+                        icon: 2,
+                        title: "提示信息"
+                    });
+                }
+                $("#loading").hide();
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                if (XMLHttpRequest.status != 999) {
+                    layer.alert("系统异常，请联系管理员", {
+                        icon: 2,
+                        title: "提示信息"
+                    });
+                }
+            }
+        });
+        
+        //svn
+        #if($scmType == 2)
+            $("#singDivCont").children("select[name='systemScmRepository']").on('shown.bs.select', function () {
+                CodeSubmitConfigModal.scmRepositoryBindCreateOptions(this, undefined, CodeSubmitConfigModal.adjustScmUrlAftercmRepositoryBindCreateOptions);
+            });
+        #end
+        //GIT
+        #if($scmType == 1)
+            $("#singDivCont").children("select[name='systemScmRepository']").on('shown.bs.select', function () {
+                CodeSubmitConfigModal.scmRepositoryBindCreateOptions(this);
+            });
+        #end
+        $("div.wildcardArea").find("select[name='systemScmRepository']").on('shown.bs.select', function () {
+            CodeSubmitConfigModal.scmRepositoryBindCreateOptions(this);
+        });
+        $("#singDivCont").children("select[name='systemVersion']").on('shown.bs.select', function () {
+            CodeSubmitConfigModal.versionBindCreateOptions(this);
+        });
+        $("#singDivCont").children("select[name='commissioningWindow']").on('shown.bs.select', function () {
+            CodeSubmitConfigModal.commissioningWindowBindCreateOptions(this);
+        });
+        
+        $('#group_label_serach').on('change',function(){
+        	if( $('#group_label_serach').val()){
+                var search_txt = '';
+                $('#group_label_serach').find('option').each(function(i,v){
+                    if($(v).val() == $('#group_label_serach').val()){
+                        search_txt = $(v).text();
+                    }
+                })
+        		$('#singDivCont').find('.singleData').each(function(idx,val){
+        			if($.trim($(val).find('input[name="groupLabel"]').val()) ==  search_txt){
+        				$(val).show();
+        			}else{
+        				$(val).hide();
+        			}
+        		})
+        	}else{
+        		$('#singDivCont').find('.singleData').show();
+        	}
+        })
+    });
+</script>
+
+## 配置项 数据模板
+<script id="codeSubmitConfigTemplate" type="text/html">
+    <div class="singleData">
+        <div class="singcheckBox">
+            <input type="checkbox">
+        </div>
+        <div class="singleDataDiv">
+            <div class="search_input entrySelect">
+                <select class="selectpicker" name="systemScmRepository"
+                    #if($scmType == 2)
+                        onchange="CodeSubmitConfigModal.generateScmUrl(this)"
+                    #end
+                >
+                    <option value="">请选择</option>
+                </select>
+            </div>
+        </div>
+        #if($scmType == 1)
+            <div class="singleDataDiv">
+                <div class="search_input entrySelect">
+                    <input type="text" class="form-control" name="scmBranch" placeholder="请输入"
+                           onmouseover="this.title=this.value"/>
+                    <span onclick='CodeSubmitConfigModal.clearContent(this)' class='btn_clear'></span>
+                </div>
+            </div>
+        #end
+        <div class="singleDataDiv w_10">
+            <div class="search_input entrySelect">
+                <select class="selectpicker" name="submitStatus">
+                    <option value="">请选择</option>
+                    <option value="1">是</option>
+                    <option value="2">否</option>
+                </select>
+            </div>
+        </div>
+        <div class="singleDataDiv w_15">
+            <div class="search_input entrySelect">
+                <select class="selectpicker" name="systemVersion">
+                    <option value="">请选择</option>
+                </select>
+            </div>
+        </div>
+        <div class="singleDataDiv w_15">
+            <div class="search_input entrySelect">
+                <select class="selectpicker" name="commissioningWindow">
+                    <option value="">请选择</option>
+                </select>
+            </div>
+        </div>
+		#if($scmType == 1)
+		<div class="singleDataDiv w_21">
+            <div class="search_input entrySelect2">
+                <input type="hidden" name="submitSuperUsers"/>
+                <input type="text" class="form-control" placeholder="请输入关键字搜索" onmouseover="this.title=this.value"/>
+            </div>
+        </div>
+		<div class="singleDataDiv w_21">
+             <div class="search_input entrySelect">
+					<input type="text" class="form-control" name="groupLabel" placeholder="请输入分组标签"
+                           onmouseover="this.title=this.value"/>
+             </div>
+        </div>	
+        <div class="singleDataDiv w_75">
+            <div class="search_input entrySelect2">
+                <input type="hidden" name="submitUsers"/>
+                <input type="text" class="form-control" placeholder="请输入关键字搜索" onmouseover="this.title=this.value"/>
+            </div>
+        </div>
+		#end
+		#if($scmType == 2)
+		<div class="singleDataDiv w_21">
+            <div class="search_input entrySelect2">
+                <input type="hidden" name="submitSuperUsers"/>
+                <input type="text" class="form-control" placeholder="请输入关键字搜索" onmouseover="this.title=this.value"/>
+            </div>
+        </div>
+		<div class="singleDataDiv w_35">
+            <div class="search_input entrySelect2">
+                <input type="hidden" name="submitUsers"/>
+                <input type="text" class="form-control" placeholder="请输入关键字搜索" onmouseover="this.title=this.value"/>
+            </div>
+        </div>
+        <div class="singleDataDiv w_70_url">
+                <div class="search_input entrySelect">
+                    <input type="text" class="form-control" name="scmUrl" placeholder="请输入"
+                           onmouseover="this.title=this.value"/>
+                    <span onclick='CodeSubmitConfigModal.clearContent(this)' class='btn_clear'></span>
+                </div>
+        </div>
+		<div class="singleDataDiv w_13 p_t_10">
+             <div class="search_input entrySelect">
+					<input type="text" class="form-control" name="groupLabel" placeholder="请输入分组标签"
+                           onmouseover="this.title=this.value"/>
+             </div>
+        </div>	
+        #end
+			
+
+        <div class="delSingData" onclick="CodeSubmitConfigModal.cleanConfigValue(this)"><a class="delFont">清空</a></div>
+        <div class="delSingData" onclick="CodeSubmitConfigModal.delConfig(this)"><a class="delFont">删除</a></div>
+    </div>
+</script>
+
+## 通配符 数据模板
+<script id="codeSubmitRegexConfigTemplate" type="text/html">
+    <div class="rowdiv">
+        <div class="form-group def_col_12 waitTime">
+            <label class="def_col_15 control-label font_right fontWeihgt">关联仓库：</label>
+            <div class="def_col_21">
+                <select class="selectpicker" name="systemScmRepository">
+                    <option value="">请选择</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group def_col_21 waitTime">
+            <label class="def_col_8 control-label font_right fontWeihgt">提交用户：</label>
+            <div class="def_col_28">
+                <input type="hidden" name="submitUsers"/>
+                <input type="text" class="form-control" placeholder="请输入关键字搜索" data-bv-field="waitTime"
+                       placeholder="请选择" onmouseover="this.title=this.value" />
+            </div>
+        </div>
+        <div class="def_col_3 font_center delFont2"><a onclick="CodeSubmitConfigModal.delConfigRegex(this)">删除</a></div>
+        <div class="form-group def_col_36 scriptTop">
+            <label class="def_col_5 control-label font_right fontWeihgt">通配符：</label>
+            <div class="def_col_28">
+                <textarea name="regexScript" class="def_textarea"></textarea>
+            </div>
+        </div>
+    </div>
+</script>

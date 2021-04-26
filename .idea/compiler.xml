@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="common" />
+        <module name="config" />
+        <module name="devManage" />
+        <module name="devManageWeb" />
+        <module name="eureka" />
+        <module name="jobManage" />
+        <module name="projectManage" />
+        <module name="projectManageWeb" />
+        <module name="reportManage" />
+        <module name="system" />
+        <module name="systemWeb" />
+        <module name="testManage" />
+        <module name="testManageWeb" />
+        <module name="zuul" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="common" target="1.8" />
+      <module name="config" target="1.8" />
+      <module name="devManage" target="1.8" />
+      <module name="devManageWeb" target="1.8" />
+      <module name="eureka" target="1.8" />
+      <module name="itmp" target="1.8" />
+      <module name="jobManage" target="1.8" />
+      <module name="projectManage" target="1.8" />
+      <module name="projectManageWeb" target="1.8" />
+      <module name="reportManage" target="1.8" />
+      <module name="system" target="1.8" />
+      <module name="systemWeb" target="1.8" />
+      <module name="testManage" target="1.8" />
+      <module name="testManageWeb" target="1.8" />
+      <module name="zuul" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

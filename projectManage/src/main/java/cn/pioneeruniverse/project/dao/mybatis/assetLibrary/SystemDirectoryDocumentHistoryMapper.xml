@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.assetLibrary.SystemDirectoryDocumentHistoryDao">
+
+<!-- 通过文档ID获取文档历史信息，documentId：文档ID -->
+    <select id="getSystemDirectoryHistoryByDocumentId" resultMap="systemDirectoryDocumentHistoryDTOMap"
+            resultType="java.util.List">
+       SELECT
+        tsddh.ID,
+        tsddh.SYSTEM_DIRECTORY_DOCUMENT_ID,
+       tsddh.DOCUMENT_NAME,
+       tsddh.DOCUMENT_VERSION,
+       tsddh.DOCUMENT_S3_BUCKET,
+       tsddh.DOCUMENT_S3_KEY,
+       tsddh.DOCUMENT_MONGO_KEY,
+       tsddh.SAVE_TYPE,
+       CASE WHEN tsddh.LAST_UPDATE_BY IS NOT NULL THEN (SELECT TUI.USER_NAME FROM tbl_user_info TUI WHERE TUI.ID = tsddh.LAST_UPDATE_BY LIMIT 1) ELSE NULL END AS "UPDATE_USER_NAME",
+       tsddh.LAST_UPDATE_DATE
+       FROM tbl_system_directory_document_history tsddh
+       WHERE
+       tsddh.STATUS = 1
+       AND tsddh.SYSTEM_DIRECTORY_DOCUMENT_ID = #{documentId}
+       ORDER BY tsddh.LAST_UPDATE_DATE DESC
+    </select>
+
+<!-- 新增文档历史 -->
+    <insert id="insertDirectoryDocumentHistory"
+            parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument" useGeneratedKeys="true"
+            keyProperty="id">
+       INSERT INTO tbl_system_directory_document_history(
+         SYSTEM_DIRECTORY_DOCUMENT_ID,
+         DOCUMENT_NAME,
+         DOCUMENT_VERSION,
+         DOCUMENT_TYPE,
+         SAVE_TYPE,
+         CHECKOUT_USER_ID,
+         DOCUMENT_S3_BUCKET,
+         DOCUMENT_S3_KEY,
+         DOCUMENT_MONGO_KEY,
+         STATUS,
+         CREATE_BY,
+         CREATE_DATE,
+         LAST_UPDATE_BY,
+         LAST_UPDATE_DATE
+       ) VALUES (
+         #{id},
+         #{documentName},
+         #{documentVersion},
+         #{documentType},
+         #{saveType},
+         #{checkoutUserId},
+         #{documentS3Bucket},
+         #{documentS3Key},
+         #{documentMongoKey},
+         #{status},
+         #{createBy},
+         #{createDate},
+         #{lastUpdateBy},
+         #{lastUpdateDate}
+       )
+    </insert>
+
+    <resultMap id="systemDirectoryDocumentHistoryMap"
+               type="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentHistory">
+        <id column="ID" property="id"/>
+        <result column="SYSTEM_DIRECTORY_DOCUMENT_ID" property="systemDirectoryDocumentId"/>
+        <result column="REQUIREMENT_ID" property="requirementId"/>
+        <result column="DOCUMENT_NAME" property="documentName"/>
+        <result column="DOCUMENT_VERSION" property="documentVersion"/>
+        <result column="DOCUMENT_TYPE" property="documentType"/>
+        <result column="SAVE_TYPE" property="saveType"/>
+        <result column="CHECKOUT_USER_ID" property="checkOutUserId"/>
+        <result column="DOCUMENT_S3_BUCKET" property="documentS3Bucket"/>
+        <result column="DOCUMENT_S3_KEY" property="documentS3Key"/>
+        <result column="DOCUMENT_MONGO_KEY" property="documentMongoKey"/>
+        <result column="STATUS" property="status"/>
+        <result column="CREATE_BY" property="createBy"/>
+        <result column="CREATE_DATE" property="createDate"/>
+        <result column="LAST_UPDATE_BY" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate"/>
+    </resultMap>
+
+    <resultMap id="systemDirectoryDocumentHistoryDTOMap"
+               type="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentHistory"
+               extends="systemDirectoryDocumentHistoryMap">
+        <result property="updateUserName" column="UPDATE_USER_NAME"/>
+        <association property="relatedRequirement" javaType="cn.pioneeruniverse.project.entity.TblRequirementInfo"
+                     column="{systemDirectoryDocumentId=SYSTEM_DIRECTORY_DOCUMENT_ID,documentVersion=DOCUMENT_VERSION}"
+                     select="cn.pioneeruniverse.project.dao.mybatis.assetLibrary.TblSystemDirectoryDocumentRequirementMapper.getSystemRequirementBySystemDirDocIdAndVersion">
+
+        </association>
+    </resultMap>
+</mapper>

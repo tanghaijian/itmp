@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>人员管理</title>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/daterangepicker-bs3.css"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css"/>
+		<link rel="stylesheet" type="text/css" media="screen" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css"/>
+
+		<link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/personnelManagement/personnelManagement.css"/>
+
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/moment.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/daterangepicker.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+		<script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+		<script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+		<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+		<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/laydate.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/common/fuzzy_serach.js"></script>
+		<script type="text/javascript" src="#springUrl('')/projectManageui/static/js/personnelManagement/personnelManagement.js"></script>
+		<script>
+				$.jgrid.defaults.responsive = true;
+				$.jgrid.defaults.styleUI = 'Bootstrap4';
+				$.jgrid.defaults.iconSet = "fontAwesome";
+				var ctxStatic = "${ctxStatic}";
+
+				var windowEdit = $auth.hasPermission("$token", "projectManage:window:edit");
+				var windowDelete = $auth.hasPermission("$token", "projectManage:window:delete");
+				var windowRelation = $auth.hasPermission("$token", "projectManage:window:relation");
+		</script>
+</head>
+<body>
+<div class="cmn_cont drc-pa" id="main">
+		<!-- 查询部分 -->
+		<div class="cmn_search_group color1">
+				<div class="form-slide-wrap">
+						<form class="cmn_search_fm" id="filterFm" role="form">
+								<div class="container-fluid" id="search_div">
+										<div class="row control-row">
+												<div class="col-md-4">
+														<div class="search_font">
+															<label class="control-label">姓名：</label>
+														</div>
+														<div class="search_input">
+															<input type="text" id="name" class="form-control _ClearVal" placeholder="请输入"/>
+														</div>
+												</div>
+												<div class="col-md-4">
+														<div class="search_font">
+															<label class="control-label">用户名：</label>
+														</div>
+														<div class="search_input">
+															<input type="text" id="userName" class="form-control _ClearVal" placeholder="请输入"/>
+														</div>
+												</div>
+												<div class="col-md-4">
+														<div class="search_font">
+																<label class="control-label">所属公司：</label>
+														</div>
+														<div class="search_input">
+															<input id="company_id" type="hidden"" class="_ClearVal"/>
+															<input id="company" type="text"  class="form-control _ClearVal" placeholder="请输入关键字进行搜索"/>
+														</div>
+												</div>
+										</div>
+										<div class="row control-row">
+												<div class="col-md-4">
+														<div class="search_font">
+																<label class="control-label">所属部门：</label>
+														</div>
+														<div class="search_input">
+															<input id="department_id" type="hidden"" class="_ClearVal"/>
+															<input type="text" id="department" class="form-control _ClearVal" placeholder="请输入关键字进行搜索"/>
+														</div>
+												</div>
+												<div class="col-md-4">
+														<div class="search_font">
+																<label class="control-label">项目组名称：</label>
+														</div>
+														<div class="search_input">
+															<input id="project_name_id" type="hidden"" class="_ClearVal"/>
+															<input type="text" id="project_name"  class="form-control _ClearVal" placeholder="请输入关键字进行搜索"/>
+														</div>
+												</div>
+												<div class="col-md-4">
+														<div class="search_font">
+																<label class="control-label">项目组编号：</label>
+														</div>
+														<div class="search_input">
+															<input id="project_number_id" type="hidden"" class="_ClearVal"/>
+															<input type="text" id="project_number" class="form-control _ClearVal" placeholder="请输入关键字进行搜索"/>
+														</div>
+												</div>
+										</div>
+										<div class="row control-row search_btn">
+												<button type="button" onclick="search()" class="btn btn-primary btn_search">搜&nbsp;&nbsp;&nbsp;索</button>
+												<button type="button" onclick="_reset()" class="btn btn btn-default btn_reset">重&nbsp;&nbsp;&nbsp;置</button>
+										</div>
+								</div>
+						</form>
+				</div>
+				<div class="btn_toggle downBtn" id="downBtn">
+						<span class="fa fa-caret-up"></span>
+				</div>
+		</div>
+</div>
+<!-- 按钮组 -->
+<div class="cmn_table_block main-content">
+		<div class="tb_btn_wrp content-btn">
+				<button type="button" onclick="setGroup()" class="btn btn-primary btn_create_custoc">设置项目组</button>
+		</div>
+		<div class="tb_table_wrp content-table" ref="tbTableWrp">
+				<!-- jqGrid start -->
+				<table id="list2"></table>
+				<div id="pager2"></div>
+				<!-- jqGrid end-->
+		</div>
+</div>
+
+<!-- 设置项目组弹框-->
+<div class="modal fade in cmn_cont drc-pb" id="add" tabindex="-1" role="dialog" aria-labelledby="">
+		<div class="modal-dialog modal-lg  _Max_lg" role="document">
+				<div class="modal-content _Max_content">
+						<div class="modal-header cmn_cont_title">
+								<p class="txt">设置项目组</p>
+								<input id="set_project_id" type="hidden" />
+						</div>
+						<div class="modal-body">
+							<div class="tb_blk_s1">
+									<div class="fm_group">
+											<form role="form" class="form-horizontal" id="addForm">
+													<div class="rowdiv">
+															<label class="col-md-1 font_right control-label fontWeihgt">人员：</label>
+															<label class="col-md-11 def_Div form-contro">
+																	<input id="UserInfo_id" type="hidden"  class=""/>
+																	<input id="UserInfo" name="UserInfo" class="form-control def_hideDiv fakeInput" type="text" placeholder="请输入关键字进行搜索"/>
+                                  <small class="help-block _hide" data-bv-validator="notEmpty" data-bv-for="UserInfo" data-bv-result="NOT_VALIDATED" style="">人员不能为空</small>
+															</label>
+															## <button type="button" onclick="checkAll()" class="btn btn-primary col-md-2">查看全部人员</button>
+													</div>
+													<div class="rowdiv">
+															<div class="col-md-3">
+																	<div class="search_font">
+																			<label class="control-label">岗位：</label>
+																			<input id="station_id" type="hidden"  class=""/>
+																	</div>
+																	<div class="search_input">
+																			<select id="station" name="station" class="form-control _ClearSelectVal selectpicker">
+																					<option value="">请选择</option>
+																					#foreach($dictMap in ${dict.getDictMap(
+																							"TBL_PROJECT_GROUP_USER_USER_POST").entrySet()})
+																							<option value="${dictMap.key}">${dictMap.value}</option>
+																					#end
+																			</select>
+																	</div>
+															</div>
+															<div class="col-md-3">
+																	<div class="search_font">
+																			<label class="control-label">项目组：</label>
+																	</div>
+																	<div class="search_input">
+																			##<select id="projectGroup" name="projectGroup" multiple class="form-control _ClearSelectVal selectpicker">
+																			<select id="projectGroup" name="projectGroup" class="form-control _ClearSelectVal selectpicker">
+																					<option value="">请选择</option>
+																					<option value="0">全选</option>
+																			</select>
+																	</div>
+															</div>
+															<div class="col-md-3 _hide" id="group_control">
+																	<div class="search_font">
+																			<label class="control-label">小组：</label>
+																			<input id="group_id" type="hidden"  class=""/>
+																	</div>
+																	<div class="search_input">
+																			<select id="group" name="group" class="form-control _ClearSelectVal selectpicker"></select>
+																	</div>
+															</div>
+															<div class="col-md-3 _hide" id="add_btn">
+                                                                <div class="search_input">
+                                                                    <button type="button" onclick="add()" class="btn btn-primary btn_submit">添加</button>
+                                                                </div>
+
+															</div>
+													</div>
+
+											</form>
+
+									</div>
+							</div>
+							<ul class="tb_blk_s12 _hide" id="group_list_toggle" style="">
+								<div class="rowdiv">
+							      <label class="col-md-4 font_center control-label fontWeihgt">岗位</label>
+							      <label class="col-md-4 font_center control-label fontWeihgt">项目组</label>
+							      <label class="col-md-4 font_center control-label fontWeihgt">小组</label>
+							    </div>
+							    <div id="group_list"></div>
+							</ul>
+						</div>
+						<div class="modal-footer tb_btn_group ">
+								<button type="button" onclick="addSubmit()" class="btn btn-primary btn_submit">保存</button>
+								<button type="button" class="btn btn-default btn_close" data-dismiss="modal">取消</button>
+						</div>
+				</div>
+		</div>
+</div>
+
+<div id="loading">
+		<img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif"/>
+</div>
+</body>
+</html>

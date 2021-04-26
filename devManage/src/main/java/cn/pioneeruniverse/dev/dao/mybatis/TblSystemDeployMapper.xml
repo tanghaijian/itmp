@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="cn.pioneeruniverse.dev.dao.mybatis.TblSystemDeployMapper">
+	<resultMap id="BaseResultMap"
+		type="cn.pioneeruniverse.dev.entity.TblSystemDeploy">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="ENVIRONMENT_TYPE" jdbcType="TINYINT"
+			property="environmentType" />
+		<result column="SYSTEM_ID" jdbcType="BIGINT"
+			property="systemId" />
+		<result column="SYSTEM_MODULE_ID" jdbcType="BIGINT"
+			property="systemModuleId" />
+		<result column="SERVER_IDS" jdbcType="VARCHAR"
+			property="serverIds" />
+		<result column="SYSTEM_DEPLOY_PATH" jdbcType="VARCHAR"
+			property="systemDeployPath" />
+		<result column="TIME_OUT" jdbcType="INTEGER" property="timeOut" />
+		<result column="RETRY_NUMBER" jdbcType="TINYINT"
+			property="retryNumber" />
+		<result column="DEPLOY_SEQUENCE" jdbcType="TINYINT"
+			property="deploySequence" />
+		<result column="TOOL_ID" jdbcType="BIGINT" property="toolId" />
+		<result column="DEPLOY_STATUS" jdbcType="TINYINT"
+			property="deployStatus" />
+		<result column="STOP_SYSTEM_SCRIPT" jdbcType="VARCHAR"
+			property="stopSystemScript" />
+		<result column="START_SYSTEM_SCRIPT" jdbcType="VARCHAR"
+			property="startSystemScript" />
+		<result column="STATUS" jdbcType="TINYINT" property="status" />
+		<result column="TEMPLATE_TYPE" jdbcType="TINYINT" property="templateType" />
+		<result column="CREATE_BY" jdbcType="BIGINT"
+			property="createBy" />
+		<result column="CREATE_DATE" jdbcType="TIMESTAMP"
+			property="createDate" />
+		<result column="LAST_UPDATE_BY" jdbcType="BIGINT"
+			property="lastUpdateBy" />
+		<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP"
+			property="lastUpdateDate" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, ENVIRONMENT_TYPE, SYSTEM_ID, SYSTEM_MODULE_ID,TEMPLATE_TYPE,
+		SERVER_IDS,
+		SYSTEM_DEPLOY_PATH,
+		TIME_OUT,
+		RETRY_NUMBER,DEPLOY_SEQUENCE,STOP_SYSTEM_SCRIPT,START_SYSTEM_SCRIPT,TOOL_ID,
+		DEPLOY_STATUS, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY,
+		LAST_UPDATE_DATE
+	</sql>
+<!--	查询-->
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tbl_system_deploy
+		where ID = #{id,jdbcType=BIGINT} and STATUS = 1
+	</select>
+<!--	查询系统部署信息-->
+	<select id="selectByCon"
+		parameterType="cn.pioneeruniverse.dev.entity.TblSystemDeploy"
+		resultMap="BaseResultMap" resultType="list">
+		select
+		<include refid="Base_Column_List" />
+		from tbl_system_deploy
+		<where>
+			<if test="environmentType != null">
+				and ENVIRONMENT_TYPE=#{environmentType}
+			</if>
+			<if test="systemId != null">
+				and SYSTEM_ID=#{systemId}
+			</if>
+			<if test="systemModuleId != null">
+				and SYSTEM_MODULE_ID=#{systemModuleId}
+			</if>
+			and STATUS = 1
+		</where>
+	</select>
+<!--	删除-->
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from
+		tbl_system_deploy
+		where ID = #{id,jdbcType=BIGINT}
+	</delete>
+<!--	插入-->
+	<insert id="insert"
+		parameterType="cn.pioneeruniverse.dev.entity.TblSystemDeploy">
+		<selectKey keyProperty="id" order="AFTER"
+			resultType="java.lang.Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into tbl_system_deploy (ENVIRONMENT_TYPE, SYSTEM_ID,
+		SYSTEM_MODULE_ID, SERVER_IDS, SYSTEM_DEPLOY_PATH,
+		TIME_OUT,
+		RETRY_NUMBER, DEPLOY_SEQUENCE, TOOL_ID,
+		DEPLOY_STATUS, STATUS, CREATE_BY,
+		CREATE_DATE,
+		LAST_UPDATE_BY, LAST_UPDATE_DATE,
+		STOP_SYSTEM_SCRIPT,
+		START_SYSTEM_SCRIPT,
+		TEMPLATE_TYPE
+		)
+		values (#{environmentType,jdbcType=TINYINT},
+		#{systemId,jdbcType=BIGINT},
+		#{systemModuleId,jdbcType=BIGINT},
+		#{serverIds,jdbcType=VARCHAR},
+		#{systemDeployPath,jdbcType=VARCHAR},
+		#{timeOut,jdbcType=INTEGER}, #{retryNumber,jdbcType=TINYINT}, #{deploySequence,jdbcType=TINYINT},
+		#{toolId,jdbcType=BIGINT},
+		#{deployStatus,jdbcType=TINYINT},
+		#{status,jdbcType=TINYINT},
+		#{createBy,jdbcType=BIGINT},
+		#{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT},
+		#{lastUpdateDate,jdbcType=TIMESTAMP},
+		#{stopSystemScript,jdbcType=LONGVARCHAR},
+		#{startSystemScript,jdbcType=LONGVARCHAR},
+		#{templateType,jdbcType=TINYINT}
+		)
+	</insert>
+<!--更新-->
+	<update id="updateByPrimaryKeySelective"
+		parameterType="cn.pioneeruniverse.dev.entity.TblSystemDeploy">
+		update tbl_system_deploy
+		<set>
+			<if test="environmentType != null">
+				ENVIRONMENT_TYPE = #{environmentType,jdbcType=TINYINT},
+			</if>
+			<if test="systemId != null">
+				SYSTEM_ID = #{systemId,jdbcType=BIGINT},
+			</if>
+			<if test="systemModuleId != null">
+				SYSTEM_MODULE_ID = #{systemModuleId,jdbcType=BIGINT},
+			</if>
+			<if test="serverIds != null">
+				SERVER_IDS = #{serverIds,jdbcType=VARCHAR},
+			</if>
+			<if test="systemDeployPath != null">
+				SYSTEM_DEPLOY_PATH =
+				#{systemDeployPath,jdbcType=VARCHAR},
+			</if>
+			<if test="timeOut != null">
+				TIME_OUT = #{timeOut,jdbcType=INTEGER},
+			</if>
+			<if test="retryNumber != null">
+				RETRY_NUMBER = #{retryNumber,jdbcType=TINYINT},
+			</if>
+			<if test="deploySequence != null">
+				DEPLOY_SEQUENCE = #{deploySequence,jdbcType=TINYINT},
+			</if>
+			<if test="toolId != null">
+				TOOL_ID = #{toolId,jdbcType=BIGINT},
+			</if>
+			<if test="deployStatus != null">
+				DEPLOY_STATUS = #{deployStatus,jdbcType=TINYINT},
+			</if>
+			<if test="status != null">
+				STATUS = #{status,jdbcType=TINYINT},
+			</if>
+			<if test="createBy != null">
+				CREATE_BY = #{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="createDate != null">
+				CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdateBy != null">
+				LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+			</if>
+			<if test="lastUpdateDate != null">
+				LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="stopSystemScript != null">
+				STOP_SYSTEM_SCRIPT =
+				#{stopSystemScript,jdbcType=LONGVARCHAR},
+			</if>
+
+			<if test="templateType != null">
+				TEMPLATE_TYPE =
+				#{templateType,jdbcType=TINYINT},
+			</if>
+			<if test="startSystemScript != null">
+				START_SYSTEM_SCRIPT =
+				#{startSystemScript,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=BIGINT}
+	</update>
+<!--	查询用户下的信息-->
+	<select id="getServersByUserId" resultType="string">
+		SELECT DISTINCT
+		deploy.SERVER_IDS FROM tbl_system_deploy deploy
+		LEFT JOIN
+		tbl_system_info system ON
+		deploy.SYSTEM_ID = system.ID
+		LEFT JOIN
+		tbl_project_info project ON
+		project.ID = system.PROJECT_ID
+		LEFT JOIN
+		tbl_project_group groups ON
+		groups.PROJECT_ID = project.ID
+		LEFT JOIN
+		tbl_project_group_user groupuser ON
+		groupuser.PROJECT_GROUP_ID =
+		groups.ID
+		WHERE groupuser.USER_ID = #{userId}
+		AND groupuser.`STATUS` = 1
+		AND groups.`STATUS` = 1
+		AND system.`STATUS` = 1
+	</select>
+</mapper>

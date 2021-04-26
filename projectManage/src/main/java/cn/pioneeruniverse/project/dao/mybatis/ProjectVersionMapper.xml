@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.ProjectVersionMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblSystemVersion">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="SYSTEM_ID" jdbcType="BIGINT" property="systemId"/>
+        <result column="GROUP_FLAG" jdbcType="VARCHAR" property="groupFlag"/>
+        <result column="VERSION" jdbcType="VARCHAR" property="version"/>
+        <result column="ENVIRONMENT_TYPES" jdbcType="VARCHAR" property="environmentTypes"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        tsv.ID, tsv.SYSTEM_ID, tsv.GROUP_FLAG,tsv.VERSION, tsv.STATUS,
+        tsv.CREATE_BY, tsv.CREATE_DATE, tsv.LAST_UPDATE_BY, tsv.LAST_UPDATE_DATE
+    </sql>
+
+    <select id="getProjectVersionByCon" parameterType="java.lang.Long"
+            resultType="cn.pioneeruniverse.project.entity.TblSystemVersion">
+        select tsv.VERSION version,tsv.GROUP_FLAG groupFlag,tsv.STATUS status,GROUP_CONCAT(tsv.ID) ids,
+            GROUP_CONCAT(system.ID) systemIds, GROUP_CONCAT(system.SYSTEM_NAME) systemNames
+        from tbl_system_version tsv
+        LEFT JOIN tbl_system_info system ON tsv.SYSTEM_ID = system.ID
+        WHERE tsv.SYSTEM_ID IN
+        (SELECT tps.SYSTEM_ID FROM tbl_project_system tps WHERE tps.STATUS = 1 AND tps.PROJECT_ID = #{projectId})
+        AND (tsv.SYSTEM_MODULE_ID is null or tsv.SYSTEM_MODULE_ID='') AND system.`STATUS`=1
+        GROUP BY tsv.VERSION,tsv.GROUP_FLAG,tsv.STATUS
+        order by tsv.STATUS asc,tsv.GROUP_FLAG asc,tsv.VERSION desc
+    </select>
+
+
+    <select id="selectSystemByProjectId" parameterType="java.lang.Long"
+            resultType="cn.pioneeruniverse.project.entity.TblSystemInfo">
+        SELECT tsi.ID id,tsi.SYSTEM_NAME systemName
+        FROM tbl_system_info tsi
+        LEFT JOIN tbl_project_system tps ON tps.SYSTEM_ID = tsi.ID
+        WHERE tsi.STATUS = 1 AND tps.STATUS = 1 AND tps.PROJECT_ID = #{projectId}
+        group by tsi.ID
+    </select>
+
+    <select id="getSystemVersionByVersion" parameterType="cn.pioneeruniverse.project.entity.TblSystemVersion"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_system_version tsv
+        where tsv.VERSION = #{version} AND tsv.GROUP_FLAG = #{groupFlag}  AND tsv.SYSTEM_ID = #{systemId}
+        AND (tsv.SYSTEM_MODULE_ID is null or tsv.SYSTEM_MODULE_ID='')
+    </select>
+
+
+    <insert id="insertVersion" parameterType="cn.pioneeruniverse.project.entity.TblSystemVersion">
+      insert into tbl_system_version (
+    	SYSTEM_ID, VERSION, GROUP_FLAG, STATUS, CREATE_BY,
+    	CREATE_DATE,LAST_UPDATE_BY, LAST_UPDATE_DATE,ENVIRONMENT_TYPES
+      )values (
+    	#{systemId,jdbcType=BIGINT},#{version,jdbcType=VARCHAR},#{groupFlag,jdbcType=VARCHAR},
+    	#{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP},
+      	#{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP},#{environmentTypes,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="getProjectVersionByVersion" parameterType="cn.pioneeruniverse.project.entity.TblSystemVersion"
+            resultMap="BaseResultMap">
+        select tsv.ID,tsv.SYSTEM_ID,tsv.ENVIRONMENT_TYPES
+        from tbl_system_version tsv
+        LEFT JOIN tbl_system_info system ON tsv.SYSTEM_ID = system.ID
+        WHERE tsv.SYSTEM_ID IN
+        (SELECT tps.SYSTEM_ID FROM tbl_project_system tps WHERE tps.STATUS = 1 AND tps.PROJECT_ID = #{projectId})
+        AND system.`STATUS`=1 AND (tsv.SYSTEM_MODULE_ID is null or tsv.SYSTEM_MODULE_ID='')
+        AND tsv.VERSION =#{version,jdbcType=VARCHAR} AND tsv.GROUP_FLAG = #{groupFlag,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getBeforeUpdate" parameterType="String" resultMap="BaseResultMap">
+        select tsv.ID,tsv.SYSTEM_ID,tsv.STATUS
+        from tbl_system_version tsv
+        where tsv.ID in
+        <foreach collection="_parameter.split(',')" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+    <delete id="deleteVersion" parameterType="String">
+        delete from tbl_system_version
+        where ID in
+        <foreach collection="_parameter.split(',')" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateStatusById" parameterType="cn.pioneeruniverse.project.entity.TblSystemVersion">
+        update tbl_system_version
+        set
+        STATUS = #{status},
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

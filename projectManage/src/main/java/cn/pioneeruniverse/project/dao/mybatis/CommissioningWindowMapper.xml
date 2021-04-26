@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.CommissioningWindowMapper">
+	<resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblCommissioningWindow">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="WINDOW_DATE" jdbcType="DATE" property="windowDate" />
+		<result column="WINDOW_NAME" jdbcType="VARCHAR" property="windowName" />
+		<result column="WINDOW_TYPE" jdbcType="TINYINT" property="windowType" />
+		<result column="WINDOW_VERSION" jdbcType="VARCHAR" property="windowVersion" />
+		<result column="STATUS" jdbcType="TINYINT" property="status" />
+		<result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+		<result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+		<result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+		<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, WINDOW_DATE, WINDOW_NAME, WINDOW_TYPE, WINDOW_VERSION, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+	</sql>
+	<!--根据窗口id获取开发任务-->
+	<select id="getReqFeatureGroupbyWindow" parameterType="Long" resultType="map">
+		SELECT GROUP_CONCAT(trf.FEATURE_CODE) featureCode,tcw.ID windowId,tcw.WINDOW_NAME windowName
+		FROM tbl_requirement_feature trf
+		LEFT JOIN tbl_commissioning_window tcw ON trf.COMMISSIONING_WINDOW_ID = tcw.ID AND tcw.STATUS  =1
+		WHERE trf.STATUS = 1 AND trf.REQUIREMENT_ID = #{requirementId}
+		GROUP BY tcw.ID
+	</select>
+	<!--查询全部窗口（主页面）-->
+	<select id="selectAllWindows" parameterType="map" resultMap="BaseResultMap">
+		select 
+			<include refid="Base_Column_List" />
+		from tbl_commissioning_window 
+		<where>
+			<if test="tblCommissioningWindow.windowName != null and tblCommissioningWindow.windowName != ''">
+				and WINDOW_NAME like concat("%",#{tblCommissioningWindow.windowName,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="tblCommissioningWindow.startDate != null and tblCommissioningWindow.endDate != null ">
+		   		and WINDOW_DATE between #{tblCommissioningWindow.startDate,jdbcType=DATE} and #{tblCommissioningWindow.endDate,jdbcType=DATE}
+		    </if>
+			<if test="tblCommissioningWindow.windowType != null and tblCommissioningWindow.windowType != ''">
+				and WINDOW_TYPE = #{tblCommissioningWindow.windowType,jdbcType=TINYINT}
+			</if>
+			
+			and STATUS = 1
+		</where>
+		order by WINDOW_DATE DESC
+		limit #{start} ,#{pageSize}
+	</select>
+	<!--查询全部窗口（主页面）-->
+	<select id="selectCommissioningWindows" parameterType="map" resultMap="BaseResultMap">
+		select 
+			<include refid="Base_Column_List" />
+		from tbl_commissioning_window 
+		<where>
+			<if test="tblCommissioningWindow.windowName != null and tblCommissioningWindow.windowName != ''">
+				and WINDOW_NAME like concat("%",#{tblCommissioningWindow.windowName,jdbcType=VARCHAR},"%")
+			</if>
+			<if test="tblCommissioningWindow.startDate != null and tblCommissioningWindow.endDate != null ">
+				and WINDOW_DATE between #{tblCommissioningWindow.startDate,jdbcType=DATE} and #{tblCommissioningWindow.endDate,jdbcType=DATE}
+			</if>
+			<if test="tblCommissioningWindow.windowType != null and tblCommissioningWindow.windowType != ''">
+				and WINDOW_TYPE = #{tblCommissioningWindow.windowType,jdbcType=TINYINT}
+			</if>
+			<if test="startTime != null and endTime != null">
+				and WINDOW_DATE between #{startTime} and #{endTime}
+			</if>
+			<if test="tblCommissioningWindow.status != null and tblCommissioningWindow.status != null">
+				and STATUS = #{tblCommissioningWindow.status}
+			</if>
+
+		</where>
+		order by ID DESC
+		limit #{start} ,#{end}
+	</select>
+	
+<!-- 	<select id="selectMaxVersion" resultType="string">
+		select MAX(WINDOW_VERSION) FROM tbl_commissioning_window
+	</select> -->
+	<!--新增-->
+	<insert id="insertCommissioningWindow" parameterType="cn.pioneeruniverse.project.entity.TblCommissioningWindow" useGeneratedKeys="true" keyProperty="id">
+		insert into tbl_commissioning_window
+		 (WINDOW_DATE, WINDOW_NAME, WINDOW_TYPE, WINDOW_VERSION, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE) 
+		 	values 
+		 (#{windowDate,jdbcType=DATE}, #{windowName,jdbcType=VARCHAR}, #{windowType,jdbcType=TINYINT}, #{windowVersion,jdbcType=VARCHAR},
+		  #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT},
+		  #{lastUpdateDate,jdbcType=TIMESTAMP})
+	</insert>
+	<!--删除-->
+	<update id="delectCommissioningWindow" parameterType="map">
+		update tbl_commissioning_window
+		set STATUS = #{status,jdbcType=TINYINT},
+		LAST_UPDATE_BY = #{currentUserId,jdbcType=BIGINT},
+		LAST_UPDATE_DATE = #{lastUpdateTime,jdbcType=TIMESTAMP}
+		where ID = #{id,jdbcType=BIGINT}
+	</update>
+	<!--据id查询-->
+	<select id="selectCommissioningWindowById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" /> from tbl_commissioning_window where ID = #{id,jdbcType=BIGINT}
+	</select>
+	<!--修改-->
+	<update id="editCommissioningWindow" parameterType="cn.pioneeruniverse.project.entity.TblCommissioningWindow">
+		update tbl_commissioning_window
+			<set>
+				<if test="windowDate != null">
+					WINDOW_DATE = #{windowDate,jdbcType=DATE},
+				</if>
+				<if test="windowName != null">
+					WINDOW_NAME = #{windowName,jdbcType=VARCHAR},
+				</if>
+				<if test="windowType != null">
+					WINDOW_TYPE = #{windowType,jdbcType=TINYINT},
+				</if>
+				<if test="lastUpdateBy != null">
+					LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+				</if>
+				<if test="lastUpdateDate != null">
+					LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+				</if>
+				</set>
+			where ID = #{id,jdbcType=BIGINT}
+	</update>
+
+	<select id="findCommissioningByWindowDate" parameterType="String" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" /> from tbl_commissioning_window 
+		WHERE WINDOW_DATE = #{windowDate,jdbcType=BIGINT} AND STATUS=1
+		<if test="id !=null and id !=''">
+			AND ID != #{id,jdbcType=BIGINT}
+		</if>
+	</select>
+</mapper>

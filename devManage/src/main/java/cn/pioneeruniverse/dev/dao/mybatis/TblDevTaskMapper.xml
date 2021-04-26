@@ -1,0 +1,1349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblDevTaskMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblDevTask">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="dev_task_NAME" jdbcType="VARCHAR" property="devTaskName"/>
+        <result column="DEV_TASK_CODE" jdbcType="VARCHAR" property="devTaskCode"/>
+        <result column="dev_task_overview" jdbcType="VARCHAR" property="devTaskOverview"/>
+        <result column="REQUIREMENT_feature_ID" jdbcType="BIGINT" property="requirementFeatureId"/>
+        <result column="DEV_TASK_STATUS" jdbcType="TINYINT" property="devTaskStatus"/>
+        <result column="dev_user_ID" jdbcType="BIGINT" property="devUserId"/>
+        <result column="SYSTEM_NAME" jdbcType="VARCHAR" property="systemName"/>
+        <result column="REQUIREMENT_ID" jdbcType="VARCHAR" property="requirementId"/>
+        <result column="REQUIREMENT_CODE" jdbcType="VARCHAR" property="requirementCode"/>
+        <result column="FEATURE_code" jdbcType="VARCHAR" property="featureCode"/>
+        <result column="FEATURE_NAME" jdbcType="VARCHAR" property="featureName"/>
+        <result column="USER_NAME" jdbcType="VARCHAR" property="userName"/>
+        <result column="USER_ID" jdbcType="BIGINT" property="userId"/>
+        <result column="DEFECT_ID" jdbcType="BIGINT" property="defectID"/>
+        <result column="PLAN_START_DATE" jdbcType="DATE" property="planStartDate"/>
+        <result column="PLAN_END_DATE" jdbcType="DATE" property="planEndDate"/>
+        <result column="PLAN_WORKLOAD" jdbcType="DOUBLE" property="planWorkload"/>
+        <result column="ESTIMATE_REMAIN_WORKLOAD" jdbcType="DOUBLE" property="estimateRemainWorkload"/>
+        <result column="ACTUAL_START_DATE" jdbcType="DATE" property="actualStartDate"/>
+        <result column="ACTUAL_END_DATE" jdbcType="DATE" property="actualEndDate"/>
+        <result column="ACTUAL_WORKLOAD" jdbcType="DOUBLE" property="actualWorkload"/>
+        <result column="REQUIREMENT_FEATURE_STATUS" jdbcType="TINYINT" property="requirementFeatureStatus"/>
+        <result column="REQUIREMENT_FEATURE_SOURCE" jdbcType="TINYINT" property="requirementFeatureSource"/>
+        <result column="COMMISSIONING_window_ID" jdbcType="BIGINT" property="commissioningWindowId"/>
+        <result column="DEV_TASK_PRIORITY" jdbcType="TINYINT" property="devTaskPriority"/>
+        <result column="DEV_TASK_TYPE" jdbcType="TINYINT" property="devTaskType"/>
+
+        <result column="CODE_REVIEW_STATUS" jdbcType="TINYINT" property="codeReviewStatus"/>
+        <result column="NEED_CODE_REVIEW" jdbcType="TINYINT" property="needCodeReview"/>
+        <result column="PARENT_ID" jdbcType="BIGINT" property="parentId"/>
+        <result column="SPRINT_ID" jdbcType="BIGINT" property="sprintId"/>
+        <result column="SPRINT_NAME" jdbcType="VARCHAR" property="sprintName"/>
+        <result column="DEVELOPMENT_MODE" jdbcType="BIGINT" property="developmentMode"/>
+        <result column="SYSTEM_ID" jdbcType="BIGINT" property="systemId"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_NAME" jdbcType="VARCHAR" property="createName"/>
+        <result column="USER_ACCOUNT" jdbcType="VARCHAR" property="userAccount"/>
+        <result column="USER_SCM_ACCOUNT" jdbcType="VARCHAR" property="userScmAccount"/>
+        <result column="MANAGE_USER_ID" jdbcType="BIGINT" property="manageUserId"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+        <result column="FIELD_TEMPLATE" jdbcType="VARCHAR" property="fieldTemplate" />
+        <result column="DEV_TASK_ID" jdbcType="BIGINT" property="devTaskId"/>
+        <result column="DEV_USER_ID" jdbcType="BIGINT" property="devUserId"/>
+        <result column="SCM_TYPE" jdbcType="TINYINT" property="scmType"/>
+        <result column="tbts_ID" jdbcType="BIGINT" property="tbtsID"/>
+    </resultMap>
+     <!-- 查询当前用户同一个项目组下工作任务  或 查询执行人和创建人还有管理岗是当前用户的任务 -->
+    <select id="getDevTask" parameterType="hashmap" resultMap="BaseResultMap">
+        SELECT DISTINCT
+            tbts.ID AS tbts_ID,
+            tbts.DEV_TASK_ID,
+            tbts.SCM_TYPE,
+            dev.DEV_TASK_PRIORITY,
+            dev.ID,
+            dev.DEV_TASK_NAME,
+            dev.DEV_TASK_CODE,
+            dev.DEV_TASK_STATUS,
+            tsystem.SYSTEM_NAME,
+            tsystem.ID AS SYSTEM_ID,
+            tsystem.CODE_REVIEW_STATUS AS CODE_REVIEW_STATUS,
+            testfeature.REQUIREMENT_ID,
+            requirement.PARENT_ID,
+            testfeature.ID AS "REQUIREMENT_feature_ID",
+            requirement.REQUIREMENT_CODE,
+            testfeature.FEATURE_code,
+            testfeature.FEATURE_NAME,
+            testfeature.REQUIREMENT_FEATURE_SOURCE,
+            userinfo.USER_NAME AS USER_NAME,
+            dev.PLAN_START_DATE,
+            dev.PLAN_END_DATE,
+            dev.PLAN_WORKLOAD,
+            dev.ESTIMATE_REMAIN_WORKLOAD,
+            dev.DEV_USER_ID,
+            createName.USER_NAME AS CREATE_NAME,
+            dev.CREATE_BY,
+            dev.CODE_REVIEW_STATUS AS NEED_CODE_REVIEW,
+            testfeature.MANAGE_USER_ID
+        FROM
+          tbl_dev_task dev
+        LEFT JOIN tbl_requirement_feature testfeature ON dev.REQUIREMENT_FEATURE_ID = testfeature.id
+        LEFT JOIN tbl_system_info tsystem ON testfeature.SYSTEM_ID = tsystem.ID
+        AND ( tsystem.STATUS = 1 OR tsystem.STATUS IS NULL )
+        LEFT JOIN tbl_project_system ps ON ps.SYSTEM_ID = tsystem.ID
+        AND ps.STATUS = 1
+        AND ps.RELATION_TYPE = 1
+        LEFT JOIN tbl_requirement_info requirement ON testfeature.REQUIREMENT_ID = requirement.id
+        LEFT JOIN tbl_user_info userinfo ON dev.DEV_USER_ID = userinfo.id
+        AND ( userinfo.`STATUS` = 1 OR userinfo.`STATUS` IS NULL )
+        LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = ps.PROJECT_ID
+        AND pgroup.STATUS = 1
+        LEFT JOIN tbl_user_info createName ON dev.CREATE_BY = createName.id
+        AND ( createName.`STATUS` = 1 OR createName.`STATUS` IS NULL )
+        LEFT JOIN tbl_commissioning_window commissioning ON dev.COMMISSIONING_WINDOW_ID = commissioning.id
+        AND ( commissioning.`STATUS` = 1 OR commissioning.`STATUS` IS NULL )
+        LEFT JOIN tbl_dev_task_scm tbts ON dev.ID = tbts.DEV_TASK_ID
+        <where>
+            dev. STATUS = 1
+            AND testfeature.STATUS = 1
+            AND (requirement.`STATUS` = 1 or requirement.`STATUS` IS NULL)
+            AND
+            <!-- 同项目组，或者创建者，或者开发者 -->
+            (pgroup.id IN (
+            SELECT
+            guser2.PROJECT_GROUP_ID
+            FROM
+            tbl_project_group_user guser2
+            WHERE
+            guser2.USER_ID =#{task.id} )
+            OR (
+            (dev.CREATE_BY = #{task.id} )
+            <!-- <if test="task.devUserId != null and task.devUserId != ''"> -->
+            OR ( dev.DEV_USER_ID = #{task.id} )
+            <!-- </if> -->
+            OR ( testfeature.MANAGE_USER_ID = #{task.id} )
+            ))
+            <if test=" projectIds!= null and  projectIds.length > 0">
+                AND ps.PROJECT_ID in
+                <foreach item="item" index="index" collection="projectIds" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="task.devTaskCode != null and task.devTaskCode != ''">
+                and dev.DEV_TASK_CODE LIKE CONCAT('%',#{task.devTaskCode},'%')
+            </if>
+            <if test="task.devTaskName != null and task.devTaskName != ''">
+                AND dev.dev_task_NAME LIKE CONCAT('%',#{task.devTaskName},'%')
+            </if>
+            <if test="task.devTaskPriority != null and task.devTaskPriority != ''">
+                AND dev.DEV_TASK_PRIORITY =#{task.devTaskPriority}
+            </if>
+
+            <if test="task.devTaskPrioritys != null and task.devTaskPrioritys != ''">
+                AND dev.DEV_TASK_PRIORITY in
+                <foreach collection="task.devTaskPrioritys.split(',')" item="item" index="index" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+
+            </if>
+            <if test="task.userName !=null and task.userName !=''">
+                and userinfo.ID in
+                <foreach collection="task.userName.split(',')" item="item" index="index" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+
+            <if test="task.userNewName !=null and task.userNewName !=''">
+                and userinfo.USER_NAME =#{task.userNewName}
+            </if>
+
+
+
+            <if test="task.workTaskStatus != null and task.workTaskStatus!=''">
+                AND dev.DEV_TASK_STATUS in
+                <foreach item="item" index="index" collection="task.workTaskStatus.split(',')" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="task.featureCode != null and task.featureCode != ''">
+                AND FEATURE_code in
+                <foreach collection="task.featureCode.split(',')" item="item" index="index" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="task.requirementCode != null and task.requirementCode != ''">
+                AND REQUIREMENT_CODE in
+                <foreach collection="task.requirementCode.split(',')" item="item" index="index" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+
+            <if test="task.requirementNewCode != null and task.requirementNewCode != ''">
+                AND requirement.REQUIREMENT_CODE= #{task.requirementNewCode}
+
+            </if>
+
+            <if test="task.requirementNewName != null and task.requirementNewName != ''">
+                AND requirement.REQUIREMENT_NAME like CONCAT('%',#{task.requirementNewName},'%')
+
+            </if>
+
+
+
+            <!--  <if test="task.systemName != null and task.systemName != ''">
+                 AND tsystem.SYSTEM_NAME =#{task.systemName}
+             </if> -->
+            <if test="task.systemName !=null and task.systemName !=''">
+                and tsystem.SYSTEM_NAME in
+                <foreach collection="task.systemName.split(',')" item="item" index="index" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="task.systemIds !=null and task.systemIds !=''">
+                and tsystem.id in
+                <foreach collection="task.systemIds.split(',')" item="item" index="index" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+
+            </if>
+
+
+
+            <if test="task.requirementFeatureSource != null and task.requirementFeatureSource != ''">
+                AND testfeature.REQUIREMENT_FEATURE_SOURCE = #{task.requirementFeatureSource}
+            </if>
+            <if test="task.sprints!=null and task.sprints!=''">
+                and dev.SPRINT_ID in
+                <foreach collection="task.sprints.split(',')" index="index" item="item" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+		 <if test="task.createStartDate!=null and task.createEndDate!=null">
+            	and dev.CREATE_DATE BETWEEN #{task.createStartDate} AND #{task.createEndDate}
+         </if> 
+
+        </where>
+        <!-- order by dev.ID desc -->
+
+        <include refid="sort_List"></include>
+    </select>
+	<!-- 查询所有工作任务 系统管理员用 -->
+    <select id="getDevTaskAll" parameterType="hashmap" resultMap="BaseResultMap">
+        SELECT DISTINCT
+            tbts.ID AS tbts_ID,
+            tbts.DEV_TASK_ID,
+            tbts.SCM_TYPE,
+            dev.DEV_TASK_PRIORITY,
+            dev.ID,
+            dev.DEV_TASK_NAME,
+            dev.DEV_TASK_CODE,
+            dev.DEV_TASK_STATUS,
+            tsystem.SYSTEM_NAME,
+            tsystem.ID AS SYSTEM_ID,
+            tsystem.CODE_REVIEW_STATUS AS CODE_REVIEW_STATUS,
+            testfeature.REQUIREMENT_ID,
+            requirement.PARENT_ID,
+            testfeature.ID AS "REQUIREMENT_feature_ID",
+            requirement.REQUIREMENT_CODE,
+            testfeature.FEATURE_code,
+            testfeature.FEATURE_NAME,
+            testfeature.REQUIREMENT_FEATURE_SOURCE,
+            userinfo.USER_NAME AS USER_NAME,
+            dev.PLAN_START_DATE,
+            dev.PLAN_END_DATE,
+            dev.PLAN_WORKLOAD,
+            dev.ESTIMATE_REMAIN_WORKLOAD,
+            dev.DEV_USER_ID,
+            createName.USER_NAME AS CREATE_NAME,
+            dev.CREATE_BY,
+            dev.CODE_REVIEW_STATUS AS NEED_CODE_REVIEW,
+            testfeature.MANAGE_USER_ID
+        from
+          tbl_dev_task dev
+        LEFT JOIN tbl_requirement_feature testfeature ON dev.REQUIREMENT_FEATURE_ID = testfeature.id
+        LEFT JOIN tbl_system_info tsystem ON testfeature.SYSTEM_ID = tsystem.ID
+        AND ( tsystem.STATUS = 1 OR tsystem.STATUS IS NULL )
+        LEFT JOIN tbl_project_system ps ON ps.SYSTEM_ID = tsystem.ID
+        AND ps.STATUS = 1
+        AND ps.RELATION_TYPE = 1
+        LEFT JOIN tbl_requirement_info requirement ON testfeature.REQUIREMENT_ID = requirement.id
+        LEFT JOIN tbl_user_info userinfo ON dev.DEV_USER_ID = userinfo.id
+        AND ( userinfo.`STATUS` = 1 OR userinfo.`STATUS` IS NULL )
+        LEFT JOIN tbl_user_info createName ON dev.CREATE_BY = createName.id
+        AND ( createName.`STATUS` = 1 OR createName.`STATUS` IS NULL )
+        LEFT JOIN tbl_commissioning_window commissioning ON dev.COMMISSIONING_WINDOW_ID = commissioning.id
+        AND ( commissioning.`STATUS` = 1 OR commissioning.`STATUS` IS NULL )
+        LEFT JOIN tbl_dev_task_scm tbts ON dev.ID = tbts.DEV_TASK_ID
+        <where>
+            dev.STATUS=1
+            AND testfeature.STATUS=1
+            AND (requirement.`STATUS` = 1 or requirement.`STATUS` IS NULL)
+            <if test=" projectIds!= null and  projectIds.length > 0">
+                AND ps.PROJECT_ID in
+                <foreach item="item" index="index" collection="projectIds" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="task.devTaskCode != null and task.devTaskCode != ''">
+                and dev.DEV_TASK_CODE LIKE CONCAT('%',#{task.devTaskCode},'%')
+            </if>
+            <if test="task.devTaskName != null and task.devTaskName != ''">
+                AND dev.dev_task_NAME LIKE CONCAT('%',#{task.devTaskName},'%')
+            </if>
+            <if test="task.devTaskPriority != null and task.devTaskPriority != ''">
+                AND dev.DEV_TASK_PRIORITY =#{task.devTaskPriority}
+
+            </if>
+
+
+            <if test="task.devTaskPrioritys != null and task.devTaskPrioritys != ''">
+                AND dev.DEV_TASK_PRIORITY in
+                <foreach collection="task.devTaskPrioritys.split(',')" item="item" index="index" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+
+            </if>
+            <!--  <if test="task.devUserId != null and task.devUserId != ''">
+                AND userinfo.id =#{task.devUserId}
+            </if>  -->
+
+            <if test="task.userName !=null and task.userName !=''">
+                and userinfo.ID in
+                <foreach collection="task.userName.split(',')" item="item" index="index" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="task.userNewName !=null and task.userNewName !=''">
+                and userinfo.USER_NAME =#{task.userNewName}
+            </if>
+            <if test="task.workTaskStatus != null and task.workTaskStatus!=''">
+                AND dev.DEV_TASK_STATUS in
+                <foreach item="item" index="index" collection="task.workTaskStatus.split(',')" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="task.featureCode != null and task.featureCode != ''">
+                AND FEATURE_code in
+                <foreach collection="task.featureCode.split(',')" item="item" index="index" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="task.requirementCode != null and task.requirementCode != ''">
+                AND REQUIREMENT_CODE in
+                <foreach collection="task.requirementCode.split(',')" item="item" index="index" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+
+            <if test="task.requirementNewCode != null and task.requirementNewCode != ''">
+                AND requirement.REQUIREMENT_CODE= #{task.requirementNewCode}
+
+            </if>
+
+            <if test="task.requirementNewName != null and task.requirementNewName != ''">
+                AND requirement.REQUIREMENT_NAME like CONCAT('%',#{task.requirementNewName},'%')
+
+            </if>
+
+
+
+            <!--  <if test="task.systemName != null and task.systemName != ''">
+                 AND tsystem.SYSTEM_NAME =#{task.systemName}
+             </if> -->
+            <if test="task.systemName !=null and task.systemName !=''">
+                and tsystem.SYSTEM_NAME in
+                <foreach collection="task.systemName.split(',')" item="item" index="index" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+
+
+            <if test="task.systemIds !=null and task.systemIds !=''">
+                and tsystem.id in
+                <foreach collection="task.systemIds.split(',')" item="item" index="index" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+
+            <if test="task.requirementFeatureSource != null and task.requirementFeatureSource != ''">
+                AND testfeature.REQUIREMENT_FEATURE_SOURCE = #{task.requirementFeatureSource}
+            </if>
+            <if test="task.sprints!=null and task.sprints!=''">
+                and dev.SPRINT_ID in
+                <foreach collection="task.sprints.split(',')" index="index" item="item" open="(" separator=","
+                         close=")">
+                    #{item}
+                </foreach>
+            </if>
+            
+             <if test="task.createStartDate!=null and task.createEndDate!=null">
+            	and dev.CREATE_DATE BETWEEN #{task.createStartDate} AND #{task.createEndDate}
+        	 </if> 
+        </where>
+        <!-- order by dev.id desc -->
+
+        <include refid="sort_List"></include>
+    </select>
+
+    <sql id="sort_List">
+    	<if test="task.sidx != '' and task.sord != '' and task.sidx == 'id' and task.sord == 'desc'">
+        	order by dev.ID desc
+        </if>
+        <if test="task.sidx != '' and task.sord != '' and task.sidx == 'id' and task.sord == 'asc'">
+        	order by dev.ID asc
+        </if>
+    	<if test="task.sidx != '' and task.sord != '' and task.sidx == 'devTaskCode' and task.sord == 'desc'">
+        	order by dev.DEV_TASK_CODE desc
+        </if>
+        <if test="task.sidx != '' and task.sord != '' and task.sidx == 'devTaskCode' and task.sord == 'asc'">
+        	order by dev.DEV_TASK_CODE asc
+        </if>
+    	<if test="task.sidx != '' and task.sord != '' and task.sidx == 'devTaskName' and task.sord == 'desc'">
+        	order by dev.DEV_TASK_NAME desc
+        </if>
+        <if test="task.sidx != '' and task.sord != '' and task.sidx == 'devTaskName' and task.sord == 'asc'">
+        	order by dev.DEV_TASK_NAME asc
+        </if>
+    	<if test="task.sidx != '' and task.sord != '' and task.sidx == 'devTaskStatus' and task.sord == 'desc'">
+        	order by dev.DEV_TASK_STATUS desc
+        </if>
+        <if test="task.sidx != '' and task.sord != '' and task.sidx == 'devTaskStatus' and task.sord == 'asc'">
+        	order by dev.DEV_TASK_STATUS asc
+        </if>
+    	<if test="task.sidx != '' and task.sord != '' and task.sidx == 'systemName' and task.sord == 'desc'">
+        	order by tsystem.SYSTEM_NAME desc
+        </if>
+        <if test="task.sidx != '' and task.sord != '' and task.sidx == 'systemName' and task.sord == 'asc'">
+        	order by tsystem.SYSTEM_NAME asc
+        </if>
+    	<if test="task.sidx != '' and task.sord != '' and task.sidx == 'requirementCode' and task.sord == 'desc'">
+        	order by requirement.REQUIREMENT_CODE desc
+        </if>
+        <if test="task.sidx != '' and task.sord != '' and task.sidx == 'requirementCode' and task.sord == 'asc'">
+        	order by requirement.REQUIREMENT_CODE asc
+        </if>
+    	<if test="task.sidx != '' and task.sord != '' and task.sidx == 'featureCode' and task.sord == 'desc'">
+        	order by testfeature.FEATURE_CODE desc
+        </if>
+        <if test="task.sidx != '' and task.sord != '' and task.sidx == 'featureCode' and task.sord == 'asc'">
+        	order by testfeature.FEATURE_CODE asc
+        </if>
+    	<if test="task.sidx != '' and task.sord != '' and task.sidx == 'devTaskPriority' and task.sord == 'desc'">
+        	order by dev.DEV_TASK_PRIORITY desc
+        </if>
+        <if test="task.sidx != '' and task.sord != '' and task.sidx == 'devTaskPriority' and task.sord == 'asc'">
+        	order by dev.DEV_TASK_PRIORITY asc
+        </if>
+    	<if test="task.sidx != '' and task.sord != '' and task.sidx == 'requirementFeatureSource' and task.sord == 'desc'">
+        	order by testfeature.REQUIREMENT_FEATURE_SOURCE desc
+        </if>
+        <if test="task.sidx != '' and task.sord != '' and task.sidx == 'requirementFeatureSource' and task.sord == 'asc'">
+        	order by testfeature.REQUIREMENT_FEATURE_SOURCE asc
+        </if>
+    	<if test="task.sidx != '' and task.sord != '' and task.sidx == 'userName' and task.sord == 'desc'">
+        	order by userinfo.USER_NAME desc
+        </if>
+        <if test="task.sidx != '' and task.sord != '' and task.sidx == 'userName' and task.sord == 'asc'">
+        	order by userinfo.USER_NAME asc
+        </if>
+    </sql>
+
+
+    <sql id="Base_Column_List">
+    ID, dev_task_NAME, DEV_TASK_CODE, dev_task_overview, REQUIREMENT_feature_ID, dev_user_ID, COMMISSIONING_window_ID,
+    ACTUAL_START_DATE,ACTUAL_END_DATE,ACTUAL_WORKLOAD,PLAN_START_DATE,PLAN_END_DATE,PLAN_WORKLOAD,
+    parent_ID, STATUS, CREATE_BY, CREATE_DATE,FIELD_TEMPLATE
+  </sql>
+  	<!-- 修改工作任务的开发任务 -->
+    <update id="updateReqFeatureId" parameterType="map">
+        update tbl_dev_task
+        set REQUIREMENT_FEATURE_ID = #{reqFeatureId}
+        where ID in
+        <foreach item="item" index="index" collection="devTasks" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </update>
+    <!-- 根据开发任务查询所有工作任务 -->
+    <select id="findByReqFeatureId" parameterType="Long" resultType="cn.pioneeruniverse.dev.entity.TblDevTask">
+  	 select *
+    from tbl_dev_task
+    where REQUIREMENT_FEATURE_ID =#{id} and status = 1
+  </select>
+    <!-- 修改工作任务的状态 ztt -->
+    <update id="updateWorkTaskStatus">
+  	UPDATE tbl_dev_task
+	SET DEV_TASK_STATUS = #{devTaskStatus}
+	WHERE ID = #{id}
+  </update>
+    <!-- 查询工作任务状态 ztt -->
+    <select id="getWorTaskStatus" resultType="cn.pioneeruniverse.dev.entity.TblDataDic">
+  	SELECT VALUE_NAME valueName, VALUE_CODE valueCode, VALUE_SEQ valueSeq
+	FROM tbl_data_dic  
+	WHERE TERM_CODE = "TBL_DEV_TASK_DEV_TASK_STATUS" AND STATUS = 1
+  
+  </select>
+
+    <!-- 根据冲刺查询工作任务 ztt -->
+    <select id="getWorkTaskBySprintId" parameterType="Long" resultType="cn.pioneeruniverse.dev.entity.TblDevTask">
+  	SELECT tdt.ID id,tdt.DEV_TASK_CODE devTaskCode, tdt.DEV_TASK_NAME devTaskName,tdt.DEV_TASK_STATUS devTaskStatus,tdt.PLAN_WORKLOAD planWorkLoad, 
+	userinfo.USER_NAME userName,tdt.DEV_TASK_PRIORITY devTaskPriority,trf.EXECUTE_PROJECT_GROUP_ID executeProjectGroupId,tdt.REQUIREMENT_FEATURE_ID requirementFeatureId
+	FROM tbl_dev_task tdt
+
+	LEFT JOIN tbl_requirement_feature trf ON trf.ID = tdt.REQUIREMENT_FEATURE_ID
+	LEFT JOIN tbl_user_info userinfo ON userinfo.ID = tdt.DEV_USER_ID
+	WHERE tdt.SPRINT_ID = #{sprintId}
+    <if test="devUserName != null and devUserName != ''">
+        AND userinfo.user_Name LIKE CONCAT('%',#{devUserName},'%')
+    </if>
+	and tdt.STATUS =1
+  </select>
+
+    <!-- 修改工作任务的冲刺 ztt-->
+    <update id="updateSprintId" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeature">
+  	update tbl_dev_task 
+	  set SPRINT_ID = #{sprintId}
+	  where REQUIREMENT_FEATURE_ID = #{id} and STATUS = 1
+  </update>
+
+    <!-- 修改投产窗口字段同开发任务 ztt-->
+    <update id="updateCommssioningWindowId" parameterType="cn.pioneeruniverse.dev.entity.TblRequirementFeature">
+	  update tbl_dev_task 
+	  set COMMISSIONING_WINDOW_ID = #{commissioningWindowId}
+	  where REQUIREMENT_FEATURE_ID = #{id} and STATUS = 1
+  </update>
+
+    <!--插入并关联开发任务 ztt -->
+    <insert id="insertWorkTask" parameterType="cn.pioneeruniverse.dev.entity.TblDevTask">
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() AS ID
+        </selectKey>
+        INSERT INTO tbl_dev_task (
+            ID,
+            DEV_TASK_NAME,
+            DEV_TASK_CODE,
+            DEV_TASK_OVERVIEW,
+            DEV_TASK_STATUS,
+            COMMISSIONING_WINDOW_ID,
+            REQUIREMENT_FEATURE_ID,
+            DEV_USER_ID,
+            PLAN_START_DATE,
+            PLAN_END_DATE,
+            PLAN_WORKLOAD,
+            ESTIMATE_REMAIN_WORKLOAD,
+            SPRINT_ID,
+            STATUS,
+            CREATE_BY,
+            CREATE_DATE,
+            DEV_TASK_PRIORITY,
+            DEV_TASK_TYPE
+        )
+        VALUES
+        (
+            null,
+            #{devTaskName},
+            #{devTaskCode},
+            #{devTaskOverview},
+            #{devTaskStatus},
+            #{commissioningWindowId},
+            #{requirementFeatureId},
+            #{devUserId},
+            #{planStartDate},
+            #{planEndDate},
+            #{planWorkload},
+            #{planWorkload},
+            #{sprintId},
+            1,
+            #{createBy},
+            #{createDate},
+            #{devTaskPriority},
+            #{devTaskType}
+        )
+    </insert>
+
+    <!-- 根据开发任务id统计各状态工作任务的数量 -->
+    <select id="getStatusCount" parameterType="Long" resultType="map">
+		SELECT COUNT(devtask.DEV_TASK_STATUS) statusCount,devtask.DEV_TASK_STATUS devtatskStatus
+		FROM tbl_dev_task devtask
+		WHERE REQUIREMENT_FEATURE_ID = #{id}
+		AND devtask.STATUS=1
+		GROUP BY devtask.DEV_TASK_STATUS
+	</select>
+    <!-- 根据需求特性表id查询  ztt-->
+    <select id="findByReqFeature" parameterType="Long" resultType="map">
+  	select 
+        devtask.ID id,devtask.DEV_TASK_NAME devTaskName,devtask.DEV_TASK_OVERVIEW devTaskOverview,devtask.DEV_USER_ID devUserId,
+       devtask.ACTUAL_START_DATE actualStartDate,devTask.ACTUAL_END_DATE actualEndDate,devTask.ACTUAL_WORKLOAD actualWorkload,
+       devtask.DEV_TASK_CODE devTaskCode,userinfo.USER_NAME devUsername,devtask.DEV_TASK_STATUS devtaskStatus,
+       datadic.VALUE_NAME devtaskStatusName,devtask.PLAN_START_DATE planStartDate,devtask.PLAN_END_DATE planEndDate,devtask.PLAN_WORKLOAD planWorkLoad
+    from tbl_dev_task devtask
+    LEFT JOIN tbl_user_info userinfo ON userinfo.ID = devtask.DEV_USER_ID
+    LEFT JOIN tbl_data_dic datadic ON datadic.VALUE_CODE = devtask.DEV_TASK_STATUS
+	where REQUIREMENT_FEATURE_ID = #{id}
+	AND datadic.TERM_CODE = 'TBL_DEV_TASK_DEV_TASK_STATUS'
+ 	AND devtask.STATUS=1
+ </select>
+
+    <!--根据开发任务获取工作任务-->    
+    <select id="findByReqFeature2" resultType="cn.pioneeruniverse.dev.entity.TblDevTask">
+        select
+        devtask.ID id,devtask.DEV_TASK_NAME devTaskName,devtask.DEV_USER_ID devUserId,
+        <!-- devtask.ACTUAL_START_DATE actualStartDate,devTask.ACTUAL_END_DATE actualEndDate,devTask.ACTUAL_WORKLOAD actualWorkload, -->
+        devtask.DEV_TASK_CODE devTaskCode,userinfo.USER_NAME userName,devtask.DEV_TASK_STATUS devTaskStatus,
+        datadic.VALUE_NAME statusName,devtask.PLAN_START_DATE planStartDate,devtask.PLAN_END_DATE
+        planEndDate,devtask.PLAN_WORKLOAD planWorkload,devtask.DEV_TASK_PRIORITY devTaskPriority
+        from tbl_dev_task devtask
+        LEFT JOIN tbl_user_info userinfo ON userinfo.ID = devtask.DEV_USER_ID
+        LEFT JOIN tbl_data_dic datadic ON datadic.VALUE_CODE = devtask.DEV_TASK_STATUS
+        where REQUIREMENT_FEATURE_ID = #{id}
+        AND datadic.TERM_CODE = 'TBL_DEV_TASK_DEV_TASK_STATUS'
+        AND devtask.STATUS=1
+    </select>
+    <!-- 统计该系统，待开发、开发中的工作量统计，显示列如：姓名、工单数量、预计工作量 ztt -->
+    <select id="countWorkloadBysystemId" parameterType="Long" resultType="map">
+ 	SELECT devtask.DEV_USER_ID ,userinfo.USER_NAME userName,COUNT(*) workNum,SUM(PLAN_WORKLOAD) planWorkLoads
+	FROM tbl_dev_task devtask
+	LEFT JOIN tbl_user_info userinfo ON devtask.DEV_USER_ID = userinfo.ID AND userinfo.STATUS = 1
+	WHERE  devtask.STATUS = 1 AND devtask.DEV_TASK_STATUS IN (1,2) AND devtask.DEV_USER_ID IS NOT NULL
+	AND devtask.REQUIREMENT_FEATURE_ID IN(
+		SELECT reqFeature.ID FROM tbl_requirement_feature reqFeature
+		WHERE reqFeature.STATUS = 1 AND reqFeature.SYSTEM_ID = #{systemId}
+	)
+	GROUP BY devtask.DEV_USER_ID
+	ORDER BY planWorkLoads DESC
+ </select>
+	<!-- 查询单个工作任务 -->
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        tdt.ID,
+        tdt.DEV_TASK_NAME,
+        tdt.DEV_TASK_CODE,
+        tdt.DEV_TASK_OVERVIEW,
+        tdt.REQUIREMENT_FEATURE_ID,
+        tdt.DEV_USER_ID,
+        tdt.COMMISSIONING_WINDOW_ID,
+        tdt.PARENT_ID,
+        tdt.STATUS,
+        tdt.CREATE_BY,
+        tdt.CREATE_DATE,
+        tdt.LAST_UPDATE_BY,
+        tdt.LAST_UPDATE_DATE,
+        tui.USER_ACCOUNT
+        from tbl_dev_task tdt
+        LEFT JOIN tbl_user_info tui
+        on tdt.DEV_USER_ID = tui.ID
+        where tdt.ID = #{id,jdbcType=BIGINT} and tdt.STATUS = 1 and tdt.DEV_TASK_STATUS BETWEEN 1 AND 2
+    </select>
+	<!-- 根据工作任务编号查询任务 -->
+    <select id="selectByDevTaskCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        tdt.ID,
+        tdt.DEV_TASK_NAME,
+        tdt.DEV_TASK_CODE,
+        tdt.DEV_TASK_OVERVIEW,
+        tdt.REQUIREMENT_FEATURE_ID,
+        tdt.DEV_USER_ID,
+        tdt.COMMISSIONING_WINDOW_ID,
+        tdt.PARENT_ID,
+        tdt.DEV_TASK_STATUS,
+        tui.USER_SCM_ACCOUNT
+        from tbl_dev_task tdt
+        LEFT JOIN tbl_user_info tui
+        on tdt.DEV_USER_ID = tui.ID
+        where tdt.DEV_TASK_CODE = #{devTaskCode} and tdt.STATUS = 1
+        LIMIT 1
+    </select>
+
+	<!-- 添加工作任务 -->
+    <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblDevTask">
+    insert into tbl_dev_task (ID, dev_task_NAME, dev_task_overview, 
+      REQUIREMENT_feature_ID, dev_user_ID, COMMISSIONING_window_ID, 
+      parent_ID, STATUS, CREATE_BY, 
+      CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+      )
+    values (#{id,jdbcType=BIGINT}, #{devTaskName,jdbcType=VARCHAR}, #{devTaskOverview,jdbcType=VARCHAR}, 
+      #{requirementFeatureId,jdbcType=BIGINT}, #{devUserId,jdbcType=BIGINT}, #{commissioningWindowId,jdbcType=BIGINT}, 
+      #{parentId,jdbcType=BIGINT}, #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <!-- <insert id="insertSelective" parameterType="cn.pioneeruniverse.dev.entity.TblDevTask">
+      insert into tbl_dev_task
+      <trim prefix="(" suffix=")" suffixOverrides=",">
+        <if test="id != null">
+          ID,
+        </if>
+        <if test="devTaskName != null">
+          dev_task_NAME,
+        </if>
+        <if test="devTaskOverview != null">
+          dev_task_overview,
+        </if>
+        <if test="requirementFeatureId != null">
+          REQUIREMENT_feature_ID,
+        </if>
+        <if test="devUserId != null">
+          dev_user_ID,
+        </if>
+        <if test="commissioningWindowId != null">
+          COMMISSIONING_window_ID,
+        </if>
+        <if test="parentId != null">
+          parent_ID,
+        </if>
+        <if test="status != null">
+          STATUS,
+        </if>
+        <if test="createBy != null">
+          CREATE_BY,
+        </if>
+        <if test="createDate != null">
+          CREATE_DATE,
+        </if>
+        <if test="lastUpdateBy != null">
+          LAST_UPDATE_BY,
+        </if>
+        <if test="lastUpdateDate != null">
+          LAST_UPDATE_DATE,
+        </if>
+      </trim>
+      <trim prefix="values (" suffix=")" suffixOverrides=",">
+        <if test="id != null">
+          #{id,jdbcType=BIGINT},
+        </if>
+        <if test="devTaskName != null">
+          #{devTaskName,jdbcType=VARCHAR},
+        </if>
+        <if test="devTaskOverview != null">
+          #{devTaskOverview,jdbcType=VARCHAR},
+        </if>
+        <if test="requirementFeatureId != null">
+          #{requirementFeatureId,jdbcType=BIGINT},
+        </if>
+        <if test="devUserId != null">
+          #{devUserId,jdbcType=BIGINT},
+        </if>
+        <if test="commissioningWindowId != null">
+          #{commissioningWindowId,jdbcType=BIGINT},
+        </if>
+        <if test="parentId != null">
+          #{parentId,jdbcType=BIGINT},
+        </if>
+        <if test="status != null">
+          #{status,jdbcType=TINYINT},
+        </if>
+        <if test="createBy != null">
+          #{createBy,jdbcType=BIGINT},
+        </if>
+        <if test="createDate != null">
+          #{createDate,jdbcType=TIMESTAMP},
+        </if>
+        <if test="lastUpdateBy != null">
+          #{lastUpdateBy,jdbcType=BIGINT},
+        </if>
+        <if test="lastUpdateDate != null">
+          #{lastUpdateDate,jdbcType=TIMESTAMP},
+        </if>
+      </trim>
+    </insert> -->
+    <!-- 修改工作任务信息 -->
+    <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblDevTask">
+        update tbl_dev_task
+        <set>
+            <if test="devTaskName != null">
+                dev_task_NAME = #{devTaskName,jdbcType=VARCHAR},
+            </if>
+            <if test="devTaskOverview != null">
+                dev_task_overview = #{devTaskOverview,jdbcType=VARCHAR},
+            </if>
+            <if test="requirementFeatureId != null">
+                REQUIREMENT_feature_ID = #{requirementFeatureId,jdbcType=BIGINT},
+            </if>
+            <if test="devUserId != null">
+                dev_user_ID = #{devUserId,jdbcType=BIGINT},
+            </if>
+            <if test="commissioningWindowId != null">
+                COMMISSIONING_window_ID = #{commissioningWindowId,jdbcType=BIGINT},
+            </if>
+            <if test="parentId != null">
+                parent_ID = #{parentId,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                STATUS = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="createBy != null">
+                CREATE_BY = #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblDevTask">
+    update tbl_dev_task
+    set dev_task_NAME = #{devTaskName,jdbcType=VARCHAR},
+      dev_task_overview = #{devTaskOverview,jdbcType=VARCHAR},
+      REQUIREMENT_feature_ID = #{requirementFeatureId,jdbcType=BIGINT},
+      dev_user_ID = #{devUserId,jdbcType=BIGINT},
+      COMMISSIONING_window_ID = #{commissioningWindowId,jdbcType=BIGINT},
+      parent_ID = #{parentId,jdbcType=BIGINT},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+    <!--  <select id="getAllFeature" parameterType="map" resultType="map">
+   SELECT DISTINCT f.id,f.FEATURE_CODE,f.FEATURE_NAME,f.COMMISSIONING_WINDOW_ID,f.REQUIREMENT_FEATURE_STATUS,f.PLAN_START_DATE,f.PLAN_START_DATE from  tbl_requirement_feature f
+           LEFT JOIN tbl_system_info sys
+           on f.SYSTEM_ID=sys.ID
+           left JOIN tbl_project_group pgroup
+           on pgroup.PROJECT_ID =sys.PROJECT_ID
+           <where>
+            f.STATUS=01 and f.REQUIREMENT_FEATURE_STATUS in(02,01)
+           <if test=" tblDevTask.featureCode!= null and tblDevTask.featureCode != ''">
+                   AND f.FEATURE_CODE  LIKE CONCAT('%',#{tblDevTask.featureCode},'%')
+           </if>
+           <if test=" tblDevTask.featureName!= null and tblDevTask.featureName!= ''">
+                   AND f.FEATURE_NAME  LIKE CONCAT('%',#{tblDevTask.featureName},'%')
+           </if>
+
+           <if test="tblDevTask.FeatureStatus != null and (tblDevTask.FeatureStatus).size()>0">
+           AND f.REQUIREMENT_FEATURE_STATUS in
+           <foreach item="item" index="index" collection="tblDevTask.FeatureStatus" open="(" separator="," close=")">
+                   #{item}
+                </foreach>
+
+           </if>
+
+           </where>
+
+           <if test="start != null and pageSize != null">
+               limit #{start},#{pageSize}
+           </if>
+     </select> -->
+
+	<!-- 根据人员ID查询同一个项目组人员 -->
+    <select id="getAllDevUser" parameterType="java.lang.Long" resultMap="BaseResultMap">
+ SELECT USER_NAME ,id as USER_ID from  tbl_user_info tuser
+where tuser.STATUS=1 and tuser.ID in
+(SELECT guser2.USER_ID FROM tbl_project_group_user guser2 WHERE guser2.PROJECT_GROUP_ID in
+ (SELECT guser.PROJECT_GROUP_ID from tbl_project_group_user guser where  guser.USER_ID=#{id}))
+  </select>
+
+    <!--  <select id="getAllDevUser2" parameterType="map" resultType="map">
+   SELECT tuser.USER_NAME ,tuser.id as USER_ID,company.COMPANY_NAME,dept.DEPT_NAME from  tbl_user_info tuser
+   LEFT JOIN tbl_dept_info dept
+  on tuser.DEPT_ID=dept.id
+  LEFT  JOIN tbl_company_info company
+  on tuser.COMPANY_ID=company.id
+  <where> tuser.STATUS=1 and tuser.ID in
+  (SELECT guser2.USER_ID FROM tbl_project_group_user guser2 WHERE guser2.PROJECT_GROUP_ID in
+   (SELECT guser.PROJECT_GROUP_ID from tbl_project_group_user guser where  guser.USER_ID=#{tblDevTask.id}))
+
+      </where>
+          <if test="start != null and pageSize != null">
+              limit #{start},#{pageSize}
+          </if>
+    </select>
+    <select id="getAllRequirt" parameterType="cn.pioneeruniverse.dev.entity.TblDevTask" resultMap="BaseResultMap">
+    select REQUIREMENT_CODE from TBL_REQUIREMENT_INFO
+    </select> -->
+
+
+    <select id="getUseName" parameterType="cn.pioneeruniverse.dev.entity.TblDevTask" resultMap="BaseResultMap">
+  select USER_NAME,ID from tbl_user_info
+  </select>
+    <!-- 添加DEV -->
+    <insert id="addDevTask" parameterType="cn.pioneeruniverse.dev.entity.TblDevTask">
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() AS ID
+        </selectKey>
+        insert into TBL_DEV_TASK
+        (DEV_TASK_CODE,DEV_TASK_NAME,REQUIREMENT_FEATURE_ID,DEV_TASK_OVERVIEW,PLAN_START_DATE,PLAN_END_DATE,PLAN_WORKLOAD,ESTIMATE_REMAIN_WORKLOAD,
+        DEV_USER_ID,COMMISSIONING_window_ID,CREATE_BY,CREATE_DATE,DEFECT_ID,DEV_TASK_PRIORITY,SPRINT_ID,FIELD_TEMPLATE,DEV_TASK_TYPE)
+        values(#{devTaskCode},#{devTaskName},#{requirementFeatureId},#{devTaskOverview},
+        #{planStartDate},#{planEndDate},#{planWorkload},#{planWorkload},#{devUserId},#{commissioningWindowId},
+        #{createBy},#{createDate},#{defectID},#{devTaskPriority},#{sprintId},#{fieldTemplate},#{devTaskType}
+        )
+    </insert>
+    <!-- 添加含有缺陷ID DEV -->
+    <insert id="addDefectDevTask" parameterType="cn.pioneeruniverse.dev.entity.TblDevTask">
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() AS ID
+        </selectKey>
+        insert into TBL_DEV_TASK
+        (DEV_TASK_CODE,DEV_TASK_NAME,REQUIREMENT_FEATURE_ID,DEV_TASK_OVERVIEW,PLAN_START_DATE,PLAN_END_DATE,PLAN_WORKLOAD,DEV_USER_ID,COMMISSIONING_window_ID,CREATE_BY,CREATE_DATE,DEFECT_ID)
+        values(#{devTaskCode},#{devTaskName},#{featureCode},#{devTaskOverview},#{planStartDate},#{planEndDate},#{planWorkload},#{devUserId},#{commissioningWindowId},#{createBy},#{createDate},#{defectID})
+    </insert>
+    <!-- 编辑 信息-->
+    <select id="getEditDevTask" parameterType="cn.pioneeruniverse.dev.entity.TblDevTask" resultMap="BaseResultMap">
+        select
+        t.id,t.DEFECT_ID,t.DEV_TASK_STATUS,t.ACTUAL_WORKLOAD,t.ACTUAL_START_DATE,t.ACTUAL_END_DATE,t.REQUIREMENT_FEATURE_ID,DEV_TASK_NAME,t.DEV_TASK_OVERVIEW,t.PLAN_START_DATE,t.PLAN_END_DATE,f.FEATURE_NAME,PLAN_WORKLOAD,t.ESTIMATE_REMAIN_WORKLOAD,u.USER_NAME,u.id
+        as
+        dev_user_ID,t.COMMISSIONING_WINDOW_ID,f.REQUIREMENT_FEATURE_STATUS,u.USER_ACCOUNT,t.SPRINT_ID,system.development_mode,f.SYSTEM_ID,t.DEV_TASK_PRIORITY,t.CODE_REVIEW_STATUS,
+        t.SPRINT_ID,sprintInfo.SPRINT_NAME,t.DEV_TASK_TYPE
+        from TBL_DEV_TASK t
+        LEFT JOIN tbl_requirement_feature f
+        on t.REQUIREMENT_FEATURE_ID=f.id
+        LEFT JOIN tbl_system_info system ON system.ID = f.SYSTEM_ID
+        LEFT JOIN tbl_user_info u
+        on t.DEV_USER_ID=u.ID
+        LEFT JOIN tbl_sprint_info sprintInfo ON t.SPRINT_ID = sprintInfo.ID and sprintInfo.STATUS=1
+
+        <where>
+            t.ID=#{id}
+        </where>
+    </select>
+    <!-- 编辑 -->
+    <update id="updateDevTask" parameterType="cn.pioneeruniverse.dev.entity.TblDevTask">
+        update TBL_DEV_TASK
+        <set>
+            <if test=" devTaskName!= null and  devTaskName!= ''">
+                DEV_TASK_NAME = #{devTaskName},
+            </if>
+            <if test=" requirementFeatureId!= null ">
+                REQUIREMENT_FEATURE_ID = #{requirementFeatureId},
+            </if>
+            <if test=" devTaskOverview!= null and  devTaskOverview!= ''">
+                DEV_TASK_OVERVIEW =#{devTaskOverview},
+            </if>
+            <if test="planStartDate!= null">
+                PLAN_START_DATE =#{planStartDate},
+            </if>
+            <if test="planEndDate!= null ">
+                PLAN_END_DATE =#{planEndDate},
+            </if>
+            <if test="planWorkload != null">
+                PLAN_WORKLOAD =#{planWorkload},
+            </if>
+
+            <if test="devUserId!= null ">
+                DEV_USER_ID =#{devUserId},
+            </if>
+            <if test="lastUpdateBy!= null">
+                LAST_UPDATE_BY =#{lastUpdateBy},
+            </if>
+            <if test="lastUpdateDate!= null ">
+                LAST_UPDATE_DATE =#{lastUpdateDate},
+            </if>
+
+            <if test="fieldTemplate!= null ">
+                FIELD_TEMPLATE =#{fieldTemplate},
+            </if>
+
+
+            <if test="commissioningWindowId!=null ">
+                COMMISSIONING_window_ID =#{commissioningWindowId},
+            </if>
+
+            DEV_TASK_PRIORITY =#{devTaskPriority},
+
+            <if test="devTaskStatus !=null ">
+                DEV_TASK_STATUS =#{devTaskStatus},
+            </if>
+            SPRINT_ID = #{sprintId}
+        </set>
+        where ID =#{id}
+    </update>
+
+
+
+    <update id="updateDevTaskNew" parameterType="cn.pioneeruniverse.dev.entity.TblDevTask">
+        update TBL_DEV_TASK
+        <set>
+            <if test=" devTaskName!= null and  devTaskName!= ''">
+                DEV_TASK_NAME = #{devTaskName},
+            </if>
+            <if test=" requirementFeatureId!= null ">
+                REQUIREMENT_FEATURE_ID = #{requirementFeatureId},
+            </if>
+            <if test=" devTaskOverview!= null and  devTaskOverview!= ''">
+                DEV_TASK_OVERVIEW =#{devTaskOverview},
+            </if>
+
+                PLAN_START_DATE =#{planStartDate},
+
+
+                PLAN_END_DATE =#{planEndDate},
+
+            <if test="planWorkload != null">
+                PLAN_WORKLOAD =#{planWorkload},
+            </if>
+
+                ESTIMATE_REMAIN_WORKLOAD =#{estimateRemainWorkload},
+
+            <if test="devUserId!= null ">
+                DEV_USER_ID =#{devUserId},
+            </if>
+            <if test="lastUpdateBy!= null">
+                LAST_UPDATE_BY =#{lastUpdateBy},
+            </if>
+            <if test="lastUpdateDate!= null ">
+                LAST_UPDATE_DATE =#{lastUpdateDate},
+            </if>
+
+            <if test="fieldTemplate!= null ">
+                FIELD_TEMPLATE =#{fieldTemplate},
+            </if>
+
+
+            <if test="commissioningWindowId!=null ">
+                COMMISSIONING_window_ID =#{commissioningWindowId},
+            </if>
+
+            DEV_TASK_PRIORITY = #{devTaskPriority},
+            DEV_TASK_TYPE = #{devTaskType},
+
+            <if test="devTaskStatus !=null ">
+                DEV_TASK_STATUS =#{devTaskStatus},
+            </if>
+            SPRINT_ID = #{sprintId}
+        </set>
+        where ID =#{id}
+    </update>
+
+
+    <!--  处理 -->
+    <update id="Handle" parameterType="cn.pioneeruniverse.dev.entity.TblDevTask">
+        update TBL_DEV_TASK
+        <set>
+            <if test="actualStartDate!= null">
+                ACTUAL_START_DATE = #{actualStartDate},
+            </if>
+            <if test="actualEndDate!= null">
+                ACTUAL_END_DATE = #{actualEndDate},
+            </if>
+            <if test="actualWorkload!= null and actualWorkload!=''">
+                ACTUAL_WORKLOAD =#{actualWorkload},
+            </if>
+            <if test="devTaskStatus!= null and devTaskStatus!=''">
+                DEV_TASK_STATUS = #{devTaskStatus},
+            </if>
+            ESTIMATE_REMAIN_WORKLOAD = 0
+        </set>
+        where ID =#{id}
+    </update>
+    <!-- 待处理 -->
+    <update id="DHandle" parameterType="cn.pioneeruniverse.dev.entity.TblDevTask">
+        update TBL_DEV_TASK
+        <set>
+            <if test="actualStartDate!= null">
+                ACTUAL_START_DATE = #{actualStartDate},
+            </if>
+            ESTIMATE_REMAIN_WORKLOAD = 0,
+            DEV_TASK_STATUS=2
+        </set>
+        where ID =#{id}
+    </update>
+    <!-- 处理中 -->
+    <update id="CodeHandle" parameterType="cn.pioneeruniverse.dev.entity.TblDevTask">
+        update TBL_DEV_TASK
+        <set>
+            <if test="actualStartDate!= null">
+                ACTUAL_START_DATE = #{actualStartDate},
+            </if>
+            <if test="actualEndDate!= null">
+                ACTUAL_END_DATE = #{actualEndDate},
+            </if>
+            <if test="actualWorkload!= null and actualWorkload!=''">
+                ACTUAL_WORKLOAD =#{actualWorkload},
+            </if>
+            DEV_TASK_STATUS=4
+
+        </set>
+        where ID =#{id}
+    </update>
+    <!-- 代码评审通过-->
+    <update id="reviewAdopt" parameterType="java.lang.Long">
+        update TBL_DEV_TASK
+        <set>
+            DEV_TASK_STATUS=3
+        </set>
+        where ID =#{id}
+    </update>
+    <!-- 代码评审未通过-->
+    <update id="reviewNAdopt" parameterType="java.lang.Long">
+        update TBL_DEV_TASK
+        <set>
+            DEV_TASK_STATUS=5
+        </set>
+        where ID =#{id}
+    </update>
+	<!-- 分派人员 -->
+    <update id="assigDev" parameterType="cn.pioneeruniverse.dev.entity.TblDevTask">
+        update TBL_DEV_TASK
+        <set>
+            DEV_USER_ID = #{devUserId}
+        </set>
+
+        where ID =#{id}
+    </update>
+	<!-- 修改开发任务状态为实施中 -->
+    <update id="editFeature" parameterType="java.lang.Long">
+    update tbl_requirement_feature
+    set REQUIREMENT_FEATURE_STATUS ="02"
+    where ID =#{id}
+  </update>
+    <!--根据主键查询关联测试任务名称-->
+    <select id="getFeatureNameById" parameterType="java.lang.Long" resultType="java.lang.String">
+      SELECT FEATURE_NAME
+      FROM tbl_requirement_feature
+      WHERE ID = #{id,jdbcType=BIGINT}
+      AND STATUS = 1
+    </select>
+    <!--获取开发人员待实施、实施中的任务集合-->
+    <select id="getTaskListByDevUserId" parameterType="Long" resultType="java.util.Map">
+        SELECT
+        tdt.ID AS "id",
+        @rownum:=@rownum + 1 AS "index",
+        tdt.DEV_TASK_CODE AS "taskCode",
+        tdt.DEV_TASK_NAME AS "taskName",
+        tdt.DEV_TASK_STATUS AS "taskStatus"
+        FROM tbl_dev_task tdt,(select @rownum:=0) tmp_row_number
+        WHERE tdt.DEV_USER_ID = #{devUserId,jdbcType=BIGINT}
+        AND tdt.DEV_TASK_STATUS BETWEEN 1 AND 2
+        AND tdt.STATUS = 1
+    </select>
+
+    <select id="getTaskDetailById" parameterType="Long" resultType="java.util.Map">
+        SELECT
+        tdt.ID AS "id",
+        tsi.CODE_REVIEW_STATUS AS "needCodeReview",
+        tdt.CODE_REVIEW_STATUS AS "codeReviewStatus",
+        tdt.ACTUAL_START_DATE AS "realStartTime"
+        FROM tbl_dev_task tdt
+        LEFT JOIN tbl_requirement_feature trf ON trf.ID = tdt.REQUIREMENT_FEATURE_ID
+        LEFT JOIN tbl_system_info tsi ON tsi.ID = trf.SYSTEM_ID
+        WHERE tdt.id = #{id} AND tdt.STATUS = 1
+    </select>
+
+    <!-- 查询最大code -->
+    <select id="DevfindMaxCode" parameterType="int" resultType="String">
+    	SELECT MAX(SUBSTRING(DEV_TASK_CODE,#{length}))
+		FROM tbl_dev_task
+    </select>
+
+    <!-- 获取 开发人 -->
+    <select id="getDevUser" parameterType="java.lang.Long" resultMap="BaseResultMap">
+ SELECT tuser.id as DEV_USER_ID,tuser.USER_NAME FROM tbl_user_info tuser
+	LEFT JOIN tbl_dev_task dev 
+	on dev.DEV_USER_ID=tuser.id
+	where dev.ID=#{id}
+  </select>
+    <!--根据开发人员id查询工作任务 -->
+    <select id="findDevTaskByDevUser" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    SELECT tdt.ID,tdt.DEV_TASK_CODE,tdt.DEV_TASK_NAME,tdt.DEV_TASK_STATUS,tsi.SYSTEM_NAME,tdt.REQUIREMENT_FEATURE_ID,
+	(select tdd.VALUE_NAME from tbl_data_dic tdd where tdd.VALUE_CODE = DEV_TASK_STATUS
+		AND tdd.TERM_CODE='TBL_DEV_TASK_DEV_TASK_STATUS' AND tdd.STATUS=1) statusName
+	FROM TBL_DEV_TASK tdt 
+	LEFT JOIN TBL_REQUIREMENT_FEATURE trf ON tdt.REQUIREMENT_FEATURE_ID=trf.ID AND trf.STATUS=1
+	LEFT JOIN tbl_system_info tsi ON trf.SYSTEM_ID=tsi.ID AND tsi.STATUS=1
+	WHERE tdt.STATUS=1 AND (DEV_TASK_STATUS =1 OR DEV_TASK_STATUS=2) AND tdt.DEV_USER_ID=#{userId}
+	ORDER BY tdt.ID DESC
+	LIMIT 0,5
+  </select>
+
+    <!--根据开发人员id查询工作任务(旧) -->
+    <select id="findTaskByUser" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    SELECT DEV_TASK_CODE,DEV_TASK_STATUS from TBL_DEV_TASK tdt 
+    WHERE (DEV_TASK_STATUS =1 OR DEV_TASK_STATUS=2) AND tdt.DEV_USER_ID=#{userId} AND tdt.status=1   	
+  </select>
+
+    <select id="findSystemByUser" parameterType="java.lang.Long" resultMap="BaseResultMap">
+   	select tsi.ID,tsi.SYSTEM_NAME,COUNT(SYSTEM_NAME) systemCount from TBL_DEV_TASK tdt 
+   	INNER JOIN TBL_REQUIREMENT_FEATURE trf on tdt.REQUIREMENT_FEATURE_ID=trf.ID 
+   	INNER JOIN tbl_system_info tsi ON trf.SYSTEM_ID=tsi.ID 
+   	WHERE tdt.STATUS=1 AND trf.STATUS=1 AND tsi.STATUS=1 
+   	AND (DEV_TASK_STATUS =1 OR DEV_TASK_STATUS=2) AND tdt.DEV_USER_ID=#{userId}   
+   	GROUP BY tsi.ID 
+  </select>
+
+    <select id="getDevOld" parameterType="cn.pioneeruniverse.dev.entity.TblDevTask" resultMap="BaseResultMap">
+        select
+        t.id,t.DEV_USER_ID,t.DEV_TASK_STATUS,t.ACTUAL_WORKLOAD,t.ACTUAL_START_DATE,t.DEV_TASK_CODE,
+        t.ACTUAL_END_DATE,t.REQUIREMENT_FEATURE_ID,t.DEV_TASK_NAME,t.DEV_TASK_OVERVIEW,
+        t.PLAN_START_DATE,t.PLAN_END_DATE,f.FEATURE_NAME,PLAN_WORKLOAD,u.USER_NAME,
+        u.id,u.USER_ACCOUNT,t.COMMISSIONING_WINDOW_ID,f.REQUIREMENT_FEATURE_STATUS,t.DEV_TASK_PRIORITY
+        from tbl_dev_task t
+        LEFT JOIN tbl_requirement_feature f
+        on t.REQUIREMENT_FEATURE_ID=f.id
+        LEFT JOIN tbl_user_info u
+        on t.DEV_USER_ID=u.ID
+        <where>
+            t.ID=#{id}
+        </where>
+    </select>
+
+
+    <update id="updateStatus" parameterType="Long">
+        update TBL_DEV_TASK
+        <set>
+            DEV_TASK_STATUS =0
+        </set>
+        where REQUIREMENT_FEATURE_ID =#{requirementFeatureId}
+    </update>
+
+    <!--shan -根据code查询信息 -->
+    <select id="getDevTaskByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        TBL_DEV_TASK
+        WHERE
+        DEV_TASK_CODE = #{code}
+    </select>
+
+    <!--shan -根据code查询信息 -->
+    <select id="getDevTaskByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        TBL_DEV_TASK
+        WHERE
+        DEV_TASK_CODE = #{code}
+        AND `STATUS` = 1
+    </select>
+
+    <!--通过开发工作任务ID获取开发工作任务 -->
+    <select id="getDevTaskById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        TBL_DEV_TASK
+        WHERE
+        ID = #{devTaskId}
+        AND `STATUS` = 1
+    </select>
+
+<!--获取某个开发人员的开发工作任务数量  -->
+    <select id="checkMySelectedTask" resultType="java.lang.Integer">
+        SELECT COUNT(*) AS num
+        FROM
+	    tbl_dev_task tdt
+        LEFT JOIN tbl_user_info tui ON tui.id = tdt.DEV_USER_ID
+        WHERE
+	    tui.USER_ACCOUNT = #{userAccount} AND tdt.ID = #{taskId}
+	    AND tdt.STATUS = 1 AND tdt.DEV_TASK_STATUS BETWEEN 1 AND 2
+    </select>
+
+<!-- 更新代码评审状态 -->
+    <update id="updateCodeReviewStatus" parameterType="cn.pioneeruniverse.dev.entity.TblDevTask">
+        UPDATE tbl_dev_task SET
+        CODE_REVIEW_STATUS = #{codeReviewStatus},
+        LAST_UPDATE_BY = #{lastUpdateBy},
+        LAST_UPDATE_DATE = #{lastUpdateDate}
+        WHERE ID = #{id}
+        AND (CODE_REVIEW_STATUS = 1 OR CODE_REVIEW_STATUS = 3)
+    </update>
+    <select id="selectSystemCodeReview" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    SELECT CODE_REVIEW_STATUS FROM tbl_system_info system
+	WHERE system.ID=#{systemId}
+    </select>
+
+
+
+ <!-- 通过冲刺获取开发工作任务 -->
+    <select id="selectIdBySprintId" parameterType="java.lang.Long" resultType="String">
+   select tdt.id from `tbl_dev_task` tdt
+   left join  `tbl_requirement_feature`  trf
+   on trf.`ID`=tdt.`REQUIREMENT_FEATURE_ID` where tdt.`REQUIREMENT_FEATURE_ID` in
+    (select trff.id from `tbl_requirement_feature` trff.`SPRINT_ID`=#{sprintId} and trff.status=1) and tdt.status=1
+    </select>
+
+<!-- 通过投产窗口ID获取开发工作任务ID -->
+    <select id="selectIdByWindowId" parameterType="map" resultType="String">
+     select tdt.id from `tbl_dev_task` tdt
+     left join  `tbl_requirement_feature`  trf
+     on trf.`ID`=tdt.`REQUIREMENT_FEATURE_ID` where tdt.`REQUIREMENT_FEATURE_ID` in
+    (select trff.id from `tbl_requirement_feature` trff.`system_id`=#{systemId} and COMMISSIONING_WINDOW_ID=#{windowId} and trff.status=1) and tdt.status=1
+    </select>
+
+<!-- 获取某个开发工作任务的自定义字段 -->
+    <select id="getDevTaskFieldTemplateById"  resultType="String">
+		SELECT JSON_UNQUOTE(JSON_EXTRACT(FIELD_TEMPLATE,REPLACE(
+		JSON_UNQUOTE(JSON_SEARCH(FIELD_TEMPLATE ,'one',#{fieldName})),'fieldName','valueName')))
+		FROM tbl_dev_task task
+    	WHERE task.ID=#{id} and  task.STATUS=1
+    </select>
+<!-- 完成开发工作任务 -->
+    <update id="finishTask" parameterType="cn.pioneeruniverse.dev.entity.TblDevTask">
+        UPDATE tbl_dev_task tdt
+        LEFT JOIN tbl_requirement_feature trf ON trf.ID = tdt.REQUIREMENT_FEATURE_ID
+        LEFT JOIN tbl_system_info tsi ON tsi.ID = trf.SYSTEM_ID
+        SET
+        tdt.DEV_TASK_STATUS = #{devTaskStatus},
+        tdt.ACTUAL_START_DATE = #{actualStartDate},
+        tdt.ACTUAL_END_DATE = #{actualEndDate},
+        tdt.ACTUAL_WORKLOAD = #{actualWorkload}
+        WHERE tdt.ID = #{id}
+        AND tsi.CODE_REVIEW_STATUS = #{needCodeReview}
+        AND tdt.CODE_REVIEW_STATUS = #{codeReviewStatus}
+        AND tdt.DEV_USER_ID = #{devUserId}
+        AND tdt.STATUS = 1
+    </update>
+<!-- 通过ID获取开发任务 -->
+    <select id="selectRequirementFeatureById" resultType="cn.pioneeruniverse.dev.entity.TblRequirementFeature">
+     SELECT FEATURE_CODE AS featureCode,PROJECT_ID AS projectId FROM tbl_requirement_feature WHERE ID = #{id} AND STATUS = 1
+    </select>
+
+    <!--liushan:CODE_REVIEW_STATUS 评审状态（数据字典）1 未评审 2 评审通过 3 不通过-->
+    <select id="selectDevTaskCodeReviewByReqFeatureIds" resultMap="BaseResultMap">
+        SELECT
+            ID,
+            DEV_TASK_NAME,
+            DEV_TASK_CODE,
+            CODE_REVIEW_STATUS
+        FROM
+        tbl_dev_task devtask
+        WHERE
+            REQUIREMENT_FEATURE_ID IN
+            <foreach collection="array" separator="," open="(" close=")" item="item">
+                #{item}
+            </foreach>
+            AND CODE_REVIEW_STATUS != 2
+            AND DEV_TASK_STATUS!=0 AND  DEV_TASK_STATUS!=1
+        AND `STATUS` = 1
+    </select>
+
+    <select id="getAttentionByReqFeatureId" resultType="Integer">
+      SELECT STATUS FROM tbl_requirement_feature_attention WHERE REQUIREMENT_FEATURE_ID = #{id}
+    </select>
+    <!-- 根据开发任务ID查询工作任务状态为待实施和实施中的任务 -->
+    <select id="getDevNotOverByFeaureId" resultMap="BaseResultMap">
+      SELECT ID,DEV_TASK_NAME,DEV_TASK_CODE FROM tbl_dev_task 
+		WHERE (DEV_TASK_STATUS=1 OR DEV_TASK_STATUS=2) AND REQUIREMENT_FEATURE_ID=#{featureId} AND `STATUS`=1
+    </select>
+
+
+</mapper>

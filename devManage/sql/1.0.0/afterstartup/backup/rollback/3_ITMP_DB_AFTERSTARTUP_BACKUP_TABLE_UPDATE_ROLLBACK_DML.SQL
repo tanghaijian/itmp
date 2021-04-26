@@ -1,0 +1,1 @@
+UPDATE AFTERSTARTUP_BACKUP SET NAME='bbbb>aaaa' where ID=1;

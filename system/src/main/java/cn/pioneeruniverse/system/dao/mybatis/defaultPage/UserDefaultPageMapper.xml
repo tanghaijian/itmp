@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.system.dao.mybatis.defaultPage.UserDefaultPageDao">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.system.entity.TblUserDefaultPage">
+  	<id column="ID" jdbcType="BIGINT" property="id" />
+  	<result column="USER_ID" jdbcType="BIGINT" property="userId" />
+  	<result column="MENU_BUTTON_ID" jdbcType="BIGINT" property="menuButtonId" />
+  	<result column="MUTTON_ORDER" jdbcType="INTEGER" property="menuOrder" />
+  	<result column="STATUS" jdbcType="TINYINT" property="status" />
+  </resultMap>
+  
+  <!-- 逻辑删除某人的默认页面（登录后显示的tab页） -->
+  <update id="updateDefaultPage" parameterType="java.lang.Long">
+    	update tbl_user_default_page set STATUS = 2 where USER_ID = #{userId}
+  </update>
+    
+    <!-- 保存默认tab页 -->
+  <insert id="saveDefaultPage" parameterType="cn.pioneeruniverse.system.entity.TblUserDefaultPage">
+    	insert into tbl_user_default_page (USER_ID, MENU_BUTTON_ID, MENU_ORDER, STATUS) values 
+    					(#{userId,jdbcType=BIGINT}, #{menuButtonId,jdbcType=BIGINT}, #{menuOrder,jdbcType=INTEGER}, #{status,jdbcType=TINYINT})
+  </insert>
+  
+  <!--获取默认tab页 -->
+  <select id="getDefaultPage" parameterType="java.lang.Long" resultType="long">
+  	select MENU_BUTTON_ID from tbl_user_default_page where USER_ID = #{currentUserId} and STATUS = 1
+  </select>
+  
+  <!-- 获取默认tab页，以及页面的菜单按钮信息 -->
+  <select id="getDefaultPage2" parameterType="java.lang.Long" resultType="cn.pioneeruniverse.system.entity.TblUserDefaultPage">
+  	select page.MENU_ORDER menuOrder, menu.URL url, page.MENU_BUTTON_ID menuButtonId, menu.MENU_BUTTON_NAME menuButtonName
+  		from tbl_user_default_page page
+  		left join tbl_menu_button_info menu on menu.ID = page.MENU_BUTTON_ID and menu.STATUS = 1
+  		where page.USER_ID = #{userId} and page.STATUS = 1
+  </select>
+ 
+ </mapper>

@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="cn.pioneeruniverse.project.dao.mybatis.TblRiskInfoMapper">
+	<resultMap id="BaseResultMap"
+		type="cn.pioneeruniverse.project.entity.TblRiskInfo">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="PROJECT_ID" jdbcType="BIGINT" property="projectId" />
+		<result column="PROGRAM_ID" jdbcType="BIGINT" property="programId" />
+		<result column="RESPONSIBLE_USER_ID" jdbcType="BIGINT" property="responsibleUserId" />
+		<result column="RISK_DESCRIPTION" jdbcType="VARCHAR" property="riskDescription" />
+		<result column="RISK_TYPE" jdbcType="TINYINT" property="riskType" />
+		<result column="RISK_FACTOR" jdbcType="TINYINT" property="riskFactor" />
+		<result column="RISK_PROBABILITY" jdbcType="TINYINT" property="riskProbability" />
+		<result column="RISK_PRIORITY" jdbcType="TINYINT" property="riskPriority" />
+		<result column="RISK_INFLUENCE" jdbcType="VARCHAR" property="riskInfluence" />
+		<result column="RISK_TRIGGERS" jdbcType="VARCHAR" property="riskTriggers" />
+		<result column="RISK_STATUS" jdbcType="TINYINT" property="riskStatus" />
+		<result column="REMARK" jdbcType="VARCHAR" property="remark" />
+		<result column="COPING_STRATEGY" jdbcType="VARCHAR" property="copingStrategy" />
+		<result column="COPING_STRATEGY_RECORD" jdbcType="VARCHAR" property="copingStrategyRecord" />
+		<result column="STATUS" jdbcType="TINYINT" property="status" />
+		<result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+		<result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+		<result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+		<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+
+		<!--liushan:[WTSK-00004843] | 风险管理优化 新添加的字段 运维类项目用到的-->
+		<result column="REQUIREMENT_FEATURE_ID" jdbcType="BIGINT" property="requirementFeatureId" />
+		<result column="COMMISSIONING_WINDOW_ID" jdbcType="BIGINT" property="commissioningWindowId" />
+		<result column="REQUIREMENT_ID" jdbcType="BIGINT" property="requirementId" />
+		<result column="SYSTEM_ID" jdbcType="BIGINT" property="systemId" />
+		<result column="DEPT_ID" jdbcType="BIGINT" property="deptId" />
+		<result column="ENVIRONMENT_TYPE" jdbcType="TINYINT" property="environmentType" />
+
+		<result column="PROJECT_NAME" jdbcType="VARCHAR" property="projectName" />
+
+	</resultMap>
+
+    <!--<resultMap id="BaseResultMap2" extends="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblRiskInfo">
+        <association property=""
+                     select="cn.pioneeruniverse.project.dao.mybatis.ProjectGroupUserMapper.selectGroupUserByProjectIdAndUserPost"></association>
+    </resultMap>-->
+	
+	<select id="getRiskInfo" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		SELECT
+		risk.ID,
+		risk.RISK_DESCRIPTION,
+		risk.RISK_PRIORITY,
+		risk.RISK_INFLUENCE,
+		risk.RISK_STATUS,
+		risk.COPING_STRATEGY,
+		risk.COPING_STRATEGY_RECORD,
+		risk.RESPONSIBLE_USER_ID,
+		risk.REQUIREMENT_FEATURE_ID,
+		risk.COMMISSIONING_WINDOW_ID,
+		risk.REQUIREMENT_ID,
+		risk.SYSTEM_ID,
+		risk.DEPT_ID,
+		risk.ENVIRONMENT_TYPE,
+		risk.CREATE_BY,
+		userInfo.USER_NAME responsibleUser
+		FROM
+		tbl_risk_info risk
+		LEFT JOIN tbl_user_info userInfo ON userInfo.ID = risk.RESPONSIBLE_USER_ID
+		WHERE
+		risk.PROJECT_ID = #{projectId} and risk.STATUS = 1
+	</select>
+
+	<sql id="list_sql">
+		<where>
+			risk. STATUS = 1
+			<choose>
+				<when test="riskInfo.projectId != null">
+					AND risk.PROJECT_ID = #{riskInfo.projectId}
+				</when>
+				<otherwise>
+					AND project.PROJECT_TYPE = 1
+				</otherwise>
+			</choose>
+			<if test="riskInfo.riskDescription != null and riskInfo.riskDescription !=''">
+				AND risk.RISK_DESCRIPTION LIKE CONCAT(CONCAT('%',LOWER(#{riskInfo.riskDescription}),'%'))
+			</if>
+			<if test="riskInfo.systemId != null">
+				AND risk.SYSTEM_ID = #{riskInfo.systemId}
+			</if>
+			<if test="riskInfo.commissioningWindowId != null">
+				AND risk.COMMISSIONING_WINDOW_ID = #{riskInfo.commissioningWindowId}
+			</if>
+			<if test="riskInfo.requirementFeatureId != null">
+				AND risk.REQUIREMENT_FEATURE_ID = #{riskInfo.requirementFeatureId}
+			</if>
+			<if test="riskInfo.requirementId != null">
+				AND risk.REQUIREMENT_ID = #{riskInfo.requirementId}
+			</if>
+			<if test="riskInfo.deptName != null and riskInfo.deptName != ''">
+				AND risk.DEPT_ID IN
+				<foreach collection="riskInfo.deptName.split(',')" item="item" open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="riskInfo.environmentType != null">
+				AND risk.ENVIRONMENT_TYPE = #{riskInfo.environmentType}
+			</if>
+		</where>
+	</sql>
+
+	<!--liushan:运维类项目查询的列表-->
+	<select id="getAllRisk" resultMap="BaseResultMap">
+		SELECT
+			risk.ID,
+			risk.RISK_DESCRIPTION,
+			risk.REQUIREMENT_FEATURE_ID,
+			risk.COMMISSIONING_WINDOW_ID,
+			window.WINDOW_NAME AS commissioningWindowName,
+			risk.REQUIREMENT_ID,
+			req.REQUIREMENT_CODE AS requirementCode,
+			risk.SYSTEM_ID,
+			system.SYSTEM_NAME AS systemName,
+			risk.DEPT_ID,
+			dept.DEPT_NAME AS deptName,
+			risk.CREATE_BY,
+			risk.ENVIRONMENT_TYPE
+		FROM
+			tbl_risk_info risk
+		LEFT JOIN tbl_project_info project ON risk.PROJECT_ID = project.ID
+		LEFT JOIN tbl_commissioning_window window ON risk.COMMISSIONING_WINDOW_ID = window.ID
+		LEFT JOIN tbl_requirement_info req ON risk.REQUIREMENT_ID = req.ID
+		LEFT JOIN tbl_system_info system ON risk.SYSTEM_ID = system.ID
+		LEFT JOIN tbl_dept_info dept ON risk.DEPT_ID = dept.ID
+		<include refid="list_sql"/>
+		<if test="start != null and pageSize != null">
+			LIMIT #{start},#{pageSize}
+		</if>
+	</select>
+
+	<!-- 运维类项目查询的列表 总数-->
+	<select id="getAllRiskCount" resultType="java.lang.Integer">
+		SELECT
+			COUNT(DISTINCT risk.ID)
+		FROM
+		tbl_risk_info risk
+		LEFT JOIN tbl_project_info project ON risk.PROJECT_ID = project.ID
+		LEFT JOIN tbl_commissioning_window window ON risk.COMMISSIONING_WINDOW_ID = window.ID
+		LEFT JOIN tbl_requirement_info req ON risk.REQUIREMENT_ID = req.ID
+		LEFT JOIN tbl_system_info system ON risk.SYSTEM_ID = system.ID
+		LEFT JOIN tbl_dept_info dept ON risk.DEPT_ID = dept.ID
+		<include refid="list_sql"/>
+	</select>
+
+	
+	<insert id="insertRiskInfo" useGeneratedKeys="true" keyProperty="id" parameterType="cn.pioneeruniverse.project.entity.TblRiskInfo">
+		insert into tbl_risk_info (PROJECT_ID, PROGRAM_ID, RESPONSIBLE_USER_ID, RISK_DESCRIPTION, RISK_TYPE, RISK_FACTOR, RISK_PROBABILITY,
+			RISK_PRIORITY, RISK_INFLUENCE, RISK_TRIGGERS, RISK_STATUS, REMARK, COPING_STRATEGY, COPING_STRATEGY_RECORD, STATUS,
+			CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE,
+			ENVIRONMENT_TYPE,REQUIREMENT_FEATURE_ID,COMMISSIONING_WINDOW_ID,REQUIREMENT_ID,SYSTEM_ID,DEPT_ID)
+			values
+			(#{projectId}, #{programId}, #{responsibleUserId}, #{riskDescription}, #{riskType}, #{riskFactor}, #{riskProbability}, #{riskPriority},
+			#{riskInfluence}, #{riskTriggers}, #{riskStatus}, #{remark}, #{copingStrategy}, #{copingStrategyRecord}, #{status},
+			#{createBy}, #{createDate}, #{lastUpdateBy}, #{lastUpdateDate},
+			#{environmentType},#{requirementFeatureId},#{commissioningWindowId},#{requirementId},#{systemId},#{deptId})
+	</insert>
+	
+	<update id="deleteRiskInfo" parameterType="cn.pioneeruniverse.project.entity.TblRiskInfo">
+		update tbl_risk_info set STATUS = 2, LAST_UPDATE_BY = #{lastUpdateBy}, LAST_UPDATE_DATE = #{lastUpdateDate}
+			where ID = #{id}
+	</update>
+	
+	<select id="getRiskInfoById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select risk.*, user.USER_NAME responsibleUser
+			from tbl_risk_info risk
+			left join tbl_user_info user on user.ID = risk.RESPONSIBLE_USER_ID
+			where risk.ID = #{id}
+	</select>
+
+	<select id="getRiskById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		SELECT
+			risk.ID,
+			risk.PROJECT_ID,
+			project.PROJECT_NAME,
+			risk.RISK_DESCRIPTION,
+			risk.REQUIREMENT_FEATURE_ID,
+			risk.COMMISSIONING_WINDOW_ID,
+			window.WINDOW_NAME AS commissioningWindowName,
+			risk.REQUIREMENT_ID,
+			req.REQUIREMENT_CODE AS requirementCode,
+			risk.SYSTEM_ID,
+			system.SYSTEM_NAME AS systemName,
+			risk.DEPT_ID,
+			dept.DEPT_NAME AS deptName,
+			risk.ENVIRONMENT_TYPE,
+			risk.REMARK
+		FROM
+		tbl_risk_info risk
+		LEFT JOIN tbl_project_info project ON risk.PROJECT_ID = project.ID
+		LEFT JOIN tbl_commissioning_window window ON risk.COMMISSIONING_WINDOW_ID = window.ID
+		LEFT JOIN tbl_requirement_info req ON risk.REQUIREMENT_ID = req.ID
+		LEFT JOIN tbl_system_info system ON risk.SYSTEM_ID = system.ID
+		LEFT JOIN tbl_dept_info dept ON risk.DEPT_ID = dept.ID
+		WHERE
+			risk.ID = #{id}
+	</select>
+	
+	<update id="updateRisk" parameterType="cn.pioneeruniverse.project.entity.TblRiskInfo">
+		update tbl_risk_info set
+			RESPONSIBLE_USER_ID = #{responsibleUserId},
+			RISK_DESCRIPTION = #{riskDescription},
+			RISK_TYPE = #{riskType},
+			RISK_FACTOR = #{riskFactor},
+			RISK_PROBABILITY = #{riskProbability},
+			RISK_PRIORITY = #{riskPriority},
+			RISK_INFLUENCE = #{riskInfluence},
+			RISK_TRIGGERS = #{riskTriggers},
+			RISK_STATUS = #{riskStatus},
+			REMARK = #{remark},
+			COPING_STRATEGY = #{copingStrategy},
+			COPING_STRATEGY_RECORD = #{copingStrategyRecord},
+			LAST_UPDATE_BY = #{lastUpdateBy},
+			LAST_UPDATE_DATE = #{lastUpdateDate},
+			ENVIRONMENT_TYPE  = #{environmentType},
+			REQUIREMENT_FEATURE_ID = #{requirementFeatureId},
+			COMMISSIONING_WINDOW_ID= #{commissioningWindowId},
+			REQUIREMENT_ID = #{requirementId},
+			SYSTEM_ID = #{systemId},
+			<if test="projectId != null">
+				PROJECT_ID = #{projectId},
+			</if>
+			DEPT_ID = #{deptId}
+			where ID = #{id}
+	</update>
+
+	<!-- 新建类：根据项目获取-->
+	<select id="getRiskInfoByProgram" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select risk.ID, risk.RISK_DESCRIPTION, risk.RISK_PRIORITY, risk.RISK_INFLUENCE, risk.RISK_STATUS,
+			risk.COPING_STRATEGY, risk.COPING_STRATEGY_RECORD, risk.RESPONSIBLE_USER_ID, user.USER_NAME responsibleUser
+			from tbl_risk_info risk
+			left join tbl_user_info user on user.ID = risk.RESPONSIBLE_USER_ID
+			where risk.PROGRAM_ID = #{programId} and risk.STATUS = 1
+	</select>
+	 
+</mapper>

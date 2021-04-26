@@ -1,0 +1,2749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>测试任务管理</title>
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/daterangepicker-bs3.css" />
+
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/jquery.editable-select.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/jquery-ztree/3.5.36/css/zTreeStyle/zTreeStyle.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/component.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/common/common.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/testManageui/static/css/testtask/testtask.css" />
+<style>
+	/**列表操作下拉框***/
+	#dropdown_menu {
+		min-width: 80px !important;
+	}
+	
+	#dropdown_menu a {
+		color: #0e90d2;
+		padding: 3px 10px;
+		display: block;
+	}
+	
+	#dropdown_menu a:hover {
+		color: #fff !important;
+		background: #0e90d2;
+	}
+	textarea {
+		resize: none;
+	}
+
+</style>
+<script type="text/javascript">
+	 var environmentTypeList = [];
+     #foreach($dictMap in ${dict.getDictMap("TBL_SYSTEM_SCM_ENVIRONMENT_TYPE").entrySet()})
+     environmentTypeList.push(["${dictMap.key}", "${dictMap.value}"]);
+     #end
+	</script>
+</head>
+
+<body>
+	<div class="main-content">
+		<div class="content-btn row">
+			#if($auth.hasPermission("$token","testManage:testtask:add"))
+			<button type="button" onclick="newtestTask_btn()"
+				class="btn btn-primary">新建任务</button>
+			&nbsp; #end
+			#if($auth.hasPermission("$token","testManage:testtask:export"))
+			<button type="button" onclick="exportTask_btn()"
+				class="btn btn-default">导出任务</button>
+			&nbsp; #end
+
+			<!-- 控制表格的搜索按钮 -->
+			<div class="relaTive btn_right">
+				<button id="dLabel" class="btn btn-primary" type="button"
+					data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					显示 / 隐藏列 <span class="caret"></span>
+				</button>
+				<div class="dropdown-menu colDown" onclick="stopDefaultEvent(event)"
+					aria-labelledby="dLabel">
+					<div class="colDownTit">请选择需要隐藏的表格列</div>
+					<div class='colGroup' id="colGroup"></div>
+				</div>
+			</div>
+			<button type="button" onclick="tableClearSreach()"
+				class="btn btn-default btn_right">清空表格搜索</button>
+			<button type="button" onclick="configFilterShow()"
+				class="btn btn-primary btn_right">自定义筛选器</button>
+			<div class="btn_right col-md-2">
+				<select class="selectpicker " id="filterType" autocomplete="off"
+					name="filterType">
+					<option value="">请选择</option>
+				</select>
+			</div> 
+		</div> 
+		<div class="content-btn">
+			<label id="condition"></label>
+		</div>
+	</div>
+	<div class="content-table">
+		<div class="wode">
+			<table id="list2"></table>
+			<div id="pager2"></div>
+		</div>
+	</div>
+
+	##处理弹出框
+	<div class="modal fade bs-example-modal-biggest" id="handletestTask"
+		tabindex="-1" role="dialog" aria-labelledby="newPerson">
+		<div class="modal-dialog modal-biggest" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<span class="modal-title" id="handletestTaskTitle"></span>
+				</div>
+				<div class="modal-body">
+					<form id="handleForm" method="post" enctype="multipart/form-data">
+						<span id="handletestTaskOverview"></span>
+						<div class="allInfo">
+							<div class="def_title">
+								<span>基本信息</span> <span class="fa fa-angle-double-up"
+									onclick="down(this)"></span>
+							</div>
+							<div class="def_content">
+								<input type="hidden" name="attachFiles" id="handlefiles"
+									value="" /> <input id="reqFeatureId" type="hidden" />
+								<div class="rowdiv">
+									<div class="form-group col-md-4">
+										<label class=" control-label fontWeihgt">任务状态：</label> <label
+											class=" control-label font_left" id="handletestTaskStatus">
+										</label>
+									</div>
+									<div class="form-group col-md-4">
+										<label class=" control-label fontWeihgt">管理岗：</label> <label
+											class=" control-label font_left" id="handledevManPost">
+										</label>
+									</div>
+									<div class="form-group col-md-4">
+										<label class=" control-label fontWeihgt">执行人：</label> <label
+											class=" control-label font_left" id="handleexecutor">
+										</label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-12">
+										<label class="control-label fontWeihgt">子系统：</label> <label
+											class="control-label font_left" id="handlesystemName">
+										</label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-12">
+										<label class=" control-label fontWeihgt">需求：</label> <label
+											class=" control-label font_left" id="handlerequirement">
+										</label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-4">
+										<label class=" control-label fontWeihgt">所属处室：</label> <label
+											class=" control-label font_left" id="handledeptName">
+										</label>
+									</div>
+									<div class="form-group col-md-4">
+										<label class=" control-label fontWeihgt">临时任务：</label> <label
+											class=" control-label font_left" id="handletemporaryTask">
+										</label>
+									</div>
+								</div>
+								#*
+								<div class="rowdiv">
+									<div class="form-group col-md-4">
+										<label class=" control-label fontWeihgt">预计开始时间：</label> <label
+											class=" control-label font_left" id="handlepreStartDate">
+										</label>
+									</div>
+									<div class="form-group col-md-4">
+										<label class=" control-label fontWeihgt">预计结束时间：</label> <label
+											class=" control-label font_left" id="handlepreEndDate">
+										</label>
+									</div>
+									<div class="form-group col-md-4">
+										<label class=" control-label fontWeihgt">预计工作量：</label> <label
+											class=" control-label font_left" id="handlepreWorkload">
+										</label>
+									</div>
+								</div>
+								*#
+								<!-- <div class="rowdiv">
+								<div class="form-group col-md-4">
+									<label class="control-label fontWeihgt">预计系测开始时间：</label>
+									<label class="control-label font_left" id="handlepreSitStartDate"> </label>
+								</div>
+								<div class="form-group col-md-4">
+									<label class="control-label fontWeihgt">预计系测结束时间：</label>
+									<label class="control-label font_left" id="handlepreSitEndDate"> </label>
+								</div>
+								<div class="form-group col-md-4">
+									<label class="control-label fontWeihgt">预计系测工作量(人天)：</label>
+									<label class="control-label font_left" id="handlepreSitWorkload"> </label>
+								</div>
+							</div>
+							<div class="rowdiv">
+								<div class="form-group col-md-4">
+									<label class="control-label fontWeihgt">预计版测开始时间：</label>
+									<label class="control-label font_left" id="handleprePptStartDate"> </label>
+								</div>
+								<div class="form-group col-md-4">
+									<label class="control-label fontWeihgt">预计版测结束时间：</label>
+									<label class="control-label font_left" id="handleprePptEndDate"> </label>
+								</div>
+								<div class="form-group col-md-4">
+									<label class="control-label fontWeihgt">预计版测工作量(人天)：</label>
+									<label class="control-label font_left" id="handleprePptWorkload"> </label>
+								</div>
+							</div> -->
+								<div class="rowdiv">
+									<div class="form-group col-md-12">
+										<label class=" control-label fontWeihgt">任务处理意见：</label> <label
+											class=" control-label font_left" id="handlehandSug">
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="allInfo">
+							<div class="def_title">
+								<span>下属工作任务</span> <span class="fa fa-angle-double-up"
+									onclick="down(this)"></span>
+							</div>
+							<div class="connect_div" id="handleConnectDiv"></div>
+						</div>
+						<br /> ##系测
+						<div class="rowdiv">
+							<div class="form-group col-md-4">
+								<label class="col-md-4 control-label fontWeihgt">实际系测开始：</label>
+								<div class="col-sm-8">
+									<input size="16" type="text" readonly
+										class="form-control pointStyle readonly form_datetime"
+										placeholder="请选择" id="handleSitstartWork"
+										name="handleSitstartWork" />
+								</div>
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-sm-4 control-label fontWeihgt">实际系测结束：</label>
+								<div class="col-sm-8">
+									<input size="16" type="text" readonly
+										class="form-control readonly pointStyle form_datetime"
+										placeholder="请选择" id="handleSitendWork"
+										name="handleSitendWork" />
+								</div>
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-sm-6 control-label fontWeihgt">系测工作量(人天)：</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" placeholder="请输入"
+										name="handleSitWorkload" id="handleSitWorkload" />
+								</div>
+								##
+								<div class="col-sm-1">
+									<label class="control-label"> 人天 </label>
+								</div>
+							</div>
+						</div>
+
+						<div class="rowdiv">
+
+							<div class="form-group col-md-4">
+								<label class="col-sm-4 control-label fontWeihgt">系测用例数：</label>
+								<div class="col-sm-8">
+									<input type="number" class="form-control readonly" readonly
+										placeholder="请输入" name="sitTestCaseNum" id="sitTestCaseNum" />
+								</div>
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-sm-4 control-label fontWeihgt">系测缺陷数：</label>
+								<div class="col-sm-8">
+									<input type="number" class="form-control readonly" readonly
+										placeholder="请输入" name="sitDefectNum" id="sitDefectNum" />
+								</div>
+							</div>
+						</div>
+						<hr />
+						<br /> ##版测
+						<div class="rowdiv">
+							<div class="form-group col-md-4">
+								<label class="col-md-4 control-label fontWeihgt">实际版测开始：</label>
+								<div class="col-sm-8">
+									<input size="16" type="text" readonly
+										class="form-control pointStyle clear readonly form_datetime"
+										placeholder="请选择" id="handlePptstartWork"
+										name="handlePptstartWork" />
+								</div>
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-sm-4 control-label fontWeihgt">实际版测结束：</label>
+								<div class="col-sm-8">
+									<input size="16" type="text" readonly
+										class="form-control pointStyle clear readonly form_datetime"
+										placeholder="请选择" id="handlePptendWork"
+										name="handlePptendWork" />
+								</div>
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-sm-6 control-label fontWeihgt">版测工作量(人天)：</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" placeholder="请输入"
+										name="handlPptWorkload" id="handlPptWorkload" />
+								</div>
+								##
+								<div class="col-sm-1">
+									<label class="control-label"> 人天 </label>
+								</div>
+							</div>
+						</div>
+
+						<div class="rowdiv">
+							<div class="form-group col-md-4">
+								<label class="col-sm-4 control-label fontWeihgt">版测用例数：</label>
+								<div class="col-sm-8">
+									<input type="number" class="form-control readonly" readonly
+										placeholder="请输入" name="pptTestCaseNum" id="pptTestCaseNum" />
+								</div>
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-sm-4 control-label fontWeihgt">版测缺陷数：</label>
+								<div class="col-sm-8">
+									<input type="number" class="form-control readonly" readonly
+										placeholder="请输入" name="pptDefectNum" id="pptDefectNum" />
+								</div>
+							</div>
+						</div>
+						<hr />
+						<br />
+						<div class="form-group">
+							<label class="col-md-2 control-label top-text">附件上传：</label>
+							<div class="col-md-10">
+								<div class="file-upload-select">
+									<input type="file" name="files" class="upload-files"
+										multiple="multiple" ##accept=".doc,.docx,.xls,.xlsx,.txt,.pdf"
+										id="handleuploadFile" />
+								</div>
+								<div class="file-upload-list">
+									<table class="file-upload-tb" id="handleFileTable">
+
+									</table>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary"
+						onclick="handletestTask()">处理完成</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取
+						消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	##查看弹出框
+	<div class="modal fade bs-example-modal-biggest checkContentModal"
+		id="checktestTask" tabindex="-1" role="dialog"
+		aria-labelledby="newPerson">
+		<div class="modal-dialog modal-biggest" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<span class="headReturn" data-dismiss="modal"> </span>&nbsp;&nbsp;
+					<span id="implementation_status"></span>&nbsp;&nbsp; <span
+						class="modal-title" id="checktestTaskTitle"></span>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form id="checkForm" type="post" enctype="multipart/form-data">
+						<div class="def_col_24">
+							<div class="border_bot_1">
+								<div class="def_title">
+									<span class="color_256">基本信息</span>
+								</div>
+							</div>
+							<div class="def_content padding_top_10">
+								<input id="checkfiles" type="hidden" name="attachFiles" /> <input
+									id="checkReqFeatureId" type="hidden" /> <input
+									id="checkItcdReqId" type="hidden" /> <input id="checktaskId"
+									type="hidden" />
+								<div class="rowdiv">
+									<div class="form-group col-md-12">
+										<label class="control-label fontWeihgt">任务描述：</label>
+										<pre class="def_pre" id="checktestTaskOverview"></pre>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-12">
+										<label class="control-label fontWeihgt">需求：</label> <label
+											class="control-label font_left" id="checkoutrequirement">
+										</label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-12">
+										<label class="control-label fontWeihgt">子系统：</label> <label
+											class="control-label font_left" id="checksystemName">
+										</label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">管理岗：</label> <label
+											class="control-label font_left" id="checkdevManPost">
+										</label>
+									</div>
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">执行人：</label> <label
+											class="control-label font_left" id="checkexecutor"> </label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">所属处室：</label> <label
+											class="control-label font_left" id="checkdeptName"> </label>
+									</div>
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">投产窗口：</label> <label
+											class="control-label font_left" id="window"> </label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<!-- <div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">临时任务：</label>
+										<label class="control-label font_left" id="checktemporaryTask"> </label>
+									</div> -->
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">创建方式：</label> <label
+											class="control-label font_left" id="checkcreateType">
+										</label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">需求变更次数：</label> <label
+											class="control-label font_left" id="checkChange"></label>
+									</div>
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">任务类型：</label> <label
+											class="control-label font_left" id="checkRequirementSource"></label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-12">
+										<label class="control-label fontWeihgt">是否监管需求：</label> <label
+											class="control-label font_left"
+											id="checkImportantRequirementType"></label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">提交测试日期：</label> <label
+											class="control-label font_left" id="checkSubmitTestTime">
+										</label>
+									</div>
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">发布版测日期：</label> <label
+											class="control-label font_left" id="checkPptDeployTime">
+										</label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">实际系测开始时间：</label> <label
+											class="control-label font_left" id="checkpreSitStartDate">
+										</label>
+									</div>
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">实际版测开始时间：</label> <label
+											class="control-label font_left" id="checkprePptStartDate">
+										</label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">实际系测结束时间：</label> <label
+											class="control-label font_left" id="checkpreSitEndDate">
+										</label>
+									</div>
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">实际版测结束时间：</label> <label
+											class="control-label font_left" id="checkprePptEndDate">
+										</label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">实际系测工作量：</label> <label
+											class="control-label font_left" id="checkpreSitWorkload">
+										</label>
+									</div>
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">实际版测工作量：</label> <label
+											class="control-label font_left" id="checkprePptWorkload">
+										</label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">系测设计案例数：</label> <label
+											class="control-label font_left" id="designCaseNumber">
+										</label>
+									</div>
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">版测设计案例数：</label> <label
+											class="control-label font_left" id="designCaseNumber2">
+										</label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">系测执行案例数：</label> <label
+											class="control-label font_left" id="executeCaseNumber">
+										</label>
+									</div>
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">版测执行案例数：</label> <label
+											class="control-label font_left" id="executeCaseNumber2">
+										</label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">系测缺陷数：</label> <label
+											class="control-label font_left" id="defectNum"> </label>
+									</div>
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">版测缺陷数：</label> <label
+											class="control-label font_left" id="defectNum2"> </label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-12">
+										<label class="control-label fontWeihgt">处理意见：</label> <label
+											class="control-label font_left" id="checkhandSug"></label>
+									</div>
+								</div>
+								<div id="checkEditField" class="rowdiv"></div>
+								<div class="rowdiv">
+									<div class="form-group col-md-12">
+										<label class="control-label fontWeihgt">相关附件：</label>
+										<div id="synfiles" style="display: none">
+											<a class="a_style" onclick="showFile()">查看附件</a>
+										</div>
+										<div id="createfiles" style="display: none"
+											class="file-upload-list">
+											<table class="file-upload-tb" id="checkFileTable">
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="def_col_12">
+							<div class="allInfo">
+								<div class="def_title">
+									<span class="color_256">相关测试任务</span> <span
+										class="fa fa-angle-double-down" onclick="down(this)"></span>
+								</div>
+								<div class="connect_div" id="brother_div"></div>
+							</div>
+							<div class="allInfo">
+								<div class="def_title">
+									<span class="color_256">下属工作任务</span> <span
+										class="fa fa-angle-double-down" onclick="down(this)"></span>
+								</div>
+								<div class="connect_div" id="connectDiv"></div>
+							</div>
+							<div class="allInfo">
+								<div class="def_title" id="titleOfwork">
+									<span class="def_controlTit color_256"
+										onclick="showThisDiv(this,1)">工作备注</span> <span
+										class="def_changeTitIcon color_256"> 丨 </span> <span
+										onclick="showThisDiv(this,2)"
+										class="def_controlTit def_changeTit color_256"">处理日志</span> <span
+										class="fa fa-angle-double-up" onclick="down(this)"></span>
+								</div>
+								<div class="def_content workRemarks">
+									<div class="new_workRemarks">
+										<textarea id="tyaskRemark" class="def_textarea" rows="3"
+											cols="102" placeholder="请输入工作备注内容" value=""></textarea>
+										<input id="testTaskID" type="hidden" />
+										<div class="rowdiv">
+											<div class="form-group col-md-12">
+												<label class="control-label fontWeihgt">相关附件：</label>
+												<div class="file-upload-select">
+													<input type="file" name="files" class="upload-files"
+														multiple="multiple" id="checkuploadFile" />
+												</div>
+												<div class="file-upload-list">
+													<table class="file-upload-tb" id="workcheckAttTable">
+
+													</table>
+												</div>
+											</div>
+										</div>
+										<div class="new_workRomarksBtn">
+											<input type="button" class="btn btn-primary"
+												onclick="saveRemark()" value="保存工作备注" />
+										</div>
+									</div>
+									<div class="old_workRemarks" id="remarkBody"></div>
+								</div>
+								<div class="dealLog" id="handleLogs"></div>
+							</div>
+						</div>
+						<div class="allInfo" style="display: none">
+							<div class="def_title">
+								<label>任务执行情况</label> <label class="fa fa-angle-double-up"
+									onclick="down(this)"></label>
+							</div>
+							<div class="def_content">
+								<div class="exceuteDiv">
+									<div id="workTaskDiv"></div>
+									<br />
+									<hr />
+									<br />
+									<div>
+										<div id="sit">
+											<div class="rowdiv">
+												<label>系测情况：</label>
+											</div>
+											<div class="rowdiv">
+												<div class="form-group col-md-2">
+													<label class="control-label">案例情况</label>
+												</div>
+												<div class="form-group col-md-2">
+													<label class="control-label">已编写：</label> <label
+														class="control-label font_left"></label>
+												</div>
+												<div class="form-group col-md-2">
+													<label class="control-label">已执行：</label> <label
+														class="control-label font_left"></label>
+												</div>
+												<div class="form-group col-md-2">
+													<label class="control-label">执行成功：</label> <label
+														class="control-label font_left"></label>
+												</div>
+												<div class="form-group col-md-2">
+													<label class="control-label">执行失败：</label> <label
+														class="control-label font_left"></label>
+												</div>
+												<div class="form-group col-md-2">
+													<label class="control-label">挂起：</label> <label
+														class="control-label font_left"></label>
+												</div>
+
+											</div>
+											<div class="rowdiv">
+												<div class="form-group col-md-2">
+													<label class="control-label">缺陷情况</label>
+												</div>
+
+												<div class="form-group col-md-2">
+													<label class="control-label">已提交：</label> <label
+														class="control-label font_left"></label>
+												</div>
+												<div class="form-group col-md-2">
+													<label class="control-label">待确认：</label> <label
+														class="control-label font_left"></label>
+												</div>
+												<div class="form-group col-md-2">
+													<label class="control-label">修复中：</label> <label
+														class="control-label font_left"> </label>
+
+												</div>
+												<div class="form-group col-md-2">
+													<label class="control-label">已解决：</label> <label
+														class="control-label font_left"></label>
+
+												</div>
+												<div class="form-group col-md-2">
+													<label class="control-label">已归档：</label> <label
+														class="control-label font_left"></label>
+												</div>
+
+											</div>
+										</div>
+									</div>
+									<br />
+									<div id="ppt">
+										<div class="rowdiv">
+											<label>版测情况：</label>
+										</div>
+										<div class="rowdiv">
+											<div class="form-group col-md-2">
+												<label class="control-label">案例情况</label>
+											</div>
+											<div class="form-group col-md-2">
+												<label class="control-label">已编写：</label> <label
+													class="control-label font_left"></label>
+											</div>
+											<div class="form-group col-md-2">
+												<label class="control-label">已执行：</label> <label
+													class="control-label font_left"></label>
+											</div>
+											<div class="form-group col-md-2">
+												<label class="control-label">执行成功：</label> <label
+													class="control-label font_left"></label>
+											</div>
+											<div class="form-group col-md-2">
+												<label class="control-label">执行失败：</label> <label
+													class="control-label font_left"></label>
+											</div>
+											<div class="form-group col-md-2">
+												<label class="control-label">挂起：</label> <label
+													class="control-label font_left"></label>
+											</div>
+
+										</div>
+										<div class="rowdiv">
+											<div class="form-group col-md-2">
+												<label class="control-label">缺陷情况</label>
+											</div>
+											<div class="form-group col-md-2">
+												<label class="control-label">已提交：</label> <label
+													class="control-label font_left"></label>
+											</div>
+											<div class="form-group col-md-2">
+												<label class="control-label">待确认：</label> <label
+													class="control-label font_left"></label>
+											</div>
+											<div class="form-group col-md-2">
+												<label class="control-label">修复中：</label> <label
+													class="control-label font_left"> </label>
+
+											</div>
+											<div class="form-group col-md-2">
+												<label class="control-label">已解决：</label> <label
+													class="control-label font_left"></label>
+
+											</div>
+											<div class="form-group col-md-2">
+												<label class="control-label">已归档：</label> <label
+													class="control-label font_left"></label>
+											</div>
+										</div>
+									</div>
+								</div>
+								##ppt end
+							</div>
+						</div>
+				</div>
+			</div>
+			</form>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+	##新增弹出框
+	<div class="modal fade bs-example-modal-biggest" id="newtestTask"
+		tabindex="-1" role="dialog" aria-labelledby="newPerson">
+		<div class="modal-dialog modal-biggest" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<span class="modal-title">新增测试任务</span>
+				</div>
+
+				<div class="modal-body">
+					<form id="newform" method="post" enctype="multipart/form-data">
+						<div class="allInfo">
+							<div class="def_title">
+								<span>任务信息</span> <span class="fa fa-angle-double-up"
+									onclick="down(this)"></span>
+							</div>
+							<input type="hidden" name="attachFiles" id="files" value="" />
+							<div class="def_content">
+								<div class="rowdiv">
+									<div class="form-group def_col_36">
+										<label class="def_col_5 control-label font_right"><span
+											class="redStar">*</span>任务名称：</label>
+										<div class="def_col_31">
+											<input type="text" class="form-control" placeholder="请输入"
+												name="featureName" id="nfeatureName" />
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group def_col_36">
+										<label class="def_col_5 control-label font_right"><span
+											class="redStar">*</span>任务描述：</label>
+										<div class="def_col_31">
+											<textarea class="form-control def_textarea" rows="3"
+												cols="80" placeholder="请输入" id="nfeatureOverview"
+												name="featureOverview"> </textarea>
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group def_col_18">
+										<label class="def_col_10 control-label font_right"><span
+											class="redStar">*</span>管理岗：</label>
+										<div class="def_col_26 chanceMyself">
+											<input type="hidden" id="newtestManageUser" /> <input
+												type="text"
+												class="form-control  def_col_20"
+												placeholder="请输入关键字搜索" id="newtestManageUserName"
+												name="newtestManageUserName" />
+											<div class="def_col_16">
+												<button type="button"
+													class="btn  btn-primary chanceMyselfBtm"
+													onclick="selectMyself(this)">选自己</button>
+											</div>
+										</div>
+									</div>
+									<div class="form-group def_col_18">
+										<label class="def_col_8 control-label font_right"><span
+											class="redStar">*</span>执行人：</label>
+										<div class="def_col_28 chanceMyself">
+											<input type="hidden" id="newexecuteUser" /> <input
+												type="text"
+												class="form-control  def_col_20"
+												placeholder="请输入关键字搜索" id="newexecuteUserName"
+												name="newexecuteUserName" />
+											<div class="def_col_16">
+												<button type="button"
+													class="btn btn-primary chanceMyselfBtm"
+													onclick="selectMyself(this)">选自己</button>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group def_col_18">
+										<label class="def_col_10 control-label font_right"><span
+											class="redStar">*</span>关联项目：</label>
+										<div class="def_col_26">
+											<input type="hidden" id="newProjectId" /> <input type="text"
+												class="form-control" placeholder="请输入名称或编号进行匹配"
+												name="newProjectName" id="newProjectName" />
+										</div>
+									</div>
+									<div class="form-group def_col_18">
+										<label class="def_col_8 control-label font_right"><span
+											class="redStar">*</span>子系统：</label>
+										<div class="def_col_28">
+											<input type="hidden" id="newsystemId" /> <input type="text"
+												class="form-control pointStyle readonly" placeholder="请选择"
+												readonly name="newsystemName" id="newsystemName" />
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group def_col_18">
+										<label class="def_col_10 control-label font_right">需求：</label>
+										<div class="def_col_26">
+											<input type="hidden" id="newrequirementId" /> <input
+												type="text" class="form-control pointStyle clear readonly"
+												placeholder="请选择" readonly id="newrequirementName" />
+										</div>
+									</div>
+									<div class="form-group def_col_18  new_project_option">
+										<label class="def_col_8 control-label font_right">项目计划：</label>
+										<div class="def_col_28">
+											<input type="hidden" id="new_project_plan_id" /> 
+											<input type="text" class="form-control pointStyle clear readonly"
+												placeholder="请选择" readonly id="new_project_plan_name"  onclick="select_project_plan(1)" />
+											<div id="new_plan_body" class="new_plan_class">
+												<div class="treeSearch">
+													<input class="treeSearchInput" id="new_plan_treeSearchInput" type="text" placeholder="查询计划名称">
+												</div>
+												<ul id="new_plan_tree" class="ztree"></ul>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group def_col_18">
+										<label class="def_col_10 control-label font_right">所属处室：</label>
+										<div class="def_col_26">
+											<select class="selectpicker" id="newdeptId" name="deptId" autocomplete="off"
+												data-live-search="true">
+												<option value="">请选择</option>
+											</select>
+											
+											<!-- <input id="newdeptId" type="hidden" /> <input type="text"
+												class="form-control pointStyle clear" autocomplete="off"
+												placeholder="请输入" id="newDeptName" name="newDeptName" />
+											<div class="selectBox" id="newselectBox">
+												<ul class="selectUl" id="newselectUl"></ul>
+											</div> -->
+										</div>
+									</div>
+
+									<div class="form-group def_col_18">
+										<label class="def_col_8 control-label font_right">需求变更次数：</label>
+										<div class="def_col_28">
+											<input type="text" class="form-control clear"
+												placeholder="请输入" id="change" name="change" />
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv is_new_project">
+									<div class="form-group def_col_18 ">
+										<label class="def_col_10 control-label font_right"><span
+											class="redStar">*</span>任务类型：</label>
+										<div class="def_col_26">
+											<select onchange="setResponseRN(this)" class="selectpicker" id="featureSource"
+												name="featureSource">
+												<option value="">请选择</option> #foreach($dictMap in
+												${dict.getDictMap(
+												"TBL_REQUIREMENT_FEATURE_REQUIREMENT_FEATURE_SOURCE_2").entrySet()})
+												<option value="${dictMap.key}">${dictMap.value}</option>
+												#end
+											</select>
+										</div>
+									</div>
+									<div class="form-group def_col_18 ">
+										<label class="def_col_8 control-label font_right"><span
+											class="redStar">*</span>投产窗口：</label>
+										<div class="def_col_28">
+											<input type="hidden" id="newcommitWindowId" name="" /> <input
+												type="text" class="form-control pointStyle readonly"
+												readonly placeholder="请选择" id="newcommitWindowName"
+												name="newcommitWindowName" />
+										</div>
+									</div>
+								</div>
+
+								<div class="" id="add_agility_inner" style="display: none;">
+									<div class="rowdiv">
+										<div class="form-group def_col_18">
+											<label class="def_col_10 control-label font_right">关联开发任务：</label>
+											<div class="def_col_26">
+												<input type="hidden" id="add_devRequirementFeatureId" /> <input
+													type="text" class="form-control  clear"
+													placeholder="请输入编号进行搜索" id="add_devRequirementFeature_name"
+													name="add_devRequirementFeature_name" />
+											</div>
+										</div>
+										<div class="form-group def_col_18">
+											<label class="def_col_8 control-label font_right">预计工作量(人天)：</label>
+											<div class="def_col_28">
+												<input type="text" class="form-control  clear"
+													placeholder="请输入" id="add_estimateWorkload"
+													name="add_estimateWorkload" />
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="rowdiv is_new_project">
+									<div class="form-group def_col_18">
+										<label class="def_col_10 control-label font_right">提交测试日期：</label>
+										<div class="def_col_26">
+											<input type="text" readonly
+												class="form-control pointStyle clear form_datetime"
+												placeholder="请选择" id="SubmitTestTime" name="SubmitTestTime"
+												value="" />
+										</div>
+									</div>
+									<div class="form-group def_col_18">
+										<label class="def_col_8 control-label font_right">发布版测日期：</label>
+										<div class="def_col_28">
+											<input type="text" readonly
+												class="form-control pointStyle clear form_datetime"
+												placeholder="请选择" id="PptDeployTime" name="PptDeployTime"
+												value="" />
+										</div>
+									</div>
+								</div>
+
+								<div class="rowdiv">
+									<div class="form-group def_col_18">
+										<label class="def_col_10 control-label font_right">计划开始日期：</label>
+										<div class="def_col_26">
+											<input type="text" readonly
+												class="form-control pointStyle clear form_datetime"
+												placeholder="请选择" id="add_planStartDate" />
+										</div>
+									</div>
+									<div class="form-group def_col_18">
+										<label class="def_col_8 control-label font_right">计划结束日期：</label>
+										<div class="def_col_28">
+											<input type="text" readonly
+												class="form-control pointStyle clear form_datetime "
+												placeholder="请选择" id="add_planEndDate" />
+										</div>
+									</div>
+								</div>
+
+								<div class="rowdiv">
+									<!-- <div class="form-group def_col_18" id="development">
+										<label class="def_col_10 control-label font_right">开发处室：</label>
+										<div class="def_col_26">
+											<select class="selectpicker" id="developmentDept"
+												name="developmentDept">
+												<option value="">请选择</option> #foreach($dictMap in
+												${dict.getDictMap( "DEVELOPMENT_DEPT").entrySet()})
+												<option value="${dictMap.key}">${dictMap.value}</option>
+												#end
+											</select>
+										</div>
+									</div> -->
+									<div class="form-group def_col_18 is_new_project">
+										<label class="def_col_10 control-label font_right"><span
+											class="redStar">*</span>是否监管需求：</label>
+										<div class="def_col_26">
+											<select class="selectpicker 11" id="importantRequirementType"
+												name="importantRequirementType">
+												<option value="">请选择</option>
+												<option value="1">是</option>
+												<option value="2">否</option>
+											</select> #*<input type="text" class="form-control clear"
+												placeholder="请输入" id="importantRequirementType"
+												name="importantRequirementType" />*#
+										</div>
+									</div>
+
+
+
+									<!-- <div class="form-group def_col_18" id="development2" style="display:none">
+										<label class="def_col_8 control-label font_right">newdeptId：</label>
+										<div class="def_col_28">
+											<input type="hidden"  id="developmentDeptNumber2" name="developmentDeptNumber2"/>
+											<input type="text" class="form-control clear" readonly id="developmentDept2" name="developmentDept2"/>
+										</div>
+									</div> -->
+
+								</div>
+								<div id="canEditField" class="rowdiv"></div>
+								<div class="rowdiv padding_top_10">
+									<div class="form-group def_col_36">
+										<label class="def_col_5 control-label font_right">相关上传：</label>
+										<div class="def_col_24">
+											<div class="file-upload-select">
+												<input type="file" name="files" class="upload-files"
+													multiple="multiple" ##
+													accept=".doc,.docx,.xls,.xlsx,.txt,.pdf" id="uploadFile" />
+											</div>
+											<div class="file-upload-list">
+												<table class="file-upload-tb" id='newFileTable'>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary bg_108EE9"
+						onclick="addCommit()">提交</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	##编辑弹出框
+	<div class="modal fade bs-example-modal-biggest" id="edittestTask"
+		tabindex="-1" role="dialog" aria-labelledby="newPerson">
+		<div class="modal-dialog modal-biggest" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<span class="modal-title">编辑测试任务</span>
+				</div>
+				<div class="modal-body">
+					<form id="editForm" method="post" autocomplete="off"
+						enctype="multipart/form-data">
+						<div class="allInfo">
+							<div class="def_title">
+								<span>任务信息</span> <span class="fa fa-angle-double-up"
+									onclick="down(this)"></span>
+							</div>
+							<div class="def_content">
+								<input type="hidden" name="attachFiles" id="editfiles" value="" />
+								<input id="edittestTaskId" type="hidden" />
+								<div class="rowdiv">
+									<div hidden="true">
+										<input type="text" class="form-control" name="createType2"
+											id="createType2" />
+									</div>
+									<div class="form-group def_col_36">
+										<label class="def_col_5 control-label font_right"><span
+											class="redStar">*</span>任务名称：</label>
+										<div class=" def_col_31">
+											<input type="text" class="form-control" placeholder="请输入"
+												name="efeatureName" id="efeatureName" />
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group def_col_36">
+										<label class="def_col_5 control-label font_right"><span
+											class="redStar">*</span>任务描述：</label>
+										<div class="def_col_31">
+											<textarea class="form-control def_textarea" placeholder="请输入"
+												rows="3" cols="80" name="efeatureOverview"
+												id="efeatureOverview"> </textarea>
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group def_col_18">
+										<label class="def_col_10 control-label font_right"><span
+											class="redStar">*</span>管理岗：</label>
+										<div class="def_col_26 chanceMyself">
+											<input type="hidden" id="edittestManageUser" /> <input
+												type="text"
+												class="form-control  def_col_20"
+												placeholder="请输入关键字搜索" name="edittestManageUserName"
+												id="edittestManageUserName" />
+											<div class="def_col_16">
+												<button type="button"
+													class="btn btn-primary chanceMyselfBtm"
+													onclick="selectMyself(this)">选自己</button>
+											</div>
+										</div>
+									</div>
+									<div class="form-group def_col_18">
+										<label class="def_col_8 control-label font_right"><span
+											class="redStar">*</span>执行人：</label>
+										<div class="def_col_28 chanceMyself">
+											<input type="hidden" id="editexecuteUser" /> <input
+												type="text"
+												class="form-control def_col_20"
+												placeholder="请输入关键字搜索" name="editexecuteUserName"
+												id="editexecuteUserName" />
+											<div class="def_col_16">
+												<button type="button"
+													class="btn btn-primary chanceMyselfBtm"
+													onclick="selectMyself(this)">选自己</button>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group def_col_18">
+										<label class="def_col_10 control-label font_right"><span
+											class="redStar">*</span>关联项目：</label>
+										<div class="def_col_26">
+											<input type="hidden" id="editProjectId" /> <input type="text"
+												class="form-control" placeholder="请输入名称或编号进行匹配"
+												name="editProjectName" id="editProjectName" />
+										</div>
+									</div>
+									<div class="form-group def_col_18">
+										<label class="def_col_8 control-label font_right"><span
+											class="redStar">*</span>子系统：</label>
+										<div class="def_col_28">
+											<input type="hidden" id="editsystemId" /> <input type="text"
+												class="form-control pointStyle readonly" placeholder="请选择"
+												readonly name="editsystemName" id="editsystemName" />
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group def_col_18">
+										<label class="def_col_10 control-label font_right">需求：</label>
+										<div class="def_col_26">
+											<input type="hidden" id="editrequirementId" /> <input
+												type="text" class="form-control pointStyle clear readonly"
+												placeholder="请选择" readonly id="editrequirementName" />
+										</div>
+									</div>
+									<div class="form-group def_col_18  new_project_option">
+										<label class="def_col_8  control-label font_right">项目计划：</label>
+										<div class="def_col_28">
+											<input type="hidden" id="edit_project_plan_id" /> 
+											<input type="text" class="form-control pointStyle clear readonly"
+												placeholder="请选择" readonly id="edit_project_plan_name"  onclick="select_project_plan(2)" />
+											<div id="edit_plan_body" class="new_plan_class" >
+												<div class="treeSearch">
+													<input class="treeSearchInput" id="edit_plan_treeSearchInput" type="text" placeholder="查询计划名称">
+												</div>
+												<ul id="edit_plan_tree" class="ztree"></ul>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group def_col_18">
+										<label class="def_col_10 control-label font_right">所属处室：</label>
+										<div class="def_col_26">
+											<select class="selectpicker" id="editdeptId" name="" autocomplete="off"
+												data-live-search="true">
+												<option value="">请选择</option>
+												
+											</select> 
+											<!-- <input id="editdeptId" type="hidden" /> <input type="text"
+												class="form-control pointStyle clear" placeholder="请输入"
+												id="editDeptName" name="editDeptName" />
+											<div class="selectBox" id="selectBox">
+												<ul class="selectUl" id="selectUl"></ul>
+											</div> -->
+										</div>
+									</div>
+									<div class="form-group def_col_18">
+										<label class="def_col_8 control-label font_right">任务状态：</label>
+										<div class="def_col_28">
+											<select class="selectpicker" id="edittestTaskStatus" name="">
+											</select>
+										</div>
+									</div>
+
+								</div>
+								<div class="rowdiv is_new_project">
+									<div class="form-group def_col_18 ">
+										<label class="def_col_10 control-label font_right"><span
+											class="redStar">*</span>投产窗口：</label>
+										<div class="def_col_26">
+											#*<select class="selectpicker" id="editcommitWindowId"
+												name="" data-live-search="true">
+												<option value="">请选择</option>
+											</select>*# <input type="hidden" id="editcommitWindowId" name="" /> <input
+												type="text" class="form-control pointStyle clear readonly"
+												readonly placeholder="请选择" id="editcommitWindowName"
+												name="editcommitWindowName" />
+										</div>
+									</div>
+									<div class="form-group def_col_18 ">
+										<label class="def_col_8 control-label font_right"><span
+											class="redStar">*</span>是否监管需求：</label>
+										<div class="def_col_28">
+											<select class="selectpicker" title="请选择"
+												id="editimportantRequirementType"
+												name="editimportantRequirementType">
+												<option value="1">是</option>
+												<option value="2">否</option>
+											</select> #*<input type="text" class="form-control clear"
+												placeholder="请输入" id="editimportantRequirementType"
+												name="editimportantRequirementType" />*#
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group def_col_18">
+										<label class="def_col_10 control-label font_right">需求变更次数：</label>
+										<div class="def_col_26">
+											<input type="text" class="form-control clear"
+												placeholder="请输入" id="editChange" name="editChange" />
+										</div>
+									</div>
+									<div class="form-group def_col_18 is_new_project">
+										<label class="def_col_8 control-label font_right"><span
+											class="redStar">*</span>任务类型：</label>
+										<div class="def_col_28">
+											<!-- <input type="text" class="form-control pointStyle clear readonly" readonly placeholder="请选择" id="editFeature" name="editFeature" /> -->
+											<select class="selectpicker" id="editFeature" title="请选择"
+												name="editFeature">
+												<option value="">请选择</option> #foreach($dictMap in
+												${dict.getDictMap(
+												"TBL_REQUIREMENT_FEATURE_REQUIREMENT_FEATURE_SOURCE_2").entrySet()})
+												<option value="${dictMap.key}">${dictMap.value}</option>
+												#end
+											</select>
+										</div>
+									</div>
+
+								</div>
+
+								<div class="" id="edit_agility_inner" style="display: none;">
+									<div class="rowdiv">
+										<div class="form-group def_col_18">
+											<label class="def_col_10 control-label font_right">关联开发任务：</label>
+											<div class="def_col_26">
+												<input type="hidden" id="edit_iddevRequirementFeatureId" />
+												<input type="text" class="form-control  clear"
+													placeholder="请输入编号进行搜索"
+													id="edit_iddevRequirementFeature_name"
+													name="edit_iddevRequirementFeature_name" />
+											</div>
+										</div>
+										<div class="form-group def_col_18">
+											<label class="def_col_8 control-label font_right">预计工作量(人天)：</label>
+											<div class="def_col_28">
+												<input type="text" class="form-control  clear"
+													placeholder="请输入" id="edit_estimateWorkload"
+													name="edit_estimateWorkload" />
+											</div>
+										</div>
+									</div>
+									<div class="rowdiv">
+										<div class="form-group def_col_18">
+											<label class="def_col_10 control-label font_right">预计剩余工作量(人天)：</label>
+											<div class="def_col_26">
+												<input type="text" class="form-control  clear"
+													placeholder="请输入" id="edit_estimateRemainWorkload"
+													name="edit_estimateRemainWorkload" />
+											</div>
+										</div>
+										<div class="form-group def_col_18">
+											<label class="def_col_8 control-label font_right">实际工作量(人天)：</label>
+											<div class="def_col_28">
+												<input type="text" class="form-control  clear"
+													placeholder="请输入" id="edit_actualWorkload"
+													name="edit_actualWorkload" />
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="rowdiv is_new_project">
+									<div class="form-group def_col_18">
+										<label class="def_col_10 control-label font_right">提交测试日期：</label>
+										<div class="def_col_26">
+											<input type="text" class="form-control pointStyle clear"
+												placeholder="请选择" id="editsubmitTestTime"
+												name="editsubmitTestTime" />
+										</div>
+									</div>
+									<div class="form-group def_col_18">
+										<label class="def_col_8 control-label font_right">发布版测日期：</label>
+										<div class="def_col_28">
+											<input type="text" class="form-control pointStyle clear"
+												placeholder="请选择" id="editPptDeployTime"
+												name="editPptDeployTime" />
+										</div>
+									</div>
+								</div>
+
+								<div class="rowdiv">
+									<div class="form-group def_col_18">
+										<label class="def_col_10 control-label font_right">计划开始日期：</label>
+										<div class="def_col_26">
+											<input type="text" readonly
+												class="form-control pointStyle clear form_datetime"
+												placeholder="请选择" id="edit_planStartDate" />
+										</div>
+									</div>
+									<div class="form-group def_col_18">
+										<label class="def_col_8 control-label font_right">计划结束日期：</label>
+										<div class="def_col_28">
+											<input type="text" readonly
+												class="form-control pointStyle clear form_datetime "
+												placeholder="请选择" id="edit_planEndDate" />
+										</div>
+									</div>
+								</div>
+
+								<div class="rowdiv">
+									<div class="form-group def_col_18">
+										<label class="def_col_10 control-label font_right">实际系测开始：</label>
+										<div class="def_col_26">
+											<input size="16" type="text" readonly
+												class="form-control pointStyle clear readonly form_datetime"
+												placeholder="请选择" id="estartWork" name="estartWork" />
+										</div>
+									</div>
+									<div class="form-group def_col_18">
+										<label class="def_col_8 control-label font_right">实际系测结束：</label>
+										<div class="def_col_28">
+											<input size="16" type="text" readonly
+												class="form-control pointStyle clear readonly form_datetime"
+												placeholder="请选择" id="eendWork" name="eendWork" />
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group def_col_18">
+										<label class="def_col_10 control-label font_right">实际版测开始：</label>
+										<div class="def_col_26">
+											<input size="16" type="text" readonly
+												class="form-control readonly clear pointStyle form_datetime"
+												placeholder="请选择" id="epptstartWork" name="epptstartWork" />
+										</div>
+									</div>
+									<div class="form-group def_col_18">
+										<label class="def_col_8 control-label font_right">实际版测结束：</label>
+										<div class="def_col_28">
+											<input size="16" type="text" readonly
+												class="form-control pointStyle clear readonly form_datetime"
+												placeholder="请选择" id="epptendWork" name="epptendWork" />
+										</div>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<!-- <div class="form-group def_col_18" id="editDevelopment">
+										<label class="def_col_10 control-label font_right">开发处室：</label>
+										<div class="def_col_26">
+											<select class="selectpicker" id="editDevelopmentDept"
+												name="editDevelopmentDept">
+												<option value="">请选择</option> #foreach($dictMap in
+												${dict.getDictMap( "DEVELOPMENT_DEPT").entrySet()})
+												<option value="${dictMap.key}">${dictMap.value}</option>
+												#end
+											</select>
+										</div>
+									</div>
+ -->
+									<!-- <div class="form-group def_col_18" id="editDevelopment2" style="display:none">
+										<label class="def_col_8 control-label font_right">开发处室：</label>
+										<div class="def_col_28">
+											<input type="hidden"  id="editDevelopmentDeptNumber2" name="editDevelopmentDeptNumber2"/>
+											<input type="text" class="form-control clear" readonly id="editDevelopmentDept2" name="editDevelopmentDept2"/>
+										</div>
+									</div> -->
+								</div>
+								<div id="editFieldDiv" class="rowdiv"></div>
+							</div>
+						</div>
+						<div class="form-group  padding_top_10" id="editCreateFile"
+							style="display: none; padding-left: 50px;">
+							<label class="def_col_5 control-label top-text font_right">附件上传：</label>
+							<div class="def_col_24">
+								<div class="file-upload-select">
+									<input type="file" name="files" class="upload-files"
+										multiple="multiple" ##accept=".doc,.docx,.xls,.xlsx,.txt,.pdf"
+										id="edituploadFile" />
+								</div>
+								<div class="file-upload-list">
+									<table class="file-upload-tb" id="editFileTable">
+									</table>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary bg_108EE9"
+						onclick="edittestTask()">确认</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	##拆分/转派弹出框
+	<div class="modal fade bs-example-modal-lg" id="splittestTask"
+		tabindex="-1" role="dialog" aria-labelledby="">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<span class="modal-title fontWeihgt" id="titleName"></span>
+				</div>
+				<div class="modal-body">
+					<form id="splitForm" method="post">
+						<div class="allInfo">
+							<div class="def_title">
+								<span>测试任务信息</span> <span class="fa fa-angle-double-up"
+									onclick="down(this)"></span>
+							</div>
+							<div class="def_content">
+								<input id="splittestTaskId" type="hidden" /> <input
+									id="splitCommitWindowId" type="hidden" /> <input
+									id="splitStatus" type="hidden" /> <input id="transferSystemId"
+									type="hidden" />
+								<div class="rowdiv">
+									<div class="form-group col-md-12">
+										<label class="control-label fontWeihgt">任务摘要：</label> <label
+											class="control-label font_left" id="splitSummary"> </label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-12">
+										<label class=" control-label fontWeihgt">任务描述：</label> <label
+											class=" control-label font_left" id="sOverView"
+											style="word-break: break-all; word-wrap: break-word;">
+										</label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-6">
+										<label class=" control-label fontWeihgt">任务状态：</label> <label
+											class=" control-label font_left" id="stestTaskStatus">
+										</label>
+									</div>
+									<div class="form-group col-md-6">
+										<label class=" control-label fontWeihgt">管理岗：</label> <label
+											class=" control-label font_left" id="sManageUser"></label>
+									</div>
+									<div class="form-group col-md-6">
+										<label class=" control-label fontWeihgt">执行人：</label> <input
+											type="hidden" id="sEcecuteUserId"></input> <label
+											class=" control-label font_left" id="sEcecuteUser"> </label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-12">
+										<label class=" control-label fontWeihgt">子系统：</label> <label
+											class=" control-label font_left" id="sSystemId"> </label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-12">
+										<label class=" control-label fontWeihgt">需求：</label> <label
+											class=" control-label font_left" id="sRequirementId">
+										</label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">所属处室：</label> <label
+											class="control-label font_left" id="sDeptId"></label>
+									</div>
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">临时任务：</label> <label
+											class="control-label font_left" id="sTemporaryTask">
+										</label>
+									</div>
+								</div>
+								<div class="rowdiv">
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">需求更改次数：</label> <label
+											class="control-label font_left" id="sChange"></label>
+									</div>
+									<div class="form-group col-md-6 is_new_project">
+										<label class="control-label fontWeihgt">任务类型：</label> <label
+											class="control-label font_left"
+											id="sRequirementFeatureSource"> </label>
+									</div>
+									<div class="form-group col-md-6 is_new_project">
+										<label class="control-label fontWeihgt">是否监管需求：</label> <label
+											class="control-label font_left"
+											id="sImportantRequirementType"> </label>
+									</div>
+								</div>
+								<div class="rowdiv is_new_project">
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">发布版测日期：</label> <label
+											class="control-label font_left" id="sPptDeployTime"></label>
+									</div>
+									<div class="form-group col-md-6">
+										<label class="control-label fontWeihgt">提交测试日期：</label> <label
+											class="control-label font_left" id="sSubmitTestTime">
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div id="splitFooter">
+							<div class="rowdiv">
+								<div class="form-group def_col_36">
+									<label class="def_col_4 control-label fontWeihgt"><span
+										class="redStar">*</span>任务摘要：</label>
+									<div class="def_col_28">
+										<input class="form-control" placeholder="请输入"
+											id="sWorkSummary" name="sWorkSummary" />
+									</div>
+									<button type="button" onclick="sameReq()"
+										class=" btn btn-primary" style="margin-left: 20px;">同以上</button>
+								</div>
+							</div>
+							<div class="rowdiv">
+								<div class="form-group def_col36">
+									<label class="def_col_4 control-label fontWeihgt"><span
+										class="redStar">*</span>任务描述：</label>
+									<div class="def_col_32">
+										<textarea class="form-control" placeholder="请输入" rows="3" cols="80"
+											id="sWorkOverView" name="sWorkOverView"></textarea>
+									</div>
+								</div>
+							</div>
+							<div class="rowdiv">
+								<div class="form-group def_col_12 is_new_project">
+									<label class="def_col_12 control-label fontWeihgt"><span
+										class="redStar">*</span>测试阶段：</label>
+									<div class="def_col_24">
+										<select class="selectpicker" id="testStage" name="testStage">
+											<option value="">请选择</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group def_col_12">
+									<label class="def_col_12 control-label fontWeihgt">环境类型：</label>
+									<div class="def_col_24">
+										<select class="selectpicker" id="environmentType"
+											name="environmentType">
+											<option value="">请选择</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<!-- <div class="rowdiv" id="rowSitId" style="display:none">
+								<div class="form-group def_col_12">
+									<label class="def_col_12 control-label fontWeihgt">计划开始：</label>
+									<div class="def_col_24">
+										<input size="16" type="text" readonly class="form-control pointStyle clear readonly form_datetime" placeholder="请选择" id="sWorkStart" name="startWork" />
+									</div>
+								</div>
+								<div class="form-group def_col_12">
+									<label class="def_col_12 control-label fontWeihgt">计划结束：</label>
+									<div class="def_col_24">
+										<input size="16" type="text" readonly class="form-control pointStyle clear readonly form_datetime" placeholder="请选择" id="sWorkEndStart" name="endWork" />
+									</div>
+								</div>
+								<div class="form-group def_col_12">
+									<label class="def_col_16  control-label fontWeihgt">预计工作量(人天)：</label>
+									<div class="def_col_20 "><input type="text" class="form-control" placeholder="请输入" name="sWorkPlanWorkload" id="sWorkPlanWorkload" /></div>
+									##<div class="def_col_4"><label class="control-label"> 人天 </label></div>
+								</div>
+							</div> -->
+							<!-- <div class="rowdiv" id="rowPptId" style="display:none">
+								<div class="form-group def_col_12">
+									<label class="def_col_12 control-label fontWeihgt">计划开始：</label>
+									<div class="def_col_24">
+										<input size="16" type="text" readonly class="form-control pointStyle clear readonly form_datetime" placeholder="请选择" id="spWorkStart" name="startWork" />
+									</div>
+								</div>
+								<div class="form-group def_col_12">
+									<label class="def_col_12 control-label fontWeihgt">计划结束：</label>
+									<div class="def_col_24">
+										<input size="16" type="text" readonly class="form-control pointStyle clear readonly form_datetime" placeholder="请选择" id="spWorkEndStart" name="endWork" />
+									</div>
+								</div>
+								<div class="form-group def_col_12">
+									<label class="def_col_16  control-label fontWeihgt">预计工作量(人天)：</label>
+									<div class="def_col_20 "><input type="text" class="form-control" placeholder="请输入" name="sWorkPlanWorkload" id="spWorkPlanWorkload" /></div>
+									##<div class="def_col_4"><label class="control-label"> 人天 </label></div>
+								</div>
+							</div> -->
+							<div class="rowdiv">
+								<div class="form-group def_col_12">
+									<label class="def_col_12 control-label fontWeihgt"><span
+										class="redStar">*</span>测试人员：</label>
+									<div class="def_col_24">
+										#*<select class="selectpicker" id="sWorkDivid">
+											<option value="">请选择</option>
+										</select>*# <input id="sWorkDivid" type="hidden" /> <input
+											id="sWorkDividUserName" type="text" placeholder="请输入关键字搜索"
+											class="form-control clear" name="sWorkDividUserName" />
+									</div>
+								</div>
+								<div class="form-group def_col_12">
+									<label class="def_col_12 control-label fontWeihgt"><span
+										class="redStar">*</span>任务分配：</label>
+									<div class="def_col_24">
+										<input id="sWorkAssignUserId" type="hidden" /> <input
+											id="sWorkAssignUserName" type="text" placeholder="请输入关键字搜索"
+											class="form-control clear" name="sWorkAssignUserName" />
+									</div>
+								</div>
+							</div>
+							
+						</div>
+						<div id="transferFooter">
+							<div class="transferDiv">
+								<div class="rowdiv">
+									<div class="form-group def_col_18">
+										<label class="def_col_12 control-label fontWeihgt"><span
+											class="redStar">*</span>将此测试任务转派给：</label>
+										<div class="def_col_18">
+											#*<select class="selectpicker" id="transferId"
+												name="transferName">
+												<option value="">请选择</option>
+											</select>*# <input type="hidden" id="transferId" /> <input type="text"
+												class="form-control" id="transferUserName" placeholder="请输入关键字搜索"
+												name="transferUserName" />
+										</div>
+									</div>
+								</div>
+								<br />
+								<div class="rowdiv">
+									<div class="form-group col-md-12">
+										<textarea class="def_textarea" placeholder="请输入需要备注说明的内容"
+											name="" id="transferRemark"></textarea>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</form>
+
+				</div>
+				<div class="modal-footer" id="footer1">
+					<button type="button" class="btn btn-primary"
+						onclick="transferCommit()">确认</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+				<div class="modal-footer" id="footer2">
+					<button type="button" class="btn btn-primary"
+						onclick="splitCommit()">确认</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	##end ##选择需求弹框
+	<div id="selReq" class="modal fade bs-example-modal-lg" tabindex="-1"
+		role="dialog" aria-labelledby="">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content modalStyle">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<span class="modal-title">请选择需求</span>
+				</div>
+
+				<div class="modal-body">
+					<div class="color1">
+						<div class="container-fluid" id="">
+							<div class="row control-row">
+								<div class="col-md-4">
+									<div class="search_font">
+										<label class="control-label">需求编号：</label>
+									</div>
+									<div class="search_input">
+										<input type="text" class="form-control" placeholder="请输入"
+											id="reqCode" name="reqCode" />
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="search_font">
+										<label class="control-label">需求名称：</label>
+									</div>
+									<div class="search_input">
+										<input type="text" class="form-control" placeholder="请输入"
+											id="reqName" name="reqName" />
+									</div>
+								</div>
+								<div class="col-md-4 ">
+									<div class="search_font">
+										<label class="control-label">需求状态：</label>
+									</div>
+									<div class="search_input">
+										<select class="selectpicker" id="reqStatus" name="reqStatus"
+											data-live-search="true">
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="row control-row search_btn">
+								<button type="button" class="btn btn-primary" id="reqSearch">搜&nbsp;&nbsp;&nbsp;索</button>
+								<button type="button" class="btn btn-default"
+									onclick="clearSearchReq()">重&nbsp;&nbsp;&nbsp;置</button>
+							</div>
+						</div>
+						<div id="downBtn" class="downBtn">
+							<span class="fa fa-caret-up"></span>
+						</div>
+					</div>
+					<br />
+					<div class="content-table">
+						<div class="wode">
+							<table id="listReq"></table>
+							<div id="pagerReq"></div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="bottom-container">
+						<button type="button" id="reqbutton" class="btn btn-primary"
+							data-req="default" onclick="insertInput()">确定</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	##涉及子系统弹框
+	<div class="modal fade bs-example-modal-lg" id="selSys" tabindex="-1"
+		role="dialog" aria-labelledby="newPerson">
+		<div class="modal-dialog modal-lg modal-user" role="document">
+			<div class="modal-content modalStyle">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<span class="modal-title" id="">选择子系统</span>
+				</div>
+				<div class="modal-body">
+
+					<div class="color1">
+						<div class="container-fluid" id="">
+							<div class="rowdiv control-row">
+								<div class="col-md-2"></div>
+
+								<div class="col-md-4">
+									<div class="search_font">
+										<label class="control-label">子系统编码：</label>
+									</div>
+									<div class="search_input">
+										<input type="text" class="form-control" placeholder="请输入"
+											id="SCsystemCode" name="systemCode" value="" />
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="search_font">
+										<label class="control-label">子系统名称：</label>
+									</div>
+									<div class="search_input">
+										<input type="text" class="form-control" placeholder="请输入"
+											id="SCsystemName" name="systemName" value="" />
+									</div>
+								</div>
+								<div class="col-md-2"></div>
+							</div>
+							<div class="rowdiv control-row search_btn">
+								<button type="button" class="btn btn-primary" id="systemSearch">搜&nbsp;&nbsp;&nbsp;索</button>
+								<button type="button" onclick="clearSearchSys()"
+									class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+							</div>
+
+						</div>
+						<div id="downBtn" class="downBtn">
+							<span class="fa fa-caret-up"></span>
+						</div>
+					</div>
+					<br>
+					<div class="content-table">
+						<div class="wode">
+							<table id="systemTable"></table>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" id="sysbutton" class="btn btn-primary"
+						data-sys="default" onclick="commitSys()">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	#*人员弹框*#
+	<div class="modal fade bs-example-modal-lg" id="userModal"
+		tabindex="-1" role="dialog" aria-labelledby="newPerson">
+		<div class="modal-dialog modal-lg modal-user" role="document">
+			<div class="modal-content modalStyle">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<span>选择人员</span>
+				</div>
+				<div class="modal-body">
+					<div class="color1">
+						<div class="container-fluid">
+							<div class="row control-row">
+								<div class="col-md-3">
+									<div class="search_font">
+										<label class="control-label">姓名：</label>
+									</div>
+									<div class="search_input">
+										<input type="text" class="form-control " placeholder="请输入"
+											id="userNameReqF" name="userName" value="" />
+									</div>
+								</div>
+
+								<div class="col-md-3">
+									<div class="search_font">
+										<label class="control-label">部门：</label>
+									</div>
+									<div class="search_input">
+										#* <select class="selectpicker" id="deptName" name="deptName">
+										</select>*# <input type="text" class="form-control " placeholder="请输入"
+											id="deptName" name="deptName" value="" />
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="search_font">
+										<label class="control-label">公司：</label>
+									</div>
+									<div class="search_input">
+										#*<select class="selectpicker" id="companyName"
+											name="companyName">
+										</select>*# <input type="text" class="form-control " placeholder="请输入"
+											id="companyName" name="companyName" value="" />
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="search_font">
+										<label class="control-label">项目：</label>
+									</div>
+									<div class="search_input">
+										<select class="selectpicker" multiple id="project"
+											name="project">
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="row control-row search_btn">
+								<button type="button" class="btn btn-primary" id="userSearch"
+									onclick="userTableShowAll()">搜&nbsp;&nbsp;&nbsp;索</button>
+								<button type="button" onclick="clearSearchUser()"
+									class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+							</div>
+
+						</div>
+						<div id="downBtn" class="downBtn">
+							<span class="fa fa-caret-up"></span>
+						</div>
+					</div>
+					<br>
+					<div class="content-table">
+						<div class="wode">
+							<table id="userTable"></table>
+							<div id="userPage"></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<div class="bottom-container">
+						<button type="button" id="userbutton" class="btn btn-primary"
+							data-user="default" onclick="commitUser()">确定</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	##合并任务 
+	<div class="modal fade bs-example-modal-lg" id="mergeDevTask"
+		tabindex="-1" role="dialog" aria-labelledby="">
+		<div class="modal-dialog modal-lg modal-user" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<span>请选择一个同步任务进行合并：</span>
+				</div>
+				<div class="modal-body">
+					<input type="hidden" value="" id="reqFId" />
+					<div id="mergeDiv"></div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary"
+						onclick="mergeCommit()">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	 ##部署确认
+	<div class="modal fade" id="sureDeploy" tabindex="-1" role="dialog"
+		aria-labelledby="">
+		<div class="modal-dialog modal-lg modalSmall" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<span>请选择部署状态</span>
+				</div>
+				<div class="modal-body">
+					<input type="hidden" value="" id="dReqFeatureId" />
+					<div id="deployDiv"></div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary"
+						onclick="deployCommit()">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	##工作任务查看 ##查看弹出框
+	<div class="modal fade bs-example-modal-lg" aria-hidden="true"
+		data-backdrop="static" id="selectdetail" tabindex="-1" role="dialog"
+		aria-labelledby="newPerson">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title">
+						<span id="SdevCode"></span>|<span id="SdevName"></span>
+					</h4>
+				</div>
+				<div class="modal-body">
+					<input type="hidden" name="attachFiles" id="newSeeFiles" value="" />
+					<input type="hidden" name="attachFiles" id="SeeFiles" value="" />
+					<pre id="SdevOverview" class="def_pre"></pre>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="col-sm-6 control-label fontWeihgt">任务状态：</label> <label
+								class="select-label" id="SStatus"></label>
+						</div>
+						<div class="form-group col-md-3">
+							<label class="col-sm-6 control-label fontWeihgt">执行人：</label> <label
+								class="select-label" id="devuserID"></label>
+						</div>
+						<div class="form-group col-md-5">
+							<label class="col-sm-5 control-label fontWeihgt">工作任务创建人：</label>
+							<label class="select-label"><span id="createBy"></span>|<span
+								id="createDate"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="col-sm-6 control-label fontWeihgt">实际开始时间：</label>
+							<label class="select-label" id="actualStartDate"></label>
+						</div>
+						<div class="form-group col-md-3">
+							<label class="col-sm-6 control-label fontWeihgt">实际结束时间：</label>
+							<label class="select-label" id="actualEndDate"></label>
+						</div>
+						<div class="form-group col-md-5">
+							<label class="col-sm-5 control-label fontWeihgt">实际工作量(人天)：</label>
+							<label class="select-label" id="actualWorkload"></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="col-sm-6 control-label fontWeihgt">测试阶段：</label> <label
+								class="select-label" id="testStage2"></label>
+						</div>
+						<div class="form-group col-md-3">
+							<label class="col-sm-6 control-label fontWeihgt">设计案例数：</label> <label
+								class="select-label" id="cases"></label>
+						</div>
+						<div class="form-group col-md-5">
+							<label class="col-sm-5 control-label fontWeihgt">执行案例数：</label> <label
+								class="select-label" id="caseExecutes"></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="col-sm-6 control-label fontWeihgt">缺陷数：</label> <label
+								class="select-label" id="defectNumber"></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group">
+							<label class="col-sm-2 control-label fontWeihgt">案例执行人：</label>
+							<div class="col-sm-10 select-label" id="executeUser"></div>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group">
+							<label class="col-md-2 control-label top-text  fontWeihgt">相关附件：</label>
+						</div>
+						<div class="col-md-2">
+							<div class="file-upload-list">
+								<table class="file-upload-tb" id="SeeFileTable">
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="allInfo">
+						<div class="def_title">
+							<input id="" type="hidden" /> <span>关联测试任务信息</span>
+						</div>
+						<div class="rowdiv">
+							<div class="form-group col-md-8">
+								<label class="col-sm-3 control-label fontWeihgt">任务摘要：</label> <label
+									class="select-label" id="wfeatureName"></label>
+							</div>
+						</div>
+						<div class="rowdiv">
+							<div class="form-group col-md-12">
+								<label class="col-sm-2 control-label fontWeihgt">任务描述：</label>
+								<textarea class="def_col_30 select-label noBorder" readonly=""
+									style="resize: none; background-color: inherit;"
+									id="featureOverview"></textarea>
+							</div>
+						</div>
+						<div class="rowdiv">
+							<div class="form-group col-md-4">
+								<label class="col-sm-6 control-label fontWeihgt">任务状态：</label> <label
+									class="select-label" id="requirementFeatureStatus"></label>
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-sm-6 control-label fontWeihgt">管理岗：</label> <label
+									class="select-label" id="manageUserId"></label>
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-sm-6 control-label fontWeihgt">执行人：</label> <label
+									class="select-label" id="executeUserId"></label>
+							</div>
+						</div>
+						<div class="rowdiv">
+							<div class="form-group col-md-4">
+								<label class="col-sm-6 control-label fontWeihgt">子系统：</label> <label
+									class="select-label" id="wsystemId"></label>
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-sm-6 control-label fontWeihgt">需求变更次数：</label>
+								<label class="select-label" id="wcheckChange"></label>
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-sm-6 control-label fontWeihgt">任务类型：</label> <label
+									class="select-label" id="checkRequirementFeatureSource"></label>
+							</div>
+						</div>
+						<div class="rowdiv">
+							<div class="form-group col-md-4">
+								<label class="col-sm-6 control-label fontWeihgt">是否监管需求：</label>
+								<label class="select-label" id="wcheckImportantRequirementType"></label>
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-sm-6 control-label fontWeihgt">发布版测日期：</label>
+								<label class="select-label" id="wcheckPptDeployTime"></label>
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-sm-6 control-label fontWeihgt">提交测试日期：</label>
+								<label class="select-label" id="wcheckSubmitTestTime"></label>
+							</div>
+						</div>
+					</div>
+					<div class="allInfo">
+						<div class="def_title">
+							<input id="" type="hidden" /> <span>关联需求信息</span>
+						</div>
+						<div class="rowdiv">
+							<div class="form-group col-md-8">
+								<label class="col-sm-3 control-label fontWeihgt">需求摘要：</label> <label
+									class="select-label" id="wrequirementName"></label>
+							</div>
+						</div>
+						<div class="rowdiv">
+							<div class="form-group col-md-4">
+								<label class="col-sm-6 control-label fontWeihgt">需求来源：</label> <label
+									class="select-label" id="requirementSource"></label>
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-sm-5 control-label fontWeihgt">需求类型：</label> <label
+									class="select-label" id="requirementType"></label>
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-sm-7 control-label fontWeihgt">优先级：</label> <label
+									class="select-label" id="requirementPriority"> </label>
+							</div>
+						</div>
+						<div class="rowdiv">
+							<div class="form-group col-md-12">
+								<label class="col-sm-2 control-label fontWeihgt">需求描述：</label>
+								<textarea class="def_col_30 select-label noBorder" readonly
+									style="resize: none; background-color: inherit;"
+									id="requirementOverview"></textarea>
+								##<label class="select-label" id="requirementOverview"></label>
+							</div>
+						</div>
+						<div class="rowdiv">
+							<div class="form-group col-md-4">
+								<label class="col-sm-6 control-label fontWeihgt">需求计划：</label> <label
+									class="select-label" id="requirementPanl"></label>
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-sm-5 control-label fontWeihgt">需求状态：</label> <label
+									class="select-label" id="requirementStatus"> </label>
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-sm-7 control-label fontWeihgt">提出人：</label> <label
+									class="select-label"><span id="applyUserId"></span>|<span
+									id="applyDeptId"></span></label>
+							</div>
+						</div>
+
+						<div class="rowdiv">
+							<div class="form-group col-md-4">
+								<label class="col-sm-6 control-label fontWeihgt">期望上线：</label> <label
+									class="select-label" id="expectOnlineDate"></label>
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-sm-5 control-label fontWeihgt">计划上线：</label> <label
+									class="select-label" id="planOnlineDate"> </label>
+							</div>
+						</div>
+						<div class="rowdiv">
+							<div class="form-group col-md-4">
+								<label class="col-sm-6 control-label fontWeihgt">创建日期：</label> <label
+									class="select-label" id="createDate3"> </label>
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-sm-5 control-label fontWeihgt">更新日期：</label> <label
+									class="select-label" id="lastUpdateDate3"> </label>
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-sm-7 control-label fontWeihgt">开启日期：</label> <label
+									class="select-label" id="openDate"> </label>
+							</div>
+						</div>
+
+					</div>
+					<div class="allInfo">
+						<div class="def_title" id="wtitleOfwork">
+							<span class="def_controlTit" onclick="showThisDiv2(this,1)">工作备注</span><span
+								class="def_changeTitIcon"> 丨 </span><span
+								onclick="showThisDiv2(this,2)"
+								class="def_controlTit def_changeTit">处理日志</span> <span
+								class="fa fa-angle-double-up" onclick="down(this)"></span>
+						</div>
+						<div class="def_content">
+							<input id="checkfiles" type="hidden" name="attachFiles" />
+							<div class="workRemarks">
+								<div class="new_workRemarks">
+									<textarea id="worktaskRemark" class="def_textarea" rows="3"
+										cols="102" placeholder="请输入工作备注内容" value=""></textarea>
+									<input id="testTaskID" type="hidden" />
+									<div class="rowdiv">
+										<div class="form-group col-md-12">
+											<label class="control-label fontWeihgt">相关附件：</label>
+											<div class="file-upload-select">
+												<input type="file" name="files" class="upload-files"
+													multiple="multiple" id="workcheckuploadFile" />
+											</div>
+											<div class="file-upload-list">
+												<table class="file-upload-tb workFileTableClass"
+													id="workcheckAttTable">
+
+												</table>
+											</div>
+										</div>
+									</div>
+									<div class="new_workRomarksBtn">
+										<input type="button" class="btn btn-primary"
+											onclick="addTestRemark()" value="保存工作备注" />
+									</div>
+								</div>
+								<div class="old_workRemarks" id="taskRemark"></div>
+							</div>
+							<div class="dealLog" id="workhandleLogs"></div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	#*投产窗口*#
+	<div class="modal fade bs-example-modal-lg" id="comWindowModal"
+		tabindex="-1" role="dialog" aria-labelledby="newPerson">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content modalStyle">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<span>选择投产窗口</span>
+				</div>
+				<div class="modal-body">
+					<div class="color1">
+						<div class="container-fluid" id="comWindowForm">
+							<div class="row control-row">
+								<div class="col-md-4">
+									<div class="search_font">
+										<label class="control-label">窗口名称：</label>
+									</div>
+									<div class="search_input">
+										<input type="text" class="form-control " placeholder="请输入"
+											id="win_windowName" name="windowName" value="" />
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="search_font">
+										<label class="control-label">投产日期：</label>
+									</div>
+									<div class="search_input">
+										<input size="16" type="text" onfocus="this.blur()"
+											class="form-control form_datetime" placeholder="请选择"
+											id="timeDate" name="windowDate" />
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="search_font">
+										<label class="control-label">窗口类型：</label>
+									</div>
+									<div class="search_input">
+										<select class="selectpicker" id="win_windowType"
+											name="windowType">
+											<option value="">请选择</option> #foreach($dictMap in
+											${dict.getDictMap(
+											"TBL_COMMISSIONING_WINDOW_WINDOW_TYPE").entrySet()})
+											<option value="${dictMap.key}">${dictMap.value}</option> #end
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="row control-row search_btn">
+								<button type="button" id="commitWindowSearch"
+									class="btn btn-primary" onclick="">搜&nbsp;&nbsp;&nbsp;索</button>
+								<button type="button" onclick="winReset()"
+									class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+							</div>
+						</div>
+						<div id="downBtn" class="downBtn">
+							<span class="fa fa-caret-up"></span>
+						</div>
+					</div>
+					<br>
+					<div class="content-table">
+						<div class="wode">
+							<table id="comWindowTable"></table>
+							<div id="userPage"></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<div class="bottom-container">
+						<button type="button" id="windowButton" class="btn btn-primary"
+							data-window="default" onclick="commitWin()">确定</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 自定义筛选器 -->
+	<div class="modal fade bs-example-modal-lg in" id="configFilterModal"
+		tabindex="-1" role="dialog" aria-labelledby="">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content modalStyle">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">×</button>
+					<span>自定义筛选器</span>
+				</div>
+				<div class="modal-body scrollModal">
+					<div class="row control-row">
+						<div class="col-md-12">
+								<div class="form-group">
+									<label class="radio-inline"> <input type="radio"
+										value="1" checked name="filter">新增
+									</label> <label class="radio-inline"> <input type="radio"
+										value="2" name="filter">修改
+									</label><label class="radio-inline"> <input type="radio"
+										value="3" name="filter">删除
+									</label>
+								</div>
+						</div>
+					</div>
+					<div class="row control-row">
+						<div class="col-md-11 newFilter">
+							<div class="search_font">
+								<label class="control-label boldFont">筛选器名称：</label>
+							</div>
+							<div class="search_input">
+								<input type="text" class="form-control " placeholder="请输入"
+									id="filterName">
+							</div>
+						</div>
+						<div class="col-md-11 editFilter hide">
+							<div class="search_font">
+								<label class="control-label boldFont">选择筛选器：</label>
+							</div>
+							<div class="search_input">
+								<select class="selectpicker " id="configFilter"
+									autocomplete="off" name="filterType">
+									<option value="">请选择</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="fieldTable">
+						<div class="row control-row">
+							<div class="col-md-11">
+								<div class="search_font">
+									<label class="control-label">任务编号：</label>
+								</div>
+								<div class="search_input">
+									<div class="col-md-11">
+										<input type="text" class="form-control " placeholder="请输入"
+										id="sh_featureCode">
+									</div>
+									<div class="col-md-1">
+										<span class="glyphicon glyphicon-question-sign" id="sp_featureCode" aria-hidden="true">
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row control-row">
+							<div class="col-md-11">
+								<div class="search_font">
+									<label class="control-label">任务摘要：</label>
+								</div>
+								<div class="search_input">
+									<div class="col-md-11">
+										<input type="text" class="form-control " placeholder="请输入"
+										id="sh_featureName">
+									</div> 
+									<div class="col-md-1">
+										<span class="glyphicon glyphicon-question-sign" id="sp_featureName" aria-hidden="true">
+										</span>
+									</div>
+								</div> 
+							</div>
+						</div>
+						<div class="row control-row">
+							<div class="col-md-11">
+								<div class="search_font">
+									<label class="control-label">子系统名称：</label>
+								</div>
+								<div class="search_input"> 
+									<div class="col-md-11">
+										<input type="text" class="form-control " placeholder="请输入"
+										id="sh_systemName">
+									</div> 
+									<div class="col-md-1">
+										<span class="glyphicon glyphicon-question-sign" id="sp_systemName" aria-hidden="true">
+										</span>
+									</div>	
+								</div>
+							</div> 
+						</div>
+						<div class="row control-row">
+							<div class="col-md-11">
+								<div class="search_font">
+									<label class="control-label">关联需求：</label>
+								</div>
+								<div class="search_input"> 
+									<div class="col-md-11">
+										<input type="text" class="form-control " placeholder="请输入"
+										id="sh_requirementCode">
+									</div> 
+									<div class="col-md-1">
+										<span class="glyphicon glyphicon-question-sign" id="sp_requirementCode" aria-hidden="true">
+										</span>
+									</div>	 
+								</div>
+							</div> 
+						</div>
+						<div class="row control-row">
+							<div class="col-md-11">
+								<div class="search_font">
+									<label class="control-label">投产窗口：</label>
+								</div>
+								<div class="search_input"> 
+									<div class="col-md-11">
+										<input type="text" class="form-control " placeholder="请输入"
+										id="sh_windowName">
+									</div> 
+									<div class="col-md-1">
+										<span class="glyphicon glyphicon-question-sign" id="sp_windowName" aria-hidden="true">
+										</span>
+									</div>	
+								</div>
+							</div> 
+						</div>		
+						<div class="row control-row">
+							<div class="col-md-11">
+								<div class="search_font">
+									<label class="control-label">任务状态：</label>
+								</div>
+								<div class="search_input"> 
+									<div class="col-md-11">
+										<input type="text" class="form-control " placeholder="请输入"
+										id="sh_requirementFeatureStatus">
+									</div> 
+									<div class="col-md-1">
+										<span class="glyphicon glyphicon-question-sign" id="sp_requirementFeatureStatus" aria-hidden="true">
+										</span>
+									</div>	
+								</div>
+							</div> 
+						</div>	
+						<div class="row control-row">
+							<div class="col-md-11">
+								<div class="search_font">
+									<label class="control-label">管理岗：</label>
+								</div>
+								<div class="search_input"> 
+									<div class="col-md-11">
+										<input type="text" class="form-control " placeholder="请输入"
+										id="sh_manageUserName">
+									</div> 
+									<div class="col-md-1">
+										<span class="glyphicon glyphicon-question-sign" id="sp_manageUserName" aria-hidden="true">
+										</span>
+									</div>	
+								</div>
+							</div> 
+						</div>
+						<div class="row control-row">
+							<div class="col-md-11">
+								<div class="search_font">
+									<label class="control-label">执行人：</label>
+								</div>
+								<div class="search_input"> 
+									<div class="col-md-11">
+										<input type="text" class="form-control " placeholder="请输入"
+										id="sh_executeUserName">
+									</div> 
+									<div class="col-md-1">
+										<span class="glyphicon glyphicon-question-sign" id="sp_executeUserName" aria-hidden="true">
+										</span>
+									</div>	
+								</div>
+							</div> 
+						</div>	
+						<div class="row control-row">
+							<div class="col-md-11">
+								<div class="search_font">
+									<label class="control-label">部署状态：</label>
+								</div>
+								<div class="search_input"> 
+									<div class="col-md-11">
+										<input type="text" class="form-control " placeholder="请输入"
+										id="sh_deployStatus">
+									</div> 
+									<div class="col-md-1">
+										<span class="glyphicon glyphicon-question-sign" id="sp_deployStatus" aria-hidden="true">
+										</span>
+									</div>	
+								</div>
+							</div> 
+						</div>		
+						<div class="row control-row">
+							<div class="col-md-11">
+								<div class="search_font">
+									<label class="control-label">任务来源：</label>
+								</div>
+								<div class="search_input"> 
+									<div class="col-md-11">
+										<input type="text" class="form-control " placeholder="请输入"
+										id="sh_requirementFeatureSourceStr">
+									</div> 
+									<div class="col-md-1">
+										<span class="glyphicon glyphicon-question-sign" id="sp_requirementFeatureSourceStr" aria-hidden="true">
+										</span>
+									</div>	
+								</div>
+							</div> 
+						</div>
+						<div class="row control-row">
+							<div class="col-md-11">
+								<div class="search_font">
+									<label class="control-label">任务创建方式：</label>
+								</div>
+								<div class="search_input"> 
+									<div class="col-md-11">
+										<input type="text" class="form-control " placeholder="请输入"
+										id="sh_createTypeStr">
+									</div> 
+									<div class="col-md-1">
+										<span class="glyphicon glyphicon-question-sign" id="sp_createTypeStr" aria-hidden="true">
+										</span>
+									</div>	
+								</div>
+							</div> 
+						</div>
+						<div class="row control-row">
+							<div class="col-md-11">
+								<div class="search_font">
+									<label class="control-label">案例数：</label>
+								</div>
+								<div class="search_input"> 
+									<div class="col-md-11">
+										<input type="text" class="form-control " placeholder="请输入"
+										id="sh_testCaseNumStr">
+									</div> 
+									<div class="col-md-1">
+										<span class="glyphicon glyphicon-question-sign" id="sp_testCaseNumStr" aria-hidden="true">
+										</span>
+									</div>	
+								</div>
+							</div> 
+						</div>
+						<div class="row control-row">
+							<div class="col-md-11">
+								<div class="search_font">
+									<label class="control-label">缺陷数：</label>
+								</div>
+								<div class="search_input"> 
+									<div class="col-md-11">
+										<input type="text" class="form-control " placeholder="请输入"
+										id="sh_defectNumStr">
+									</div> 
+									<div class="col-md-1">
+										<span class="glyphicon glyphicon-question-sign" id="sp_defectNumStr" aria-hidden="true">
+										</span>
+									</div>	
+								</div>
+							</div> 
+						</div>
+						<div class="row control-row">
+							<div class="col-md-11">
+								<div class="search_font">
+									<label class="control-label">需求变更数：</label>
+								</div>
+								<div class="search_input"> 
+									<div class="col-md-11">
+										<input type="text" class="form-control " placeholder="请输入"
+										id="sh_changeNumberStr">
+									</div> 
+									<div class="col-md-1">
+										<span class="glyphicon glyphicon-question-sign" id="sp_changeNumberStr" aria-hidden="true">
+										</span>
+									</div>	
+								</div>
+							</div> 
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="windowButton" class="btn btn-primary"
+						onclick="configFilterCommit()">保存</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" id="" class="btn btn-primary"
+						onclick="configFilterSearch()">搜索</button>
+					<button type="button" id="" class="btn btn-primary"
+					onclick="clearConfigFilter()">重置</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="loading">
+		<img class="loadingImg"
+			src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+	</div>
+	<div class="hideDiv" style="display: none">
+		<select class="selectpicker" id="testTaskStatus" title="请选择" multiple name="requirementFeatureStatus">
+		#foreach($dictMap in ${dict.getDictMap("TBL_REQUIREMENT_FEATURE_REQUIREMENT_FEATURE_STATUS_2").entrySet()})
+					<option value="${dictMap.key}">${dictMap.value}</option>
+				#end
+		</select>
+		<select class="selectpicker" id="deployStatus2" title="请选择" multiple
+			name="deployStatus"> #foreach($dictMap in
+			${dict.getDictMap("TBL_REQUIREMENT_FEATURE_DEPLOY_STATUS").entrySet()})
+			<option value="${dictMap.key}">${dictMap.value}</option> #end
+		</select>
+	</div>
+</body>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/moment.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/bootstrap.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/daterangepicker.js"></script>
+
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/jquery-editable-select.js"></script>
+
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/component.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/laydate.js"></script>
+	
+<script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.core.js"></script>
+<script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.exhide.js"></script>
+<script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/fuzzysearch.js"></script>
+
+<script>
+		$.jgrid.defaults.responsive = true;
+		$.jgrid.defaults.styleUI = 'Bootstrap4';
+		$.jgrid.defaults.iconSet = "fontAwesome";
+		var ctxStatic = "${ctxStatic}";
+		$(function(){
+			$("[data-toggle='tooltip']").tooltip();
+		 });
+		 
+		var editPermission = $auth.hasPermission("$token","testManage:testtask:edit");
+		var transferPermission = $auth.hasPermission("$token","testManage:testtask:transfer");
+		var splitPermission = $auth.hasPermission("$token","testManage:testtask:split");
+		var handleEditPermission = $auth.hasPermission("$token","testManage:testtask:handle");
+		var deployPermission = $auth.hasPermission("$token","testManage:testtask:deploy");
+		var uid = $uid;
+		var username = '$username';
+		var pageUrl = '$url';
+		var uifavorite=$uifav.getFavoriteContent("$token","$url"); 
+		
+		var defectMenuUrl ='$system.getMenuByCode("testManageui:defect:toDefect").url';
+		var defectMenuId ='$system.getMenuByCode("testManageui:defect:toDefect").id';
+		var defectMenuName ='$system.getMenuByCode("testManageui:defect:toDefect").menuButtonName';
+		
+		var testSetMenuUrl ='$system.getMenuByCode("testManageui:testSet:toTestSet").url';
+		var testSetMenuId ='$system.getMenuByCode("testManageui:testSet:toTestSet").id';
+		var testSetMenuName ='$system.getMenuByCode("testManageui:testSet:toTestSet").menuButtonName';
+		var mergePermission = $auth.hasPermission("$token","testManage:testtask:marge");
+		
+		var reqAttUrl = '$reqAttUrl';
+		var roleCodes = "$roleCodes";
+		var existSystemName = "$systemName";
+		var existWindowDate = "$windowDate";
+		function setResponseRN(_this) {
+			var val=$(_this).val()
+			if(val==='1'){
+				val=1
+			}else if(val){
+				val=2
+			}else{
+				val=''
+			}
+			$('#importantRequirementType').selectpicker('val', val);
+		}
+	</script>
+
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/common.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/common/common.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/common/fuzzy_serach.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/testManageui/static/js/common/fuzzy_serach_test.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/testManageui/static/js/testtask/testtask.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/testManageui/static/js/testtask/testtaskOther.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/testManageui/static/js/testtask/testtaskInfo_other.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/testManageui/static/js/testtask/testtask_list_opt.js"></script>
+</html>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.role.RoleDao">
+
+    <sql id="baseColumn">
+      ID,
+      ROLE_NAME,
+      ROLE_CODE,
+      STATUS,
+      CREATE_BY,
+      CREATE_DATE,
+      LAST_UPDATE_BY,
+      LAST_UPDATE_DATE
+    </sql>
+    <!--查询角色权限-->
+    <select id="selectUserPostRole" resultType="cn.pioneeruniverse.project.entity.TblRoleInfo">
+      select tri.ID id,tri.ROLE_CODE roleCode,tri.ROLE_NAME roleName,
+      tri.PROJECT_ID projectId,tri.USER_POST userPost
+      from tbl_role_info tri
+      where tri.status = 1 and tri.PROJECT_ID = #{projectId}
+      <if test="userPost != null">
+        and tri.USER_POST = #{userPost}
+      </if>
+    </select>
+
+    <!--新增角色权限 -->
+    <insert id="insertUserPostRole" parameterType="cn.pioneeruniverse.project.entity.TblRoleInfo"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_role_info(
+          ROLE_NAME,
+          ROLE_CODE,
+          PROJECT_ID,
+          USER_POST,
+          STATUS,
+          CREATE_BY,
+          CREATE_DATE,
+          LAST_UPDATE_BY,
+          LAST_UPDATE_DATE
+        )values(
+          #{roleName},
+          #{roleCode},
+          #{projectId},
+          #{userPost},
+          #{status},
+          #{createBy},
+          #{createDate},
+          #{lastUpdateBy},
+          #{lastUpdateDate}
+        )
+    </insert>
+    <!--查询角色权限-->
+    <select id="selectNoProjectRole" resultType="cn.pioneeruniverse.project.entity.TblRoleInfo">
+        select tri.ID id,tri.ROLE_CODE roleCode,tri.ROLE_NAME roleName
+        from tbl_role_info tri
+        where tri.status = 1 and tri.PROJECT_ID is null
+    </select>
+
+    <!--删除项目组用户权限-->
+    <delete id="deleteProjectUserRole">
+        delete from tbl_user_role where ROLE_ID in
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+    <!--查询用户角色-->
+    <select id="selectUserRole" resultType="Integer">
+        select count(tur.ID)
+        from tbl_user_role tur
+        where tur.status = 1
+        and tur.USER_ID = #{userId}
+        and tur.ROLE_ID = #{roleId}
+    </select>
+
+    <!-- 新增用户角色 -->
+    <insert id="insertRoleUser" parameterType="hashmap">
+        INSERT INTO tbl_user_role (
+        `USER_ID`,
+        `ROLE_ID`,
+        `STATUS`,
+        `CREATE_BY`,
+        `LAST_UPDATE_BY`
+        )
+        values
+        (
+          #{useId},
+          #{roleId},
+          #{status},
+          #{createBy},
+          #{lastUpdateBy}
+        )
+  </insert>
+</mapper>

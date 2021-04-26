@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>冲刺管理</title>
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/daterangepicker-bs3.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/component.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/common/common.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+
+<link rel="stylesheet" type="text/css" media="screen"
+	href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css" />
+
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css" />
+
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/moment.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/daterangepicker.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/frame/laydate.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/devManageui/static/js/sprint/sprint.js"></script>
+<script>
+	$.jgrid.defaults.responsive = true;
+	$.jgrid.defaults.styleUI = 'Bootstrap4';
+	$.jgrid.defaults.iconSet = "fontAwesome";
+	var ctxStatic = "${ctxStatic}";
+	var uid = ${uid};
+	var sprintEdit = $auth.hasPermission("$token","devManage:sprint:edit"); 
+	var sprintDelete = $auth.hasPermission("$token","devManage:sprint:delete");
+	var sprintClose = $auth.hasPermission("$token","devManage:sprint:close");
+	var sprintOpen = $auth.hasPermission("$token","devManage:sprint:open");
+</script>
+<style>
+	.allInfo {
+		width: auto;
+		border: 1px solid #D9D9D9;
+		border-radius: 4px;
+		margin: 10px 0 15px;
+		padding-right: 15px;
+		background-color: #F4F4FB;
+	}
+
+	.def_title {
+		padding: 10px 20px 10px;
+		position: relative;
+		font-size: 13px;
+		font-weight: bold;
+		line-height: 16px;
+	}
+
+	.rowdiv {
+		margin: 8px 0;
+		padding: 0;
+	}
+
+	.rowdiv:before, .rowdiv:after {
+		display: table;
+		content: " ";
+	}
+
+	.rowdiv:after {
+		clear: both;
+	}
+
+	.rowdiv .form-group {
+		margin-bottom: 0;
+	}
+
+	.textAreaStyle {
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		width: 100%;
+	}
+
+	.pjNameType1, .pjNameType2 {
+		line-height: 32px;
+		padding: 2px 8px;
+	}
+
+	.pjNameType1 {
+		background-color: #108EE9;
+	}
+
+	.pjNameType2 {
+		background-color: CC66FF;
+	}
+
+	#select_Correlation .modal-body {
+		padding: 0;
+	}
+
+	#select_Correlation .rowdiv {
+		margin: 0;
+	}
+
+	#select_Correlation .search_btn {
+		margin-bottom: 10px;
+	}
+
+	.form-horizontal .control-label {
+		padding: 0;
+	}
+
+	#add_preject .modal-header {
+		padding: 10px 15px;
+	}
+
+	#relevanceSys input[type*="text"] {
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 1;
+	}
+
+	.addSysNames {
+		position: relative;
+		display: inline-block;
+		margin: 6px 0px 6px 10px;
+		border-radius: 4px;
+		padding: 0 7px;
+		line-height: 20px;
+		background-color: #D8D8EF;
+		z-index: 10;
+	}
+
+	.close_x {
+		margin-left: 3px;
+		cursor: pointer;
+	}
+
+	#confirmModel .modal-body {
+		padding: 40px 35px 0;
+	}
+
+	.footerBtn {
+		padding: 18px 0;
+		text-align: center;
+	}
+
+	.footerBtn .btn {
+		padding: 6px 18px;
+	}
+
+	.fa-circle {
+		color: #FFBF00;
+	}
+
+	.marginR {
+		margin-left: 35px;
+		margin-right: 15px;
+		font-size: 12px;
+		margin-top: -5px;
+	}
+
+	.colorW {
+		color: white;
+		font-size: 14px;
+	}
+
+	.titleFontS {
+		font-size: 14px;
+	}
+
+	.jobArea {
+		margin-top: 10px;
+		border: 1px solid #D9D9D9;
+		border-radius: 5px;
+		padding: 10px 30px 0;
+		background: #F4F4FB;
+	}
+
+	.oneJob {
+		margin-bottom: 10px;
+	}
+
+	.proText {
+		padding: 15px 160px 25px;
+	}
+
+	.proText p {
+		margin-top: 3px;
+		color: #F04134;
+	}
+</style>
+</head>
+<body>
+<input type="hidden" id="project_Id" name="" value="$!projectId"/>
+<input type="hidden" id="z_project_Name" name="" value="$!projectName"/>
+<input type="hidden" id="system_id" name="" value="$!systemId"/>
+<input type="hidden" id="system_Name" name="" value="$!systemName"/>
+<div class="color1">
+	<div class="container-fluid search_div" id="search_div">
+		<div class="row control-row">
+			<div class="col-md-4">
+				<div class="search_font">
+					<label class="control-label">冲刺名称：</label>
+				</div>
+				<div class="search_input">
+					<input type="text" class="form-control" placeholder="请输入"
+						id="sprintName" name="sprintName" value=""  onkeyup="this.value=this.value.replace(/(^\s*)|(\s*$)/g, '')"/>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="search_font">
+					<label class="control-label">子系统名称：</label>
+				</div>
+				<div class="search_input">
+					<input type="hidden" id="systemId" name="systemId"/>
+											<input type="text" class="form-control pointStyle readonly" readonly placeholder="请选择" id="systemName" name="systemName" />
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="search_font">
+					<label class="control-label">冲刺状态：</label>
+				</div>
+				<div class="search_input">
+					<select class="selectpicker" id="validStatus" name="validStatus">
+						<option value="">请选择</option>
+						<option value="1">正常</option>
+						<option value="2">关闭</option>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="row control-row search_btn">
+			<button type="button" class="btn btn-primary" onclick="searchInfo()">搜&nbsp;&nbsp;&nbsp;索</button>
+			<button type="button" onclick="clearSearch()"
+				class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+		</div>
+	</div>
+	<div id="downBtn">
+		<span class="fa fa-caret-up"></span>
+	</div>
+</div>
+<div class="main-content">
+	<div class="content-btn">
+		#if($auth.hasPermission("$token","devManage:sprint:add"))
+		<button type="button" onclick="newSprint_btn()"
+			class="btn btn-primary">新增冲刺任务</button>
+		#end
+	</div>
+	<div class="content-table">
+		<div class="wode">
+			<table id="list2"></table>
+			<div id="pager2"></div>
+		</div>
+	</div>
+</div>
+
+<!-- 新增冲刺任务 -->
+<div class="modal fade bs-example-modal-lg" id="new_sprint"
+	tabindex="-1" role="dialog" aria-labelledby="add_wiondow">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="myModalLabel">新增冲刺任务</h4>
+			</div>
+			<div class="modal-body">
+				<form id="newform">
+					<div class="allInfo">
+						<div class="def_title">
+							<span>任务基本信息</span>
+						</div>
+						<div class="def_content">
+							<div class="rowdiv">
+								<div class="form-group def_col_20">
+									<div class="def_col_9">
+										<label class="control-label"><span class="redStar"
+											style="color: red;">*</span>冲刺任务名称:</label>
+									</div>
+									<div class="def_col_27">
+										<input type="text" class="form-control" placeholder="请输入"
+											id="new_sprintName" name="new_sprintName" value="" />
+									</div>
+								</div>
+							</div>
+							<div class="rowdiv">
+									<div class="form-group def_col_20">
+											<label class="def_col_9  select-label font_right">
+												<span class="redStar" style="color: red;">*</span>关联项目：
+											</label>
+											<div class="def_col_27">
+													<input type="hidden" id="newProject_listId"/>
+													<input type="text" onclick="getProject_list()" class="form-control pointStyle readonly" readonly placeholder="请选择" name="newProject_list" id="newProject_list"/>
+											</div>
+									</div>
+							</div>
+							<div class="rowdiv">
+								<div class="form-group def_col_20">
+									<div class="def_col_9 font_right select-label">
+										<span class="redStar" style="color: red;">*</span>涉及子系统:
+									</div>
+									<div class="def_col_27">
+										<!-- <select class="selectpicker" id="new_system"
+											name="new_system">
+											<option value="">请选择</option>
+										</select> -->
+										<input type="hidden" id="new_systemId" name=""/>
+																<input type="text" class="form-control pointStyle readonly" readonly placeholder="请输入" id="new_systemName" name="new_system" />
+									</div>
+								</div>
+							</div>
+							<div class="rowdiv">
+									<div class="form-group def_col_20">
+											<div class="def_col_9 font_right select-label">
+													<span class="redStar" style="color: red;"></span>项目计划:
+											</div>
+											<div class="def_col_27">
+													<input type="hidden" id="newProjectPlanId" name=""/>
+													<input type="text" class="form-control pointStyle readonly" readonly placeholder="请输入" id="newProjectPlanName" name="newProjectPlanName" />
+											</div>
+									</div>
+							</div>
+							<input type="hidden" id="add_windowType" />
+							<div class="rowdiv">
+								<div class="form-group def_col_20">
+									<div class="def_col_9">
+										<label class="control-label"><span class="redStar"
+											style="color: red;">*</span>冲刺开始日期:</label>
+									</div>
+									<div class="def_col_27">
+										<input type="text" class="form-control" onfocus="this.blur()"
+											placeholder="yyyymmdd" id="new_sprintStartDate"
+											name="new_sprintStartDate" value="" />
+									</div>
+								</div>
+							</div>
+							<div class="rowdiv">
+								<div class="form-group def_col_20">
+									<div class="def_col_9">
+										<label class="control-label"><span class="redStar"
+											style="color: red;">*</span>冲刺结束日期:</label>
+									</div>
+									<div class="def_col_27">
+										<input type="text" class="form-control" onfocus="this.blur()"
+											placeholder="yyyymmdd" id="new_sprintEndDate"
+											name="new_sprintEndDate" value="" />
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" onclick="addSprint()" class="btn btn-primary">确定</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 编辑冲刺任务 -->
+<div class="modal fade bs-example-modal-lg" id="edit_sprint"
+	tabindex="-1" role="dialog" aria-labelledby="edit_window">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="myModalLabel">编辑冲刺任务</h4>
+			</div>
+			<div class="modal-body">
+				<form id="newform2">
+					<div class="allInfo">
+						<div class="def_title">
+							<span>冲刺任务详细信息</span>
+						</div>
+						<div class="def_content">
+							<div class="rowdiv">
+								<div class="def_col_15 hide">
+									<label class="control-label" id="id"></label>
+								</div>
+								<div class="form-group def_col_20">
+									<div class="def_col_9">
+										<label class="control-label"><span class="redStar"
+											style="color: red;">*</span>冲刺任务名称:</label>
+									</div>
+									<div class="def_col_27">
+										<input type="text" class="form-control" id="edit_sprintName"
+											name="edit_sprintName" value="" />
+									</div>
+								</div>
+							</div>
+							<div class="rowdiv">
+									<div class="form-group def_col_20">
+											<label class="def_col_9  select-label font_right">
+												<span class="redStar" style="color: red;">*</span>关联项目：
+											</label>
+											<div class="def_col_27">
+													<input type="hidden" id="editProject_listId"/>
+													<input type="text" onclick="getProject_list()" 
+														class="form-control pointStyle readonly" readonly placeholder="请选择" 
+															name="editProject_list" id="editProject_list"/>
+											</div>
+									</div>
+							</div>
+							<div class="rowdiv">
+								<div class="form-group def_col_20">
+									<div class="def_col_9">
+										<label class="control-label"><span class="redStar"
+											style="color: red;">*</span>所属子系统:</label>
+									</div>
+									<div class="def_col_27">
+										<!-- <select class="selectpicker" id="edit_system"
+											name="edit_system">
+										</select> -->
+										<input type="hidden" id="edit_systemId" name=""/>
+																<input type="text" class="form-control pointStyle readonly" readonly placeholder="请输入" id="edit_systemName" name="edit_system" />
+									</div>
+								</div>
+							</div>
+															<div class="rowdiv">
+																	<div class="form-group def_col_20">
+																			<div class="def_col_9 font_right select-label">
+																					<span class="redStar" style="color: red;"></span>项目计划:
+																			</div>
+																			<div class="def_col_27">
+																					<input type="hidden" id="editProjectPlanId" name=""/>
+																					<input type="text" class="form-control pointStyle readonly" readonly placeholder="请输入" id="editProjectPlanName" name="editProjectPlanName" />
+																			</div>
+																	</div>
+															</div>
+							<div class="rowdiv">
+								<div class="form-group def_col_20">
+									<div class="def_col_9">
+										<label class="control-label"><span class="redStar"
+											style="color: red;">*</span>冲刺开始日期:</label>
+									</div>
+									<div class="def_col_27">
+										<input type="text" class="form-control" onfocus="this.blur()"
+											id="edit_sprintStartDate" name="edit_sprintStartDate" value="" />
+									</div>
+								</div>
+							</div>
+							<div class="rowdiv">
+								<div class="form-group def_col_20">
+									<div class="def_col_9">
+										<label class="control-label"><span class="redStar"
+											style="color: red;">*</span>冲刺结束日期:</label>
+									</div>
+									<div class="def_col_27">
+										<input type="text" class="form-control" onfocus="this.blur()"
+											id="edit_sprintEndDate" name="edit_sprintEndDate" value="" />
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" onclick="editSprint()"
+					class="btn btn-primary">确定</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+##选择项目弹窗
+<div class="modal fade bs-example-modal-lg" id="project_modal" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg modal-user" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <span class="modal-title" id="">选择项目</span>
+            </div>
+            <div class="modal-body">
+                <div class="color1">
+                    <div class="container-fluid" id="">
+                        <div class="rowdiv control-row">
+                            <div class="col-md-2">
+
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">项目名称：</label></div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入" id="project_Name" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                 <div class="search_font"><label class="control-label">项目编码：</label></div>
+                                 <div class="search_input">
+                                     <input type="text" class="form-control" placeholder="请输入" id="project_Code" />
+                                 </div>
+                            </div>
+                            <div class="col-md-2">
+
+                            </div>
+                        </div>
+                        <div class="rowdiv control-row search_btn">
+                            <button type="button" class="btn btn-primary" onclick="getProject_list()">搜&nbsp;&nbsp;&nbsp;索</button>
+                            <button type="button" onclick="clearSearchProject()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                        </div>
+
+                    </div>
+                    <div id="downBtn2" class="downBtn">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br>
+                <div class="content-table">
+                    <div class="wode">
+                        <table id="Project_Table"></table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="sysbutton" class="btn btn-primary" onclick="select_project()">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 子系统弹框 ztt -->
+<div class="modal fade bs-example-modal-lg" id="selSys" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg modal-user" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <span class="modal-title" id="">选择子系统</span>
+            </div>
+            <div class="modal-body">
+
+                <div class="color1">
+                    <div class="container-fluid" id="">
+                        <div class="rowdiv control-row">
+                            <div class="col-md-2">
+
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">子系统名称：</label></div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="输入" id="SCsystemName"
+                                           name="systemName" value=""/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">子系统编码：</label></div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入" id="SCsystemCode"
+                                           name="systemCode" value=""/>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+
+                            </div>
+                        </div>
+                        <div class="rowdiv control-row search_btn">
+                            <button type="button" class="btn btn-primary" id="systemSearch">搜&nbsp;&nbsp;&nbsp;索</button>
+                            <button type="button" onclick="clearSearchSys()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                        </div>
+
+                    </div>
+                    <div id="downBtn2">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br>
+                <div class="content-table">
+                    <div class="wode">
+                        <table id="systemTable2"></table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="sysbutton" class="btn btn-primary" data-sys="default" onclick="commitSys()">
+                    确定
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+##项目计划弹框
+<div class="modal fade bs-example-modal-lg" id="selProjectPlan" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+	<div class="modal-dialog modal-lg modal-user" role="document">
+		<div class="modal-content modalStyle">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+				</button>
+				<span class="modal-title" id="">选择项目计划</span>
+			</div>
+			<div class="modal-body">
+
+				<div class="color1">
+					<div class="container-fluid" id="">
+						<div class="rowdiv control-row">
+							<div class="col-md-3">
+								<div class="search_font"><label class="control-label">计划编码：</label></div>
+								<div class="search_input">
+									<input type="text" class="form-control" placeholder="请输入" id="planCode"
+										   name="planCode" value=""/>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="search_font"><label class="control-label">计划名称：</label></div>
+								<div class="search_input">
+									<input type="text" class="form-control" placeholder="请输入" id="planName"
+										   name="planName" value=""/>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="search_font"><label class="control-label">所属项目名称：</label></div>
+								<div class="search_input">
+									<input type="text" class="form-control" placeholder="请输入" id="projectName"
+										   name="projectName" value=""/>
+								</div>
+							</div>
+                            <div class="col-md-3">
+                                <div class="search_font"><label class="control-label">责任人：</label></div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入" id="responsibleUserName"
+                                           name="responsibleUserName" value=""/>
+                                </div>
+                            </div>
+						</div>
+						<div class="rowdiv control-row search_btn">
+							<button type="button" class="btn btn-primary" onclick="planTableShow()">搜&nbsp;&nbsp;&nbsp;索</button>
+							<button type="button" onclick="clearSearchPlan()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+						</div>
+
+					</div>
+					<div id="downBtn2" class="downBtn">
+						<span class="fa fa-caret-up"></span>
+					</div>
+				</div>
+				<br>
+				<div class="content-table">
+					<div class="wode">
+						<table id="planTable2"></table>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" id="planbutton" class="btn btn-primary" data-sys="default" onclick="commitPlan()">
+					确定
+				</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+	<div id="loading">
+		<img class="loadingImg"
+			src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+	</div>
+</body>
+</html>

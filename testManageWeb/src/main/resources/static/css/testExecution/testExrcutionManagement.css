@@ -1,0 +1,734 @@
+/*  commonn  */
+.btn{
+    height: 28px;
+    padding: 5px 12px;
+}
+/*.btn-primary{
+    background-color: #108EE9!important;
+}*/
+.myUpfileDiv{
+    width: 80px;
+    height: 22px;
+    background: url("../../images/testExe/upload-file.png") no-repeat 100% 100%;
+    overflow: hidden;
+    cursor: pointer;
+    margin-top: -2px;
+}
+.myUpfile{
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 10;
+}
+.btn-stop{
+    background: #993399;
+    color: white;
+}
+.btn-temporary{
+    border: 1px solid #3399FF;
+    background: #E8F3FF;
+    color: #3399FF;
+}
+.btn-temporary:hover{
+    color: #3399FF;
+}
+.btn-stop:hover{
+    background: #883388;
+    color: white;
+}
+.btn-success{
+    background: #33CC99;
+    color: white;
+}
+.btn-danger{
+    background: #FF3E3E;
+    color: white;
+}
+[class^="classColor"]{
+    border-radius: 4px;
+    margin-right: 6px;
+    padding: 2px 5px;
+    color: white;
+}
+.classColor1{
+    background: #33CC99;
+}
+.classColor2{
+    background: #3399FF;
+}
+.classColor3{
+    background: #FF9933;
+}
+.classColor4{
+    background: #FF6699;
+}
+.classColor5{
+    background: #FF0000;
+} 
+
+.successBg{
+    background: #33CC99;
+    color: white;
+    font-weight: bold;
+}
+.failBg{
+    background: #FF3E3E;
+    color: white;
+    font-weight: bold;
+}
+[class^='spanClass']{
+	border-radius: 30px;  
+	display: inline-block;
+	padding:2px 12px;
+	text-align: center;
+	width : 70px;
+	margin-top:-2px;
+	margin-bottom:-2px;
+	color:#ffffff;
+}
+.spanClass1{
+	background: #CCCCCC;
+}
+.spanClass2{
+	background: #33CC99;
+}
+.spanClass3{
+	background: #FF3E3E;
+}
+.spanClass4{
+	background: #993399;
+}
+.spanClass5{
+	background: #1F97EF;
+} 
+
+
+
+/* 閺堫剟銆夐棃锟� */
+body{
+    display: flex;
+    flex-direction: row;
+    background-color: #F2F2F2;
+    font-size: 12px;
+}
+[class*="def_col_"]{
+    padding-left: 0px;
+}
+.bootstrap-select .btn{
+    margin: 0;
+}
+.left{
+    width: 30%;
+    padding: 10px;
+}
+.left_top{
+    width: 100%;
+    background-color: white;
+    border-radius: 4px;
+}
+.left_top_title{
+    height: 55px;
+    padding: 13px 8px;
+    border-bottom: 1px solid #E4E4E4;
+}
+.left_top_title button{
+    float: right;
+}
+.titleFont{
+    font-size: 16px;
+    line-height: 28px;
+    font-weight: bold;
+    color: #333333;
+}
+.left_top_search{
+    width: 100%;
+    padding: 8px;
+}
+.input_search{
+    position: relative;
+    margin-bottom: 8px;
+}
+
+.input_search input{
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 6px 25px 6px 6px;
+    border-bottom: 1px solid #CCCCCC;
+}
+#checkTaskName{
+	padding: 6px;
+}
+.input_search input:focus{
+    box-shadow: none;
+}
+.input_search .fa-search{
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    color: #999999;
+    font-size: 14px;
+}
+.border_right{
+    height: 28px;
+    border-right: 1px solid #E4E4E4;
+}
+.left_bottom{
+    margin-top: 10px;
+    width: 100%;
+    overflow-y: auto; 
+    
+}
+.testTask{
+    margin-bottom: 10px;
+    background-color: white;
+    border-radius: 4px;
+}
+.taskTop{
+    padding: 8px;
+    position: relative;
+    line-height: 24px;
+    cursor: pointer;
+}
+.taskTop img{
+    position: absolute;
+    left: 8px;
+    top: 8px;
+}
+.taskBottom{
+	display: none;
+    border-top:1px solid #E4E4E4;
+}
+.taskName{
+    margin-left: 30px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #333333;
+}
+.place_right,.place_right2{
+    position: absolute;
+    top: 0;
+    right: 10px;
+    line-height: 10px;
+}
+.placeBottom{
+	 top: 5px;
+}
+.place_right .dropdown-toggle{
+    color: #108EE9;
+    cursor: pointer;
+}
+.place_right .dropdown-toggle{
+    box-shadow: none !important;
+    font-weight: bold;
+}
+.place_right .dropdown-menu{
+    top: 18px;
+    left: auto;
+    right: -5px;
+    min-width: 90px;
+}
+.place_right .dropdown-menu>li>a{
+    font-size: 12px;
+    color: #108EE9;
+    padding: 5px 15px;
+    text-align: center;
+}
+.place_right .dropdown-menu>li>a:hover,.place_right .dropdown-menu>li>a:focus{
+    color: #fff;
+}
+
+.taskContent{
+    padding: 10px;
+    padding-bottom: 0;
+}
+.testName{
+    padding: 0 30px 0 0; 
+    position: relative;
+    cursor: pointer;
+}
+.testNameFont,.testNameFont2{
+    font-weight: bold;
+    overflow: hidden;
+    padding-left: 20px;
+    background: url("../../images/testExe/show.png") no-repeat 0 1px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.testNameFont2{
+    font-weight: 500;
+}
+.testContent,.testContent2{ 
+    border-left:1px solid #D8D8D8;
+    padding: 10px 0 0 20px;
+    margin-left: 7px;
+
+}
+.testContent2{
+    padding: 5px 0;
+    max-height: 230px;
+    overflow-y: auto; 
+} 
+.caseStatus{
+    padding: 3px 20px 3px 48px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+.caseSuccess{
+    background: url("../../images/testExe/success.png") no-repeat 28px 3px;
+}
+.caseFail{
+    background: url("../../images/testExe/fail.png") no-repeat 28px 2px;
+}
+.caseBlock{
+    background: url("../../images/testExe/block.png") no-repeat 28px 3px;
+}
+.caseNext{
+    background: url("../../images/testExe/next.png") no-repeat 28px 3px;
+    text-decoration:line-through;
+}
+.caseTitle{ 
+	position: relative;
+	padding-right: 30px; 
+}
+.caseTitleLeft{
+	padding: 0 8px 0 30px;
+	overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer; 
+    height: 27px;
+    line-height: 27px;
+}
+.caseTitle:hover{
+	background-color: #f2f2f2;
+}
+.casebg1{
+    background: url("../../images/testExe/ceshiyongli1.png") no-repeat 11px 6px;
+    background-size: 15px;
+}
+.casebg2{
+    background: url("../../images/testExe/ceshiyongli2.png") no-repeat 11px 6px;
+    background-size: 15px;
+} 
+.casebg4{
+    background: url("../../images/testExe/ceshiyongli4.png") no-repeat 11px 6px;
+    background-size: 15px;
+}
+.casebg5{
+    background: url("../../images/testExe/ceshiyongli5.png") no-repeat 11px 6px;
+    background-size: 15px;
+    text-decoration:line-through;
+}
+.testSuit{
+    padding: 2px;
+}
+.testSuit:hover{
+    background-color: #F2F2F2;
+}
+.testSuitName{
+    padding: 0 8px 0 30px;
+    font-weight: bold;
+    background: url("../../images/testExe/project.png") no-repeat 10px 3px;
+    line-height: 24px;
+}
+.testSuitContent{
+    margin-left: 22px;
+    height: 20px;
+}
+.testContent_border{
+
+}
+.right{
+    width: 70%;
+    padding: 10px;
+    padding-left: 0;
+    display: none;
+}
+.right_div{
+    height: 100%;
+    border-radius: 4px;
+    background-color: white;
+}
+.right_alert{
+    height: 100%;
+    border-radius: 4px;
+    background-color: white;
+}
+.right_div_tit{
+    height: 45px;
+    border-bottom: 1px solid #E4E4E4;
+    padding: 0 0 0 20px;
+    display: flex;
+    flex-direction: row;
+}
+.bigScreen{
+	position: fixed; 
+	bottom: 0;
+	right: 0;
+	top: 0;
+	left: 0;
+	overflow-y: auto;
+	z-index: 100;
+}
+.bigScreenBtn{
+	height: 100%;
+	width: 50px;
+	background: url(../../images/testExe/big.png) no-repeat 10px 10px;
+	cursor: pointer;
+}
+.right_div_titFont{
+    line-height: 45px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #333333;
+    flex: 1;
+}
+.right_div_titImg{
+    padding: 11px;
+    cursor: pointer;
+}
+.right_div_body{
+    padding: 10px 20px 0 20px;
+}
+
+.right_btnGroup{
+    border-top: 1px solid #E4E4E4;
+    text-align: center;
+}
+.right_btnGroup .btn{
+    font-size: 14px!important;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    padding: 6px 25px;
+    font-weight: bold;
+    height: 35px;
+}
+.right_btnGroup .btn-default{
+    color: #666666;
+}
+
+.assignModalTit{
+    font-size: 13px;
+    padding: 10px 0 20px;
+    font-weight: bold;
+}
+.assignTableGroup{
+    padding: 10px 35px;
+}
+.assignNo{
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 28px;
+    border-bottom: 1px solid #CCCCCC;
+}
+.assignBtnGroup .btn{
+    margin: 10px 10px 10px 0;
+}
+
+.selectFont{
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 28px;
+    display: inline-block;
+    float: left;
+    margin-right: 5px;
+}
+.def_choice{
+    width: 40px;
+    height: 24px;
+    display: inline-block;
+    background: #1890FF;
+    border: 2px solid #1890FF;
+    border-radius: 12px;
+    float: right;
+    margin-top: 2px;
+    position: relative;
+    cursor: pointer;
+}
+.def_choice_circle{
+    position: absolute;
+    background: white;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    top: 2px;
+    right: 2px;
+}
+.def_Selection{
+    background: white;
+}
+.def_Selection .def_choice_circle{
+    position: absolute;
+    background: #1890FF;
+    left: 2px;
+    right: auto;
+}
+.rightModal{
+    margin-bottom: 10px;
+}
+.tagTitle{
+    padding: 8px 0;
+    font-size: 13px;
+    font-weight: bold;
+    position: relative;
+}
+.fileDiv{
+    margin-left: 11%;
+}
+.fileTable{
+    width: 100%;
+}
+.fileTable img{
+    width: 13px;
+    height: 15px;
+}
+.fileTable tr>td{
+    padding-bottom: 5px;
+    line-height: 20px;
+}
+.del-fileBtn{
+    color: #FF6699;
+}
+.exeResult{
+    display: inline-block;
+    padding: 8px 10px;
+    border-radius: 17px;
+    line-height: 12px;
+}
+.borderBottom{
+    border-bottom: 1px solid #E4E4E4;
+    padding-bottom: 10px;
+}
+.fontWrop{
+    word-wrap:break-word ;
+}
+#commitBug .modal-body{
+    padding: 20px 80px;
+}
+#commitBug .rowdiv{
+    margin-bottom: 15px;
+}
+.myUpfileDiv2{
+    width: 80px;
+    height: 22px;
+    background: url(../../images/testExe/upload-file.png) no-repeat 100% 100%;
+    overflow: hidden;
+    cursor: pointer;
+    margin-top: 4px;
+}
+.assign{
+    padding: 28px 0;
+}
+
+.noLeftPadding{
+    padding-left: 0;
+}
+.defColor{
+    color: #FF3E3E;
+    font-weight: bold;
+}
+
+#editCaseSteps td{
+    position: relative;
+}
+.def_tableDiv2{
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    top: 2px;
+    bottom: 3px;
+}
+.btnArea .btn {
+    height: 28px;
+    padding: 5px 12px;
+    margin: 0 10px 10px 0;
+} 
+#sp{
+    color:red;
+}
+.hideAll>*{
+	display: none;
+}
+#CaseSteps td {
+    position: relative;
+} 
+.fixed-table-body {
+	overflow: visible;
+}
+.margB{
+	margin-bottom: 2px;
+}
+.hideCaseID{
+	display: none;
+}
+.defectCode{
+	padding: 0 8px;
+	overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.file-bucket,.file-s3Key,.file-url{
+	display: none;
+}
+
+.haveNoFont {
+	margin-top: 5%;
+	text-align: center;
+	font-weight: bold;
+	font-size: 15px;
+}
+.haveNoFontRight{
+	text-align: center;
+    font-weight: bold;
+    font-size: 15px;
+    padding-top: 2%;
+}
+.right_blank {
+	width: 70%;
+	padding: 10px;
+	padding-left: 0; 
+}
+#commitBug [class*="def_col_"]{
+	padding-top: 0 !important;
+}
+#commitBug .form-group{
+	margin: 0;
+}
+.topMargin{
+	margin-top: 6px;
+}
+.tagTitleCont{
+    font-size: 12px;
+    font-weight: 500;
+}
+#checkExcuteRemark2{
+	font-weight: 500;
+	font-size: 12px;
+}
+.oneHistory{
+	padding: 6px;
+	border-bottom: 1px dashed #666666;
+}
+#editCaseSteps>tbody>tr{
+	height:102px;
+}
+#editCaseSteps>tbody>tr>td.stepOrder{
+	line-height: 84px;
+}
+#editCaseSteps>tbody>tr>td.handleBtn{
+	line-height: 84px;
+}
+#editCaseSteps textarea.form-control{
+	height:94px;
+}
+#newTestCaseInfo .form-group {
+    margin: 0;
+}
+.caseLable {
+    text-align: right;
+    padding-right: 8px;
+    line-height: 30px;
+}
+#newCaseSteps td {
+    position: relative;
+}
+.def_tableDiv2 {
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    top: 2px;
+    bottom: 3px;
+}
+#editCaseSteps textarea.form-control {
+    height: 94px;
+}
+.def_tableInput{
+	height: 100% !important;
+}
+#orderByNum .modal-dialog{
+	width: 400px !important;
+}
+#orderByNum .modal-body{
+	padding: 20px 30px !important;
+}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+.testSetBack{
+    color: #108EE9!important;
+}
+#executionTable{
+	background: #fff;
+}
+#executionTable img{
+    width: 17px;
+    height: 17px;
+}
+.opt_handle{
+	display:flex;
+	height: 40px !important;
+}
+.opt_handle>a{
+	padding-right: 5px;
+}
+.rightTableArea{
+    width: 100%;
+    overflow: auto;
+    border-right: 1px solid #ddd;
+    border-top: 1px solid #ddd;
+}
+.rightTableArea>.bootstrap-table{
+    width: 100%;
+}
+.table_w{
+    width: 100px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+}
+#defectOverview{
+    height: 320px;
+    overflow-y: auto;
+}
+#defectOverview>.w-e-text-container{
+    z-index: 100 !important;
+}
+
+
+
+#caseActualResult_ipt{
+	width: 100%;
+	height:200px;
+	resize:none;
+}
+
+
+.case_list_pager{
+    text-align: right;
+    padding-bottom: 5px;
+}
+
+
+
+@media (max-width: 1920px) { 
+    .rightTableArea, .left_bottom {
+	    max-height:550px;
+    }
+}
+
+@media (max-width:1366px) {
+	.rightTableArea, .left_bottom  {
+		max-height:280px;
+	}
+}

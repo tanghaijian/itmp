@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="cn.pioneeruniverse.project.dao.mybatis.TblProjectSystemMapper">
+	<resultMap id="BaseResultMap"
+		type="cn.pioneeruniverse.project.entity.TblProjectSystem">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="PROJECT_ID" jdbcType="BIGINT" property="projectId" />
+		<result column="SYSTEM_ID" jdbcType="BIGINT" property="systemId" />
+		<result column="RELATION_TYPE" jdbcType="TINYINT" property="relationType" />
+		<result column="STATUS" jdbcType="TINYINT" property="status" />
+		<result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+		<result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+		<result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+		<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+	</resultMap>
+
+	<!-- 新增操作 -->
+	<insert id="insertProjectSystem" parameterType="cn.pioneeruniverse.project.entity.TblProjectSystem">
+		insert into tbl_project_system (PROJECT_ID, SYSTEM_ID, RELATION_TYPE, STATUS, CREATE_BY, CREATE_DATE,
+				LAST_UPDATE_BY, LAST_UPDATE_DATE)
+				values
+				(#{projectId}, #{systemId}, #{relationType}, #{status}, #{createBy}, #{createDate},
+				#{lastUpdateBy}, #{lastUpdateDate})
+	</insert>
+
+	<!--获取被开发系统-->
+	<select id="getDevelopSystemIds" parameterType="java.lang.Long" resultType="long">
+		select SYSTEM_ID from tbl_project_system where PROJECT_ID = #{id} and STATUS = 1 and RELATION_TYPE = 1
+	</select>
+
+	<!--获取周边相关系统-->
+	<select id="getPeripheralSystemIds" parameterType="java.lang.Long" resultType="long">
+		select SYSTEM_ID from tbl_project_system where PROJECT_ID = #{id} and STATUS = 1 and RELATION_TYPE = 2
+	</select>
+
+	<!--更新 STATUS = 2-->
+	<update id="updateProjectSystem" parameterType="java.lang.Long">
+		update tbl_project_system set STATUS = 2 where PROJECT_ID = #{id}
+	</update>
+
+	<!-- 根据项目id获取系统名称 -->
+	<select id="getSystemNames" parameterType="java.lang.Long" resultType="string">
+		select DISTINCT sys.SYSTEM_NAME from tbl_system_info sys 
+			left join tbl_project_system prosys on prosys.SYSTEM_ID = sys.ID
+			where prosys.PROJECT_ID = #{id} and prosys.`STATUS` = 1 and sys.`STATUS` = 1
+	</select>
+	<!--根据项目获取系统id-->
+	<select id="getSystemIds" parameterType="java.lang.Long" resultType="Long">
+		select DISTINCT sys.id from tbl_system_info sys
+			left join tbl_project_system prosys on prosys.SYSTEM_ID = sys.ID
+			where prosys.PROJECT_ID = #{id} and prosys.`STATUS` = 1 and sys.`STATUS` = 1
+	</select>
+
+	<!--物理删除-->
+	<delete id="deleteProjectSystem" parameterType="java.lang.Long">
+		delete from tbl_project_system where PROJECT_ID = #{id}
+	</delete>
+</mapper>

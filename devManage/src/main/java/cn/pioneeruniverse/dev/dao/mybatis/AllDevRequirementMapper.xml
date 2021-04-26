@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.AllDevRequirementMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.DevDetailVo">
+    <id column="ID" jdbcType="BIGINT"  property="id" />
+    <result column="DEV_TASK_NAME"  jdbcType="VARCHAR" property="devTaskName" />
+    <result column="DEV_TASK_CODE" jdbcType="VARCHAR" property="devTaskCode" />
+    <result column="DEV_TASK_OVERVIEW" jdbcType="VARCHAR"  property="devTaskOverview" />
+    <result column="DEV_TASK_STATUS" jdbcType="TINYINT"  property="devTaskStatus" />
+    <result column="DEV_USER_ID" jdbcType="BIGINT" property="devuserID" />
+    <result column="DEVUSERNAME" jdbcType="VARCHAR" property="devuserName" />
+    <result column="CREATE_BY"  jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP"  property="createDate" />
+    <result column="PLAN_START_DATE" jdbcType="DATE"   property="planStartDate" />
+    <result column="PLAN_END_DATE" jdbcType="DATE"  property="planEndDate" />
+    <result column="PLAN_WORKLOAD" jdbcType="DOUBLE" property="planWorkload" />
+    <result column="ESTIMATE_REMAIN_WORKLOAD" jdbcType="DOUBLE" property="estimateRemainWorkload" />
+
+    <result column="ACTUAL_START_DATE" jdbcType="DATE"   property="actualStartDate" />
+    <result column="ACTUAL_END_DATE" jdbcType="DATE"  property="actualEndDate" />
+    <result column="ACTUAL_WORKLOAD" jdbcType="DOUBLE" property="actualWorkload" />
+    <result column="WINDOW_NAME" jdbcType="VARCHAR" property="windowName" />
+    <result column="REQUIREMENT_OVERVIEW" jdbcType="VARCHAR" property="requirementOverview" />
+    <result column="development_mode" jdbcType="VARCHAR" property="developmentMode" />
+    
+    <result column="DEPT_NAME" jdbcType="VARCHAR" property="applyDeptName" />
+    <result column="FEATURE_CODE" jdbcType="VARCHAR" property="featureCode" />
+    
+    <result column="FEATURE_NAME" jdbcType="VARCHAR" property="featureName" />
+    <result column="FEATURE_OVERVIEW" jdbcType="VARCHAR"  property="featureOverview" />
+    <result column="REQUIREMENT_FEATURE_STATUS" jdbcType="VARCHAR"  property="requirementFeatureStatus" />
+    <result column="MANAGE_USER_ID" jdbcType="BIGINT" property="manageUserId" />
+    <result column="EXECUTE_USER_ID" jdbcType="BIGINT" property="executeUserId" />
+    <result column="SYSTEM_ID" jdbcType="BIGINT"  property="systemId" />
+    <result column="SYSTEM_NAME" jdbcType="VARCHAR"  property="systemName" />
+    <result column="SPRINT_NAME" jdbcType="VARCHAR"  property="sprintName" />
+    <result column="REQUIREMENT_SOURCE" jdbcType="VARCHAR" property="requirementSource" />
+    <result column="REQUIREMENT_TYPE" jdbcType="VARCHAR" property="requirementType" />
+    <result column="REQUIREMENT_PRIORITY" jdbcType="VARCHAR" property="requirementPriority" />
+    <result column="REQUIREMENT_PLAN" jdbcType="VARCHAR" property="requirementPanl" />
+    <result column="REQUIREMENT_STATUS"  jdbcType="VARCHAR" property="requirementStatus" />
+    <result column="REQUIREMENT_NAME"  jdbcType="VARCHAR" property="requirementName" /> 
+    <result column="APPLY_USER_ID" jdbcType="BIGINT"  property="applyUserId" />
+    <result column="APPLY_DEPT_ID" jdbcType="BIGINT" property="applyDeptId" />
+    <result column="EXPECT_ONLINE_DATE" jdbcType="DATE" property="expectOnlineDate" />
+    <result column="PLAN_ONLINE_DATE" jdbcType="DATE" property="planOnlineDate" />
+    <result column="OPEN_DATE" jdbcType="DATE" property="openDate" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+    <result column="lastDate" jdbcType="TIMESTAMP" property="lastUpdateDate3" />
+    <result column="createDate" jdbcType="TIMESTAMP" property="createDate3" />
+
+    <result column="DEV_TASK_TYPE" jdbcType="TINYINT" property="devTaskType"/>
+  </resultMap>
+ 
+   <sql id="Base_Column_List">
+     t.ID, DEV_TASK_NAME, DEV_TASK_CODE, DEV_TASK_OVERVIEW, DEV_TASK_STATUS,
+     DEV_USER_ID, t.CREATE_BY,t.CREATE_DATE,t.PLAN_START_DATE,t.PLAN_END_DATE,PLAN_WORKLOAD,t.ESTIMATE_REMAIN_WORKLOAD,s.development_mode,window.WINDOW_NAME,
+    FEATURE_NAME, FEATURE_OVERVIEW, REQUIREMENT_FEATURE_STATUS,MANAGE_USER_ID, EXECUTE_USER_ID, d.SYSTEM_ID,d.FEATURE_CODE, 
+    REQUIREMENT_SOURCE, REQUIREMENT_TYPE,REQUIREMENT_PRIORITY,REQUIREMENT_PLAN,REQUIREMENT_STATUS,REQUIREMENT_NAME,
+    APPLY_USER_ID,APPLY_DEPT_ID,EXPECT_ONLINE_DATE,PLAN_ONLINE_DATE,OPEN_DATE,sprint.SPRINT_NAME,REQUIREMENT_OVERVIEW,
+    b.LAST_UPDATE_DATE as lastDate,b.CREATE_DATE as createDate,t.ACTUAL_START_DATE,t.ACTUAL_END_DATE,t.ACTUAL_WORKLOAD
+  </sql>
+   <!-- 根据工作任务查询需求 -->
+ <select id="AlldevReuirement" parameterType="java.lang.Long"  resultMap="BaseResultMap">
+  SELECT   <include refid="Base_Column_List" />,t.DEV_TASK_PRIORITY devTaskPriority,t.DEV_TASK_TYPE
+ 	from tbl_dev_task t
+	LEFT JOIN tbl_requirement_feature d
+	on t.REQUIREMENT_FEATURE_ID=d.ID
+	LEFT JOIN tbl_sprint_info sprint
+	ON t.SPRINT_ID=sprint.id and sprint.STATUS=1
+	LEFT JOIN tbl_requirement_info b
+	on b.ID=d.REQUIREMENT_ID 
+	LEFT JOIN tbl_system_info s
+	on s.id=d.SYSTEM_ID  
+	LEFT JOIN tbl_commissioning_window window
+	ON window.ID =d.COMMISSIONING_WINDOW_ID and window.STATUS=1
+	 where t.id=#{devID}
+  </select>
+  <!--获取名称-->
+     <select id="getdevName" parameterType="java.lang.Long"  resultType="String">
+    select USER_NAME as DEVUSERNAME from tbl_user_info where id=#{devuserID}
+    </select>
+  <!--获取系统名称-->
+     <select id="getSystemName" parameterType="java.lang.Long"  resultType="String">
+    select  SYSTEM_NAME from tbl_system_info where id=#{system}
+    </select>
+  <!--获取部门名称 -->
+      <select id="getdeptName" parameterType="java.lang.Long"  resultType="String">
+    select  DEPT_NAME from tbl_dept_info where id=#{deptID}
+    </select>
+  
+ 
+</mapper>

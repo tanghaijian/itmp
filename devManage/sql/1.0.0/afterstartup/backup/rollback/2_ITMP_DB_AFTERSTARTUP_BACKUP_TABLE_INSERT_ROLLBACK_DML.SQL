@@ -1,0 +1,1 @@
+delete from AFTERSTARTUP_BACKUP where ID=1;

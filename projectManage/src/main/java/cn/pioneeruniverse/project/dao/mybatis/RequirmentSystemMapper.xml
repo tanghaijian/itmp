@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.RequirmentSystemMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblRequirementSystem">
+  	<id column="ID" jdbcType="BIGINT" property="id" />
+  	<result column="REQ_SYSTEM_ID" jdbcType="BIGINT" property="reqSystemId" />
+    <result column="REQUIREMENT_ID" jdbcType="BIGINT" property="requirementId" />
+    <result column="SYSTEM_ID" jdbcType="BIGINT" property="systemId" />
+    <result column="asset_system_tree_id" jdbcType="BIGINT" property="assetSystemTreeId" />
+    <result column="FUNCTION_COUNT" jdbcType="INTEGER" property="functionCount" />
+    <result column="MAIN_SYSTEM_FLAG" jdbcType="TINYINT" property="mainSystemFlag" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+    
+  </resultMap>
+  <sql id="Base_Column_List">
+  	ID,REQ_SYSTEM_ID,REQUIREMENT_ID, SYSTEM_ID, asset_system_tree_id, FUNCTION_COUNT, MAIN_SYSTEM_FLAG, STATUS, CREATE_BY, 
+  		CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+	<!--根据需求id查询需求系统关联表数据-->
+  <select id="getReqSystemByCode" parameterType="Long" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/> from tbl_requirement_system trs 
+  	where trs.REQ_SYSTEM_ID=#{reqSystemId ,jdbcType= BIGINT} and trs.STATUS=1
+  </select>
+	<!--新增-->
+  <insert id="insertReqSystem" parameterType="cn.pioneeruniverse.project.entity.TblRequirementSystem" useGeneratedKeys="true" keyProperty="id">
+   	insert into tbl_requirement_system (
+   		REQ_SYSTEM_ID,
+		REQUIREMENT_ID,
+		SYSTEM_ID,
+		asset_system_tree_id,
+		FUNCTION_COUNT,
+		MAIN_SYSTEM_FLAG,
+		STATUS,
+		CREATE_BY,
+		CREATE_DATE,
+		LAST_UPDATE_BY,
+		LAST_UPDATE_DATE
+	)values(
+		#{reqSystemId ,jdbcType= BIGINT},
+		#{requirementId ,jdbcType= BIGINT},
+		#{systemId ,jdbcType= BIGINT},
+		#{assetSystemTreeId ,jdbcType= BIGINT},
+		#{functionCount ,jdbcType= INTEGER},
+		#{mainSystemFlag ,jdbcType= TINYINT},
+		#{status ,jdbcType= TINYINT},
+		#{createBy ,jdbcType= BIGINT},
+		#{createDate ,jdbcType= TIMESTAMP},
+		#{lastUpdateBy ,jdbcType= BIGINT},
+		#{lastUpdateDate ,jdbcType= TIMESTAMP}
+	)
+  </insert>
+	<!--修改-->
+  <update id="updateReqSystem" parameterType="cn.pioneeruniverse.project.entity.TblRequirementSystem">
+    update tbl_requirement_system
+	<set>
+		<if test="requirementId != null and requirementId !='' ">
+			REQUIREMENT_ID = #{requirementId ,jdbcType= BIGINT},
+		</if>
+		<if test="systemId != null and systemId !='' ">
+			SYSTEM_ID = #{systemId ,jdbcType= BIGINT},
+		</if>
+		<if test="functionCount != null and functionCount !='' ">
+			FUNCTION_COUNT = #{functionCount ,jdbcType= INTEGER},
+		</if>
+		<if test="mainSystemFlag != null and mainSystemFlag !='' ">
+			MAIN_SYSTEM_FLAG = #{mainSystemFlag ,jdbcType= TINYINT},
+		</if>		
+		<if test="status != null and status !='' ">
+			STATUS = #{status ,jdbcType= TINYINT},
+		</if>
+		<if test="lastUpdateBy != null and lastUpdateBy !='' ">
+			LAST_UPDATE_BY = #{lastUpdateBy ,jdbcType= BIGINT},
+		</if>
+		<if test="lastUpdateDate != null">
+			LAST_UPDATE_DATE = #{lastUpdateDate ,jdbcType= TIMESTAMP},
+		</if>
+	</set>
+	WHERE ID = #{id,jdbcType=BIGINT} 	
+  </update>
+	<!--根据需求id与系统id查询需求系统关联表数据-->
+  <select id="selectReqSystemByReqSystem" parameterType="cn.pioneeruniverse.project.entity.TblRequirementSystem"
+		  resultMap="BaseResultMap">
+  	SELECT <include refid="Base_Column_List"/> from tbl_requirement_system
+	WHERE SYSTEM_ID = #{systemId ,jdbcType= BIGINT}
+  	AND REQUIREMENT_ID = #{requirementId ,jdbcType= BIGINT}
+	AND STATUS = 1
+  </select>
+	<!--删除-->
+  <delete id="deleteReqSystem" parameterType="Long">
+  	DELETE FROM tbl_requirement_system WHERE
+  	REQUIREMENT_ID = #{requirementId ,jdbcType= BIGINT}
+  	AND SYSTEM_ID IS NULL
+  </delete>
+	<!--查询需求对应的功能点数-->
+  <select id="getFunctionCountByReqId" parameterType="Long" resultType="int">
+  	SELECT IFNULL(SUM(FUNCTION_COUNT),0) from tbl_requirement_system trs 
+  	WHERE trs.REQUIREMENT_ID=#{requirementId ,jdbcType= BIGINT} AND STATUS=1
+  </select>
+	<!--根据需求id查询对应的系统id-->
+  <select id="getSystemByrequirementId" parameterType="java.lang.Long" resultType="long">
+  	SELECT SYSTEM_ID FROM tbl_requirement_system where REQUIREMENT_ID = #{rid} and STATUS = 1
+  </select>
+	<!--查询系统名称-->
+  <select id="getSystemNameByIds" parameterType="Long" resultType="string">
+  	select SYSTEM_NAME from tbl_system_info where ID in
+  		 <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+  </select>
+  
+  <select id="getAssetSystemIdByRequirementId" parameterType="Long" resultType="long">
+  	SELECT DISTINCT asset_system_tree_id FROM tbl_requirement_system where REQUIREMENT_ID = #{rId} and STATUS = 1
+  </select>
+  
+  <select id="getAssetSystemNameByAssetSystemId" parameterType="Long" resultType="string">
+  	select SYSTEM_TREE_NAME from tbl_asset_system_tree where ID = #{assetSystemId}
+  </select>
+ 	
+ 	<update id="updateReqAssSystemTree" parameterType="cn.pioneeruniverse.project.entity.TblRequirementInfo">
+ 		update tbl_requirement_system set STATUS = 2 where REQUIREMENT_ID = #{id}
+ 	</update>
+ 	
+ 	<select id="getReqSystemByReqId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+ 		select <include refid="Base_Column_List"/> from tbl_requirement_system where REQUIREMENT_ID = #{id} and STATUS = 1
+ 	</select>
+ 	
+ 	<select id="getSystemNameBySystemId" parameterType="java.lang.Long" resultType="string">
+ 		select SYSTEM_NAME from tbl_system_info where ID = #{systemId} and STATUS = 1
+ 	</select>
+ 	
+ 	<select id="getSystemCodeBySystemId" parameterType="java.lang.Long" resultType="string">
+ 		select SYSTEM_CODE from tbl_system_info where ID = #{systemId} and STATUS = 1
+ 	</select>
+ 	
+ 	<select id="getsystems" parameterType="java.lang.Long" resultType="string">
+ 		select DISTINCT system.SYSTEM_NAME from tbl_system_info system 
+ 			left join tbl_requirement_system res on system.ID = res.SYSTEM_ID and system.STATUS = 1
+ 			where res.REQUIREMENT_ID = #{id} and res.STATUS = 1
+ 	</select>
+ 	
+</mapper>

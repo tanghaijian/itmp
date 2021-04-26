@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.wikiLibrary.WikiSystemDirectoryMapper">
+	<resultMap type="cn.pioneeruniverse.project.entity.TblSystemDirectory" id="systemDirectoryMap">
+        <id column="ID" property="id"/>
+        <result column="DIRECTORY_TYPE" property="directoryType"/>
+        <result column="SYSTEM_ID" property="systemId"/>
+        <result column="PROJECT_ID" property="projectId"/>
+        <result column="PROJECT_TYPE" property="projectType"/>
+        <result column="SYSTEM_DIRECTORY_TEMPLATE_ID" property="systemDirectoryTemplateId"/>
+        <result column="DOCUMENT_TYPES" property="documentTypes"/>
+        <result column="DIR_NAME" property="dirName"/>
+        <result column="ORDER_NUMBER" property="orderNumber"/>
+        <result column="TIER_NUMBER" property="tierNumber"/>
+        <result column="PARENT_ID" property="parentId"/>
+        <result column="PARENT_IDS" property="parentIds"/>
+        <result column="CREATE_TYPE" property="createType"/>
+        <result column="STATUS" property="status"/>
+        <result column="CREATE_BY" property="createBy"/>
+        <result column="CREATE_DATE" property="createDate"/>
+        <result column="LAST_UPDATE_BY" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate"/>
+    </resultMap>
+
+    <!-- 根据项目获取目录信息 -->
+	<select id="getDirectoryByProjectId" parameterType="Long" resultMap="systemDirectoryMap">
+		select tsd.ID,
+      tsd.PROJECT_ID,
+      tsd.CREATE_TYPE,
+      tsd.PROJECT_TYPE,
+      tsd.DOCUMENT_TYPES,
+      tsd.PARENT_ID,
+      tsd.PARENT_IDS,
+      tsd.DIR_NAME,
+      tsd.CREATE_TYPE
+      FROM tbl_system_directory tsd
+       WHERE
+      tsd.PROJECT_TYPE = 2
+      AND tsd.DIRECTORY_TYPE = 2
+      AND tsd.PROJECT_ID = #{projectId}
+       AND tsd.STATUS = 1
+      ORDER BY tsd.DIR_NAME,tsd.ORDER_NUMBER
+	</select>
+    <!--新增项目对应的目录-->
+     <insert id="addSystemDirectory" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectory"
+            useGeneratedKeys="true" keyProperty="id">
+            <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() AS ID
+        </selectKey>
+       INSERT INTO tbl_system_directory(
+        DIRECTORY_TYPE,
+        PROJECT_ID,
+        PROJECT_TYPE,
+        DOCUMENT_TYPES,
+        DIR_NAME,
+        ORDER_NUMBER,
+        TIER_NUMBER,
+        PARENT_ID,
+        PARENT_IDS,
+        CREATE_TYPE,
+        STATUS,
+        CREATE_BY,
+        CREATE_DATE,
+        LAST_UPDATE_BY,
+        LAST_UPDATE_DATE
+        ) VALUES (
+         #{directoryType},
+         #{projectId},
+         #{projectType},
+         #{documentTypes},
+         #{dirName},
+         #{orderNumber},
+         #{tierNumber},
+         #{parentId},
+         #{parentIds},
+         #{createType},
+         #{status},
+         #{createBy},
+         #{createDate},
+         #{lastUpdateBy},
+         #{lastUpdateDate}
+        )
+    </insert>
+    <!--项目系统信息 -->
+	<select id="systemSystemName"  resultType="map">
+  		SELECT system.ID id,system.SYSTEM_NAME systemName
+  		FROM tbl_system_info system
+		LEFT JOIN tbl_project_system pSystem
+		ON system.ID=pSystem.SYSTEM_ID AND pSystem.`STATUS`=1
+		
+	WHERE pSystem.PROJECT_ID=#{projectId}
+       	and  system.STATUS=1
+       		
+       	  order by system.ID DESC
+       	<!--  <if test="systemName !=null and systemName !='' ">
+     	  	    and system.SYSTEM_NAME LIKE CONCAT('%',#{systemName},'%')
+      	  </if> -->
+      	 
+      	  
+  	</select>
+    
+
+    <!-- SAVE_TYPE为3的项目系统信息 -->
+   <select id="systemSystemName2"  resultType="map">
+  		SELECT system.ID id,system.SYSTEM_NAME systemName, document.ID systemDirectoryDocumentId 
+  		FROM tbl_system_directory director 
+		LEFT JOIN tbl_system_directory_document document
+		ON director.ID =document.SYSTEM_DIRECTORY_ID 
+		LEFT JOIN tbl_system_info system 
+		ON document.SYSTEM_ID=system.ID
+	WHERE director.PROJECT_ID=#{projectId}
+       	and  system.STATUS=1
+       		AND document.SAVE_TYPE=3
+       	  order by system.ID DESC
+       	<!--  <if test="systemName !=null and systemName !='' ">
+     	  	    and system.SYSTEM_NAME LIKE CONCAT('%',#{systemName},'%')
+      	  </if> -->
+      	 
+      	  
+  	</select>
+
+</mapper>

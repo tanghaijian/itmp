@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.monthlyReport.TblReportMonthlyModuleMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlyModule">
+        <id column="ID" jdbcType="BIGINT"  property="id" />
+        <result column="YEAR_MONTH" jdbcType="VARCHAR" property="yearMonth"/>
+        <result column="PAGE" jdbcType="TINYINT" property="page"/>
+        <result column="AREA" jdbcType="TINYINT" property="area"/>
+        <result column="NUM" jdbcType="TINYINT" property="num"/>
+        <result column="CONTENT" jdbcType="VARCHAR" property="content"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        select * from tbl_report_monthly_module
+    </select>
+    <select id="findByDate" resultMap="BaseResultMap">
+        select * from tbl_report_monthly_module module
+        where module.`YEAR_MONTH` = #{date} and module.STATUS = 1
+        order by module.num asc
+    </select>
+    <insert id="insertMonthlyModule">
+        INSERT INTO tbl_report_monthly_module
+        (`YEAR_MONTH`,
+        PAGE,
+        AREA,
+        NUM,
+        CONTENT,
+        CREATE_BY,
+        CREATE_DATE,
+        LAST_UPDATE_BY,
+        LAST_UPDATE_DATE,
+        `STATUS`)
+        SELECT
+         #{nowMonthTime} `YEAR_MONTH`,
+         PAGE,
+         AREA,
+         NUM,
+         CONTENT,
+         CREATE_BY,
+         NOW(),
+         LAST_UPDATE_BY,
+         NOW(),
+         `STATUS`
+         FROM tbl_report_monthly_module
+         WHERE `YEAR_MONTH` = #{lastMonthTime}
+
+    </insert>
+
+    <update id="updateMonthlyModule">
+        update tbl_report_monthly_module module
+        <set>
+            <if test="page !=null and page !=''">
+                module.PAGE = #{page},
+            </if>
+            <if test="area !=null and area !=''">
+                module.AREA = #{area},
+            </if>
+            <if test="num !=null and num !=''">
+                module.NUM = #{num},
+            </if>
+            <if test="content !=null and content !=''">
+                module.CONTENT = #{content}
+            </if>
+        </set>
+        where module.ID = #{id}
+    </update>
+    <update id="updateModuleNum">
+
+        UPDATE tbl_report_monthly_module module
+        set
+        <if test="type ==0">
+            module.num= IFNULL(module.num,0)-1
+        </if>
+        <if test="type ==1">
+            module.num= IFNULL(module.num,0)+1
+        </if>
+        WHERE
+        module.page = #{page}
+        AND module.area = #{area}
+        AND module.num >#{num}
+        AND module.YEAR_MONTH = #{date}
+
+    </update>
+</mapper>

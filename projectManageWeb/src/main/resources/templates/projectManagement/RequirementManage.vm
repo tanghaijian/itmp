@@ -1,0 +1,1509 @@
+﻿
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>需求管理</title>
+ 
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css" />
+<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+<link rel="stylesheet" href="#springUrl('')/devManageui/static/js/jquery-ztree/3.5.12/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/requirement/requirement.css ">
+<link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/requirement/requirementCheck.css ">
+
+<script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/jquery.min.js"></script> 
+<script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/jquery.ba-resize.js"></script>	
+<script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/bootstrap.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/bootstrapValidator.js"></script>
+<script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/bootstrap-table.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/defaults-zh_CN.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="#springUrl('')/projectManageui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/projectManageui/static/jqgrid/js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/projectManageui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/projectManageui/static/jqgrid/js/jquery.jqGrid.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/component.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.core.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.excheck.min.js"></script>
+<script type="text/javascript" src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.exhide.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/laydate.js"></script>
+
+
+<script type="text/ecmascript" src="#springUrl('')/projectManageui/static/js/requirement/requirement.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/projectManageui/static/js/requirement/requirementOther.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/projectManageui/static/js/requirement/fileOpt.js"></script>
+<script type="text/ecmascript" src="#springUrl('')/projectManageui/static/js/requirement/outputExcel.js"></script>
+
+<script>
+	$.jgrid.defaults.responsive = true;
+	$.jgrid.defaults.styleUI = 'Bootstrap4';
+	$.jgrid.defaults.iconSet = "fontAwesome";
+	var reqAttUrl = '$reqAttUrl';
+	
+	var reqEdit = $auth.hasPermission("$token","projectManage:req:edit"); 	// 编辑
+	var reqSave = $auth.hasPermission("$token","projectManage:req:add"); 	// 新建需求
+    var reqExport = $auth.hasPermission("$token","projectManage:req:export"); //导出需求
+</script>
+ 
+</head>
+<body>
+<!-- 开发工作任务状态 -->
+<select style="display: none;" id="devTaskStatus">
+	#foreach($dictMap in ${dict.getDictMap(
+	    "TBL_DEV_TASK_DEV_TASK_STATUS").entrySet()})
+	    <option value="${dictMap.key}">${dictMap.value}</option>
+	#end
+</select>
+<div class="color1">
+
+<!-- 搜索区 -->
+	<div class="container-fluid" id="search_div">
+		<div class="row control-row">
+			<div class="col-md-3">
+				<div class="search_font">
+					<label class="control-label">需求编号：</label>
+				</div>
+				<div class="search_input">
+					<input type="text" class="form-control" placeholder="请输入" id="reqCode" name="reqCode" />
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="search_font">
+					<label class="control-label">需求名称：</label>
+				</div>
+				<div class="search_input">
+					<input type="text" class="form-control" placeholder="请输入" id="reqName" name="reqName" />
+				</div>
+			</div> 
+			
+			<div class="col-md-3 ">
+				<div class="search_font">
+					<label class="control-label">需求状态：</label>
+				</div>
+				<div class="search_input">						
+					<select class="selectpicker" id="reqStatus" multiple data-live-search="true">
+                        #foreach($dictMap in ${dict.getDictMap(
+                            "TBL_REQUIREMENT_INFO_REQUIREMENT_STATUS").entrySet()})
+                            <option value="${dictMap.key}">${dictMap.value}</option>
+                        #end
+					</select>					
+				</div>
+			</div>
+
+			<div class="col-md-3">
+				<div class="search_font">
+					<label class="control-label">开发管理人员：</label>
+				</div>
+				<div class="search_input">
+					<input type="hidden" id="devManageUserId"/>
+					<input type="text" class="form-control pointStyle readonly" readonly placeholder="请选择" id="devManageUserName" name="devManageUserName" />
+				</div>
+			</div> 			
+		</div>
+		<div class="row control-row">
+			<div class="col-md-3 ">				
+				<div class="search_font"><label class="control-label">涉及子系统：</label></div>
+				<div class="search_input">
+					<input type="hidden" id="systemId"/>
+					<input type="text" class="form-control pointStyle readonly" readonly placeholder="请选择" id="systemName"  />
+				</div>
+			</div>
+			<div class="col-md-3 ">
+				<div class="search_font">
+					<label class="control-label">开发任务名称：</label>
+				</div>
+				<div class="search_input">
+					<input type="hidden" id="featureId"/>
+					<input type="text" class="form-control pointStyle readonly" readonly  placeholder="请选择" id="featureName"/>
+					<!-- <div class="selectBox" id="selectBox">
+	                	<ul class="selectUl" id="selectUl"></ul>
+	                </div> -->
+				</div> 
+			</div>
+			<div class="col-md-3">
+				<div class="search_font">
+					<label class="control-label">需求管理人员：</label>
+				</div>
+				<div class="search_input">
+					<input type="hidden" id="reqManageUserId"/>
+					<input type="text" class="form-control pointStyle readonly" readonly placeholder="请选择" id="reqManageUserName" name="reqManageUserName" />
+				</div>
+			</div>			
+		</div>
+						                                                             			
+		<div class="row control-row search_btn">
+			<button type="button" class="btn btn-primary" onclick="searchInfo()">搜&nbsp;&nbsp;&nbsp;索</button>
+			<button type="button" class="btn btn-default"
+					onclick="clearSearch()">重&nbsp;&nbsp;&nbsp;置</button>
+		</div>
+	</div>
+	<div id="downBtn">
+		<span class="fa fa-caret-up"></span>
+	</div>
+</div>
+
+<!-- 列表区，根据tbl_menu_button_info中配置的权限显示 -->
+<div class="main-content">
+	<div class="content-btn">
+	 #if($auth.hasPermission("$token","projectManage:req:add"))
+		<button type="button" onclick="newReq_btn()" class="btn btn-primary">新增需求</button>
+	 #end
+	 <button type="button" onclick="insertRequirement()" class="btn btn-primary">导入</button>
+	 #if($auth.hasPermission("$token","projectManage:req:export"))
+		<button type="button" onclick="ExcelRequirement()" class="btn btn-primary">导出需求</button>
+	 #end 
+	    <button type="button" onclick="synItcdAttr()" class="btn btn-primary">同步IT全流程附件</button>
+
+		<!-- <button type="button" onclick="ExcelRequirement()" class="btn btn-primary" id="putExcel">导出需求</button> -->
+	</div>
+	<div class="content-table">
+		<div class="wode">
+			<table id="list2"></table>
+			<div id="pager2"></div>
+		</div>
+	</div>
+</div>
+
+<!-- 需求详情 -->
+<div id="details" style="display:none;">
+	<div class="head">
+        <div class="headReturn">
+            <div class="return headReturn"></div>
+        </div>
+        <div class="focusInfo" title="关注">
+        </div>
+        <div class="title"> 
+            <div class="titleFont" id="reqCodeDetails">| 需求详情</div>
+        </div>
+    </div>
+    <div class="defectBody">
+	    <input type="hidden" id = "itcdReqId"/>  
+		<div class = "left_div">
+			<div class="allInfo">
+				<div class="def_title">
+					<span>基本信息</span>  
+				</div>
+				<div class="def_content">
+					<div class="rowdiv">
+						<div class="form-group col-md-12">
+							<pre class="def_pre" id="requirementOverviewDetails" ></pre>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="reqSource">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_REQUIREMENT_SOURCE").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt">需求来源:</label> 
+							<label class="control-label font_left"> <span id="reqSourceNameDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="reqType">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_REQUIREMENT_TYPE").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt">需求类型:</label> 
+							<label class="control-label font_left"> <span id="reqTypeNameDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="reqPriority">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_REQUIREMENT_PRIORITY").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt">优先级:</label> 
+							<label class="control-label font_left"> <span id="reqPriorityNameDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="reqPlan">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_REQUIREMENT_PLAN").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt">需求计划:</label> 
+							<label class="control-label font_left"><span id="reqPlanNameDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="reqStatus1">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_REQUIREMENT_STATUS").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt">需求状态:</label> 										
+							<label class="control-label font_left"><span id="reqStatusNameDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">期望上线:</label> <label
+								class="control-label font_left"><span
+								id="expectOnlineDateDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">计划上线:</label> <label
+								class="control-label font_left"><span
+								id="planOnlineDateDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">实际上线:</label> <label
+								class="control-label font_left"><span
+								id="actualOnlineDateDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">提出人:</label> <label
+								class="control-label font_left"><span
+								id="userNameDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">归属部门:</label> <label
+								class="control-label font_left"><span
+								id="deptNameDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">开发处室:</label> <label
+								class="control-label font_left"><span
+								id="devDeptNameDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-12">
+							<label class="control-label fontWeihgt">父需求:</label> <label
+								class="control-label font_left"><span
+								id="relevancyDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">创建日期:</label> <label
+								class="control-label font_left"><span
+								id="createDateDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">更新日期:</label> <label
+								class="control-label font_left"><span
+								id="lastUpdateDateDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">开始日期:</label> <label
+								class="control-label font_left"><span
+								id="openDateDetails"></span></label>
+						</div>
+					</div> 
+					
+					<div class="rowdiv">
+						<div class="form-group col-md-12">
+							<label class="control-label fontWeihgt">关联需求:</label> <label
+								class="control-label font_left"><span
+								id="checkReqs"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">关闭时间:</label> <label
+								class="control-label font_left"><span
+								id="checkCloseTime"></span></label>
+						</div> 
+					</div>
+					<div id="checkSysModal">
+						 
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">模块:</label> <label
+								class="control-label font_left"><span
+								id="checkMod"></span></label>
+						</div> 
+					</div>
+					<div class="rowdiv" id="checkEditField"></div>
+					<div class="rowdiv">
+						<div class="form-group col-md-12">
+							<label class="control-label fontWeihgt">相关附件:</label> 									
+							<label class="control-label font_left"><a class="a_style" onclick="showFile()">查看附件</a></label>
+						</div>
+					</div>
+					
+						
+				</div>
+			</div>
+		
+			<div class="allInfo">
+				<div class="def_title">
+					<span>重点需求相关</span>  
+				</div>
+				<div class="def_content">
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="impReqStatus">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_IMPORTANT_REQUIREMENT_STATUS").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt">重点需求:</label>
+							<label class="control-label font_left"><span id="impReqStatusNameDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="impReqType">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_IMPORTANT_REQUIREMENT_TYPE").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt">重点需求类型:</label>								
+							<label class="control-label font_left"><span id="impReqTypeDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="impReqDelay">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_IMPORTANT_REQUIREMENT_DELAY").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt">是否延期:</label>
+							<label class="control-label font_left"><span id="impReqDelayStatusNameDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">计划上线:</label>
+							<label class="control-label font_left"><span id="impReqOnlineQuarterDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">需求延误原因:</label>
+							<label class="control-label font_left"><span id="impReqDelayReasonDetails"></span></label>
+						</div>
+					</div>
+				</div>						 						 
+			</div>
+			
+			<div class="allInfo">
+				<div class="def_title">
+					<span>成本与收益</span>  
+				</div>
+				<div class="def_content">
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">直接收益:</label>
+							<label class="control-label font_left"><span id="directIncomeDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">远期收益:</label>
+							<label class="control-label font_left"><span id="forwardIncomeDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">隐性收益:</label>
+							<label class="control-label font_left"><span id="recessiveIncomeDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">直接节约:</label>
+							<label class="control-label font_left"><span id="directCostReductionDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">远期节约:</label>
+							<label class="control-label font_left"><span id="forwardCostReductionDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">预计收益:</label>
+							<label class="control-label font_left"><span id="anticipatedIncomeDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">预估成本:</label>
+							<label class="control-label font_left"><span id="estimateCostDetails"></span></label>
+						</div>
+					</div>
+				</div>  
+			</div>
+				
+			<div class="allInfo">
+				<div class="def_title">
+					<span>其他信息</span>  
+				</div>
+				<div class="def_content">
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="hangupStatus">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_HANGUP_STATUS").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt">挂起状态:</label>
+							<label class="control-label font_left"><span id="hangupStatusNameDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">挂起时间:</label>
+							<label class="control-label font_left"><span id="hangupDateDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">变更次数:</label>
+							<label class="control-label font_left"><span id="changeCountDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">开发管理:</label>
+							<label class="control-label font_left"><span
+								id="devManageUserNameDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">需求管理:</label>
+							<label class="control-label font_left"><span id="reqManageUserNameDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">业务验收:</label>
+							<label class="control-label font_left"><span id="reqAcceptanceUserNameDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="reqProperty">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_REQUIREMENT_PROPERTY").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt">需求性质:</label>
+							<label class="control-label font_left"><span id="requirementPropertyDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="reqClassify">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_REQUIREMENT_CLASSIFY").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt">需求分类:</label>
+							<label class="control-label font_left"><span id="requirementClassifyDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="reqSubdivision">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_REQUIREMENT_SUBDIVISION").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt">细分类型:</label>
+							<label class="control-label font_left"><span id="requirementSubdivisionDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">计划联调时间:</label>
+							<label class="control-label font_left"><span id="planIntegrationTestDateDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">实际联调时间:</label>
+							<label class="control-label font_left"><span id="actualIntegrationTestDateDetails"></span></label>
+						</div>
+					</div>
+		
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">验收描述:</label>
+							<label class="control-label font_left"><span id="acceptanceDescriptionDetails"></span></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">验收时效:</label>
+							<label class="control-label font_left"><span id="acceptanceTimelinessDetails"></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<div class="search_input" style="display:none;">	
+							<select class="selectpicker" id="dataMigration">
+		                        #foreach($dictMap in ${dict.getDictMap(
+		                            "TBL_REQUIREMENT_INFO_DATA_MIGRATION_STATUS").entrySet()})
+		                            <option value="${dictMap.key}">${dictMap.value}</option>
+		                        #end
+							</select>
+							</div>
+							<label class="control-label fontWeihgt">迁移数据:</label>
+							<label class="control-label font_left"><span id="dataMigrationStatusNameDetails" ></span></label>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="control-label fontWeihgt">开发工作量:</label>
+							<label class="control-label font_left"><span id="workloadDetails"></span></label>
+						</div>
+					</div>
+				</div> 
+			</div>
+		</div>
+		<div class="right_div">
+			<div class="allInfo">
+				<div class="def_title">
+					<span>下属开发与工作任务</span> 
+				</div>
+				<div id="connectDiv">
+		
+				</div>						
+			</div> 
+		</div> 
+    </div> 
+</div>
+	
+##新增弹出框
+<div class="modal fade bs-example-modal-lg" id="newReq" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-lg" role="document">       
+            <div class="modal-content">
+            
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <span class="modal-title">新增需求</span>
+                </div>
+
+                <div class="modal-body"> 
+                    <div class="allInfo">
+                        <div class="def_title">
+                            <span>需求信息</span>
+                            <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+                        </div>
+                        <input type="hidden" name="attachFiles" id="files" value=""/>
+                        <div class="def_content">
+	                        <form id="newform" method="post" enctype="multipart/form-data">
+	                            <div class="rowdiv">
+	                                <div class="form-group def_col_36">
+	                                    <label class="def_col_4 control-label font_right"><span class="redStar">*</span>需求名称：</label>
+	                                    <div class="def_col_32">
+	                                        <input type="text" class="form-control" placeholder="请输入" name="requirementName"
+	                                               id="requirementName"/>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            <div class="rowdiv">
+	                                <div class="form-group def_col_36">
+	                                    <label class="def_col_4 control-label font_right"><span class="redStar">*</span>需求描述：</label>
+	                                    <div class="def_col_32"><textarea class="form-control" rows="3" cols="80"
+	                                                                      placeholder="请输入" id="requirementOverview"
+	                                                                      name="requirementOverview"> </textarea></div>
+	                                </div>
+	                            </div>
+	                            <div class="rowdiv">
+	                            	<div class="form-group def_col_36">
+	                                    <label class="def_col_4 control-label font_right">父需求：</label>
+	                                    <div class="def_col_32">
+	                                        <input id="parentId" type="hidden"/>
+	                                        <input type="text" class="form-control pointStyle readonly" readonly placeholder="请输入" id="parent"/>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            <div class="rowdiv">
+	                                <div class="form-group def_col_12">
+	                                    <label class="def_col_12 control-label font_right"><span class="redStar">*</span>需求状态：</label>
+	                                    <div class="def_col_24">
+	                                        <select class="selectpicker" id="requirementStatus" name="requirementStatus" data-live-search="true">
+												<option value="">----请选择----</option>
+						                        #foreach($dictMap in ${dict.getDictMap(
+						                            "TBL_REQUIREMENT_INFO_REQUIREMENT_STATUS").entrySet()})
+						                            <option value="${dictMap.key}">${dictMap.value}</option>
+						                        #end
+											</select>
+	                                    </div>
+	                                </div>                                
+	                                <div class="form-group def_col_12">
+	                                    <label class="def_col_12 control-label font_right"><span class="redStar">*</span>需求来源：</label>
+	                                    <div class="def_col_24">
+	                                        <select class="selectpicker" id="requirementSource" name="requirementSource">
+												<option value="">----请选择----</option>
+						                        #foreach($dictMap in ${dict.getDictMap(
+						                            "TBL_REQUIREMENT_INFO_REQUIREMENT_SOURCE").entrySet()})
+						                            <option value="${dictMap.key}">${dictMap.value}</option>
+						                        #end
+											</select>
+	                                    </div>
+	                                </div>                                
+	                                <div class="form-group def_col_12">
+	                                    <label class="def_col_12 control-label font_right"><span class="redStar">*</span>需求类型：</label>
+	                                    <div class="def_col_24">
+	                                        <select class="selectpicker" id="requirementType" name="requirementType">
+												<option value="">----请选择----</option>
+							                        #foreach($dictMap in ${dict.getDictMap(
+							                            "TBL_REQUIREMENT_INFO_REQUIREMENT_TYPE").entrySet()})
+							                            <option value="${dictMap.key}">${dictMap.value}</option>
+							                        #end
+											</select>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            
+	                            <div class="rowdiv">
+	                                <div class="form-group def_col_12">
+	                                    <label class="def_col_12 control-label font_right"><span class="redStar">*</span>提出人：</label>
+	                                    <div class="def_col_24">
+	                                        <input type="hidden" id="applyUserId"/>
+	                                        <input type="text" class="form-control pointStyle readonly" readonly placeholder="请选择"
+	                                               id="applyUserName" name="applyUserName"/>
+	                                    </div>
+	                                </div>
+	
+	                                <div class="form-group def_col_12">
+	                                    <label class="def_col_12 control-label font_right"><span class="redStar">*</span>归属部门：</label>
+	                                    <div class="def_col_24">
+	                                        <!-- <select class="selectpicker" id="applyDeptId" name="applyDeptId"
+	                                                data-live-search="true">
+	                                            <option value="">请选择</option>
+	                                        </select> -->
+	                                        <input id="applyDeptId" type="hidden"/>
+	                                        <input type="text" class="form-control"placeholder="请输入" id="applyDeptName"/>
+	                                        <div class="newSelectBox" id="newSelectBox">
+							                	<ul class="newSelectUl" id="newSelectUl"></ul>
+							                </div>
+	                                    </div>
+	                                </div> 
+	                                <div class="form-group def_col_12">
+	                                    <label class="def_col_12 control-label font_right"><!-- <span class="redStar">*</span> -->开发管理人员：</label>
+	                                    <div class="def_col_24">
+	                                        <input type="hidden" id="developmentManageUserId"/>
+	                                        <input type="text" class="form-control pointStyle readonly" readonly placeholder="请选择"
+	                                               id="developmentManageUserName" name="developmentManageUserName"/>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            
+	                            <div class="rowdiv">
+	                                <div class="form-group def_col_12">
+	                                    <label class="def_col_12 control-label font_right"><!-- <span class="redStar">*</span> -->开发处室：</label>
+	                                    <div class="def_col_24">
+	                                        <!-- <select class="selectpicker" id="developmentDeptId" name="developmentDeptId"
+	                                                data-live-search="true">
+	                                            <option value="">请选择</option>
+	                                        </select> -->
+	                                        <input id="developmentDeptId" type="hidden"/>
+	                                        <input type="text" class="form-control pointStyle readonly"placeholder="请输入" id="developmentDeptName"/>
+	                                        <div class="newSelectBox1" id="newSelectBox1">
+							                	<ul class="newSelectUl1" id="newSelectUl1"></ul>
+							                </div>
+	                                    </div>
+	                                </div>
+	                                <div class="form-group def_col_12">
+	                                    <label class="def_col_12 control-label font_right"><!-- <span class="redStar">*</span> -->需求管理人员：</label>
+	                                    <div class="def_col_24">
+	                                        <input type="hidden" id="requirementManageUserId"/>
+	                                        <input type="text" class="form-control pointStyle readonly" readonly placeholder="请选择"
+	                                               id="requirementManageUserName" name="requirementManageUserName"/>
+	                                    </div>
+	                                </div>
+	                                
+	                                <div class="form-group def_col_12">
+	                                    <label class="def_col_12 control-label font_right">需求验收人员：</label>
+	                                    <div class="def_col_24">
+	                                        <input type="hidden" id="requirementAcceptanceUserId"/>
+	                                        <input type="text" class="form-control pointStyle readonly" readonly placeholder="请选择"
+	                                               id="requirementAcceptanceUserName" name="requirementAcceptanceUserName"/>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            
+	                            <div class="rowdiv">
+	                                <div class="form-group def_col_12">
+	                                    <label class="def_col_12 control-label font_right"><span class="redStar">*</span>需求优先级：</label>
+	                                    <div class="def_col_24">
+	                                        <select class="selectpicker" id="requirementPriority" name="requirementPriority">
+												<option value="">----请选择----</option>
+							                        #foreach($dictMap in ${dict.getDictMap(
+							                            "TBL_REQUIREMENT_INFO_REQUIREMENT_PRIORITY").entrySet()})
+							                            <option value="${dictMap.key}">${dictMap.value}</option>
+							                        #end
+											</select>
+	                                    </div>
+	                                </div>
+	                                
+	                                <div class="form-group def_col_12">
+	                                    <label class="def_col_12 control-label font_right">计划上线日期：</label>
+	                                    <div class="def_col_24">
+	                                        <input size="16" type="text" readonly class="form-control form_datetime pointStyle readonly"
+	                                               placeholder="请选择" id="planOnlineDate" name="planOnlineDate"/>
+	                                    </div>
+	                                </div>
+	                                <div class="form-group def_col_12">
+	                                    <label class="def_col_12 control-label font_right">实际上线日期：</label>
+	                                    <div class="def_col_24">
+	                                        <input size="16" type="text" readonly class="form-control form_datetime pointStyle readonly"
+	                                               placeholder="请选择" id="actualOnlineDate" name="actualOnlineDate"/>
+	                                    </div>
+	                                </div>                               
+	                            </div>
+	                            
+	                            <div class="rowdiv">
+	                                <div class="form-group def_col_12">
+	                                    <label class="def_col_12 control-label font_right">是否重点需求：</label>
+	                                    <div class="def_col_24">
+	                                        <select class="selectpicker" id="importantRequirementStatus" name="importantRequirementStatus">
+												<option value="">----请选择----</option>
+							                        #foreach($dictMap in ${dict.getDictMap(
+							                            "TBL_REQUIREMENT_INFO_IMPORTANT_REQUIREMENT_STATUS").entrySet()})
+							                            <option value="${dictMap.key}">${dictMap.value}</option>
+							                        #end
+											</select>
+	                                    </div>
+	                                </div>
+	                                
+	                                <div class="form-group def_col_12">
+	                                    <label class="def_col_12 control-label font_right">变更次数：</label>
+	                                    <div class="def_col_24">
+	                                    	<input type="text" placeholder="请输入"
+	                                        class="col-sm-6 form-control" name="changeCount" id="changeCount"/>
+	                                    </div>
+	                                </div> 
+	                                
+	                                <div class="form-group def_col_12">
+	                                    <label class="def_col_12 control-label font_right">工作量：</label>
+	                                    <div class="def_col_24">
+	                                    	<input type="text" placeholder="请输入"
+	                                        class="col-sm-6 form-control" name="workload" id="workload"/>
+	                                    </div>
+	                                </div>                                                              
+	                            </div>
+	                            
+	                            <div class="rowdiv">
+	                                <div class="form-group def_col_12">
+	                                    <label class="def_col_12 control-label font_right">关联需求：</label>
+	                                    <div class="def_col_24">
+	                                        <input id="requirementIds" type="hidden"/>
+	                                        <input type="text" class="form-control pointStyle readonly" readonly placeholder="请输入" id="requirements"/>
+	                                    </div>
+	                                </div>
+	                                <div class="form-group def_col_12">
+	                                    <label class="def_col_12 control-label font_right">关闭时间：</label>
+	                                    <div class="def_col_24">
+	                                        <input size="16" type="text" readonly class="form-control form_datetime pointStyle readonly"
+	                                               placeholder="请选择" id="closeTime" name="closeTime"/>
+	                                    </div>
+	                                </div>  
+	                            </div>                      
+	                            <div class="rowdiv">
+	                                <div class="form-group def_col_36">
+	                                    <label class="def_col_4 control-label font_right">验收描述：</label>
+	                                    <div class="def_col_32"><textarea class="form-control" rows="3" cols="80"
+	                                                                      placeholder="请输入" id="acceptanceDescription"
+	                                                                      name="acceptanceDescription"> </textarea></div>
+	                                </div>
+	                            </div> 
+	                         </form>  
+                             <div id="allSysModal">  
+	                            <div id="newSysInput">
+	                            </div>
+                            </div> 
+                            <div class="btnArea rowdiv">
+                            	<div class="def_col_4"></div>
+                            	<div class="def_col_32">
+                            		<button type="button" class="btn btn-primary" onclick="addSysInput( 'newSysInput' )">添加子系统</button>
+                            	</div> 
+                            </div>                                                      
+                        </div>
+                    </div> 
+                    <div id = "canEditField" class="rowdiv"></div>
+                </div> 
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="addCommit()">确认</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>  
+    	</div>
+    </div>
+</div>
+
+<!-- 编辑弹窗 -->
+<div class="modal fade bs-example-modal-lg" id="editReq" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-lg" role="document">       
+            <div class="modal-content">         
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <span class="modal-title">编辑需求</span>
+                </div>
+                <div class="modal-body">
+                  
+                    <div class="allInfo">
+                        <div class="def_title">
+                            <span>需求信息</span>
+                            <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+                        </div> 
+                        <div class="def_content">
+                       		<form id="editform" method="post" enctype="multipart/form-data">
+                       		<input type="hidden" name="attachFiles" id="files" value=""/>
+                        	<input id="editReqId" type="hidden"/>
+                            <div class="rowdiv">
+                                <div class="form-group def_col_36">
+                                    <label class="def_col_4 control-label font_right"><span class="redStar">*</span>需求名称：</label>
+                                    <div class="def_col_32">
+                                        <input type="text" class="form-control" placeholder="请输入" name="editRequirementName"
+                                               id="editRequirementName"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rowdiv">
+                                <div class="form-group def_col_36">
+                                    <label class="def_col_4 control-label font_right"><span class="redStar">*</span>需求描述：</label>
+                                    <div class="def_col_32"><textarea class="form-control" rows="3" cols="80"
+                                                                      placeholder="请输入" id="editRequirementOverview"
+                                                                      name="editRequirementOverview"> </textarea></div>
+                                </div>
+                            </div>
+                            <div class="rowdiv">
+	                            	<div class="form-group def_col_36">
+	                                    <label class="def_col_4 control-label font_right">父需求：</label>
+	                                    <div class="def_col_32">
+	                                        <input id="editParentId" type="hidden"/>
+	                                        <input type="text" class="form-control pointStyle readonly" readonly placeholder="请输入" id="editParent"/>
+	                                    </div>
+	                                </div>
+	                            </div>
+                            <div class="rowdiv">
+                                <div class="form-group def_col_12">
+                                    <label class="def_col_12 control-label font_right"><span class="redStar">*</span>需求状态：</label>
+                                    <div class="def_col_24">
+                                        <select class="selectpicker" id="editRequirementStatus" name="editRequirementStatus">
+											<option value="">----请选择----</option>
+					                        #foreach($dictMap in ${dict.getDictMap(
+					                            "TBL_REQUIREMENT_INFO_REQUIREMENT_STATUS").entrySet()})
+					                            <option value="${dictMap.key}">${dictMap.value}</option>
+					                        #end
+										</select>
+                                    </div>
+                                </div>                                
+                                <div class="form-group def_col_12">
+                                    <label class="def_col_12 control-label font_right"><span class="redStar">*</span>需求来源：</label>
+                                    <div class="def_col_24">
+                                        <select class="selectpicker" id="editRequirementSource" name="editRequirementSource">
+											<option value="">----请选择----</option>
+					                        #foreach($dictMap in ${dict.getDictMap(
+					                            "TBL_REQUIREMENT_INFO_REQUIREMENT_SOURCE").entrySet()})
+					                            <option value="${dictMap.key}">${dictMap.value}</option>
+					                        #end
+										</select>
+                                    </div>
+                                </div>                                
+                                <div class="form-group def_col_12">
+                                    <label class="def_col_12 control-label font_right"><span class="redStar">*</span>需求类型：</label>
+                                    <div class="def_col_24">
+                                        <select class="selectpicker" id="editRequirementType" name="editRequirementType">
+											<option value="">----请选择----</option>
+						                        #foreach($dictMap in ${dict.getDictMap(
+						                            "TBL_REQUIREMENT_INFO_REQUIREMENT_TYPE").entrySet()})
+						                            <option value="${dictMap.key}">${dictMap.value}</option>
+						                        #end
+										</select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="rowdiv">
+                                <div class="form-group def_col_12">
+                                    <label class="def_col_12 control-label font_right"><span class="redStar">*</span>提出人：</label>
+                                    <div class="def_col_24">
+                                        <input type="hidden" id="editApplyUserId"/>
+                                        <input type="text" class="form-control pointStyle readonly" readonly placeholder="请输入"
+                                               id="editApplyUserName" name="editApplyUserName"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group def_col_12">
+                                    <label class="def_col_12 control-label font_right"><span class="redStar">*</span>归属部门：</label>
+                                    <div class="def_col_24">
+                                        <!-- <select class="selectpicker" id="editApplyDeptId" name="editApplyDeptId"
+                                                data-live-search="true">
+                                            <option value="">请选择</option>
+                                        </select> -->
+                                        <input id="editApplyDeptId" type="hidden"/>
+                                        <input type="text" class="form-control pointStyle readonly"placeholder="请输入" id="editApplyDeptName"/>
+                                        <div class="editSelectBox" id="editSelectBox">
+						                	<ul class="editSelectUl" id="editSelectUl"></ul>
+						                </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group def_col_12">
+                                    <label class="def_col_12 control-label font_right"><!-- <span class="redStar">*</span> -->开发管理人员：</label>
+                                    <div class="def_col_24">
+                                        <input type="hidden" id="editDevelopmentManageUserId"/>
+                                        <input type="text" class="form-control pointStyle readonly" readonly placeholder="请输入"
+                                               id="editDevelopmentManageUserName" name="editDevelopmentManageUserName"/>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="rowdiv">
+                                <div class="form-group def_col_12">
+                                    <label class="def_col_12 control-label font_right"><!-- <span class="redStar">*</span> -->开发处室：</label>
+                                    <div class="def_col_24">
+                                        <!-- <select class="selectpicker" id="editDevelopmentDeptId" name="editDevelopmentDeptId"
+                                                data-live-search="true">
+                                            <option value="">请选择</option>
+                                        </select> -->
+                                        <input id="editDevelopmentDeptId" type="hidden"/>
+                                        <input type="text" class="form-control pointStyle readonly"placeholder="请输入" id="editDevelopmentDeptName"/>
+                                        <div class="editSelectBox1" id="editSelectBox1">
+						                	<ul class="editSelectUl1" id="editSelectUl1"></ul>
+						                </div>
+                                    </div>
+                                </div>
+                                <div class="form-group def_col_12">
+                                    <label class="def_col_12 control-label font_right"><!-- <span class="redStar">*</span> -->需求管理人员：</label>
+                                    <div class="def_col_24">
+                                        <input type="hidden" id="editRequirementManageUserId"/>
+                                        <input type="text" class="form-control pointStyle readonly" readonly placeholder="请输入"
+                                               id="editRequirementManageUserName" name="editRequirementManageUserName"/>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group def_col_12">
+                                    <label class="def_col_12 control-label font_right">需求验收人员：</label>
+                                    <div class="def_col_24">
+                                        <input type="hidden" id="editRequirementAcceptanceUserId"/>
+                                        <input type="text" class="form-control pointStyle readonly" readonly placeholder="请输入"
+                                               id="editRequirementAcceptanceUserName" name="editRequirementAcceptanceUserName"/>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="rowdiv">
+                                <div class="form-group def_col_12">
+                                    <label class="def_col_12 control-label font_right"><span class="redStar">*</span>需求优先级：</label>
+                                    <div class="def_col_24">
+                                        <select class="selectpicker" id="editRequirementPriority" name="editRequirementPriority">
+											<option value="">----请选择----</option>
+						                        #foreach($dictMap in ${dict.getDictMap(
+						                            "TBL_REQUIREMENT_INFO_REQUIREMENT_PRIORITY").entrySet()})
+						                            <option value="${dictMap.key}">${dictMap.value}</option>
+						                        #end
+										</select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group def_col_12">
+                                    <label class="def_col_12 control-label font_right">计划上线日期：</label>
+                                    <div class="def_col_24">
+                                        <input size="16" type="text" readonly class="form-control form_datetime pointStyle readonly"
+                                               placeholder="请选择" id="editPlanOnlineDate" name="editPlanOnlineDate"/>
+                                    </div>
+                                </div>
+                                <div class="form-group def_col_12">
+                                    <label class="def_col_12 control-label font_right">实际上线日期：</label>
+                                    <div class="def_col_24">
+                                        <input size="16" type="text" readonly class="form-control form_datetime pointStyle readonly"
+                                               placeholder="请选择" id="editActualOnlineDate" name="editActualOnlineDate"/>
+                                    </div>
+                                </div>                               
+                            </div>
+                            
+                            <div class="rowdiv">
+                                <div class="form-group def_col_12">
+                                    <label class="def_col_12 control-label font_right">是否重点需求：</label>
+                                    <div class="def_col_24">
+                                        <select class="selectpicker" id="editImportantRequirementStatus">
+											<option value="">----请选择----</option>
+						                        #foreach($dictMap in ${dict.getDictMap(
+						                            "TBL_REQUIREMENT_INFO_IMPORTANT_REQUIREMENT_STATUS").entrySet()})
+						                            <option value="${dictMap.key}">${dictMap.value}</option>
+						                        #end
+										</select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group def_col_12">
+                                    <label class="def_col_12 control-label font_right">变更次数：</label>
+                                    <div class="def_col_24">
+                                    	<input type="text" class="col-sm-6 form-control"
+                                        placeholder="请输入" name="editChangeCount" id="editChangeCount"/>
+                                    </div>
+                                </div> 
+                                
+                                <div class="form-group def_col_12">
+                                    <label class="def_col_12 control-label font_right">工作量：</label>
+                                    <div class="def_col_24">
+                                    	<input type="text" placeholder="请输入"
+                                        class="col-sm-6 form-control" name="editWorkload" id="editWorkload"/>
+                                    </div>
+                                </div>                                                              
+                            </div>
+                            
+                            <div class="rowdiv">
+                                <div class="form-group def_col_12">
+                                    <label class="def_col_12 control-label font_right">关联需求：</label>
+                                    <div class="def_col_24">
+                                        <input id="editRequirementIds" type="hidden"/>
+                                        <input type="text" class="form-control pointStyle readonly" readonly placeholder="请输入" id="editRequirements"/>
+                                    </div>
+                                </div>
+                               <!--  <div class="form-group def_col_12">
+                                    <label class="def_col_12 control-label font_right">子系统：</label>
+                                    <div class="def_col_24">
+                                        <input type="hidden" id="editSystemIds"/>
+                                        <input type="text" class="form-control pointStyle readonly" readonly placeholder="请输入"
+                                               id="editSystems" name="editSystems"/>
+                                    </div>
+                                </div> --> 
+                                <div class="form-group def_col_12">
+                                    <label class="def_col_12 control-label font_right">关闭时间：</label>
+                                    <div class="def_col_24">
+                                        <input size="16" type="text" readonly class="form-control form_datetime pointStyle readonly"
+                                               placeholder="请选择" id="editCloseTime" name="editCloseTime"/>
+                                    </div>
+                                </div>  
+                            </div>
+                            
+                                                        
+                            <div class="rowdiv">
+                                <div class="form-group def_col_36">
+                                    <label class="def_col_4 control-label font_right">验收描述：</label>
+                                    <div class="def_col_32"><textarea class="form-control" rows="3" cols="80"
+                                                                      placeholder="请输入" id="editAcceptanceDescription"
+                                                                      name="editAcceptanceDescription"> </textarea></div>
+                                </div>
+                            </div> 
+                            </form>  
+                            <div>
+                            	<div id="editSysInput"></div>
+                            	<div class="btnArea rowdiv">
+	                            	<div class="def_col_4"></div>
+	                            	<div class="def_col_32">
+	                            		<button type="button" class="btn btn-primary" onclick="addSysInput( 'editSysInput' )">添加子系统</button>
+	                            	</div> 
+	                            </div>
+	                            
+                            </div>                                                     
+                        </div>
+                    </div> 
+                    <div id="editFieldDiv" class="rowdiv"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="editCommit()">确认</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>            
+			
+    	</div>
+    </div>
+</div>
+<!-- 子系统弹窗 -->
+<div class="modal fade bs-example-modal-lg" id="selSys" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-lg modal-user" role="document"  style="margin-top:10px;">
+            <div class="modal-content modalStyle">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <span class="modal-title" id="myModalLabel">选择子系统</span>
+           	 </div>  
+                <div class="modal-body">
+                   
+                        <div class="color1">
+                            <div class="container-fluid" id="">
+                                <div class="rowdiv control-row">
+                                    <div class="col-md-2">
+                                        
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="search_font"><label class="control-label">子系统名称：</label></div>
+                                        <div class="search_input">
+                                            <input type="text" class="form-control" placeholder="请选择" id="SCsystemName" name="systemName" value="" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="search_font"><label class="control-label">子系统编码：</label></div>
+                                        <div class="search_input">
+                                           <input type="text" class="form-control" placeholder="请选择" id="SCsystemCode" name="systemCode" value="" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                         
+                                    </div>
+                                </div>
+                                <div class="rowdiv control-row search_btn">
+                                    <button type="button" class="btn btn-primary" onclick="systemTableShowAll()">搜&nbsp;&nbsp;&nbsp;索</button>
+                                    <button type="button" onclick="clearSearchSys()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                                </div>
+
+                            </div>
+                            <div id="downBtn2">
+                                <span class="fa fa-caret-up"></span>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="content-table">
+                            <div class="wode">
+                                <table id="systemTable"></table> 
+                            </div>
+                        </div>
+                  
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="commitSys()">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div> 
+            </div>
+        </div>
+</div>	
+
+<!-- 开发任务弹窗 -->
+<div class="modal fade bs-example-modal-lg" id="selfeature" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-lg modal-user" role="document"  style="margin-top:10px;">
+            <div class="modal-content modalStyle">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <span class="modal-title" id="myModalLabel">选择开发任务</span>
+           	 </div>  
+                <div class="modal-body">
+                   
+                        <div class="color1">
+                            <div class="container-fluid" id="">
+                                <div class="rowdiv control-row">                                    
+                                    <div class="col-md-4">
+                                        <div class="search_font"><label class="control-label">任务名称：</label></div>
+                                        <div class="search_input">
+                                            <input type="text" class="form-control" placeholder="请选择" id="SCfeatureName" name="featureName" value="" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="search_font"><label class="control-label">任务编码：</label></div>
+                                        <div class="search_input">
+                                           <input type="text" class="form-control" placeholder="请选择" id="SCfeatureCode" name="featureCode" value="" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="search_font"><label class="control-label">任务状态：</label></div>
+                                        <div class="search_input">						
+											<select class="selectpicker" id="SCfeatureStatus">
+												<option value="">----请选择----</option>
+						                        #foreach($dictMap in ${dict.getDictMap(
+						                            "TBL_REQUIREMENT_FEATURE_REQUIREMENT_FEATURE_STATUS").entrySet()})
+						                            <option value="${dictMap.key}">${dictMap.value}</option>
+						                        #end
+											</select>					
+										</div>
+                                    </div>
+                                </div>
+                                <div class="rowdiv control-row search_btn">
+                                    <button type="button" class="btn btn-primary" onclick="featureTableShowAll()">搜&nbsp;&nbsp;&nbsp;索</button>
+                                    <button type="button" onclick="clearSearchFeature()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                                </div>
+
+                            </div>
+                            <div id="downBtn2">
+                                <span class="fa fa-caret-up"></span>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="content-table">
+                            <div class="wode">
+                                <table id="featureTable"></table> 
+                            </div>
+                        </div>
+                  
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="commitFeature()">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div> 
+            </div>
+        </div>
+</div>
+
+#*人员弹框*#
+<div class="modal fade bs-example-modal-lg" id="userModal" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg modal-user" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <span>选择人员</span>
+            </div>
+            <div class="modal-body">
+                <div class="color1">
+                    <div class="container-fluid">
+                        <div class="row control-row">
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">姓名：</label></div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control " placeholder="请输入" id="userName"
+                                           name="userName" value=""/>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">部门：</label></div>
+                                <div class="search_input">
+                                    <!-- <select class="selectpicker" id="deptName" name="deptName">
+                                    </select> -->
+                                     <input type="text" class="form-control " placeholder="请输入" id="deptName"
+                                       name="deptName" value=""/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font"><label class="control-label">公司：</label></div>
+                                <div class="search_input">
+                                    <!-- <select class="selectpicker" id="companyName" name="companyName">
+                                    </select> -->
+                                    <input type="text" class="form-control " placeholder="请输入" id="companyName"
+                                       name="companyName" value=""/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row control-row search_btn">
+                            <button type="button" class="btn btn-primary" id="userSearch">搜&nbsp;&nbsp;&nbsp;索</button>
+                            <button type="button" onclick="clearSearchUser()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                        </div>
+
+                    </div>
+                    <div id="downBtn">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br>
+                <div class="content-table">
+                    <div class="wode">
+                        <table id="userTable"></table>
+                        <div id="userPage"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="bottom-container">
+                    <button type="button" id="userbutton" class="btn btn-primary" data-user="default"
+                            onclick="commitUser()">确定
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+##选择需求弹框
+<div id="selReq" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <span class="modal-title">请选择需求</span>
+            </div>
+
+            <div class="modal-body">
+                <div class="color1">
+                    <div class="container-fluid" id="">
+                        <div class="row control-row">
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">需求编号：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入" id="reqCode2"
+                                           name="reqCode2"/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">需求名称：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入" id="reqName2"
+                                           name="reqName2"/>
+                                </div>
+                            </div>
+                            <div class="col-md-4 ">
+                                <div class="search_font">
+                                    <label class="control-label">需求状态：</label>
+                                </div>
+                                <div class="search_input">
+                                    <select class="selectpicker" id="reqStatus2" name="reqStatus2" data-live-search="true">
+                                            <option value="">----请选择----</option>
+						                        #foreach($dictMap in ${dict.getDictMap(
+						                            "TBL_REQUIREMENT_INFO_REQUIREMENT_STATUS").entrySet()})
+						                            <option value="${dictMap.key}">${dictMap.value}</option>
+						                        #end
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row control-row search_btn">
+                            <button type="button" class="btn btn-primary" id="reqSearch" onclick="reqTableShowAll()">
+                                搜&nbsp;&nbsp;&nbsp;索
+                            </button>
+                            <button type="button" class="btn btn-default" onclick="clearSearchReq()">重&nbsp;&nbsp;&nbsp;置</button>
+                        </div>
+                    </div>
+                    <div id="downBtn" class="downBtn">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br/>
+                <div class="content-table">
+                    <div class="wode">
+                        <table id="listReq"></table>
+                        <div id="pagerReq"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="bottom-container">
+                    <button type="button" id="reqbutton" class="btn btn-primary" data-req="default"
+                            onclick="insertInput()">确定
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+##模块弹框
+<div id="moduleTb" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <span class="modal-title">请选择模块</span>
+            </div>
+
+            <div class="modal-body">
+                <div class="color1">
+                    <div class="container-fluid" id="">
+                        <div class="row control-row">
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">模块名称：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入" id="moduleName"
+                                           name="moduleName"/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">模块编码：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入" id="moduleCode"
+                                           name="moduleCode"/>
+                                </div>
+                            </div>
+                            <div class="col-md-4 ">
+                                <div class="search_font">
+                                    <label class="control-label">模块状态：</label>
+                                </div>
+                                <div class="search_input">
+                                    <select class="selectpicker" id="moduleStatus" name="moduleStatus">
+                                    	<option value="">请选择</option>
+                                    	<option value="1">有效</option>
+                                    	<option value="2">无效</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row control-row search_btn">
+                            <button type="button" class="btn btn-primary"  onclick="moduleSearch()">
+                                搜&nbsp;&nbsp;&nbsp;索
+                            </button>
+                            <button type="button" class="btn btn-default" onclick="clearSearchModule()">重&nbsp;&nbsp;&nbsp;置</button>
+                        </div>
+                    </div>
+                    <div id="downBtn" class="downBtn">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br/>
+                <div class="content-table">
+                    <div class="wode">
+                        <table id="listModule"></table>
+                        <div id="pagerModule"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="bottom-container">
+                    <button type="button"  class="btn btn-primary" data-req="default"
+                            onclick="moduleSubmit()">确定
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+#*导入需求弹窗*#
+<div class="modal fade" id="importPerson" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="POST"  enctype="multipart/form-data" id="form1" action="">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">导入需求</h4>
+                </div>
+                <div class="modal-body">
+                    <div class=""> 
+                        <input id="upfile" type="file" name="upfile" accept=".csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />  
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="upload()" id="btn">确定</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="menuContent" class="menuContent">
+	<ul id="projectOwn" class="ztree"></ul>
+</div>
+<div id="loading"> 
+	<img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+</div>
+<script type="text/ecmascript" src="#springUrl('')/projectManageui/static/js/requirement/selectzTree.js"></script>
+</body>
+</html>

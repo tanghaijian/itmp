@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblSystemModuleMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblSystemModule">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="system_ID" jdbcType="BIGINT" property="systemId" />
+    <result column="module_name" jdbcType="VARCHAR" property="moduleName" />
+    <result column="module_code" jdbcType="VARCHAR" property="moduleCode" />
+    <result column="dependency_system_module_ids" jdbcType="VARCHAR" property="dependencySystemModuleIds" />
+    <result column="ARTIFACT_ID" jdbcType="VARCHAR" property="artifactId" />
+    <result column="GROUP_ID" jdbcType="VARCHAR" property="groupId" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+    <result column="BUILD_DEPENDENCY" jdbcType="TINYINT" property="buildDependency" />
+    <result column="BUILD_DEPENDENCY_SEQUENCE" jdbcType="TINYINT" property="buildDependencySequence" />
+    <result column="COMPILE_COMMAND" jdbcType="VARCHAR" property="compileCommand" />
+    <result column="BUILD_TYPE" jdbcType="TINYINT" property="buildType" />
+    <result column="RELEASE_REPOSITORY_NAME" jdbcType="VARCHAR" property="releaseRepositoryName" />
+    <result column="SNAPSHOT_REPOSITORY_NAME" jdbcType="VARCHAR" property="snapshotRepositoryName" />
+    <result column="BUILD_TOOL_VERSION" jdbcType="VARCHAR" property="buildToolVersion" />
+    <result column="PACKAGE_SUFFIX" jdbcType="VARCHAR" property="packageSuffix" />
+    <result column="JDK_VERSION" jdbcType="VARCHAR" property="jdkVersion" />
+    <result column="RELATIVE_PATH" jdbcType="VARCHAR" property="relativePath" />
+    <result column="FIRST_COMPILE_FLAG" jdbcType="TINYINT" property="firstCompileFlag" />
+    <result column="SYSTEM_MODULE_FLAG" jdbcType="VARCHAR" property="systemModuleFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID id, system_ID systemId, module_name moduleName, GROUP_ID groupId,module_code moduleCode, dependency_system_module_ids dependencySystemModuleIds,ARTIFACT_ID artifactId, STATUS status, CREATE_BY createBy,
+    CREATE_DATE createDate, LAST_UPDATE_BY lastUpdateBy, LAST_UPDATE_DATE lastUpdateDate,BUILD_DEPENDENCY buildDependency,BUILD_DEPENDENCY_SEQUENCE buildDependencySequence,
+    COMPILE_COMMAND compileCommand,BUILD_TYPE buildType,RELEASE_REPOSITORY_NAME releaseRepositoryName,SNAPSHOT_REPOSITORY_NAME snapshotRepositoryName,BUILD_TOOL_VERSION buildToolVersion,
+    PACKAGE_SUFFIX packageSuffix,JDK_VERSION jdkVersion,RELATIVE_PATH relativePath,FIRST_COMPILE_FLAG firstCompileFlag,SYSTEM_MODULE_FLAG systemModuleFlag
+  </sql>
+  <!-- 新增 -->
+	<insert id="insertModule" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModule" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		insert into tbl_system_module
+		(system_ID, module_name, module_code, GROUP_ID, ARTIFACT_ID, BUILD_DEPENDENCY,COMPILE_COMMAND,BUILD_TYPE,RELEASE_REPOSITORY_NAME,SNAPSHOT_REPOSITORY_NAME,
+		BUILD_TOOL_VERSION,PACKAGE_SUFFIX,JDK_VERSION,
+		BUILD_DEPENDENCY_SEQUENCE,CREATE_BY ,CREATE_DATE , LAST_UPDATE_BY , LAST_UPDATE_DATE ,RELATIVE_PATH,FIRST_COMPILE_FLAG,SYSTEM_MODULE_FLAG)
+		values
+		(#{systemId},#{moduleName},#{moduleCode},#{groupId},#{artifactId},#{buildDependency},#{compileCommand},#{buildType},#{releaseRepositoryName},#{snapshotRepositoryName},
+		#{buildToolVersion},#{packageSuffix},#{jdkVersion},
+		#{buildDependencySequence},#{createBy},#{createDate},#{lastUpdateBy},#{lastUpdateDate},#{relativePath},#{firstCompileFlag},#{systemModuleFlag})
+	</insert>
+  <!-- 根据id获取系统模块表相关信息 -->
+  <select id="getOneSystemModule" parameterType="Long" resultType="map">
+  	SELECT module.ID id,module.module_code moduleCode,module.module_name moduleName,module.ARTIFACT_ID artifactId,module.GROUP_ID groupId,module.COMPILE_COMMAND compileCommand,
+  	module.BUILD_TYPE buildType,module.RELEASE_REPOSITORY_NAME releaseRepositoryName,module.SNAPSHOT_REPOSITORY_NAME snapshotRepositoryName,
+  	module.BUILD_TOOL_VERSION buildToolVersion,module.PACKAGE_SUFFIX packageSuffix,module.JDK_VERSION jdkVersion,
+  	module.BUILD_DEPENDENCY buildDependency,module.BUILD_DEPENDENCY_SEQUENCE buildDependencySequence ,module.SYSTEM_MODULE_FLAG systemModuleFlag,
+  	system.system_code systemCode,system.system_name systemName,module.system_Id systemId,module.RELATIVE_PATH relativePath,module.FIRST_COMPILE_FLAG firstCompileFlag
+	FROM tbl_system_module module
+	LEFT JOIN tbl_system_info system
+	ON module.system_ID = system.ID
+	WHERE module.ID = #{id}
+  
+  </select>
+  <!-- 根据系统表id查询系统模块 -->
+  <select id="getSystemModuleBySystemId" parameterType="Long" resultType="map">
+  	 select 
+    <include refid="Base_Column_List" />
+    from tbl_system_module
+    where system_ID = #{id} and status=1
+    order by BUILD_DEPENDENCY_SEQUENCE is null,BUILD_DEPENDENCY_SEQUENCE
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultType="cn.pioneeruniverse.dev.entity.TblSystemModule">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_system_module
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectSystemModule" parameterType="java.lang.Long" resultType="cn.pioneeruniverse.dev.entity.TblSystemModule">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_system_module
+    where SYSTEM_ID = #{id,jdbcType=BIGINT} and status=1
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_system_module
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModule">
+    insert into tbl_system_module (ID, system_ID, module_name, 
+      module_code,dependency_system_module_ids, 
+      STATUS, CREATE_BY, CREATE_DATE, 
+      LAST_UPDATE_BY, LAST_UPDATE_DATE)
+    values (#{id,jdbcType=BIGINT}, #{systemId,jdbcType=BIGINT}, #{moduleName,jdbcType=VARCHAR}, 
+      #{moduleCode,jdbcType=VARCHAR},
+       #{dependencySystemModuleIds,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModule">
+    insert into tbl_system_module
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="systemId != null">
+        system_ID,
+      </if>
+      <if test="moduleName != null">
+        module_name,
+      </if>
+      <if test="moduleCode != null">
+        module_code,
+      </if>
+      <if test="dependencySystemModuleIds != null">
+        dependency_system_module_ids,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="systemId != null">
+        #{systemId,jdbcType=BIGINT},
+      </if>
+      <if test="moduleName != null">
+        #{moduleName,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleCode != null">
+        #{moduleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dependencySystemModuleIds != null">
+        #{dependencySystemModuleIds,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModule">
+    update tbl_system_module
+    <set>
+      <if test="systemId != null">
+        system_ID = #{systemId,jdbcType=BIGINT},
+      </if>
+      <if test="moduleName != null">
+        module_name = #{moduleName,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleCode != null">
+        module_code = #{moduleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dependencySystemModuleIds != null">
+        dependency_system_module_ids = #{dependencySystemModuleIds,jdbcType=VARCHAR},
+      </if>
+      <if test="groupId != null">
+        GROUP_ID = #{groupId,jdbcType=VARCHAR},
+      </if>
+      <if test="artifactId != null">
+        ARTIFACT_ID = #{artifactId,jdbcType=VARCHAR},
+      </if>
+      <if test="buildDependency != null">
+        BUILD_DEPENDENCY = #{buildDependency,jdbcType=VARCHAR},
+      </if>
+        BUILD_DEPENDENCY_SEQUENCE = #{buildDependencySequence,jdbcType=VARCHAR},
+      <if test="compileCommand != null">
+        COMPILE_COMMAND = #{compileCommand,jdbcType=VARCHAR},
+      </if>
+      <if test="buildType != null">
+        BUILD_TYPE = #{buildType,jdbcType=TINYINT},
+      </if>
+      <if test="releaseRepositoryName != null">
+        RELEASE_REPOSITORY_NAME = #{releaseRepositoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="snapshotRepositoryName != null">
+        SNAPSHOT_REPOSITORY_NAME = #{snapshotRepositoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="buildToolVersion != null">
+        BUILD_TOOL_VERSION = #{buildToolVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="packageSuffix != null">
+        PACKAGE_SUFFIX = #{packageSuffix,jdbcType=VARCHAR},
+      </if>
+      <if test="jdkVersion != null">
+        JDK_VERSION = #{jdkVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="relativePath != null">
+        RELATIVE_PATH = #{relativePath,jdbcType=VARCHAR},
+      </if>
+      <if test="firstCompileFlag != null">
+        FIRST_COMPILE_FLAG = #{firstCompileFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="systemModuleFlag != null">
+        SYSTEM_MODULE_FLAG = #{systemModuleFlag,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModule">
+    update tbl_system_module
+    set system_ID = #{systemId,jdbcType=BIGINT},
+      module_name = #{moduleName,jdbcType=VARCHAR},
+      module_code = #{moduleCode,jdbcType=VARCHAR},
+      dependency_system_module_ids = #{dependencySystemModuleIds,jdbcType=VARCHAR},
+      ARTIFACT_ID = #{artifactId,jdbcType=VARCHAR},
+      BUILD_DEPENDENCY = #{buildDependency,jdbcType=VARCHAR},
+      BUILD_DEPENDENCY_SEQUENCE = #{buildDependencySequence,jdbcType=VARCHAR},
+      COMPILE_COMMAND = #{compileCommand,jdbcType=VARCHAR},
+      BUILD_TYPE = #{buildType,jdbcType=TINYINT},
+      RELEASE_REPOSITORY_NAME = #{releaseRepositoryName,jdbcType=VARCHAR},
+      SNAPSHOT_REPOSITORY_NAME = #{snapshotRepositoryName,jdbcType=VARCHAR},
+      BUILD_TOOL_VERSION = #{buildToolVersion,jdbcType=VARCHAR},
+      PACKAGE_SUFFIX = #{packageSuffix,jdbcType=VARCHAR},
+      JDK_VERSION = #{jdkVersion,jdbcType=VARCHAR},
+      FIRST_COMPILE_FLAG = #{firstCompileFlag,jdbcType=TINYINT},
+      SYSTEM_MODULE_FLAG = #{systemModuleFlag,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+   <select id="" parameterType="cn.pioneeruniverse.dev.entity.TblSystemModule" resultMap="BaseResultMap">
+    SELECT ID,SYSTEM_ID
+   	from   tbl_system_module
+   	 <where>
+   	 GROUP_ID=#{groupId} and ARTIFACT_ID=#{artifactId} 
+  	 </where>
+  </select>
+  
+  
+  <!-- 排序-->
+  <select id="sortModule" parameterType="map"  resultMap="BaseResultMap">
+   select 
+    <include refid="Base_Column_List" />
+    from tbl_system_module
+    where  
+    id in  
+    <foreach item="id" index="index" collection="ids" open="(" separator="," close=")"> 
+     #{id} 
+    </foreach>
+      order by BUILD_DEPENDENCY_SEQUENCE is null ,BUILD_DEPENDENCY_SEQUENCE asc
+  </select> 
+  
+  
+  
+  
+  
+</mapper>

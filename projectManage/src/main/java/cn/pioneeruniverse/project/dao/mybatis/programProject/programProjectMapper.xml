@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.programProject.ProgramProjectMapper">
+
+
+    <select id="selectProgramInfoHomeByID" resultType="cn.pioneeruniverse.project.vo.ProgramInfoHomeVO">
+    SELECT pi.ID AS id ,pi.PROGRAM_NUMBER AS programNumber ,pi.PROGRAM_NAME AS programName,ui.USER_NAME AS userName,ui.ID AS userId
+    FROM tbl_program_info pi
+    LEFT JOIN tbl_user_info ui ON pi.MANAGE_USER_ID = ui.ID
+    WHERE pi.ID = #{programId}
+    </select>
+
+    <!-- 项目群子项目 -->
+    <select id="selectProgramProjectList" resultType="cn.pioneeruniverse.project.vo.ProgramProjectVO">
+    SELECT DISTINCT pro.ID AS projectId,pro.DEVELOPMENT_MODE AS developmentMode,pro.PROJECT_NAME AS projectName,pro.PROJECT_STATUS AS projectStatus,ui.USER_NAME AS userName,pro.PROJECT_SCHEDULE_STATUS AS projectScheduleStatus
+    FROM tbl_program_project pp
+    LEFT JOIN tbl_project_info pro on pp.PROJECT_ID = pro.ID
+    LEFT JOIN tbl_user_info ui on pro.MANAGER_USER_ID = ui.ID
+    WHERE pp.PROGRAM_ID = #{programId} AND pp.STATUS = 1 AND pro.STATUS = 1 AND ui.USER_STATUS =1
+    </select>
+
+    <!-- 项目群风险信息总数 -->
+    <select id="selectProgramRiskInfoCount" resultType="cn.pioneeruniverse.project.dto.RiskInfoAndChangeInfoDTO">
+      SELECT COUNT(*) AS riskInfoCount
+		FROM tbl_risk_info
+		WHERE STATUS = 1 AND PROGRAM_ID = #{programId}
+     </select>
+
+    <!-- 项目群风险本周新增 -->
+    <select id="selectProgramWeedAdd" resultType="cn.pioneeruniverse.project.dto.RiskInfoAndChangeInfoDTO">
+    SELECT COUNT(*) AS riskWeekAdd
+		FROM tbl_risk_info
+		WHERE YEARWEEK(DATE_FORMAT(CREATE_DATE,'%Y-%m-%d')) = YEARWEEK(NOW()) AND STATUS = 1 AND PROGRAM_ID = #{programId}
+     </select>
+
+    <!-- 项目群风险未解决数 -->
+    <select id="selectProgramOutStandingNumber" resultType="cn.pioneeruniverse.project.dto.RiskInfoAndChangeInfoDTO">
+     	SELECT COUNT(*) AS outStandingNumber
+		FROM tbl_risk_info
+		WHERE  STATUS = 1 AND RISK_STATUS IN(1,3) AND PROGRAM_ID = #{programId}
+	</select>
+
+    <!--项目群变更总数 -->
+    <select id="selectProgramProjectChangeInfoCount" resultType="cn.pioneeruniverse.project.dto.RiskInfoAndChangeInfoDTO">
+    SELECT COUNT(*) AS changeInfoCount
+		FROM tbl_project_change_info
+		WHERE STATUS = 1 AND PROGRAM_ID = #{programId}
+	 </select>
+
+    <!-- 项目群变更本周新增 -->
+    <select id="selectProgramProjectChangeWeedAdd" resultType="cn.pioneeruniverse.project.dto.RiskInfoAndChangeInfoDTO">
+    SELECT COUNT(*) AS changeWeekAdd
+		FROM tbl_project_change_info
+		WHERE YEARWEEK(DATE_FORMAT(CREATE_DATE,'%Y-%m-%d')) = YEARWEEK(NOW()) AND STATUS = 1 AND PROGRAM_ID = #{programId}
+	 </select>
+
+    <!--  项目群变更未解决数  -->
+    <select id="selectProgramConfirmationNumber" resultType="cn.pioneeruniverse.project.dto.RiskInfoAndChangeInfoDTO">
+     SELECT COUNT(*) AS confirmationNumber
+	  FROM tbl_project_change_info
+	  WHERE  STATUS = 1 AND CHANGE_STATUS NOT IN(5,6) AND PROGRAM_ID = #{programId}
+    </select>
+
+    <!-- 项目群里程碑 -->
+    <select id="selectProgramProjectPlan" resultType="cn.pioneeruniverse.project.dto.ProjectPlanDTO">
+    SELECT PROJECT_ID AS projectId ,PLAN_NAME AS planName,PLAN_START_DATE AS planStartDate,PLAN_END_DATE AS planEndDate,PLAN_SCHEDULE AS currentProgress
+    FROM tbl_project_plan
+    WHERE  STATUS = 1 AND PROJECT_ID IN
+    (SELECT DISTINCT pro.ID
+    FROM tbl_program_project pp
+    LEFT JOIN tbl_project_info pro ON pp.PROJECT_ID = pro.ID
+    WHERE pp.PROGRAM_ID = #{programId} AND pp.STATUS = 1 AND pro.DEVELOPMENT_MODE = 2 AND pro.STATUS = 1)
+    AND PLAN_START_MILESTONE = 1 OR PLAN_END_MILESTONE =1
+    </select>
+
+    <!-- 项目群冲刺表项目周期 -->
+    <select id="selectProgramProjectPeriod" resultType="cn.pioneeruniverse.project.dto.ProjectPlanNewDTO">
+        select DISTINCT spr.ID AS sprintId,spr.PROJECT_ID AS projectId,spr.SPRINT_START_DATE AS planNewStartDate , spr.SPRINT_END_DATE AS planNewEndDate
+        from tbl_sprint_info spr
+        LEFT JOIN tbl_program_project pp ON spr.PROJECT_ID = pp.PROJECT_ID
+        where pp.PROGRAM_ID = #{programId}  AND #{currentDate} <![CDATA[>=]]> spr.SPRINT_START_DATE AND  #{currentDate} <![CDATA[<=]]> spr.SPRINT_END_DATE
+
+        <!-- SELECT DISTINCT pro.ID AS projectId,spr.SPRINT_START_DATE AS planNewStartDate , spr.SPRINT_END_DATE AS planNewEndDate
+        FROM tbl_requirement_feature req
+        LEFT JOIN tbl_sprint_info spr ON req.SPRINT_ID = spr.ID
+        LEFT JOIN tbl_project_system ps ON req.SYSTEM_ID = ps.SYSTEM_ID
+        LEFT JOIN tbl_project_info pro ON ps.PROJECT_ID = pro.ID
+        LEFT JOIN tbl_system_info sys ON ps.SYSTEM_ID = sys.ID
+        LEFT JOIN tbl_requirement_feature_history his ON spr.ID = his.SPRINT_ID AND his.REQUIREMENT_FEATURE_ID = req.ID
+        WHERE  ps.PROJECT_ID IN
+        (SELECT DISTINCT pro.ID
+        FROM tbl_program_project pp
+        LEFT JOIN tbl_project_info pro ON pp.PROJECT_ID = pro.ID
+        LEFT JOIN tbl_user_info ui ON pro.MANAGER_USER_ID = ui.ID
+        WHERE pp.PROGRAM_ID = #{programId} AND pp.STATUS = 1  AND pro.DEVELOPMENT_MODE = 1 AND pro.DEVELOPMENT_MODE = 1 AND pro.STATUS = 1 AND ui.USER_STATUS =1)
+        AND  #{currentDate} <![CDATA[>=]]>  spr.SPRINT_START_DATE AND  #{currentDate} <![CDATA[<=]]> spr.SPRINT_END_DATE
+        AND req.STATUS =1 AND spr.STATUS = 1 AND ps.STATUS = 1 AND pro.STATUS = 1 AND sys.STATUS = 1 AND his.STATUS = 1 -->
+    </select>
+
+    <!--  项目群燃尽图预计工作量 -->
+    <select id="selectProgramProjectPlanNewList" resultType="cn.pioneeruniverse.project.dto.ProjectPlanNewDTO">
+        SELECT spr.PROJECT_ID  AS projectId,SUM(req.ESTIMATE_WORKLOAD) AS estimateWorkload,DATE_FORMAT(req.CREATE_DATE,'%Y-%m-%d') AS createDate
+        FROM tbl_sprint_info spr
+        LEFT JOIN tbl_requirement_feature req ON spr.ID = req.SPRINT_ID
+        WHERE spr.PROJECT_ID IN (
+        select DISTINCT pp.PROJECT_ID
+        from tbl_program_project pp
+        LEFT JOIN tbl_project_info pro ON pp.PROJECT_ID = pro.ID
+        where pp.PROGRAM_ID = #{programId}  AND pp.STATUS = 1 AND pro.DEVELOPMENT_MODE = 1 AND pro.STATUS = 1
+        )
+        AND req.STATUS = 1 AND spr.STATUS =1 AND #{currentDate} <![CDATA[>=]]> spr.SPRINT_START_DATE AND #{currentDate} <![CDATA[<=]]> spr.SPRINT_END_DATE
+        GROUP BY  DATE_FORMAT(req.CREATE_DATE,'%Y-%m-%d'),spr.PROJECT_ID
+
+        <!--  SELECT ps.PROJECT_ID  AS projectId,sum(req.ESTIMATE_WORKLOAD) AS estimateWorkload , sum(his.ESTIMATE_REMAIN_WORKLOAD) AS estimateRemainWorkload,his.CREATE_DATE AS createDate
+        FROM tbl_requirement_feature req
+        LEFT JOIN tbl_sprint_info spr ON req.SPRINT_ID = spr.ID
+        LEFT JOIN tbl_project_system ps ON req.SYSTEM_ID = ps.SYSTEM_ID
+        LEFT JOIN tbl_project_info pro ON ps.PROJECT_ID = pro.ID
+        LEFT JOIN tbl_system_info sys ON ps.SYSTEM_ID = sys.ID
+        LEFT JOIN tbl_requirement_feature_history his ON spr.ID = his.SPRINT_ID AND his.REQUIREMENT_FEATURE_ID = req.ID
+        WHERE  ps.PROJECT_ID IN
+        (SELECT DISTINCT pro.ID
+        FROM tbl_program_project pp
+        LEFT JOIN tbl_project_info pro ON pp.PROJECT_ID = pro.ID
+        LEFT JOIN tbl_user_info ui ON pro.MANAGER_USER_ID = ui.ID
+        WHERE pp.PROGRAM_ID =  #{programId} AND pp.STATUS = 1 AND pro.DEVELOPMENT_MODE = 1 AND pro.STATUS = 1 AND ui.USER_STATUS =1)
+        AND  #{currentDate} <![CDATA[>=]]> spr.SPRINT_START_DATE AND #{currentDate} <![CDATA[<=]]> spr.SPRINT_END_DATE
+        AND req.STATUS =1 AND spr.STATUS = 1 AND ps.STATUS = 1 AND pro.STATUS = 1 AND sys.STATUS = 1 AND his.STATUS = 1
+        GROUP BY his.CREATE_DATE,ps.PROJECT_ID -->
+    </select>
+
+    <!-- 燃尽图实际工作量 -->
+    <select id="selectEstimateRemainWorkloadNewList" resultType="cn.pioneeruniverse.project.dto.ProjectPlanNewDTO">
+        SELECT spr.PROJECT_ID  AS projectId,sum(rfh.ESTIMATE_REMAIN_WORKLOAD) AS estimateRemainWorkload,rfh.CREATE_DATE AS createDate
+        FROM tbl_sprint_info spr
+        LEFT JOIN tbl_requirement_feature req ON spr.ID = req.SPRINT_ID
+        LEFT JOIN (
+        SELECT DISTINCT REQUIREMENT_FEATURE_ID,ESTIMATE_REMAIN_WORKLOAD,CREATE_DATE from tbl_requirement_feature_history
+        <where>
+            SPRINT_ID IN
+            <foreach item="item" index="index" collection="sprintId" open="(" separator="," close=")">#{item}</foreach>
+        </where>
+        ) rfh ON rfh.REQUIREMENT_FEATURE_ID = req.ID
+        WHERE spr.PROJECT_ID IN (
+        select DISTINCT pp.PROJECT_ID
+        from tbl_program_project pp
+        LEFT JOIN tbl_project_info pro ON pp.PROJECT_ID = pro.ID
+        where pp.PROGRAM_ID = #{programId}  AND pp.STATUS = 1 AND pro.DEVELOPMENT_MODE = 1 AND pro.STATUS = 1
+        )
+        AND req.STATUS = 1 AND spr.STATUS =1 AND #{currentDate} <![CDATA[>=]]> spr.SPRINT_START_DATE AND #{currentDate} <![CDATA[<=]]> spr.SPRINT_END_DATE AND rfh.CREATE_DATE is not null
+        GROUP BY rfh.CREATE_DATE,spr.PROJECT_ID
+    </select>
+
+    <!-- 项目群公告 -->
+    <select id="selectProgramProjectNotice" resultType="cn.pioneeruniverse.project.dto.ProjectNoticeDTO">
+        SELECT DISTINCT pro.PROJECT_ID AS id,tic.NOTICE_CONTENT AS noticeContent,tic.CREATE_DATE AS createDate
+        FROM tbl_notice_info tic
+        LEFT JOIN tbl_project_notice pro ON  tic.ID = pro.NOTICE_ID
+        WHERE pro.PROJECT_ID IN
+        (SELECT DISTINCT pro.ID
+        FROM tbl_program_project pp
+        LEFT JOIN tbl_project_info pro on pp.PROJECT_ID = pro.ID
+        LEFT JOIN tbl_user_info ui on pro.MANAGER_USER_ID = ui.ID
+        WHERE pp.PROGRAM_ID = #{programId} AND pp.STATUS = 1 AND pro.STATUS = 1 AND ui.USER_STATUS =1)
+        AND #{currentDate} <![CDATA[>=]]> tic.START_TIME AND  #{currentDate} <![CDATA[<=]]> tic.END_TIME   AND tic.STATUS =1 AND pro.STATUS=1
+    </select>
+
+<!--获取项目计划表信息 -->
+ <select id="selectProgramProjectPlanList" resultType="cn.pioneeruniverse.project.vo.ProjectPlanVO">
+   SELECT DISTINCT pl.ID AS planId,pl.PLAN_NAME AS PlanName,spr.ID AS sprintId
+    FROM tbl_project_plan pl
+    LEFT JOIN tbl_sprint_info spr ON  pl.ID = spr.PROJECT_PLAN_ID
+    WHERE  pl.STATUS = 1 AND spr.STATUS = 1 AND pl.PROJECT_ID = #{programId}
+</select>
+
+    <!-- 获取项目群系统id -->
+    <select id="selectProgramSystemId" resultType="cn.pioneeruniverse.project.dto.PeripheralSystemDTO">
+    SELECT DISTINCT pro.PROJECT_NAME AS projectName,ps.SYSTEM_ID AS id
+    FROM tbl_program_project pp
+    LEFT JOIN tbl_project_info pro ON pp.PROJECT_ID = pro.ID
+    LEFT JOIN tbl_user_info ui ON pro.MANAGER_USER_ID = ui.ID
+	LEFT JOIN tbl_project_system ps ON pro.ID = ps.PROJECT_ID
+    WHERE pp.PROGRAM_ID = #{programId} AND pp.STATUS = 1 AND pro.STATUS = 1 AND ui.USER_STATUS =1 AND ps.STATUS =1
+    </select>
+
+
+    <!-- 项目群项目动态 -->
+    <select id="selectProgramMessageInfoList" resultType="cn.pioneeruniverse.project.vo.MessageInfoVO">
+         SELECT MESSAGE_TITLE AS messageTitle, MESSAGE_CONTENT AS messageContent, CREATE_DATE AS createDate FROM tbl_message_info
+          <where>
+              PROJECT_ID IN
+              <foreach item="item" index="index" collection="projectId" open="(" separator="," close=")">#{item}</foreach>
+          </where>
+          ORDER BY CREATE_DATE DESC limit 8
+    </select>
+
+</mapper>

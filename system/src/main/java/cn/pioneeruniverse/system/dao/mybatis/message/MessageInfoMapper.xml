@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.system.dao.mybatis.message.MessageInfoDao">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.system.entity.TblMessageInfo">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="MESSAGE_SOURCE" jdbcType="TINYINT" property="messageSource" />
+    <result column="MESSAGE_TITLE" jdbcType="VARCHAR" property="messageTitle" />
+    <result column="MESSAGE_CONTENT" jdbcType="VARCHAR" property="messageContent" />
+    <result column="MESSAGE_URL" jdbcType="VARCHAR" property="messageUrl" />
+    <result column="menu_button_id" jdbcType="BIGINT" property="menuButtonId" />
+    <result column="MESSAGE_RECEIVER_SCOPE" jdbcType="TINYINT" property="messageReceiverScope" />
+    <result column="MESSAGE_RECEIVER" jdbcType="VARCHAR" property="messageReceiver" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="DATE" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, MESSAGE_SOURCE, MESSAGE_TITLE, MESSAGE_CONTENT, MESSAGE_URL, menu_button_id, 
+    MESSAGE_RECEIVER_SCOPE, MESSAGE_RECEIVER, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, 
+    LAST_UPDATE_DATE
+  </sql>
+  
+<!--   根据id查询消息 -->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_message_info
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+<!--   获取所有消息 -->
+  <select id="getAllMessage" parameterType="cn.pioneeruniverse.system.entity.TblMessageInfo" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_message_info tmi
+    <where>
+        tmi.STATUS = 1
+        <if test="messageSource != null">
+            and tmi.MESSAGE_SOURCE = #{messageSource,jdbcType=TINYINT}
+        </if>
+        <if test="messageTitle != null and messageTitle !=''">
+            and tmi.MESSAGE_TITLE like concat("%",#{messageTitle,jdbcType=VARCHAR},"%")
+        </if>
+        <if test="messageContent != null and messageContent !=''">
+            and tmi.MESSAGE_CONTENT like concat("%",#{messageContent,jdbcType=VARCHAR},"%")
+        </if>
+        <if test="messageReceiverScope != null">
+            and tmi.MESSAGE_RECEIVER_SCOPE = #{messageReceiverScope,jdbcType=TINYINT}
+        </if>
+        
+<!--         当前用户为空默认查询全部 -->
+        <if test="currentUserId != null">
+            and (tmi.MESSAGE_RECEIVER_SCOPE = 1 or (tmi.MESSAGE_RECEIVER_SCOPE = 2 and locate(concat(',', #{currentUserId}, ',') , concat(',', tmi.MESSAGE_RECEIVER, ','))))
+        </if>
+        order by ID desc
+    </where>
+  </select>
+  
+<!--   根据id删除消息 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_message_info
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+<!--   插入消息 -->
+  <insert id="insert" parameterType="cn.pioneeruniverse.system.entity.TblMessageInfo">
+    insert into tbl_message_info (PROJECT_ID, MESSAGE_SOURCE, MESSAGE_TITLE,
+      MESSAGE_CONTENT, MESSAGE_URL, menu_button_id, 
+      MESSAGE_RECEIVER_SCOPE, MESSAGE_RECEIVER, 
+      STATUS, CREATE_BY, CREATE_DATE, 
+      LAST_UPDATE_BY, LAST_UPDATE_DATE)
+    values (#{projectId,jdbcType=BIGINT}, #{messageSource,jdbcType=TINYINT}, #{messageTitle,jdbcType=VARCHAR},
+      #{messageContent,jdbcType=VARCHAR}, #{messageUrl,jdbcType=VARCHAR}, #{menuButtonId,jdbcType=BIGINT}, 
+      #{messageReceiverScope,jdbcType=TINYINT}, #{messageReceiver,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=DATE})
+  </insert>
+  
+<!--   根据选择信息插入消息 -->
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.system.entity.TblMessageInfo">
+    insert into tbl_message_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="messageSource != null">
+        MESSAGE_SOURCE,
+      </if>
+      <if test="messageTitle != null">
+        MESSAGE_TITLE,
+      </if>
+      <if test="messageContent != null">
+        MESSAGE_CONTENT,
+      </if>
+      <if test="messageUrl != null">
+        MESSAGE_URL,
+      </if>
+      <if test="menuButtonId != null">
+        menu_button_id,
+      </if>
+      <if test="messageReceiverScope != null">
+        MESSAGE_RECEIVER_SCOPE,
+      </if>
+      <if test="messageReceiver != null">
+        MESSAGE_RECEIVER,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="messageSource != null">
+        #{messageSource,jdbcType=TINYINT},
+      </if>
+      <if test="messageTitle != null">
+        #{messageTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="messageContent != null">
+        #{messageContent,jdbcType=VARCHAR},
+      </if>
+      <if test="messageUrl != null">
+        #{messageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="menuButtonId != null">
+        #{menuButtonId,jdbcType=BIGINT},
+      </if>
+      <if test="messageReceiverScope != null">
+        #{messageReceiverScope,jdbcType=TINYINT},
+      </if>
+      <if test="messageReceiver != null">
+        #{messageReceiver,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  
+<!--   根据选择信息更新消息 -->
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.system.entity.TblMessageInfo">
+    update tbl_message_info
+    <set>
+      <if test="messageSource != null">
+        MESSAGE_SOURCE = #{messageSource,jdbcType=TINYINT},
+      </if>
+      <if test="messageTitle != null">
+        MESSAGE_TITLE = #{messageTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="messageContent != null">
+        MESSAGE_CONTENT = #{messageContent,jdbcType=VARCHAR},
+      </if>
+      <if test="messageUrl != null">
+        MESSAGE_URL = #{messageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="menuButtonId != null">
+        menu_button_id = #{menuButtonId,jdbcType=BIGINT},
+      </if>
+      <if test="messageReceiverScope != null">
+        MESSAGE_RECEIVER_SCOPE = #{messageReceiverScope,jdbcType=TINYINT},
+      </if>
+      <if test="messageReceiver != null">
+        MESSAGE_RECEIVER = #{messageReceiver,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=DATE},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+<!--   根据id更新消息 -->
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.system.entity.TblMessageInfo">
+    update tbl_message_info
+    set MESSAGE_SOURCE = #{messageSource,jdbcType=TINYINT},
+      MESSAGE_TITLE = #{messageTitle,jdbcType=VARCHAR},
+      MESSAGE_CONTENT = #{messageContent,jdbcType=VARCHAR},
+      MESSAGE_URL = #{messageUrl,jdbcType=VARCHAR},
+      menu_button_id = #{menuButtonId,jdbcType=BIGINT},
+      MESSAGE_RECEIVER_SCOPE = #{messageReceiverScope,jdbcType=TINYINT},
+      MESSAGE_RECEIVER = #{messageReceiver,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=DATE}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

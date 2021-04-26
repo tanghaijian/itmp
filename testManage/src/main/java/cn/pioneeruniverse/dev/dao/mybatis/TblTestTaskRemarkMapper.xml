@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblTestTaskRemarkMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblTestTaskRemark">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+      <result column="TEST_TASK_ID" jdbcType="BIGINT" property="testTaskId" />
+      <result column="TEST_TASK_REMARK" jdbcType="VARCHAR" property="testTaskRemark" />
+      <result column="USER_ID" jdbcType="BIGINT" property="userId" />
+      <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+      <result column="USER_ACCOUNT" jdbcType="VARCHAR" property="userAccount" />
+       <result column="STATUS" jdbcType="TINYINT" property="status" />
+      <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+   	  <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+   	  <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+   	  <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <insert id="addTaskRemark"  parameterType="cn.pioneeruniverse.dev.entity.TblTestTaskRemark" >
+   
+      <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+      SELECT LAST_INSERT_ID() AS ID
+    </selectKey>
+    
+  insert into TBL_TEST_TASK_REMARK (TEST_TASK_ID,TEST_TASK_REMARK,USER_ID,USER_NAME,USER_ACCOUNT,CREATE_BY,CREATE_DATE) 
+  values(#{testTaskId},#{testTaskRemark},#{userId},#{userName},#{userAccount},#{createBy},CURRENT_TIMESTAMP)
+  </insert>
+  
+  <select id="selectRemark" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  select ID,TEST_TASK_REMARK,USER_NAME,USER_ACCOUNT,CREATE_DATE  from TBL_TEST_TASK_REMARK
+  <where>
+  	TEST_TASK_ID=#{testTaskId}
+  	and STATUS=1
+  	 order by id desc
+  </where>
+  </select>
+  
+  </mapper>

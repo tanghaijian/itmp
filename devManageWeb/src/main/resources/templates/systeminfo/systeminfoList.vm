@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>系统配置</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" /> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css" />
+     
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css" /> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css" /> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />  
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/systeminfoList/systeminfoList.css"/>   
+    
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script> 
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/component.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/devManageui/static/js/systeminfoList/system_user.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/devManageui/static/js/systeminfoList/systeminfoList.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/devManageui/static/js/systeminfoList/systeminfoPopup.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script>
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap4';
+        $.jgrid.defaults.iconSet = "fontAwesome"; 
+        //页面各种按钮的权限
+        var systemConfig = $auth.hasPermission("$token","devManage:system:config"); 
+        var systemVersion = $auth.hasPermission("$token","devManage:system:version"); 
+        var systemVersionEdit = $auth.hasPermission("$token","devManage:systemVersion:edit");
+        var systemVersionChange = $auth.hasPermission("$token","devManage:systemVersion:change");
+        var systemAddModule = $auth.hasPermission("$token","devManage:system:addModule"); 
+        var systemDeploy = $auth.hasPermission("$token","devManage:system:deploy"); 
+        var systemEnvironment = $auth.hasPermission("$token","devManage:system:environment");
+        var authTest = $auth.hasPermission("$token","devManage:system:authTest");
+        var deleteSystem = $auth.hasPermission("$token","devManage:system:deleteSystem");
+        var deleteModule = $auth.hasPermission("$token","devManage:system:deleteModule");
+    </script> 
+</head>
+<body>
+<div class="color1">
+    <div class="container-fluid" id="search_div">
+        <div class="row control-row">
+       		<div class="col-md-3">
+                <div class="search_font"><label class="control-label">子系统编号：</label></div>
+                <div class="search_input">
+                    <input type="text" class="form-control" placeholder="请输入" id="systemCode" name="systemCode" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">子系统名称：</label></div>
+                <div class="search_input">
+                    <input type="text" class="form-control" placeholder="请输入" id="systemName" name="systemName" />
+                </div>
+            </div> 
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">子系统类型：</label></div>
+                <div class="search_input">
+                    <select class="selectpicker" id="architectureType" name="architectureType">
+                        <option value="">请选择</option>
+						#foreach($dictMap in ${dict.getDictMap(
+							"TBL_SYSTEM_INFO_ARCHITECTURE_TYPE").entrySet()})
+                            <option value="${dictMap.key}">${dictMap.value}</option>
+						#end
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">状态：</label></div>
+                <div class="search_input">
+                    <select class="selectpicker" id="status" name="status">
+                        <option value="">请选择</option>
+                        <option value="1">有效</option>
+                        <option value="2">无效</option>
+                    </select>
+                </div>
+            </div>
+        </div> 
+        <div class="row control-row search_btn">
+            <button type="button" class="btn btn-primary" onclick="searchBoxInfo()">搜&nbsp;&nbsp;&nbsp;索</button>
+            <button type="button" onclick="clearSearch()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button> 
+        </div>
+    </div>
+    <div id="downBtn">
+        <span class="fa fa-caret-up"></span>
+    </div>
+</div>
+<div class="main-content">
+    <div class="content-btn">
+   		#if($auth.hasPermission("$token","devManage:system:add"))
+            <button type="button" onclick="newSystem_btn()" class="btn btn-primary">新建系统</button>&nbsp;
+		#end
+    	#if($auth.hasPermission("$token","devManage:system:sync"))
+        <button type="button" onclick="" class="btn btn-primary">同步系统</button>  &nbsp;
+        #end
+        #if($auth.hasPermission("$token","devManage:system:export"))
+        <button type="button" onclick="" class="btn btn-default">导出系统列表</button>
+        #end
+    </div>
+    <div class="content-table">
+        <div class="wode">
+            <table id="list2"></table>
+            <div id="pager"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑系统弹窗 -->
+<div class="modal fade bs-example-modal-lg" id="addSystem" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+       <div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title">编辑系统</h4>
+				<input id="editSystem_id"  type="hidden" />
+			</div>
+			<div class="modal-body">
+                   <form class="form-horizontal" id="addSyatemForm">
+                   		<div class="form-group">
+                           <label class="col-md-3 control-label"><span class="redStar">*</span>系统编号：</label>
+                           <div class="col-md-8">
+							<input id="addSystemCode" name="addSystemCode"
+								class="form-control tableInput " placeholder="请输入" type="text" />
+                           </div>
+                       </div>
+						<div class="form-group">
+							<label class="col-md-3 control-label"><span class="redStar">*</span>系统名称：</label>
+							<div class="col-md-8">
+	                               <input id="addSystemName" name="addSystemName"
+								   class="form-control tableInput " placeholder="请输入" type="text" />
+							</div>
+						</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<div class="bottom-container">
+					<button type="button" id="userbutton" class="btn btn-primary" data-user="default" onclick="addSystem()">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+ <div class="modal fade bs-example-modal-biggest" id="microService" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-biggest" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="microServiceTitle"></h4>
+                </div>
+                <div class="modal-body"> 
+                    <form id="configInfoForm">
+                    <div class="allInfo">
+                        <div class="def_title">
+                            <span >基本信息</span>
+                            <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+                        </div>
+                        <div class="def_content">
+		                        <input id="microServiceID" type="hidden" />
+		                        <!-- =====================主模块独有的列表项 START==================================== -->
+		                        <div class="rowdiv">
+	                               <div class="form-group def_col_18">
+	                                   <label class="def_col_12 control-label font_right fontWeihgt">系统名称：</label>
+                                          <div class="def_col_24">
+										   <input type="text" class="form-control" id="microServiceName" name="microServiceName"/>
+									   </div>
+	                                   #*<label class="def_col_12 control-label font_left" id="microServiceName"></label>*#
+	                               </div>
+		                               	<div class="form-group def_col_18">
+		                                   	<label class="def_col_12 control-label font_right fontWeihgt">系统编号：</label>
+		                                       <div class="def_col_24">
+		                                           <input type="text" class="form-control" id="microServiceNum" name="microServiceNum"/>
+		                                       </div>
+		                                   	#*<label class="def_col_12 control-label font_left" id="microServiceNum"></label>*#
+		                               	</div>
+		                           </div>
+		                           <div class="rowdiv">
+		                           	   <div class="form-group def_col_18">
+		                                   <label class="def_col_12 control-label font_right fontWeihgt">系统架构：</label>
+		                                   <div class="def_col_24">
+			                                   <select class="selectpicker" id="architectureId" name="architectureId" onchange="showCompilePack( this )">
+													<option value="">请选择</option>
+													#foreach($dictMap in ${dict.getDictMap(
+							                   			 "TBL_SYSTEM_INFO_ARCHITECTURE_TYPE").entrySet()})
+							                          	<option value="${dictMap.key}">${dictMap.value}</option>
+							               			#end
+											   </select>
+		                                   </div>
+		                               </div>
+		                               <div class="form-group def_col_18">
+		                                   <label class="def_col_12 control-label font_right fontWeihgt">部署方式：</label>
+		                                   <div class="def_col_24">
+			                                   <select class="selectpicker" id="deployType" name="deployType">
+													<option value="">请选择</option>
+											   </select>
+		                                   </div>
+		                               </div> 
+		                           </div>
+		                           <div class="rowdiv">
+		                           		<div class="form-group def_col_18">
+		                                   	<label class="def_col_12 control-label font_right fontWeihgt">开发模式：</label> 
+		                               		<div class="def_col_24">
+			                                   <select class="selectpicker" id="developMode" name="developMode">
+													<option value="">请选择</option>
+													<option value="1">敏态</option>
+													<option value="2">稳态</option>
+											   </select>
+		                                   	</div>
+		                               </div> 
+							            <div class="form-group def_col_18">
+		                                   <label class="def_col_12 control-label font_right fontWeihgt">生产环境部署方式：</label>
+		                                   <div class="def_col_24">
+			                                   <select class="selectpicker" id="productionDeployType" name="productionDeployType">
+													<option value="">请选择</option>
+											   </select>
+		                                   </div>
+		                               </div> 
+		                           </div>
+		                           <div class="rowdiv">
+		                               <div class="form-group def_col_18">
+		                                   	<label class="def_col_12 control-label font_right fontWeihgt">是否代码评审：</label> 
+		                               		<div class="def_col_24">
+			                                   <select class="selectpicker" id="codeReviewStatus" name="codeReviewStatus" onchange=" codeReviewShow(this) " >
+													<option value="">请选择</option>
+											   </select>
+		                                   	</div>
+		                               </div> 
+		                               <div class="form-group def_col_18 hidden">
+		                                   	<label class="def_col_12 control-label font_right fontWeihgt">代码评审人：</label> 
+		                               		<div class="def_col_24">
+		                               		   <input type="hidden" id="codeReviewUserIds">
+			                                   <input type="text" class="form-control readonly pointStyle" readonly placeholder="请选择代码评审人" onclick="userModalShow(this)"  id="codeReviewUserName" name="codeReviewUserName"/>
+		                                   	</div>
+		                               </div> 
+		                           </div>
+		                           <div class="rowdiv"> 
+		                           		<div class="form-group def_col_18">
+		                                   <label class="def_col_12 control-label font_right fontWeihgt">是否Sonar扫描：</label>
+		                                   <div class="def_col_24">
+			                               		<select class="selectpicker" id="sonarScanStatus" name="sonarScanStatus">
+													<option value="">请选择</option>
+													<option value="1">是</option>
+													<option value="2">否</option>
+											    </select>		
+										   </div>
+		                               </div> 
+		                           </div>
+		                           <div class="rowdiv">
+		                               <div class="form-group">
+		                                   <label class="def_col_6 control-label font_right fontWeihgt">任务创建方式：</label> 
+		                               	<div class="def_col_30 control-label" id="buildingWay" > 
+		                               		<div class="def_col_4">
+		                               			<input type="radio" onchange="buildingWay(this)" value="1" name="build" />自动
+		                               		</div> 
+		                               		<div class="def_col_4">
+		                               			<input type="radio" onchange="buildingWay(this)" value="2" name="build" />手动
+		                               		</div> 
+		                               	</div>
+		                               </div> 
+		                           </div> 
+		                           <!-- =====================主模块独有的列表项 END==================================== -->
+		                    </div>
+                         </div> 
+		                           
+		                 <div class="allInfo">
+                            <div class="def_title">
+                                <span >编译信息</span>
+                                <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+                            </div>
+                            <div class="def_content">
+		                           <!-- =====================主模块与子模块通用的列表项 START==================================== -->
+		                           <div class="rowdiv">
+		                               <div class="form-group">
+		                                   <label class="def_col_6 control-label font_right fontWeihgt">构建工具：</label> 
+			                               	<div class="def_col_30 control-label" id="buildingTool"> 
+			                               		#foreach($dictMap in ${dict.getDictMap(
+						                   			  "TBL_SYSTEM_INFO_BUILD_TYPE").entrySet()})
+				                          		 <div class="def_col_4">
+				                          		 <input type="radio" onchange="buildingTool(this)" value="${dictMap.key}" name="tools"  />${dictMap.value}
+				                          		 </div>
+						               			  #end
+			                               	</div>
+		                               </div> 
+		                           </div>
+		                           <div class="rowdiv">
+		                               <div class="form-group def_col_18">
+		                                   <label class="def_col_12 control-label font_right fontWeihgt">发布仓库：</label> 
+		                               	   <div class="def_col_24">
+		                                   	   <input type="text" class="form-control" placeholder="请填写发布仓库名称"  id="microServiceReleaseRepositoryName" name="releaseRepositoryName"/>
+		                                   </div>
+		                               </div> 
+		                               <div class="form-group def_col_18">
+		                                   <label class="def_col_12 control-label font_right fontWeihgt">快照仓库：</label>
+		                                   <div class="def_col_24">
+		                                   	   <input type="text" class="form-control" placeholder="请填写快照仓库名称"  id="microServiceSnapshotRepositoryName" name="snapshotRepositoryName"/>
+		                                   </div>
+		                               </div>
+		                           </div>
+		                           <div class="rowdiv">
+			                           <div class="form-group def_col_18">							                
+							                <label class="def_col_12 control-label font_right fontWeihgt">构建工具版本：</label>							                
+							                <div class="def_col_24">
+							                     <select class="selectpicker" id="editBuildToolVersion" name="editBuildToolVersion">
+							                     	  <option value="">请选择</option>
+							                          #foreach($dictMap in ${dict.getDictMap(
+							                   			  "TBL_SYSTEM_INFO_BUILD_TOOL_VERSION").entrySet()})
+							                          		 <option value="${dictMap.key}">${dictMap.value}</option>
+							               			  #end
+							                    </select>
+							                </div>
+							            </div> 
+							            <div class="form-group def_col_18">							                
+							                <label class="def_col_12 control-label font_right fontWeihgt">构建打包后缀：</label>							                
+							                <div class="def_col_24">
+							                     <select class="selectpicker" id="editPackageSuffix" name="editPackageSuffix">
+							                     	  <option value="">请选择</option>
+							                          #foreach($dictMap in ${dict.getDictMap(
+							                   			  "TBL_SYSTEM_INFO_PACKAGE_SUFFIX").entrySet()})
+							                          		 <option value="${dictMap.key}">${dictMap.value}</option>
+							               			  #end
+							                    </select>
+							                </div>
+							            </div>
+		                           </div>
+		                           <div class="rowdiv showTag showMaven showNexus">
+		                               <div class="form-group def_col_18">
+		                                   <label class="def_col_12 control-label font_right fontWeihgt">GroupID：</label>
+		                                   <div class="def_col_24">
+		                                       <input type="text" class="form-control" placeholder="请填写GroupID,用于Maven编译及制品部署" id="microServiceGroupID" name="groupID"/>
+		                                   </div> 
+		                               </div> 
+		                               <div class="form-group def_col_18">
+		                               	   <label class="def_col_12 control-label font_right fontWeihgt">ArtifactID：</label>
+		                                   <div class="def_col_24">
+		                                       <input type="text" class="form-control" placeholder="请填写ArtifactID,用于Maven编译及制品部署"  id="microServiceArtifactID" name="artifactID"/>
+		                                   </div>
+		                               </div>
+		                           </div> 
+		                           <div class="rowdiv showTag showMaven showAnt">
+		                           		<div class="form-group def_col_18">							                
+							                <label class="def_col_12 control-label font_right fontWeihgt">jdk版本：</label>							                
+							                <div class="def_col_24">
+							                     <select class="selectpicker" id="editJdkVersion" name="editJdkVersion">
+							                     	  <option value="">请选择</option>
+							                          #foreach($dictMap in ${dict.getDictMap(
+							                   			  "TBL_SYSTEM_INFO_JDK_VERSION").entrySet()})
+							                          		 <option value="${dictMap.key}">${dictMap.value}</option>
+							               			  #end
+							                    </select>
+							                </div>
+							            </div>
+		                           </div>
+		                           <div class="rowdiv">
+		                           		<div class="form-group def_col_18">
+		                                   <label class="def_col_12 control-label font_right fontWeihgt">编译打包命令：</label>
+		                                   <div class="def_col_24">
+			                               		<textarea class="def_textarea" placeholder="请填写编译打包命令"  id="editCompileCommand" name="editCompileCommand"></textarea>
+		                                   </div>
+		                               </div>
+		                           </div>
+		                           <!-- =====================主模块与子模块通用的列表项 END==================================== -->
+                        </div>
+                        <br />
+                    </div> 
+                    </form>  
+                    <!-- <div class="allInfo autoInfo" id="codeConfig">
+                        <div class="def_title">
+                            <span>源码管理配置</span>
+                            <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+                        </div>
+                        <div class="def_content">
+                        	 <div class="rowdiv" style="margin-bottom: 15px;">
+                        	 	 <div class="def_col_3">
+		                        	<label class="control-label">托管服务</label>
+		                        </div>
+		                        <div class="def_col_12">  
+			                        <select class="selectpicker microServiceScmType" onchange="getToolId( this )" id="scmTypeName" name="scmTypeName">
+			                        	<option value="">请选择</option>
+			                        	<option value="1">Git</option>
+			                            <option value="2">SVN</option>
+			                        </select> 
+		                        </div>
+                        	 </div>
+                             <div class="dataEntry microServiceData" style="display:none">  
+                             </div>
+                             <div class="def_btnGroup" style="display:none">
+                                 <button type="button" onclick="addDataEntry()" class="btn btn-primary">新增环境</button>
+                                 <button type="button" onclick="selectVersion()" class="btn btn-primary">选择版本</button>
+                             </div>
+                        </div>
+                    </div> -->
+                    <div class="allInfo manualInfo">
+                        <div class="def_title">
+                            <span>构建/部署信息配置</span>
+                            <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+                        </div>
+                        <div class="def_content">
+                        	<form id="buildingForm">
+                             <div class="configInfo">
+                             	<div class="configTit">
+                             		构建配置
+                             		<a class="a_style" onclick="addJenkinsJob(this)">新增</a>
+                             	</div>
+                             	<div class="configContent buildingConfig">
+                             		 
+                             	</div>
+                             </div>
+                             <div class="configInfo">
+                             	<div class="configTit">
+                             		部署配置
+                             		<a class="a_style" onclick="addJenkinsJob(this)">新增</a>
+                             	</div>
+                             	<div class="configContent deployConfig">
+                             		 
+                             	</div>
+                             </div>
+                             </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                	<button type="button" class="btn btn-primary" onclick="microServiceCommit()">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button> 
+                </div>
+            </div>
+        </div>
+    </div>
+ <div class="modal fade bs-example-modal-lg" id="normalService" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="microChildService"></h4>
+                </div>
+                <div class="modal-body">
+                    <form id="normalServiceForm">
+                    <div class="allInfo">
+                        <div class="def_title">
+                            <span >基本信息</span>
+                            <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+                        </div>
+                        <div class="def_content">
+	                        	<input id="microChildServiceID" type="hidden">
+	                        	<input id="microChildSystemId" type="hidden">
+	                            <div class="rowdiv">
+	                                <div class="form-group col-md-6">
+	                                    <label class="col-sm-4 control-label fontWeihgt">系统名称：</label>
+	                                    <label class="col-sm-8 control-label font_left" id="microChildServiceSystemName"></label>
+	                                </div>
+	                                <div class="form-group col-md-6">
+	                                    <label class="col-sm-4 control-label fontWeihgt">系统编号：</label>
+	                                    <label class="col-sm-8 control-label font_left" id="microChildServiceSystemNum"></label>
+	                                </div>
+	                            </div>
+	                            <div class="rowdiv">
+	                                <div class="form-group col-md-6">
+	                                    <label class="col-sm-4 control-label fontWeihgt"><span style="color:red">*</span>模块名称：</label>
+	                                    <div class="col-sm-8 search_input">
+	                                    	<input type="text" class="form-control" name="microChildServiceName" id="microChildServiceName"/>
+	                                    </div>  
+	                                </div>
+	                                <div class="form-group col-md-6">
+	                                    <label class="col-sm-4 control-label fontWeihgt"><span style="color:red">*</span>模块编号：</label>
+	                                    <div class="col-sm-8 search_input">
+	                                    	<input type="text" class="form-control" name="microChildServiceNum" id="microChildServiceNum"/>
+	                                    </div> 
+	                                </div>
+	                            </div>
+	                            <div class="rowdiv">
+	                            	<div class="form-group col-md-6">
+	                                    <label class="col-sm-4 control-label fontWeihgt"><span style="color:red">*</span>构建依赖：</label>
+	                                    <div class="col-sm-8 search_input">
+	                                    	<select class="selectpicker" id="normalBuildDependency" name="normalBuildDependency">
+						                        <option value="">请选择</option>
+						                    </select>
+	                                    </div>
+	                                </div>
+	                                <div class="form-group col-md-6">
+	                                    <label class="col-sm-4 control-label fontWeihgt">构建顺序：</label>
+	                                    <div class="col-sm-8 search_input">
+	                                    	<input type="text" class="form-control" name="normalBuildDependencySequence" id="normalBuildDependencySequence" />
+	                                    </div>
+	                                </div>
+                            	</div>
+                            </div>
+                      </div>
+                            
+                      <div class="allInfo">
+                        <div class="def_title">
+                            <span >编译信息</span>
+                            <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+                        </div>
+                        <div class="def_content">
+                            <!-- =====================主模块与子模块通用的列表项 START==================================== -->
+                           <div class="rowdiv">
+                               <div class="form-group">
+                                   <label class="def_col_6 control-label font_right fontWeihgt">构建工具：</label> 
+	                               	<div class="def_col_30 control-label" id="childBuildingTool"> 
+	                               		#foreach($dictMap in ${dict.getDictMap(
+				                   			  "TBL_SYSTEM_INFO_BUILD_TYPE").entrySet()})
+		                          		 <div class="def_col_4">
+		                          		 <input type="radio" onchange="buildingTool(this)" value="${dictMap.key}" name="tools"  />${dictMap.value}
+		                          		 </div>
+				               			  #end
+	                               	</div>
+                               </div> 
+                           </div>
+                           <div class="rowdiv">
+                               <div class="form-group col-md-6">
+                                   <label class="col-sm-4 control-label fontWeihgt">发布仓库：</label> 
+                               	   <div class="col-sm-8 search_input">
+                                   	   <input type="text" class="form-control" placeholder="请填写发布仓库名称"  id="childReleaseRepositoryName" name="childReleaseRepositoryName"/>
+                                   </div>
+                               </div> 
+                               <div class="form-group col-md-6">
+                                   <label class="col-sm-4 control-label fontWeihgt">快照仓库：</label>
+                                   <div class="col-sm-8 search_input">
+                                   	   <input type="text" class="form-control" placeholder="请填写快照仓库名称"  id="childSnapshotRepositoryName" name="childSnapshotRepositoryName"/>
+                                   </div>
+                               </div>
+                           </div>
+                           <div class="rowdiv">
+	                           <div class="form-group col-md-6">							                
+					                <label class="col-sm-4 control-label fontWeihgt">构建工具版本：</label>							                
+					                <div class="col-sm-8 search_input">
+					                     <select class="selectpicker" id="childBuildToolVersion" name="childBuildToolVersion">
+					                     	  <option value="">请选择</option>
+					                          #foreach($dictMap in ${dict.getDictMap(
+					                   			  "TBL_SYSTEM_INFO_BUILD_TOOL_VERSION").entrySet()})
+					                          		 <option value="${dictMap.key}">${dictMap.value}</option>
+					               			  #end
+					                    </select>
+					                </div>
+					            </div> 
+					            <div class="form-group col-md-6">							                
+					                <label class="col-sm-4 control-label fontWeihgt">构建打包后缀：</label>							                
+					                <div class="col-sm-8 search_input">
+					                     <select class="selectpicker" id="childPackageSuffix" name="childPackageSuffix">
+					                     	  <option value="">请选择</option>
+					                          #foreach($dictMap in ${dict.getDictMap(
+					                   			  "TBL_SYSTEM_INFO_PACKAGE_SUFFIX").entrySet()})
+					                          		 <option value="${dictMap.key}">${dictMap.value}</option>
+					               			  #end
+					                    </select>
+					                </div>
+					            </div>
+                           </div>
+                           <div class="rowdiv showTag showMaven showNexus">
+                               <div class="form-group col-md-6">
+                                   <label class="col-sm-4 control-label fontWeihgt">GroupID：</label>
+                                   <div class="col-sm-8 search_input">
+                                       <input type="text" class="form-control" placeholder="请填写GroupID,用于Maven编译及制品部署" id="childGroupID" name="childGroupID"/>
+                                   </div> 
+                               </div>
+                            	<div class="form-group col-md-6">
+                                    <label class="col-sm-4 control-label fontWeihgt">ArtifactID：</label>
+                                    <div class="col-sm-8 search_input">
+                                    	<input type="text" class="form-control" placeholder="请填写ArtifactID,用于Maven编译及制品部署" name="childArtifactID" id="childArtifactID" />
+                                    </div>
+                                </div>
+                            </div>
+                           <div class="rowdiv showTag showMaven showAnt">
+                           		<div class="form-group col-md-6">							                
+					                <label class="col-sm-4 control-label fontWeihgt">jdk版本：</label>							                
+					                <div class="col-sm-8 search_input">
+					                     <select class="selectpicker" id="childJdkVersion" name="childJdkVersion">
+					                     	  <option value="">请选择</option>
+					                          #foreach($dictMap in ${dict.getDictMap(
+					                   			  "TBL_SYSTEM_INFO_JDK_VERSION").entrySet()})
+					                          		 <option value="${dictMap.key}">${dictMap.value}</option>
+					               			  #end
+					                    </select>
+					                </div>
+					            </div>
+                           </div>
+                           <!-- =====================主模块与子模块通用的列表项 END==================================== -->
+							<div class="rowdiv">
+								<div class="form-group col-md-6">
+									<label class="col-sm-4 control-label fontWeihgt">编译相对路径：</label>
+									<div class="col-sm-8 search_input">
+
+										<input type="text" class="form-control" placeholder="请填写编译相对路径" name="relativePath" id="relativePath" />
+##										<textarea class="def_textarea" placeholder="请填写编译打包命令"  id="relativePath" name="relativePath"></textarea>
+									</div>
+								</div>
+							</div>
+
+
+
+
+                           	<div class="rowdiv"> 
+                                <div class="form-group col-md-6">
+                                    <label class="col-sm-4 control-label fontWeihgt">编译打包命令：</label>
+                                    <div class="col-sm-8 search_input">
+                                    	<textarea class="def_textarea" placeholder="请填写编译打包命令"  id="childCompileCommand" name="childCompileCommand"></textarea>
+                                    </div>
+                                </div>
+                           	</div>
+                        </div>
+                    </div>
+                    </form> 
+                    <!-- <div class="allInfo">
+                        <div class="def_title">
+                            <span >配置信息</span>
+                            <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+                        </div>
+                        <div class="def_content">
+                            <div class="rowdiv" id="environmentDIV">
+                                <div class="form-group col-md-1">
+                                
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="microChildServiceCommit()">确定</button>
+	                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>  
+<div class="modal fade bs-example-modal-lg" id="addService" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" >新增子模块</h4>
+                </div>
+                <div class="modal-body">
+                 <form id="newform">
+                    <div class="allInfo">
+                        <div class="def_title">
+                            <span >基本信息</span>
+                            <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+                        </div>
+                        <div class="def_content">
+                        	<input id="systemId" type="hidden">
+                            <div class="rowdiv">
+                                <label class="col-sm-2 control-label fontWeihgt">系统名称：</label>
+                                <label class="col-sm-4 control-label font_left" id="serviceSystemName"></label>
+                                <label class="col-sm-2 control-label fontWeihgt">系统编号：</label>
+                                <label class="col-sm-4 control-label font_left" id="serviceSystemNum"></label> 
+                            </div>
+                            <div class="rowdiv">
+                                <div class="form-group col-md-6">
+                                    <label class="col-sm-4 control-label fontWeihgt"><span style="color:red">*</span>模块名称：</label>
+                                    <div class="col-sm-8 search_input">
+                                    	<input type="text" class="form-control" placeholder="中文或者英文的工程描述" name="moduleName" id="moduleName" />
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="col-sm-4 control-label fontWeihgt"><span style="color:red">*</span>模块编号：</label>
+                                    <div class="col-sm-8 search_input">
+                                    	<input type="text" class="form-control" placeholder="编号与svn对应文件夹名称相同" name="moduleCode" id="moduleCode"/>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="rowdiv">
+                            	<div class="form-group col-md-6">
+                                    <label class="col-sm-4 control-label fontWeihgt"><span style="color:red">*</span>构建依赖：</label>
+                                    <div class="col-sm-8 search_input">
+                                    	<select class="selectpicker form-control" id="addBuildDependency" name="addBuildDependency">
+					                        <option value="">请选择</option>
+					                        <option value="1">必须</option>
+					                        <option value="2">非必须</option>
+					                    </select>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="col-sm-4 control-label fontWeihgt">构建顺序：</label>
+                                    <div class="col-sm-8 search_input">
+                                    	<input type="text" class="form-control" placeholder="非必填" name="addBuildDependencySequence" id="addBuildDependencySequence" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                            
+                      <div class="allInfo">
+                        <div class="def_title">
+                            <span >编译信息</span>
+                            <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+                        </div>
+                        <div class="def_content">
+                            <!-- =====================主模块与子模块通用的列表项 START==================================== -->
+                           <div class="rowdiv">
+                               <div class="form-group">
+                                   <label class="def_col_6 control-label font_right fontWeihgt">构建工具：</label> 
+	                               	<div class="def_col_30 control-label" id="addBuildingTool"> 
+	                               		#foreach($dictMap in ${dict.getDictMap(
+				                   			  "TBL_SYSTEM_INFO_BUILD_TYPE").entrySet()})
+		                          		 <div class="def_col_4">
+		                          		 <input type="radio" onchange="buildingTool(this)" value="${dictMap.key}" name="tools"  />${dictMap.value}
+		                          		 </div>
+				               			  #end
+	                               	</div>
+                               </div> 
+                           </div>
+                           <div class="rowdiv">
+                               <div class="form-group col-md-6">
+                                   <label class="col-sm-4 control-label fontWeihgt">发布仓库：</label> 
+                               	   <div class="col-sm-8 search_input">
+                                   	   <input type="text" class="form-control" placeholder="请填写发布仓库名称"  id="addReleaseRepositoryName" name="addReleaseRepositoryName"/>
+                                   </div>
+                               </div> 
+                               <div class="form-group col-md-6">
+                                   <label class="col-sm-4 control-label fontWeihgt">快照仓库：</label>
+                                   <div class="col-sm-8 search_input">
+                                   	   <input type="text" class="form-control" placeholder="请填写快照仓库名称"  id="addSnapshotRepositoryName" name="addSnapshotRepositoryName"/>
+                                   </div>
+                               </div>
+                           </div>
+                           <div class="rowdiv">
+	                           <div class="form-group col-md-6">							                
+					                <label class="col-sm-4 control-label fontWeihgt">构建工具版本：</label>							                
+					                <div class="col-sm-8 search_input">
+					                     <select class="selectpicker" id="addBuildToolVersion" name="addBuildToolVersion">
+					                     	  <option value="">请选择</option>
+					                          #foreach($dictMap in ${dict.getDictMap(
+					                   			  "TBL_SYSTEM_INFO_BUILD_TOOL_VERSION").entrySet()})
+					                          		 <option value="${dictMap.key}">${dictMap.value}</option>
+					               			  #end
+					                    </select>
+					                </div>
+					            </div> 
+					            <div class="form-group col-md-6">							                
+					                <label class="col-sm-4 control-label fontWeihgt">构建打包后缀：</label>							                
+					                <div class="col-sm-8 search_input">
+					                     <select class="selectpicker" id="addPackageSuffix" name="addPackageSuffix">
+					                     	  <option value="">请选择</option>
+					                          #foreach($dictMap in ${dict.getDictMap(
+					                   			  "TBL_SYSTEM_INFO_PACKAGE_SUFFIX").entrySet()})
+					                          		 <option value="${dictMap.key}">${dictMap.value}</option>
+					               			  #end
+					                    </select>
+					                </div>
+					            </div>
+                           </div>
+                           <div class="rowdiv showTag showMaven showNexus">
+                               <div class="form-group col-md-6">
+                                   <label class="col-sm-4 control-label fontWeihgt">GroupID：</label>
+                                   <div class="col-sm-8 search_input">
+                                       <input type="text" class="form-control" placeholder="请填写GroupID,用于Maven编译及制品部署" id="addGroupID" name="addGroupID"/>
+                                   </div> 
+                               </div>
+                            	<div class="form-group col-md-6">
+                                    <label class="col-sm-4 control-label fontWeihgt">ArtifactID：</label>
+                                    <div class="col-sm-8 search_input">
+                                    	<input type="text" class="form-control" placeholder="请填写ArtifactID,用于Maven编译及制品部署" name="addArtifactID" id="addArtifactID" />
+                                    </div>
+                                </div>
+                            </div>
+                           <div class="rowdiv showTag showMaven showAnt">
+                           		<div class="form-group col-md-6">							                
+					                <label class="col-sm-4 control-label fontWeihgt">jdk版本：</label>							                
+					                <div class="col-sm-8 search_input">
+					                     <select class="selectpicker" id="addJdkVersion" name="addJdkVersion">
+					                     	  <option value="">请选择</option>
+					                          #foreach($dictMap in ${dict.getDictMap(
+					                   			  "TBL_SYSTEM_INFO_JDK_VERSION").entrySet()})
+					                          		 <option value="${dictMap.key}">${dictMap.value}</option>
+					               			  #end
+					                    </select>
+					                </div>
+					            </div>
+                           </div>
+                           <!-- =====================主模块与子模块通用的列表项 END==================================== -->
+							<div class="rowdiv">
+								<div class="form-group col-md-6">
+									<label class="col-sm-4 control-label fontWeihgt">编译相对路径：</label>
+									<div class="col-sm-8 search_input">
+										<input type="text" class="form-control" placeholder="请填写编译相对路径" name="relativePathAdd" id="relativePathAdd" />
+
+									</div>
+								</div>
+							</div>
+
+                            <div class="rowdiv"> 
+					            <div class="form-group col-md-6">
+                                   <label class="col-sm-4 control-label fontWeihgt">编译打包命令：</label>
+                                   <div class="col-sm-8 search_input">
+	                               		<textarea class="def_textarea" placeholder="请填写编译打包命令"  id="addCompileCommand" name="addCompileCommand"></textarea>
+                                   </div>
+                                </div> 
+                           </div>
+                        </div>
+                    </div>
+                    <!-- <div class="allInfo">
+                        <div class="def_title">
+                            <span >配置信息</span>
+                            <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+                        </div>
+                        <div class="def_content">
+                            <div class="rowdiv" id="addModuleScmDiv">
+                                <div class="form-group col-md-1">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                    </form>
+                </div>
+
+                <div class="modal-footer"> 
+                    <button type="button" class="btn btn-primary" onclick="addMudule()">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>     
+    <div class="modal fade bs-example-modal-lg" id="versionModal" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" >版本管理</h4>
+                </div>
+                <div class="modal-body">
+                	<div class="content-btn" style="padding-left:0">
+                		#if($auth.hasPermission("$token","devManage:systemVersion:add"))
+        				<button type="button" onclick="insertVersion()" class="btn btn-primary">新增版本</button>
+        				#end
+    				</div>
+                   	<div class="wode">
+            			<table id="list3"></table>
+        			</div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+	<div class="modal fade" id="promptBox" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+            	<input id="promptBoxRowData" type="hidden" />
+                <div class="modal-body modal-body2">
+                    <span class="alertStyle">!</span>
+                    <p id="promptBoxSysName"></p>
+                    <p>你确定要删除本条信息吗？</p> 
+                    <br />
+                    <p class="colFont">点击【确定】，删除本条信息</p>
+                    <p class="colFont">点击【取消】，取消操作</p>
+                </div>
+                <div class="modal-footer modal-footer2"> 
+                </div>
+            </div>
+        </div>
+</div> 
+##部署配置  
+<div class="modal fade bs-example-modal-lg" id="deploymentConfig" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="deploymentConfigTit"></h4>
+            </div>
+            <div class="modal-body">
+            	<input type="hidden" id="deploy_serverId"  value=''/>
+            	<input type="hidden" id="deploy_Id"  value=''/>
+           		<div id="serverDiv">
+           			<div class="def_colList">
+	            	  	<div class="def_colList_menu">
+	            	  		<ul>
+	            	  		</ul>
+	            	  	</div>
+	            	  	<div class="def_colList_cont">
+	            	  		<div class="def_rowList">
+	            	  			<div class="def_rowList_menu">
+	            	  				<ul>
+			            	  		</ul>
+	            	  			</div>
+	            	  			<div class="def_rowList_cont">
+	            	  			 	 <form id="deployInfoForm">
+			                           <div class="rowdiv">
+			                               <div class="form-group">
+			                                   <label class="def_col_5 control-label font_right fontWeihgt"><span class="checkfont">*</span>目标服务器：</label>
+			                                   <div class="def_col_31">
+				                                   <div id = "serverGroup" class="def_hideDiv fakeInput pointStyle" onclick="serverShow()">
+	                       													
+	                       						   </div>
+			                                   	   <!-- <input type="hidden" id="serverId" />
+			                                       <input type="text" class="form-control pointStyle" readonly placeholder="请选择服务器" id="hostName"/> -->
+			                                   </div> 
+			                               </div>
+			                           </div>
+			                           <div class="rowdiv">     
+			                               <div class="form-group">
+			                               	   <label class="def_col_5 control-label font_right fontWeihgt"><span class="checkfont">*</span>部署路径：</label>
+			                                   <div class="def_col_31">
+			                                       <input type="text" class="form-control" placeholder="请填写部署路径"  id="deployPath" name="deployPath"/>
+			                                   </div>
+			                               </div>
+			                           </div>
+			                           <!-- <div class="rowdiv">
+							                <div class="search_font"><label class="control-label">模版类型：</label></div>
+							                <div class="search_input">
+							                    <select class="selectpicker" id="templateType" name="">
+							                        <option value="0">自定义</option> 
+							                    </select>
+							                </div>
+							            </div> -->
+			                           <div class="rowdiv">
+			                           	   <div class="form-group def_col_18">
+			                                   <label class="def_col_10 control-label font_right fontWeihgt"><span class="checkfont">*</span>超时时间(秒)：</label>
+			                                   <div class="def_col_26">
+				                                   <input type="text" class="form-control" placeholder="请填写超时时间"  id="timeOut" name="timeOut"/>
+			                                   </div>
+			                               </div>
+			                               <div class="form-group def_col_18">
+			                                   <label class="def_col_10 control-label font_right fontWeihgt"><span class="checkfont">*</span>重试次数：</label>
+			                                   <div class="def_col_26">
+			                                   	   <input type="text" class="form-control" placeholder="请填写重试次数"  id="retryNumber" name="retryNumber"/>
+			                                   </div>
+			                               </div>
+			                               <div class="form-group def_col_18">
+			                                   <label class="def_col_10 control-label font_right fontWeihgt">部署顺序：</label>
+			                                   <div class="def_col_26">
+			                                   	   <input type="text" class="form-control" placeholder="请填写部署顺序,顺序相同会执行并发部署"  id="deploySequence" name="deploySequence"/>
+			                                   </div>
+			                               </div>
+			                           </div>  
+			                           <div id="addConfigContent">
+			                           	    
+			                           </div>
+			                           <div class="rowdiv addConfigBtn">
+			                               <div class="def_col_5"></div>
+			                               <div class="def_col_31">
+			                               		<div class="btn btn-primary"  onclick="addConfig()">新&nbsp;&nbsp;&nbsp;增</div>	
+			                               		<div class="btn btn-primary"  onclick="copyInfo()">复&nbsp;&nbsp;&nbsp;制</div>	
+			                               		<div class="btn btn-primary"  onclick="pasteInfo()">粘&nbsp;&nbsp;&nbsp;贴</div>	
+			                               </div> 
+			                           </div>
+	                            </form>  
+	            	  			</div>
+	            	  		</div> 
+	            	  	</div>
+	            	  </div>
+           		</div>
+            </div> 
+            <div class="modal-footer">
+            	<button type="button" class="btn btn-primary"  onclick="updateDeploy()">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-lg" id="autoTestConfig" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="autoTestConfigTit"></h4>
+            </div>
+            <div class="modal-body">
+            	<form class="form-horizontal" id="autoTestForm">
+	            	<input type="hidden" id="autoTestSystemId"  value=''/>
+	            	<input type="hidden" id="authTestArchitectureType"  value=''/>
+	           		<div class="allInfo autoInfo">
+	                    <div class="def_title">
+	                        <span>自动化配置</span>
+	                        <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+	                    </div>
+	                    <div class="def_content">
+	                         <div class="dataEntry autoTestData"> 
+	                         </div>
+	                    </div>
+	                </div>
+           		</form>
+            </div> 
+            <div class="modal-footer">
+            	<button type="button" class="btn btn-primary"  onclick="updateAutoTest()">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+##服务器选择
+	<div  class="modal fade bs-example-modal-lg" tabindex="-1" id="serverModal" role="dialog" aria-labelledby="serverModal" >
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content modalStyle">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"  aria-hidden="true">
+                        &times;
+                    </button>
+						<span class="modal-title">请选择服务器</span>
+					</div>
+					<div class="modal-body">
+						<div class="color1">
+							<div class="container-fluid" id="">
+								<div class="row control-row">
+								<div class="col-md-6">
+										<div class="search_font">
+											<label class="control-label">主机名：</label>
+										</div>
+										<div class="search_input">
+											<input type="text" class="form-control" placeholder="请输入" id="host" name="host" />
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="search_font">
+											<label class="control-label">IP：</label>
+										</div>
+										<div class="search_input">
+											<input type="text" class="form-control" placeholder="请输入" id="IP" name="IP" />
+										</div>
+									</div>
+								</div>
+								<div class="row control-row search_btn">
+									<button type="button" class="btn btn-primary" onclick="serverShow()">搜&nbsp;&nbsp;&nbsp;索</button>
+									<button type="button" class="btn btn-default" onclick="clearServer()">重&nbsp;&nbsp;&nbsp;置</button>
+								</div>
+							</div>
+								
+							 <div id="downBtn2">
+                                <span class="fa fa-caret-up"></span>
+                            </div>
+						</div>
+						 <br>
+							
+						 <div class="content-table">
+                            <div class="wode">
+                             <table id="serverTable"></table>
+									<div id="serverPage"></div>
+                            </div>
+                        </div>
+						
+					</div>
+					<div class="modal-footer">
+						<div class="bottom-container">
+							<button type="button" class="btn btn-primary" onclick="commitServer()" >确定</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal" >取消</button>
+					</div>
+					</div>
+				</div>
+			</div>
+		</div>	
+		
+		<!-- ##版本选择
+		<div  class="modal fade bs-example-modal-sm" tabindex="-1" id="versionSelModal" role="dialog" aria-labelledby="versionSelModal" >
+			<div class="modal-dialog modal-sm" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"  aria-hidden="true">
+                        &times;
+                    </button>
+						<span class="modal-title">请选择版本</span>
+					</div>
+					<div class="modal-body">
+						
+						
+					</div>
+					<div class="modal-footer">
+						<div class="bottom-container">
+							<button type="button" class="btn btn-primary" onclick="commitVersion()" >确定</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal" >取消</button>
+					</div>
+					</div>
+				</div>
+			</div>
+		</div>	 -->
+	 #*人员弹框*#
+    <div class="modal fade bs-example-modal-lg" id="userModal" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-lg modal-user" role="document">
+            <div class="modal-content modalStyle">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <span>选择人员</span>
+                </div>
+                <div class="modal-body">
+                        <div class="color1">
+                            <div class="container-fluid">
+                                <div class="row control-row">
+                                    <div class="col-md-4">
+                                        <div class="search_font"><label class="control-label">姓名：</label></div>
+                                        <div class="search_input">
+                                            <input type="text" class="form-control " placeholder="请输入" id="userName" name="userName" value="" />
+                                        </div>
+                                    </div>
+                                   
+                                     <div class="col-md-4">
+                                        <div class="search_font"><label class="control-label">部门：</label></div>
+                                        <div class="search_input">
+                                           #* <select class="selectpicker" id="deptName" name="deptName">
+                                            </select>*#
+                                            <input type="text" class="form-control " placeholder="请输入" id="deptName" name="deptName" value="" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="search_font"><label class="control-label">公司：</label></div>
+                                        <div class="search_input">
+                                            #*<select class="selectpicker" id="companyName" name="companyName">
+                                            </select>*#
+                                            <input type="text" class="form-control " placeholder="请输入" id="companyName" name="companyName" value="" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row control-row search_btn">
+                                    <button type="button" class="btn btn-primary" onclick="userTableShow()">搜&nbsp;&nbsp;&nbsp;索</button>
+                                    <button type="button" onclick="clearSearchUser()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+                                </div>
+
+                            </div>
+                            <div id="downBtn">
+                                <span class="fa fa-caret-up"></span>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="content-table">
+                            <div class="wode">
+                                <table id="userTable"></table>
+                                <div id="userPage"></div>
+                            </div>
+                        </div>
+                </div>
+
+                <div class="modal-footer">
+                    <div class="bottom-container">
+                        <button type="button" id="userbutton" class="btn btn-primary" data-user="default" onclick="commitUser()">确定</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 环境配置弹窗 -->
+    <div class="modal fade bs-example-modal-lg" id="environmentModal" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-lg modal-user" role="document">
+            <div class="modal-content modalStyle">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">配置环境</h4>
+                </div>
+                <div class="modal-body">
+	                <div class="content-table">
+	                     <div class="wode">
+	                         <table id="environmentTable"></table>
+	                         <div id="userPage"></div>
+	                     </div>
+	                 </div> 
+                </div> 
+                <div class="modal-footer">
+                    <div class="bottom-container">
+                        <button type="button" id="userbutton" class="btn btn-primary" data-user="default" onclick="commitEnvironment()">确定</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+   <div id="loading"> 
+		<img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+   </div>  
+   
+</body> 
+</html>
+ 

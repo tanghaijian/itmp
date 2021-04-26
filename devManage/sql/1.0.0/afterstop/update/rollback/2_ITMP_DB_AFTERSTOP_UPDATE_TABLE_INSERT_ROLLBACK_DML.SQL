@@ -1,0 +1,1 @@
+delete from AFTERSTOP_UPDATE where ID=1;

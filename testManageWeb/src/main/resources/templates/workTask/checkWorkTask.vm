@@ -1,0 +1,277 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>测试工作任务管理</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" /> 
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/daterangepicker-bs3.css" /> 
+	
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css" />
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css" /> 
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/jquery.editable-select.min.css" />
+	
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css"/> 
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />  
+    <link rel="stylesheet" href="#springUrl('')/testManageui/static/css/testManagement/workTaskManagement/css.css" />
+    
+	 
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/moment.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+    
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="#springUrl('')/testManageui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script> 
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script> 
+     
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/laydate.js"></script> 
+	<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/component.js"></script> 
+	<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common.js"></script> 
+	<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+	<script type="text/ecmascript" src="#springUrl('')/testManageui/static/js/worktask/checkWorkTask.js"></script> 
+    <script type="text/ecmascript" src="#springUrl('')/testManageui/static/js/worktask/devPopup.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/daterangepicker.js"></script>
+    
+    <script>
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap4';
+        $.jgrid.defaults.iconSet = "fontAwesome";
+        var ctxStatic="${ctxStatic}";
+        
+        $(function(){
+			$("[data-toggle='tooltip']").tooltip();
+		 });
+		var addwork= $auth.hasPermission("$token","testManage:workTask:add");//新增
+        var workExprot = $auth.hasPermission("$token","testManage:workTask:exprot"); //导出
+        var workEdit = $auth.hasPermission("$token","testManage:workTask:edit");//编辑
+        var workTransfer = $auth.hasPermission("$token","testManage:workTask:transfer"); // 转派
+        var workAssign = $auth.hasPermission("$token","testManage:workTask:assign"); // 分派
+        var workHandle =$auth.hasPermission("$token","testManage:workTask:handle"); // 处理
+
+        var currentUserId = $userId;
+        var currentUserName = " $userName";
+		var pageUrl = '$url';
+		var uifavorite=$uifav.getFavoriteContent("$token","$url"); 
+		
+		var defectMenuUrl ='$system.getMenuByCode("testManageui:defect:toDefect").url';
+        var defectMenuId ='$system.getMenuByCode("testManageui:defect:toDefect").id';
+        var defectMenuName ='$system.getMenuByCode("testManageui:defect:toDefect").menuButtonName';
+        
+        var testSetMenuUrl ='$system.getMenuByCode("testManageui:testSet:toTestSet").url';
+        var testSetMenuId ='$system.getMenuByCode("testManageui:testSet:toTestSet").id';
+        var testSetMenuName ='$system.getMenuByCode("testManageui:testSet:toTestSet").menuButtonName';
+        
+        var environmentTypeList = [];
+        #foreach($dictMap in ${dict.getDictMap("TBL_SYSTEM_SCM_ENVIRONMENT_TYPE").entrySet()})
+        environmentTypeList.push(["${dictMap.key}", "${dictMap.value}"]);
+        #end
+        
+    </script> 
+    <style>
+    	.modal-header{
+    		padding-left: 70px;
+    		position: relative;
+    	}
+    	.modal-header .headReturn{
+    		position: absolute;
+    		top: 8px;
+    		left: 10px;
+    	}
+    </style>
+</head>
+<body>
+	<div style="display:none">
+		<select class="selectpicker" id="taskState" multiple name="taskState" title="请选择">
+	          #foreach($dictMap in ${dict.getDictMap(
+	   			  "TBL_TEST_TASK_TEST_TASK_STATUS").entrySet()})
+	              <option value="${dictMap.key}">${dictMap.value}</option>
+	          #end
+	    </select>
+	</div>
+	<div class="modal-header">
+		<span class="headReturn" data-dismiss="modal">
+		</span>&nbsp;&nbsp;
+		<span id="implementation_status"></span>&nbsp;&nbsp;
+		<span class="modal-title"><span id="SdevCode"></span>|<span id="SdevName"></span> 
+	</div>
+	<div class="modal-body">
+		<input type="hidden" name="attachFiles" id="newSeeFiles" value=""/>
+		<input type="hidden" name="attachFiles" id="SeeFiles" value=""/>
+		<div class="def_col_24">
+			<div class="allInfo">
+				<div class="def_title">
+					<input id="" type="hidden" />
+					<span>基本信息</span>
+				</div>
+				<div class="def_content">
+					<div class="rowdiv">
+						 <div class="form-group col-md-12">
+							 <label class="control-label fontWeihgt">任务描述：</label>
+							 <div>
+							 	<pre id="SdevOverview" class="def_pre"></pre>
+							 </div>
+						 </div>
+					</div> 
+					<div class="rowdiv">
+						<div class="form-group col-md-6">
+							<label class="control-label fontWeihgt">任务状态：</label>
+							<label class="select-label" id="SStatus"></label>
+						</div>
+						<div class="form-group col-md-6">
+							<label class="control-label fontWeihgt">测试人员：</label>
+							<label class="select-label" id="devuserID"></label>
+						</div> 
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-6">
+							<label class="control-label fontWeihgt">工作任务创建人：</label>
+							<label class="select-label" ><span id="createBy"></span>|<span id="createDate"></span></label>
+						</div>
+						<div class="form-group col-md-6">
+							<label class="control-label fontWeihgt">实际开始时间：</label>
+							<label class="select-label" id="actualStartDate"></label>
+						</div> 
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-6">
+							<label class="control-label fontWeihgt">实际结束时间：</label>
+							<label class="select-label" id="actualEndDate"></label>
+						</div>
+						<div class="form-group col-md-6">
+							<label class="control-label fontWeihgt">实际工作量(人天)：</label>
+							<label class="select-label" id="actualWorkload"></label>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-6">
+							<label class="control-label fontWeihgt">测试阶段：</label>
+							<label class="select-label" id="testStage2"></label>
+						</div>
+						<div class="form-group col-md-6">
+							<label class="control-label fontWeihgt">设计案例数：</label>
+							<label class="select-label" id="cases"></label>
+						</div> 
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-6">
+							<label class="control-label fontWeihgt">执行案例数：</label>
+							<label class="select-label" id="caseExecutes"></label>
+						</div>
+						<div class="form-group col-md-6">
+							<label class="control-label fontWeihgt">缺陷数：</label>
+							<label class="select-label" id="defectNum"></label>
+						</div> 
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-6">
+							<label class="control-label fontWeihgt">任务分配：</label>
+							<label class="select-label" id="checkTaskAssignUser"></label>
+						</div>
+						<div class="form-group col-md-6">
+							<label class="control-label fontWeihgt">案例执行人：</label>
+							<div class="select-label" id="executeUser"></div>
+						</div>
+					</div> 
+					<div class="rowdiv">
+						<div class="form-group col-md-12">
+							<label class="control-label fontWeihgt">环境类型：</label>
+							<label class="select-label" id="checkEnvironmentType"></label>
+						</div> 
+					</div>
+					<div class="rowdiv">
+						<div class="form-group col-md-12">
+							<label class="control-label fontWeihgt">所属测试任务：</label>
+							<label class="select-label">
+								<span id="featureName"></span>
+							</label>
+						</div> 
+					</div>
+					
+					<div class="rowdiv">
+						<div class="form-group col-md-12">
+							<label class="control-label fontWeihgt">所属需求：</label>
+							<label class="select-label">
+								<span id="requirementCode"></span>
+							</label>
+						</div>
+					</div> 
+					<div class="rowdiv">
+						<div>
+							<label class="control-label top-text fontWeihgt">相关附件：</label>
+						</div>
+						<div>
+							<div class="file-upload-list">
+								<table class="file-upload-tb" id="SeeFileTable"></table>
+							</div>
+						</div>
+					</div>
+				</div>  
+			</div>  
+		</div>
+		<div class="def_col_12">
+			<div class="allInfo">
+				<div class="def_title" id="titleOfwork">
+					<span class="def_controlTit" onclick="showThisDiv(this,1)">工作备注</span><span class="def_changeTitIcon"> 丨 </span><span onclick="showThisDiv(this,2)" class="def_controlTit def_changeTit">处理日志</span> 
+					<span class="fa fa-angle-double-up" onclick="down(this)"></span>
+				</div>
+				<div class="def_content">
+					<input id="checkfiles" type="hidden" name="attachFiles" />
+					<div class="workRemarks">
+						<div class="new_workRemarks">
+							<textarea id="tyaskRemark" class="def_textarea" rows="3" cols="102" placeholder="请输入工作备注内容" value=""></textarea>
+							<span id="testTaskID" ></span>
+								<div class="rowdiv">
+									<div class="form-group col-md-12">
+											<label class="control-label fontWeihgt">相关附件：</label>
+												<div class="file-upload-select">
+											<input type="file" name="files" class="upload-files" multiple="multiple"
+															id="checkuploadFile"/>
+									</div>
+									<div class="file-upload-list">
+											<table class="file-upload-tb" id="checkAttTable"> 
+												
+											</table>
+									</div> 
+								</div> 
+							</div>
+							<div class="new_workRomarksBtn">
+								<input type="button" class="btn btn-primary" onclick="addTestRemark()"  value="保存工作备注" />
+							</div>
+						</div>  
+						<div class="old_workRemarks" id="taskRemark">
+							
+						</div> 
+					</div>
+					<div class="dealLog" id="handleLogs">
+					
+					</div>
+				</div>
+			</div>
+		</div>  
+	</div> 
+<div id="loading"> 
+  <img class="loadingImg" src="#springUrl('')/testManageui/static/images/loadingPic.gif" />
+</div>
+  
+</body>
+
+
+</html>
+ 

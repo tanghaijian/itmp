@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head> 
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>自定义属性配置</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css"/> 
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css"/>  
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css"/> 
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css"/>
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/fieldTemplate/fieldTemplate.css"/> 
+</head>
+<body>
+	<div id="loading">
+	    <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif"/>
+	</div>
+	
+	<!-- 自定义属性字段主页面 -->
+    <div class="layout">
+        <div class="left-box">
+            <ul class="menu-ul">
+
+            </ul>
+        </div>
+        <div class="main-container">
+            <div class="allInfo">
+                <div class="def_title">
+                    <span>默认属性字段（不可更改）</span>
+                </div>
+                <div class="def_content">
+                   <div class="non-editable">
+                         
+                   </div>
+                </div>
+            </div>
+            <div class="allInfo">
+                <div class="def_title">
+                    <span>扩展属性字段</span>
+                </div>
+                <div class="def_content">
+                    <div class="content-btn">
+                        <button type="button" id="newFieldBtn" class="btn btn-primary">新增字段</button>
+                    </div>
+                    <div class="content-table">
+                        <table id="editFieldTable">
+	
+	                    </table>
+                    </div>
+                </div>
+            </div>
+            <div class="saveDiv">
+           			<button type="button" id="saveAll" class="btn btn-primary" > 保    存 </button> 
+            </div>
+        </div>
+    </div>
+    <!-- 枚举类型字段弹框：数据字典 -->
+    <div class="modal fade bs-example-modal-lg" id="enuModul" tabindex="-1" role="dialog" aria-labelledby="enuModul">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <span class="modal-title" id="myModalLabel">枚举值配置</span>
+                </div>
+                <div class="modal-body">
+                	<form id="newDicForm">
+	                   <div class="rowdiv">
+	                       <div class="form-group def_col_18">
+	                           <label class="def_col_10 control-label font_right fontWeihgt">字典项名称：</label>
+	                           <div class="def_col_26">
+	                               <input type="text" class="form-control" id="newDicName" name="newDicName" placeholder="请输入" />
+	                           </div>
+	                       </div>
+	                       <div class="form-group def_col_18">
+	                           <label class="def_col_10 control-label font_right fontWeihgt">排序：</label>
+	                           <div class="def_col_26">
+	                               <input type="text" class="form-control" id="newSequence" name="newSequence"  placeholder="请输入" />
+	                           </div>
+	                       </div>
+	                   </div> 
+		            </form>
+                    <div class="font_right btnPadding">
+                        <button type="button" id="newDicBtn" class="btn btn-primary">新增字典项</button>
+                    </div>
+                    <div class="rowdiv">
+                        <div class="form-group">
+                            <label class="def_col_5 control-label font_right fontWeihgt">数据字典项配置：</label>
+                            <div class="def_col_31">
+                                <table id="dictionaryConfigTable">
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="commitEnu">保 存</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div> 
+	<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+     
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/fieldTemplate/fieldTemplate.js"></script>
+ 	 <div id="newField" class="rowdiv form-group">
+		 <label class="def_col_10 control-label font_right fontWeihgt">字段名称：</label>
+	     <div class="def_col_26">
+	         <input type="text" class="form-control" id="new_fieldName" placeholder="请输入" />
+	     </div>
+	</div>
+</body> 
+</html>
+ 

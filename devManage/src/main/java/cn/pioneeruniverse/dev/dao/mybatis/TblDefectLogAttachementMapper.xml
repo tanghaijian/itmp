@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblDefectLogAttachementMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblDefectLogAttachement">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="DEFECT_LOG_ID" jdbcType="BIGINT" property="defectLogId" />
+    <result column="FILE_NAME_NEW" jdbcType="VARCHAR" property="fileNameNew" />
+    <result column="FILE_NAME_OLD" jdbcType="VARCHAR" property="fileNameOld" />
+    <result column="FILE_TYPE" jdbcType="VARCHAR" property="fileType" />
+    <result column="FILE_PATH" jdbcType="VARCHAR" property="filePath" />
+    <result column="FILE_S3_BUCKET" jdbcType="VARCHAR" property="fileS3Bucket" />
+    <result column="FILE_S3_KEY" jdbcType="VARCHAR" property="fileS3Key" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, DEFECT_LOG_ID, FILE_NAME_OLD, FILE_TYPE, FILE_S3_BUCKET,
+    FILE_S3_KEY, STATUS
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_defect_log_attachement
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_defect_log_attachement
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!-- 新增缺陷日志附件 -->
+  <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblDefectLogAttachement">
+    insert into tbl_defect_log_attachement (ID, DEFECT_LOG_ID, FILE_NAME_NEW, 
+      FILE_NAME_OLD, FILE_TYPE, FILE_PATH, 
+      FILE_S3_BUCKET, FILE_S3_KEY, STATUS, 
+      CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, 
+      LAST_UPDATE_DATE)
+    values (#{id,jdbcType=BIGINT}, #{defectLogId,jdbcType=BIGINT}, #{fileNameNew,jdbcType=VARCHAR}, 
+      #{fileNameOld,jdbcType=VARCHAR}, #{fileType,jdbcType=VARCHAR}, #{filePath,jdbcType=VARCHAR}, 
+      #{fileS3Bucket,jdbcType=VARCHAR}, #{fileS3Key,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
+      #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, 
+      #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.dev.entity.TblDefectLogAttachement" useGeneratedKeys="true" keyProperty="id">
+    insert into tbl_defect_log_attachement
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="defectLogId != null">
+        DEFECT_LOG_ID,
+      </if>
+      <if test="fileNameNew != null">
+        FILE_NAME_NEW,
+      </if>
+      <if test="fileNameOld != null">
+        FILE_NAME_OLD,
+      </if>
+      <if test="fileType != null">
+        FILE_TYPE,
+      </if>
+      <if test="filePath != null">
+        FILE_PATH,
+      </if>
+      <if test="fileS3Bucket != null">
+        FILE_S3_BUCKET,
+      </if>
+      <if test="fileS3Key != null">
+        FILE_S3_KEY,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="defectLogId != null">
+        #{defectLogId,jdbcType=BIGINT},
+      </if>
+      <if test="fileNameNew != null">
+        #{fileNameNew,jdbcType=VARCHAR},
+      </if>
+      <if test="fileNameOld != null">
+        #{fileNameOld,jdbcType=VARCHAR},
+      </if>
+      <if test="fileType != null">
+        #{fileType,jdbcType=VARCHAR},
+      </if>
+      <if test="filePath != null">
+        #{filePath,jdbcType=VARCHAR},
+      </if>
+      <if test="fileS3Bucket != null">
+        #{fileS3Bucket,jdbcType=VARCHAR},
+      </if>
+      <if test="fileS3Key != null">
+        #{fileS3Key,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+<!-- 可选择性更新缺陷日志附件 -->
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblDefectLogAttachement">
+    update tbl_defect_log_attachement
+    <set>
+      <if test="defectLogId != null">
+        DEFECT_LOG_ID = #{defectLogId,jdbcType=BIGINT},
+      </if>
+      <if test="fileNameNew != null">
+        FILE_NAME_NEW = #{fileNameNew,jdbcType=VARCHAR},
+      </if>
+      <if test="fileNameOld != null">
+        FILE_NAME_OLD = #{fileNameOld,jdbcType=VARCHAR},
+      </if>
+      <if test="fileType != null">
+        FILE_TYPE = #{fileType,jdbcType=VARCHAR},
+      </if>
+      <if test="filePath != null">
+        FILE_PATH = #{filePath,jdbcType=VARCHAR},
+      </if>
+      <if test="fileS3Bucket != null">
+        FILE_S3_BUCKET = #{fileS3Bucket,jdbcType=VARCHAR},
+      </if>
+      <if test="fileS3Key != null">
+        FILE_S3_KEY = #{fileS3Key,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+<!-- 更新缺陷日志附件 -->
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblDefectLogAttachement">
+    update tbl_defect_log_attachement
+    set DEFECT_LOG_ID = #{defectLogId,jdbcType=BIGINT},
+      FILE_NAME_NEW = #{fileNameNew,jdbcType=VARCHAR},
+      FILE_NAME_OLD = #{fileNameOld,jdbcType=VARCHAR},
+      FILE_TYPE = #{fileType,jdbcType=VARCHAR},
+      FILE_PATH = #{filePath,jdbcType=VARCHAR},
+      FILE_S3_BUCKET = #{fileS3Bucket,jdbcType=VARCHAR},
+      FILE_S3_KEY = #{fileS3Key,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!--根据日志id查询所属日志文件-->
+  <select id="selectLogAttachementBylogId" resultType="Long" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM tbl_defect_log_attachement
+    WHERE DEFECT_LOG_ID = #{logId,jdbcType=BIGINT}
+    ORDER BY ID DESC
+  </select>
+</mapper>

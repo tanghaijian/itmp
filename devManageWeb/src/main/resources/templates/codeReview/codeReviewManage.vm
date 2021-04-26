@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>代码评审管理-外</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css"/>
+
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript"
+            src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript"
+            src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script>
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap4';
+        $.jgrid.defaults.iconSet = "fontAwesome";
+    </script>
+</head>
+<body>
+<div id="loading">
+    <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif"/>
+</div>
+<div class="color1">
+    <div class="container-fluid" id="search_div">
+        <div class="row control-row">
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">任务编号：</label></div>
+                <div class="search_input">
+                    <input type="text" class="form-control" placeholder="请输入" id="devTaskCode" name="devTaskCode"
+                           onkeyup="this.value=this.value.replace(/(^\s*)|(\s*$)/g, '')" value="$!devTaskCode"/>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">任务名称：</label></div>
+                <div class="search_input">
+                    <input type="text" class="form-control" placeholder="请输入" id="devTaskName" name="devTaskName"/>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">开发人员：</label></div>
+                <div class="search_input">
+                    <input type="text" class="form-control pointStyle" readonly autocomplete="off"
+                           onclick="devUserSelect()" idValue
+                           placeholder="请选择" id="devUser" name="devUser"/>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="search_font"><label class="control-label">评审状态：</label></div>
+                <div class="search_input">
+                    <select class="selectpicker" id="codeReviewStatus" name="codeReviewStatus">
+                        <option value="">请选择</option>
+                        #foreach($dictMap in ${dict.getDictMap("CODE_REVIEW_STATU").entrySet()})
+                            <option value="${dictMap.key}">${dictMap.value}</option>
+                        #end
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row control-row search_btn">
+            <button type="button" class="btn btn-primary" onclick="searchInfo()">搜&nbsp;&nbsp;&nbsp;索</button>
+            <button type="button" onclick="clearSearch()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+        </div>
+    </div>
+    <div id="downBtn">
+        <span class="fa fa-caret-up"></span>
+    </div>
+</div>
+<div class="main-content">
+    <div class="content-btn">
+    </div>
+    <div class="content-table">
+        <div class="wode">
+            <table id="codeReviewManageList"></table>
+            <div id="codeReviewManagePager"></div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bs-example-modal-lg" id="devUserSelectModal" tabindex="-1" role="dialog"
+     aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg modal-user" role="document">
+        <div class="modal-content modalStyle">
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $("#devUserSelectModal").on("hidden.bs.modal", function () {
+        $(this).removeData("bs.modal");
+    });
+
+    $(function () {
+    	//获取本地保存的查询条件
+        if (sessionStorage.getItem("searchOptions") != null) {
+            var searchOptions = JSON.parse(sessionStorage.getItem("searchOptions"));
+            $('#devTaskCode').val(searchOptions.devTaskCode);
+            $('#devTaskName').val(searchOptions.devTaskName);
+            $("#devUser").val(searchOptions.devUserNames);
+            $("#devUser").attr("idValue", searchOptions.devUserIds);
+            $("#codeReviewStatus").selectpicker('val', searchOptions.codeReviewStatus);
+            pageInit(parseInt(searchOptions.page), parseInt(searchOptions.rows));
+        } else {
+            pageInit(1, 10);
+        }
+        //搜索栏展开和收起
+        $("#downBtn").click(function () {
+            if ($(this).children("span").hasClass("fa-caret-up")) {
+                $(this).children("span").removeClass("fa-caret-up");
+                $(this).children("span").addClass("fa-sort-desc");
+                $("#search_div").slideUp(200);
+            } else {
+                $(this).children("span").removeClass("fa-sort-desc");
+                $(this).children("span").addClass("fa-caret-up");
+                $("#search_div").slideDown(200);
+            }
+        });
+        //搜索栏所有的Input标签，在输入值后出现清空的按钮
+        $('.color1 input[type="text"]').parent().css("position", "relative");
+        $('.color1 input[type="text"]').parent().append("<span onclick='clearContent(this)' class='btn_clear'></span>");
+        $('.color1 input[type="text"]').bind("input propertychange", function () {
+            if ($(this).val() != "") {
+                $(this).parent().children(".btn_clear").css("display", "block");
+            } else {
+                $(this).parent().children(".btn_clear").css("display", "none");
+            }
+        });
+    });
+
+    //初始化页面
+    function pageInit(page, rows) {
+        jQuery("#codeReviewManageList").jqGrid({
+            url: '/devManage/codeReview/getCodeReviewPage',
+            datatype: 'json',
+            mtype: "post",
+            postData: {
+                "devTaskCode": $.trim($("#devTaskCode").val()),
+                "devTaskName": $.trim($("#devTaskName").val()),
+                "devUserIds": $("#devUser").attr("idValue"),
+                "codeReviewStatus": $("#codeReviewStatus").val()
+            },
+            height: 'auto',
+            width: $(".content-table").width() * 0.999,
+            colNames: ['id', '任务编号', '任务名称', '评审状态', '涉及子系统', '代码库类型', '开发人员', '评审人', '操作'],
+            colModel: [
+                {name: 'id', index: 'id', hidden: true},
+                {name: 'devTaskCode', index: 'devTaskCode', searchoptions: {sopt: ['cn']}},
+                {name: 'devTaskName', index: 'devTaskName', searchoptions: {sopt: ['cn']}},
+                {
+                    name: 'codeReviewStatus', index: 'codeReviewStatus', searchoptions: {sopt: ['cn']},
+                    formatter: function (value, grid, rows) {
+                        if (value == 1) {
+                            return "未评审";
+                        } else if (value == 2) {
+                            return "评审通过";
+                        } else if (value == 3) {
+                            return "评审未通过";
+                        } else {
+                            return "";
+                        }
+                    }
+                },
+                {name: 'systemName', index: 'systemName', searchoptions: {sopt: ['cn']}},
+                {
+                    name: 'scmType', index: 'scmType', searchoptions: {sopt: ['cn']},
+                    formatter: function (value, grid, rows) {
+                        if (value == 1) {
+                            return "SVN";
+                        } else if (value == 2) {
+                            return "GIT";
+                        } else {
+                            return "";
+                        }
+                    }
+                },
+                {name: 'devUserName', index: 'devUserName', searchoptions: {sopt: ['cn']}},
+                {name: 'codeReviewUserNames', index: 'codeReviewUserNames', searchoptions: {sopt: ['cn']}},
+                {
+                    name: 'edit',
+                    index: 'edit',
+                    align: "center",
+                    fixed: true,
+                    sortable: false,
+                    resize: false,
+                    search: false,
+                    formatter: function (value, grid, rows, state) {
+                        if (rows.codeReviewUserIds != null && rows.codeReviewUserIds != "" && rows.codeReviewUserIds.split(",").indexOf("$currentUserId") != -1) {
+                            //未评审+评审通过的任务才可以评审(rows.id会有为null的情况)
+                            if (rows.codeReviewStatus == 1 || rows.codeReviewStatus == 3) {
+                                return "<a onclick='restoreSearchOptions()' href='/devManageui/codeReviewControl/toReviewPage?devTaskScmId=" + (rows.id == null ? "" : rows.id) + "&devTaskId=" + rows.devTaskId + "&scmType=" + (rows.scmType == null ? "" : rows.scmType) + "&codeReviewOrViewResult=1'>评审</a>";
+                            } else if (rows.codeReviewStatus == 2) {
+                                return "<a onclick='restoreSearchOptions()' href='/devManageui/codeReviewControl/toReviewPage?devTaskScmId=" + (rows.id == null ? "" : rows.id) + "&devTaskId=" + rows.devTaskId + "&scmType=" + (rows.scmType == null ? "" : rows.scmType) + "&codeReviewOrViewResult=2'>查看评审结果</a>";
+                            }
+                        } else if (rows.devUserId == $currentUserId) {
+                            if (rows.codeReviewStatus == 2 || rows.codeReviewStatus == 3) {
+                                return "<a onclick='restoreSearchOptions()' href='/devManageui/codeReviewControl/toReviewPage?devTaskScmId=" + (rows.id == null ? "" : rows.id) + "&devTaskId=" + rows.devTaskId + "&scmType=" + (rows.scmType == null ? "" : rows.scmType) + "&codeReviewOrViewResult=2'>查看评审结果</a>";
+                            }
+                        }
+                        return "";
+                    }
+                }
+            ],
+            page: page,
+            rowNum: rows,
+            rowTotal: 200,
+            rowList: [5, 10, 20, 30],
+            rownumWidth: 40,
+            pager: '#codeReviewManagePager',
+            sortable: true,   //是否可排序
+            sortorder: 'asc',
+            sortname: 'id',
+            loadtext: "数据加载中......",
+            viewrecords: true, //是否要显示总记录数
+            beforeRequest: function () {
+                $("#loading").css('display', 'block');
+            },
+            loadError: function (xhr, status, error) {
+                layer.alert("获取代码评审列表异常", {
+                    icon: 2,
+                    title: "提示信息"
+                });
+            },
+            loadComplete: function (xhr) {
+                $("#loading").css('display', 'none');
+            }
+        });
+    }
+
+    //查询事件
+    function searchInfo() {
+        $("#codeReviewManageList").jqGrid('setGridParam', {
+            url: '/devManage/codeReview/getCodeReviewPage',
+            postData: {
+                "devTaskCode": $.trim($("#devTaskCode").val()),
+                "devTaskName": $.trim($("#devTaskName").val()),
+                "devUserIds": $("#devUser").attr("idValue"),
+                "codeReviewStatus": $("#codeReviewStatus").val()
+            },
+            page: 1
+        }).trigger("reloadGrid");
+    }
+
+    function clearSearch() {
+        $('#devTaskCode').val("");
+        $('#devTaskName').val("");
+        $("#devUser").val("");
+        $("#devUser").attr("idValue", "");
+        $("#codeReviewStatus").selectpicker('val', '');
+        searchInfo();
+    }
+
+    function devUserSelect() {
+        //模态窗口
+        $('#devUserSelectModal').modal({
+            'show': true,
+            'remote': '/devManageui/codeReviewControl/getDevUser?existUsers=' + $("#devUser").attr("idValue")
+        });
+    }
+
+    //a标签先onclick,后href.且当onclick事件中如果return fase;则href就不起作用了
+    function restoreSearchOptions() {
+        //存储当前页查询条件
+        var searchOptions = {
+            "devTaskCode": $('#devTaskCode').val(),
+            "devTaskName": $('#devTaskName').val(),
+            "devUserNames": $("#devUser").val(),
+            "devUserIds": $("#devUser").attr("idValue"),
+            "codeReviewStatus": $("#codeReviewStatus").val(),
+            "page": $("#codeReviewManageList").getGridParam('page'),
+            "rows": $("#codeReviewManageList").getGridParam('rowNum')
+        }
+        sessionStorage.setItem("searchOptions", JSON.stringify(searchOptions));
+    }
+
+</script>
+</body>
+</html>

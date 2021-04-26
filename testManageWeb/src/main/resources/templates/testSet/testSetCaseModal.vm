@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<META HTTP-EQUIV="pragma" CONTENT="no-cache">
+<meta http-equiv="X-UA-Compatible" content="no-cache,IE=edge,Chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>测试集查看</title>
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-table-reorder-rows.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+<link rel="stylesheet" type="text/css" media="screen"
+	href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static//jqgrid/jqgrid/css/jqGridDefined.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/component.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/common/common.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/testManageui/static/css/testset/testSetTable.css" />
+
+
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/component.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+  <script src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/jquery.tablednd.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-table-reorder-rows.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/common/common.js"></script>
+
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/common.js"></script>
+<script src="#springUrl('')/testManageui/static/js/common/modal.js"></script>
+
+<script type="text/javascript"
+	src="#springUrl('')/testManageui/static/js/testSet/testSetCase.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/testManageui/static/js/testSet/testSetPupop.js"></script>
+<script src="#springUrl('')/testManageui/static/js/testExecution/testSetCaseCommonOpt.js"></script>
+
+<script>
+	$.jgrid.defaults.responsive = true;
+	$.jgrid.defaults.styleUI = 'Bootstrap4';
+	$.jgrid.defaults.iconSet = "fontAwesome";
+
+	var testSetId = "$testSetId";
+	
+	var caseExecuteStatusList = [];
+	#foreach($dictMap in ${dict.getDictMap("TBL_TEST_SET_CASE_CASE_EXECUTE_RESULT").entrySet()})
+		caseExecuteStatusList.push(["${dictMap.key}","${dictMap.value}"]);
+	#end
+</script>
+</head>
+	<style>
+		#doc_name_list{
+			word-break: break-all;
+		}
+		.doc_name {
+			background: #e2d8d8;
+			border-radius: 4px;
+			padding: 3px;
+			cursor:pointer;
+			margin-top: 5px;
+    		display: inline-block;
+		}
+	</style>
+<body>
+	<div class="head row">
+		<div class="col-md-1">
+			<div class="headReturn">
+				<div class="return headReturn"></div>
+			</div>
+		</div>
+		<div class="col-md-9">
+			<div class="right_div_titFont"></div>
+		</div>
+		<div class="col-md-2">
+			<div class="right_div_titDiv">
+				<div class="right_div_titFont2">总用例数：</div>
+				<div class="right_div_titFont3" id="showCaseNum">0</div>
+				<input type="hidden" id="taskId">
+			</div>
+		</div>
+	</div>
+	<div class="caseTableDiv">
+		<div class="caseTitle">已纳入的用例：</div>
+		<div class="caseBtnGroup">
+			<button type="button" class="btn btn-primary" onclick="addCaseShow()">新建</button>	
+			<button type="button" class="btn btn-primary" onclick="testSetCase.copy.copyPass()">复制</button>	
+			<button type="button" class="btn btn-primary" id="relateCase">关联</button>		
+			<button type="button" class="btn btn-primary" id="leadInCase">引入测试集案例</button>	
+			<button type="button" class="btn btn-primary" onclick="testSetCase.archivedCase.archivedCaseCommit()">归档</button>
+			<button type="button" class="btn btn-primary" onclick="testSetCase.importExcel.importModal(1)">导入</button>
+			<button type="button" class="btn btn-primary" onclick="testSetCase.exportCase()">导出</button>
+			<button type="button" class="btn btn-primary" onclick="testSetCase.order.orderPass()">排序</button>
+			<button type="button" class="btn btn-primary" onclick="testSetCase.move.movePass()">移除</button>
+	        
+		</div>
+		<div class="caseTableArea">
+			<div class="wode">
+				<table id="executionTable"
+					class="table table-hover table-condensed"
+                           data-use-row-attr-func="true"
+                           data-use-row-attr-func="true"
+                           data-reorderable-rows="true"
+				></table>
+				<!-- <div id="pager2"></div> -->
+			</div>
+		</div>
+	</div>
+	<div class="executeUserDiv">
+		<div class="caseTitle">执行人员：</div>
+		<div class="rowdiv"></div>
+	</div>
+	<!-- 展示用例弹框 -->
+	 <div class="modal fade bs-example-modal-bigges" id="showTestCaseModal"
+		tabindex="-1" role="dialog" aria-labelledby="newPerson">
+		<div class="modal-dialog modal-biggest" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<span class="layui-layer-setwin">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">×</span>
+						</button>
+					</span>
+					<h4 class="modal-title" id="ModalLabel">用例详情</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" id="TestCaseForm"
+						accept-charset="utf-8" enctype="multipart/form-data">
+
+						<div class="allInfo" id="newTestCaseInfo">
+							<div class="def_title">
+								<span>基本信息</span> <span class="fa fa-angle-double-up"
+									onclick="down(this)"></span>
+							</div>
+							<div class="def_content down_content">
+                                <div class="rowdiv">
+                                    <div class="form-group def_col_34">
+                                        <div class="def_col_4  caseLable">
+                                            <span class="redStar" style="font-weight:bold;">案例名称:</span>
+                                        </div>
+                                        <div class="def_col_32 showCaseLable">
+                                            <span id="showCaseName"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rowdiv">
+                                    <div class="form-group def_col_34">
+                                        <div class="def_col_4 caseLable">
+                                            <span class="redStar" style="font-weight:bold;">前置条件:</span>
+                                        </div>
+                                        <div class="def_col_32 showCaseLable">
+                                            <span id="showCasePrecondition"></span>
+                                        </div>
+                                    </div>
+                                </div>
+								<div class="rowdiv">
+									<div class="def_col_34">
+										<div class="form-group def_col_18">
+											<div class="def_col_8  caseLable">
+												<span class="redStar" style="font-weight:bold;">涉及子系统:</span>
+											</div>
+											<div class="def_col_28 showCaseLable">
+												<span id="showSystemName"></span>
+											</div>
+										</div>
+										<div class="form-group def_col_18">
+											<div class="def_col_8  caseLable">
+												<span class="redStar" style="font-weight:bold;">案例类型:</span>
+											</div>
+											<div class="def_col_28 showCaseLable">
+												<span id="showCaseType"></span>
+											</div>
+										</div>
+									</div>
+								</div>
+
+                                <div class="rowdiv">
+                                    <div class="def_col_34">
+                                        <div class="form-group def_col_18">
+											<div class="def_col_8 caseLable">
+												<span class="redStar" style="font-weight:bold;">输入数据:</span>
+											</div>
+											<div class="def_col_28 showCaseLable">
+												<span id="showInputData"></span>
+											</div>
+										</div>
+										<div class="form-group def_col_18">
+											<div class="def_col_8 caseLable">
+												<span class="redStar" style="font-weight:bold;">测试项:</span>
+											</div>
+											<div class="def_col_28 showCaseLable">
+												<span id="showTestPoint"></span>
+											</div>
+										</div>
+                                    </div>
+                                </div>
+                                <div class="rowdiv">
+                                    <div class="def_col_34">
+										<div class="form-group def_col_18">
+											<div class="def_col_8 caseLable">
+												<span class="redStar" style="font-weight:bold;">模块:</span>
+											</div>
+											<div class="def_col_28 showCaseLable">
+												<span id="showModuleName"></span>
+											</div>
+										</div>
+										<div class="form-group def_col_18">
+											<div class="def_col_8 caseLable">
+												<span class="redStar" style="font-weight:bold;">业务类型:</span>
+											</div>
+											<div class="def_col_28 showCaseLable">
+												<span id="showBusinessType"></span>
+											</div>
+										</div>
+									</div>
+                                </div>
+                                <div class="rowdiv">
+                                    <div class="def_col_34">
+										<div class="form-group def_col_18">
+											<div class="def_col_8 caseLable">
+												<span class="redStar" style="font-weight:bold;">预期结果:</span>
+											</div>
+											<div class="def_col_28 showCaseLable">
+												<span id="showExpectResult"></span>
+											</div>
+										</div>
+									</div>
+                                </div>
+							</div>
+						</div>
+						<div class="rightModal">
+							<div class="fontWeihgt caseTitleFont">用例步骤：</div>
+						</div>
+						<div class="tagBody">
+							<table id="showCaseSteps">
+
+							</table>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div> 
+	<!-- 新建案例弹框 -->
+	 <div class="modal fade bs-example-modal-lg" id="newTestCaseModal"
+		tabindex="-1" role="dialog" aria-labelledby="newPerson">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">新建案例</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" id="newTestCaseForm"
+						accept-charset="utf-8" enctype="multipart/form-data">
+
+						<div class="allInfo" id="newTestCaseInfo">
+							<div class="def_title">
+								<span>基本信息</span> <span class="fa fa-angle-double-up"
+									onclick="down(this)"></span>
+							</div>
+							<div class="def_content down_content">
+                                <div class="rowdiv">
+                                <div class="form-group def_col_34">
+                                    <div class="def_col_4  caseLable">
+                                        <span class="redStar" style="color: red;">*</span>案例名称:
+                                    </div>
+                                    <div class="def_col_32">
+                                        <input class="form-control" type="text" placeholder="请输入" id="new_caseName" name="new_caseName"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rowdiv">
+                                <div class="form-group def_col_34">
+                                    <div class="form-group def_col_18">
+                                        <div class="def_col_8  caseLable">
+                                            <span class="redStar" style="color: red;">*</span>所属子系统:
+                                        </div>
+                                        <div class="def_col_28">
+                                            <input id="systemId" type="hidden"> <input
+                                                class="form-control readonly pointStyle" readonly
+                                                type="text" placeholder="请选择子系统" id="systemName"
+                                                name="systemName"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group def_col_18">
+                                        <div class="def_col_8 caseLable">业务类型:</div>
+                                        <div class="def_col_28">
+                                            <input class="form-control" type="text" placeholder="请输入"
+                                                   id="new_businessType" name="new_businessType"></input>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="rowdiv">
+                                <div class="form-group def_col_34">
+                                    <div class="form-group def_col_18">
+                                        <div class="def_col_8 caseLable">模块:</div>
+                                        <div class="def_col_28">
+                                            <input class="form-control" type="text" placeholder="请输入" id="new_moduleName" name="new_moduleName"></input>
+                                        </div>
+                                    </div>
+                                    <div class="form-group def_col_18">
+                                        <div class="def_col_8 caseLable">测试项:</div>
+                                        <div class="def_col_28">
+                                            <input class="form-control" type="text" placeholder="请输入" id="new_testPoint" name="new_testPoint"></input>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="rowdiv">
+                                <div class="form-group def_col_34">
+                                    <div class="def_col_4 caseLable">案例描述:</div>
+                                    <div class="def_col_32">
+                                        <textarea style="resize:none;" class="form-control" placeholder="请输入" id="new_CaseDescription" name="new_CaseDescription"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="rowdiv">
+                                <div class="form-group def_col_34">
+                                    <div class="def_col_4 caseLable">前置条件:</div>
+                                    <div class="def_col_32">
+											<textarea style="resize:none;" class="form-control" placeholder="请输入" id="new_precodition" name="new_precodition"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="rowdiv">
+                                <div class="form-group def_col_34">
+                                    <div class="def_col_4 caseLable">输入数据:</div>
+                                    <div class="def_col_32">
+                                        <textarea style="resize:none;" class="form-control" maxlength="500" type="text" placeholder="请输入" id="new_inputData" name="new_inputData"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rowdiv">
+                                <div class="form-group def_col_34">
+                                    <div class="def_col_4 caseLable">预期结果:</div>
+                                    <div class="def_col_32">
+                                        <textarea style="resize:none;" class="form-control" maxlength="500" type="text" placeholder="请输入" id="new_expectResult" name="new_expectResult"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+							</div>
+						</div>
+						<div class="rightModal">
+							<div class="fontWeihgt caseTitleFont">案例步骤：</div>
+							<button type="button" onclick="addStep_btn()"
+								class="btn btn-primary">增加步骤</button>
+						</div>
+						<div class="tagBody">
+							<table id="addCaseSteps">
+
+							</table>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary"
+						onclick="testSetCase.insert.submitTestCase(1)">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 编辑案例 -->
+	 <div class="modal fade bs-example-modal-lg" id="editTestCaseModal"
+		tabindex="-1" role="dialog" aria-labelledby="newPerson">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">编辑案例</h4>
+				</div>
+				<div class="modal-body">
+					<!-- 测试执行和测试集公共页面 公共案例编辑部分-->
+            		#parse("./testSet/testSetCaseEdit.vm")
+				</div>
+				<div class="modal-footer">
+					 <button type="button" class="btn btn-primary" onclick="testSetCase.edit.UpdateCaseStep()">保 存</button>
+            		 <button type="button" class="btn btn-default" data-dismiss="modal">取 消
+				</div>
+			</div>
+		</div>
+	</div>
+					
+<!-- 涉及子系统 -->
+<div class="modal fade bs-example-modal-lg" id="systemModal"
+     tabindex="-1" role="dialog" aria-labelledby="newPerson">
+    <div class="modal-dialog modal-lg modal-user" role="document">
+        <div class="modal-content modalStyle">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <span class="modal-title" id="">选择子系统</span>
+            </div>
+            <div class="modal-body">
+
+                <div class="color1">
+                    <div class="container-fluid" id="">
+                        <div class="rowdiv control-row">
+                            <div class="col-md-2"></div>
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">子系统名称：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="输入"
+                                           id="sel_systemName" name="systemName" value=""/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="search_font">
+                                    <label class="control-label">子系统编码：</label>
+                                </div>
+                                <div class="search_input">
+                                    <input type="text" class="form-control" placeholder="请输入"
+                                           id="sel_systemCode" name="systemCode" value=""/>
+                                </div>
+                            </div>
+                            <div class="col-md-2"></div>
+                        </div>
+                        <div class="rowdiv control-row search_btn">
+                            <button type="button" class="btn btn-primary"
+                                    onclick="systemTableShow(true)">搜&nbsp;&nbsp;&nbsp;索
+                            </button>
+                            <button type="button" onclick="testSetCase.resetFunction.clearSystem()"
+                                    class="btn btn-default">重&nbsp;&nbsp;&nbsp;置
+                            </button>
+                        </div>
+
+                    </div>
+                    <div id="downBtn2">
+                        <span class="fa fa-caret-up"></span>
+                    </div>
+                </div>
+                <br>
+                <div class="content-table">
+                    <div class="wode">
+                        <table id="systemTable"></table>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="sysbutton" class="btn btn-primary"
+                        data-sys="default" onclick="testSetCase.insert.commitSys()">确定
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+    <!-- 测试执行和测试集公共页面 引入测试集案例弹框、选择案例弹框、导入弹框 -->
+	#parse("./testSet/testSetCaseCommon.vm")
+
+	 <div id="loading">
+		<img class="loadingImg"
+			src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+	</div> 
+	
+</body>
+</html>

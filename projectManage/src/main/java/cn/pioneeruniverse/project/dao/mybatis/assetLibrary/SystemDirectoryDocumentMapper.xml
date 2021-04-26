@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.assetLibrary.SystemDirectoryDocumentDao">
+
+<!-- 获取筛选的系统id文档类型 ，子查询：获取某个系统下的文档类型，去重-->
+    <select id="getDocumentTypesBySystemIds" resultMap="systemDirctoryDocumentDTOMap" resultType="java.util.List">
+        SELECT
+        temp.SYSTEM_ID,
+        temp.DOCUMENT_TYPE,
+        tsdt.DOCUMENT_TYPE AS "DOCUMENT_TYPE_NAME"
+        FROM (
+        SELECT
+        tsdd.SYSTEM_ID,
+        tsdd.DOCUMENT_TYPE
+        FROM tbl_system_directory_document tsdd
+        WHERE tsdd.STATUS = 1
+        <if test="systemIds != null and systemIds != ''">
+            AND tsdd.SYSTEM_ID IN
+            <foreach collection="systemIds.split(',')" item="item1" open="(" separator="," close=")"
+                     index="index1">
+                #{item1}
+            </foreach>
+        </if>
+        AND tsdd.DOCUMENT_TYPE IS NOT NULL
+        GROUP BY tsdd.SYSTEM_ID,tsdd.DOCUMENT_TYPE
+        ) temp
+        LEFT JOIN tbl_system_document_type tsdt ON tsdt.ID = temp.DOCUMENT_TYPE
+        WHERE tsdt.STATUS = 1
+    </select>
+
+    <!-- 获取开发任务关联的系统目录文档 -->
+    <select id="getDocumentsUnderDocumentTypesDirectory" resultMap="systemDirctoryDocumentDTOMap"
+            resultType="java.util.List">
+        SELECT tsdd.ID,
+        tsdd.DOCUMENT_NAME,
+        tsdd.DOCUMENT_S3_BUCKET,
+        tsdd.DOCUMENT_S3_KEY,
+        tsdd.DOCUMENT_TEMP_S3_KEY,
+        CASE WHEN tsdd.CREATE_BY IS NOT NULL THEN (SELECT TUI1.USER_NAME FROM tbl_user_info TUI1 WHERE TUI1.ID =
+        tsdd.CREATE_BY LIMIT 1) ELSE NULL END AS "CREATE_USER_NAME",
+        tsdd.CREATE_DATE,
+        CASE WHEN tsdd.CHECKOUT_USER_ID IS NOT NULL THEN (SELECT TUI2.USER_NAME FROM tbl_user_info TUI2 WHERE TUI2.ID =
+        tsdd.CHECKOUT_USER_ID LIMIT 1) ELSE NULL END AS "CHECKOUT_USER_NAME",
+        tsdd.LAST_UPDATE_DATE,
+        CASE WHEN tsdd.LAST_UPDATE_BY IS NOT NULL THEN (SELECT TUI3.USER_NAME FROM tbl_user_info TUI3 WHERE TUI3.ID =
+        tsdd.LAST_UPDATE_BY LIMIT 1) ELSE NULL END AS "UPDATE_USER_NAME",
+        CASE WHEN (SELECT COUNT(1) FROM tbl_system_directory_document_requirement tsddr WHERE
+        tsddr.SYSTEM_DIRECTORY_DOCUMENT_ID = tsdd.ID) > 0 THEN 1 ELSE 0 END AS "EXIST_RELATED_INFO",
+        tsdd.SAVE_TYPE
+        FROM tbl_system_directory_document_requirement_feature ddrf
+        LEFT JOIN tbl_system_directory_document tsdd ON ddrf. SYSTEM_DIRECTORY_DOCUMENT_ID = tsdd.ID AND tsdd.status = 1
+        LEFT JOIN tbl_requirement_feature rf ON rf.ID = ddrf.REQUIREMENT_FEATURE_ID AND rf.STATUS = 1
+        WHERE rf.SYSTEM_ID = #{systemId}
+        AND tsdd.DOCUMENT_TYPE = #{documentType}
+        AND tsdd.STATUS = 1
+    </select>
+
+<!-- 更新文档版本 -->
+    <update id="updateVersionForCoverUploadDocument" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument">
+        UPDATE tbl_system_directory_document tsdd
+        SET tsdd.DOCUMENT_VERSION = #{documentVersion},
+         tsdd.DOCUMENT_NAME = #{documentName},
+         tsdd.DOCUMENT_S3_KEY = #{documentS3Key},
+         tsdd.LAST_UPDATE_BY = #{lastUpdateBy},
+         tsdd.LAST_UPDATE_DATE = CURRENT_TIMESTAMP
+        WHERE tsdd.ID = #{id}
+    </update>
+
+<!-- 获取系统目录文档 ，directoryId目录ID-->
+    <select id="getDirectoryDocumentsByDirectoryId" resultMap="systemDirctoryDocumentDTOMap"
+            resultType="java.util.List">
+       SELECT
+       document.ID,
+       document.SYSTEM_DIRECTORY_ID,
+      <!--  documentRe.REQUIREMENT_CODE requirementCode, -->
+      <!--  PROJECT_TYPE, -->
+       DOCUMENT_NAME,
+       DOCUMENT_TYPE,
+      <!--  DOCUMENT_TYPE2, -->
+       SAVE_TYPE,
+       CHECKOUT_STATUS,
+       CHECKOUT_USER_ID,
+       <!-- 获取对应检出人的姓名 -->
+       CASE WHEN CHECKOUT_USER_ID IS NOT NULL THEN (SELECT TUI.USER_NAME FROM tbl_user_info TUI WHERE TUI.ID = document.CHECKOUT_USER_ID LIMIT 1) ELSE NULL END AS "CHECKOUT_USER_NAME",
+       DOCUMENT_S3_BUCKET,
+       DOCUMENT_S3_KEY,
+       DOCUMENT_TEMP_S3_KEY,
+       CREATE_BY,
+       <!-- 获取创建人的姓名 -->
+       CASE WHEN CREATE_BY IS NOT NULL THEN (SELECT TUI.USER_NAME FROM tbl_user_info TUI WHERE TUI.ID = document.CREATE_BY LIMIT 1) ELSE NULL END AS "CREATE_USER_NAME",
+       CREATE_DATE,
+       LAST_UPDATE_BY,
+       <!-- 获取最近更新人的姓名 -->
+       CASE WHEN LAST_UPDATE_BY IS NOT NULL THEN (SELECT TUI.USER_NAME FROM tbl_user_info TUI WHERE TUI.ID = document.LAST_UPDATE_BY LIMIT 1) ELSE NULL END AS "UPDATE_USER_NAME",
+       LAST_UPDATE_DATE
+       FROM tbl_system_directory_document document
+	  <!--  LEFT JOIN tbl_system_directory_document_requirement documentRe
+       ON document.ID=documentRe.SYSTEM_DIRECTORY_DOCUMENT_ID -->
+       WHERE
+       SYSTEM_DIRECTORY_ID = #{directoryId}
+       <!-- AND PROJECT_TYPE = 2 -->
+       AND STATUS = 1
+       ORDER BY ID DESC
+   </select>
+   
+   <!-- 通过ID获取系统目录文档 -->
+	<select id="getMarkById" resultMap="systemDirctoryDocumentMap"
+            >
+       SELECT
+       ID,
+       SYSTEM_DIRECTORY_ID,
+       SYSTEM_ID,
+       DOCUMENT_NAME,
+       DOCUMENT_VERSION,
+       DOCUMENT_TYPE,
+       CHECKOUT_STATUS,
+       CHECKOUT_USER_ID,
+       SAVE_TYPE,
+      DOCUMENT_S3_BUCKET,
+      DOCUMENT_S3_KEY,
+      STATUS,
+      <!-- 获取创建人姓名 -->
+       CASE WHEN CREATE_BY IS NOT NULL THEN (SELECT TUI.USER_NAME FROM tbl_user_info TUI WHERE TUI.ID = CREATE_BY LIMIT 1) ELSE NULL END AS "CREATE_USER_NAME",
+      CREATE_DATE,
+      <!-- 获取最近更新人姓名 -->
+      CASE WHEN LAST_UPDATE_BY IS NOT NULL THEN (SELECT TUI.USER_NAME FROM tbl_user_info TUI WHERE TUI.ID = CREATE_BY LIMIT 1) ELSE NULL END AS "UPDATE_USER_NAME",
+      LAST_UPDATE_DATE
+       FROM tbl_system_directory_document
+       WHERE
+       id = #{id}
+   </select>
+   
+   <!-- 通过ID获取系统目录文档 -->
+   <select id="getDirectoryDocumentsById" resultMap="systemDirctoryDocumentMap"
+            >
+       SELECT
+       ID,
+       SYSTEM_DIRECTORY_ID,
+       SYSTEM_ID,
+       DOCUMENT_NAME,
+       DOCUMENT_VERSION,
+       DOCUMENT_TYPE,
+       CHECKOUT_STATUS,
+       CHECKOUT_USER_ID,
+       SAVE_TYPE,
+      DOCUMENT_S3_BUCKET,
+      DOCUMENT_S3_KEY,
+      STATUS,
+      CREATE_BY,
+      CREATE_DATE,
+      LAST_UPDATE_BY,
+      LAST_UPDATE_DATE
+       FROM tbl_system_directory_document
+       WHERE
+       id = #{id}
+   </select>
+   
+   <!-- 文档是否存在 -->
+    <select id="existRelatedDocuments" resultType="java.lang.Boolean">
+        SELECT
+        CASE WHEN COUNT(*) >0 THEN 1 ELSE 0 END AS "exist"
+        FROM tbl_system_directory_document
+        WHERE STATUS = 1
+        AND SYSTEM_DIRECTORY_ID IN
+        <foreach collection="directoryIds" item="item1" open="(" separator="," close=")"
+                 index="index1">
+            #{item1}
+        </foreach>
+    </select>
+
+<!-- 通过条件查询文档 -->
+    <select id="selectUploadedDocumentForUpdate" resultMap="systemDirctoryDocumentMap"
+            parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument">
+        SELECT
+        ID,
+        DOCUMENT_VERSION
+        FROM tbl_system_directory_document
+        WHERE
+        SYSTEM_DIRECTORY_ID = #{systemDirectoryId}
+        AND PROJECT_TYPE = 2
+        AND DOCUMENT_NAME = #{documentName}
+        AND SAVE_TYPE = 1
+        AND STATUS = 1
+        LIMIT 1
+        FOR UPDATE
+    </select>
+    
+    <!-- 获取系统和项目下的文档 -->
+    <select id="selectBySystemId"  resultMap="systemDirctoryDocumentMap"
+            >
+       SELECT document.ID,document.SYSTEM_ID  FROM tbl_system_directory dire
+	LEFT JOIN tbl_system_directory_document document
+	ON dire.ID=document.SYSTEM_DIRECTORY_ID AND document.`STATUS`=1
+	WHERE SAVE_TYPE=3 AND SYSTEM_ID= #{systemId} AND dire.`STATUS`=1 AND dire.PROJECT_ID=#{projectId}
+      
+    </select>
+
+<!-- 获取所有文档 -->
+    <select id="getAllDirectoryDocuments" resultMap="systemDirctoryDocumentMap" resultType="java.util.List">
+        SELECT
+        ID,
+        SYSTEM_DIRECTORY_ID,
+        PROJECT_TYPE,
+        DOCUMENT_NAME,
+        DOCUMENT_TYPE2,
+        SAVE_TYPE,
+        CHECKOUT_STATUS,
+        CHECKOUT_USER_ID,
+        DOCUMENT_S3_BUCKET,
+        DOCUMENT_S3_KEY,
+        DOCUMENT_TEMP_S3_KEY,
+        LAST_UPDATE_BY,
+        LAST_UPDATE_DATE
+        FROM tbl_system_directory_document
+        <where>
+            SYSTEM_DIRECTORY_ID = #{directoryId}
+            <if test="excludeId != null">
+                AND ID != #{excludeId}
+            </if>
+            AND PROJECT_TYPE = 2
+            AND STATUS = 1
+        </where>
+    </select>
+
+<!-- 保存文档 -->
+    <insert id="insertDirectoryDocument" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument"
+            useGeneratedKeys="true" keyProperty="id">
+     <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+      SELECT LAST_INSERT_ID() AS ID
+    </selectKey>
+      INSERT INTO tbl_system_directory_document(
+        SYSTEM_DIRECTORY_ID,
+      <!--   PROJECT_TYPE, -->
+      	SYSTEM_ID,
+        DOCUMENT_NAME,
+        DOCUMENT_VERSION,
+        DOCUMENT_TYPE,
+        SAVE_TYPE,
+        DOCUMENT_S3_BUCKET,
+        DOCUMENT_S3_KEY,
+        STATUS,
+        CREATE_BY,
+        CREATE_DATE,
+        LAST_UPDATE_BY,
+        LAST_UPDATE_DATE
+        ) VALUES (
+         #{systemDirectoryId},
+         #{systemId},
+         #{documentName},
+         #{documentVersion},
+         #{documentType},
+         #{saveType},
+         #{documentS3Bucket},
+         #{documentS3Key},
+         #{status},
+         #{createBy},
+         #{createDate},
+         #{lastUpdateBy},
+         #{lastUpdateDate}
+        )
+    </insert>
+
+<!-- 更新系统目录文档信息 -->
+    <update id="updateForSameDirectoryDocument"
+            parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument">
+        UPDATE tbl_system_directory_document SET
+        DOCUMENT_VERSION = #{documentVersion},
+        DOCUMENT_TYPE2 = #{documentType2},
+        DOCUMENT_S3_BUCKET = #{documentS3Bucket},
+        DOCUMENT_S3_KEY = #{documentS3Key},
+        LAST_UPDATE_BY = #{lastUpdateBy},
+        LAST_UPDATE_DATE = #{lastUpdateDate}
+        WHERE ID = #{id}
+    </update>
+    
+    <!-- 逻辑删除系统目录文档 -->
+	<update id="removeDocumentFile"
+            parameterType="java.lang.Long">
+        UPDATE tbl_system_directory_document 
+        SET
+        STATUS = 2
+        WHERE ID = #{directoryDocumentId}
+    </update>
+    <!-- 物理删除系统目录文档 -->
+    <delete id="delDirectoryDocument" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument">
+        DELETE FROM tbl_system_directory_document WHERE ID = #{id}
+    </delete>
+
+    <resultMap type="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument" id="systemDirctoryDocumentMap">
+        <id column="ID" property="id"/>
+        <result column="SYSTEM_ID" property="systemId"/>
+        <result column="SYSTEM_DIRECTORY_ID" property="systemDirectoryId"/>
+       <!--  <result column="PROJECT_TYPE" property="projectType"/> -->
+        <result column="REQUIREMENT_ID" property="requirementId"/>
+        <result column="DOCUMENT_NAME" property="documentName"/>
+        <result column="DOCUMENT_VERSION" property="documentVersion"/>
+        <!-- <result column="DOCUMENT_TYPE1" property="documentType1"/>
+        <result column="DOCUMENT_TYPE2" property="documentType2"/> -->
+        <result column="SAVE_TYPE" property="saveType"/>
+        <result column="CHECKOUT_STATUS" property="checkoutStatus"/>
+        <result column="CHECKOUT_USER_ID" property="checkoutUserId"/>
+        <result column="DOCUMENT_S3_BUCKET" property="documentS3Bucket"/>
+        <result column="DOCUMENT_S3_KEY" property="documentS3Key"/>
+        <result column="DOCUMENT_MONGO_KEY" property="documentMongoKey"/>
+        <result column="DOCUMENT_TEMP_S3_KEY" property="documentTempS3Key"/>
+        <result column="DOCUMENT_TEMP_MONGO_KEY" property="documentTempMongoKey"/>
+        <result column="STATUS" property="status"/>
+        <result column="CREATE_BY" property="createBy"/>
+        <result column="CREATE_DATE" property="createDate"/>
+        <result column="LAST_UPDATE_BY" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate"/>
+    </resultMap>
+
+    <resultMap id="systemDirctoryDocumentDTOMap" type="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument"
+               extends="systemDirctoryDocumentMap">
+        <result column="CHECKOUT_USER_NAME" property="checkOutUserName"/>
+        <result column="CREATE_USER_NAME" property="createUserName"/>
+        <result column="UPDATE_USER_NAME" property="updateUserName"/>
+        <result column="DOCUMENT_TYPE_NAME" property="documentTypeName"/>
+        <result column="EXIST_RELATED_INFO" property="existRelatedInfo"/>
+    </resultMap>
+
+
+</mapper>

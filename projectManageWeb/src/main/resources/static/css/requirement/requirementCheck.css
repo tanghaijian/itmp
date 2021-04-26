@@ -1,0 +1,188 @@
+#details{
+    background: #F2F2F2;
+    width: 100%;
+    min-height: 100%;
+}
+.defectBody [class*="def_col_"]{
+    padding-left: 0;
+}
+.head{
+    display: flex;
+    flex-direction: row;
+    padding: 10px 12px;
+    border-bottom: 1px solid #E8E8E8;
+}
+.headReturn{
+    width: 55px;
+    height: 36px;
+    background: url("../../images/return.png") no-repeat 8px 0;
+    border-right: 2px solid #E8E8E8;
+    cursor:pointer;
+}
+.title{
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    padding-left: 8px;
+}
+.title>div{
+    line-height: 36px;
+}
+[class^="classColor"]{
+    border-radius: 3px;
+    padding: 3px 5px;
+}
+.titleFont{
+    font-size: 15px;
+    font-weight: bold;
+}
+.defectBody{
+    padding: 8px;
+    display: flex;
+    flex-direction: row;
+}
+.defectInfos{
+    width: 65%;
+    padding-right: 8px;
+}
+.defectHandlingLog{ 
+    width: 35%;
+}
+.defectBody .allInfo {
+    margin: 0;
+    border: none;
+    padding: 0 10px;
+    background-color: #FFF;
+    padding-bottom: 20px;
+}
+.defectBody .def_title{
+    padding: 12px 2px 10px;
+    border-bottom: 1px solid #D1D1D1;
+}
+.defectBody .def_title span{
+    color: #108EE9 !important;
+}
+.defectBody .allInfo .def_content{
+    border: none;
+    padding:  8px 0 8px 10px;
+}
+pre{
+    background-color: inherit;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+.oneTask,.oneWorkTask{ 
+    padding: 8px 2px;
+}
+.oneTask{
+	border-top: 1px solid #EBEBEB;
+}
+.oneWorkTask{
+	margin-left: 20px;
+	border-top: 1px solid #F8F8F8;
+}
+.oneTask .name,.oneTask .large,.oneTask .user,.oneWorkTask .name,.oneWorkTask .large,.oneWorkTask .user{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.oneTask .name{
+    position: relative;
+    padding-right: 100px !important; 
+}
+.oneWorkTask .name{
+	position: relative;
+    padding-right: 100px !important;  
+}
+.oneTask .describe,.oneTask .name,.oneTask .large,.oneTask .user{
+	padding: 4px 0 ;
+}
+.oneWorkTask .describe,.oneWorkTask .large,.oneWorkTask .user{
+	padding: 4px 0 ;
+}
+.status{
+    top: 2px;
+    position: absolute;
+    right: 8px;
+    color: #FFF;
+    padding: 3px 0;
+    text-align: center;
+    width: 84px;
+    border-radius: 3px;
+    font-size: 12px;
+    line-height: 12px;
+    background:#CCCCCC;
+}
+.status01{
+    background:#FF6699;
+}
+.status02{
+    background:#108EE9;
+}
+.status03{
+    background:#33CC99;
+}
+.status04{
+    background:#FF5723;
+}
+.status05{
+    background:#FD5723;
+}
+.status06{
+    background:#FD5723;
+}
+.statu07{
+    background:#FD5723;
+}
+.status08{
+    background:#42429B;
+}
+.status09{
+    background:#E9E9F5;
+}  
+.status00{
+    background:#CCCCCC;
+}  
+.oneTask [class*="def_col_"]{
+    padding: 0;
+}
+.oneTask .fa-th-large,.oneTask .fa-user,.oneWorkTask .fa-user{
+    color: #BFBFBF;
+} 
+.large .fa-check-square{
+	font-size: 14px;
+	color: #1296DB;
+}
+.left_div,.right_div{
+	border: 1px solid #D9D9D9;
+	border-radius: 3px;
+	background-color: #FFF;
+}
+.left_div{
+	flex: 1;
+}
+.right_div {
+	width: 25%;
+	margin-left:10px;
+	
+}
+#requirementOverviewDetails{
+	margin-bottom: 8px;
+}
+#details .rowdiv .form-group{
+	margin: 0;
+}
+.focusInfo{
+	margin-left: 16px;	
+	margin-top: 4px;	
+	width: 28px;
+	height: 28px;
+	background: url("../../../../systemui/static/images/concern.png") no-repeat;
+	background-position: 0 0;
+	cursor:pointer;
+}
+.noheart{
+	background-position: -28px 0;
+}

@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblSystemJenkinsJobRunStageLogMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRunStageLog">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="SYSTEM_JENKINS_JOB_RUN_STAGE_ID" jdbcType="BIGINT" property="systemJenkinsJobRunStageId" />
+    <result column="STAGE_ID" jdbcType="INTEGER" property="stageId" />
+    <result column="STAGE_LOG_ID" jdbcType="INTEGER" property="stageLogId" />
+    <result column="STAGE_LOG_NAME" jdbcType="VARCHAR" property="stageLogName" />
+    <result column="STAGE_LOG_ORDER" jdbcType="INTEGER" property="stageLogOrder" />
+    <result column="STAGE_LOG_EXEC_NODE" jdbcType="VARCHAR" property="stageLogExecNode" />
+    <result column="STAGE_LOG_STATUS" jdbcType="VARCHAR" property="stageLogStatus" />
+    <result column="STAGE_LOG_START_TIME" jdbcType="TIMESTAMP" property="stageLogStartTime" />
+    <result column="STAGE_LOG_DURATION" jdbcType="BIGINT" property="stageLogDuration" />
+    <result column="STAGE_LOG_PAUSE_DURATION" jdbcType="BIGINT" property="stageLogPauseDuration" />
+    <result column="DETAIL_NODE_STATUS" jdbcType="VARCHAR" property="detailNodeStatus" />
+    <result column="DETAIL_LENGTH" jdbcType="BIGINT" property="detailLength" />
+    <result column="DETAIL_HASMORE" jdbcType="TINYINT" property="detailHasmore" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRunStageLog">
+    <result column="DETAIL_TEXT" jdbcType="LONGVARBINARY" property="detailText" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, SYSTEM_JENKINS_JOB_RUN_STAGE_ID, STAGE_ID, STAGE_LOG_ID, STAGE_LOG_NAME, STAGE_LOG_ORDER, STAGE_LOG_EXEC_NODE, STAGE_LOG_STATUS, 
+    STAGE_LOG_START_TIME, STAGE_LOG_DURATION, STAGE_LOG_PAUSE_DURATION, DETAIL_NODE_STATUS, 
+    DETAIL_LENGTH, DETAIL_HASMORE, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  <sql id="Blob_Column_List">
+    DETAIL_TEXT
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from tbl_system_jenkins_job_run_stage_log
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 查看构建部署的stage日志 -->
+  <select id="selectJobRunStageLog" parameterType="map" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from tbl_system_jenkins_job_run_stage_log
+    where STATUS=1 and STAGE_LOG_ID = #{executionId,jdbcType=INTEGER} and SYSTEM_JENKINS_JOB_RUN_STAGE_ID in (
+    	select ID from tbl_system_jenkins_job_run_stage where SYSTEM_JENKINS_JOB_RUN_ID = #{jobRunId,jdbcType=BIGINT}
+    )
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_system_jenkins_job_run_stage_log
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert"   keyProperty="id" useGeneratedKeys="true" parameterType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRunStageLog">
+    insert into tbl_system_jenkins_job_run_stage_log (SYSTEM_JENKINS_JOB_RUN_STAGE_ID, STAGE_ID, STAGE_LOG_ID, STAGE_LOG_NAME, 
+      STAGE_LOG_ORDER, STAGE_LOG_EXEC_NODE, STAGE_LOG_STATUS, 
+      STAGE_LOG_START_TIME, STAGE_LOG_DURATION, 
+      STAGE_LOG_PAUSE_DURATION, DETAIL_NODE_STATUS, 
+      DETAIL_LENGTH, DETAIL_HASMORE, STATUS, 
+      CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, 
+      LAST_UPDATE_DATE, DETAIL_TEXT)
+    values (#{systemJenkinsJobRunStageId,jdbcType=BIGINT}, #{stageId,jdbcType=INTEGER}, #{stageLogId,jdbcType=INTEGER}, #{stageLogName,jdbcType=VARCHAR}, 
+      #{stageLogOrder,jdbcType=INTEGER}, #{stageLogExecNode,jdbcType=VARCHAR}, #{stageLogStatus,jdbcType=VARCHAR}, 
+      #{stageLogStartTime,jdbcType=TIMESTAMP}, #{stageLogDuration,jdbcType=BIGINT}, 
+      #{stageLogPauseDuration,jdbcType=BIGINT}, #{detailNodeStatus,jdbcType=VARCHAR}, 
+      #{detailLength,jdbcType=BIGINT}, #{detailHasmore,jdbcType=TINYINT}, #{status,jdbcType=TINYINT}, 
+      #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, 
+      #{lastUpdateDate,jdbcType=TIMESTAMP}, #{detailText,jdbcType=LONGVARBINARY})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRunStageLog">
+    insert into tbl_system_jenkins_job_run_stage_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="stageId != null">
+        SYSTEM_JENKINS_JOB_RUN_STAGE_ID,
+      </if>
+      <if test="stageId != null">
+        STAGE_ID,
+      </if>
+      <if test="stageLogId != null">
+        STAGE_LOG_ID,
+      </if>
+      <if test="stageLogName != null">
+        STAGE_LOG_NAME,
+      </if>
+      <if test="stageLogOrder != null">
+        STAGE_LOG_ORDER,
+      </if>
+      <if test="stageLogExecNode != null">
+        STAGE_LOG_EXEC_NODE,
+      </if>
+      <if test="stageLogStatus != null">
+        STAGE_LOG_STATUS,
+      </if>
+      <if test="stageLogStartTime != null">
+        STAGE_LOG_START_TIME,
+      </if>
+      <if test="stageLogDuration != null">
+        STAGE_LOG_DURATION,
+      </if>
+      <if test="stageLogPauseDuration != null">
+        STAGE_LOG_PAUSE_DURATION,
+      </if>
+      <if test="detailNodeStatus != null">
+        DETAIL_NODE_STATUS,
+      </if>
+      <if test="detailLength != null">
+        DETAIL_LENGTH,
+      </if>
+      <if test="detailHasmore != null">
+        DETAIL_HASMORE,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+      <if test="detailText != null">
+        DETAIL_TEXT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="id != null">
+        #{systemJenkinsJobRunStageId,jdbcType=BIGINT},
+      </if>
+      <if test="stageId != null">
+        #{stageId,jdbcType=INTEGER},
+      </if>
+      <if test="stageLogId != null">
+        #{stageLogId,jdbcType=INTEGER},
+      </if>
+      <if test="stageLogName != null">
+        #{stageLogName,jdbcType=VARCHAR},
+      </if>
+      <if test="stageLogOrder != null">
+        #{stageLogOrder,jdbcType=INTEGER},
+      </if>
+      <if test="stageLogExecNode != null">
+        #{stageLogExecNode,jdbcType=VARCHAR},
+      </if>
+      <if test="stageLogStatus != null">
+        #{stageLogStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="stageLogStartTime != null">
+        #{stageLogStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="stageLogDuration != null">
+        #{stageLogDuration,jdbcType=BIGINT},
+      </if>
+      <if test="stageLogPauseDuration != null">
+        #{stageLogPauseDuration,jdbcType=BIGINT},
+      </if>
+      <if test="detailNodeStatus != null">
+        #{detailNodeStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="detailLength != null">
+        #{detailLength,jdbcType=BIGINT},
+      </if>
+      <if test="detailHasmore != null">
+        #{detailHasmore,jdbcType=TINYINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="detailText != null">
+        #{detailText,jdbcType=LONGVARBINARY},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRunStageLog">
+    update tbl_system_jenkins_job_run_stage_log
+    <set>
+      <if test="stageId != null">
+        SYSTEM_JENKINS_JOB_RUN_STAGE_ID = #{systemJenkinsJobRunStageId,jdbcType=BIGINT},
+      </if>
+      <if test="stageId != null">
+        STAGE_ID = #{stageId,jdbcType=INTEGER},
+      </if>
+      <if test="stageLogId != null">
+        STAGE_LOG_ID = #{stageLogId,jdbcType=INTEGER},
+      </if>
+      <if test="stageLogName != null">
+        STAGE_LOG_NAME = #{stageLogName,jdbcType=VARCHAR},
+      </if>
+      <if test="stageLogOrder != null">
+        STAGE_LOG_ORDER = #{stageLogOrder,jdbcType=INTEGER},
+      </if>
+      <if test="stageLogExecNode != null">
+        STAGE_LOG_EXEC_NODE = #{stageLogExecNode,jdbcType=VARCHAR},
+      </if>
+      <if test="stageLogStatus != null">
+        STAGE_LOG_STATUS = #{stageLogStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="stageLogStartTime != null">
+        STAGE_LOG_START_TIME = #{stageLogStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="stageLogDuration != null">
+        STAGE_LOG_DURATION = #{stageLogDuration,jdbcType=BIGINT},
+      </if>
+      <if test="stageLogPauseDuration != null">
+        STAGE_LOG_PAUSE_DURATION = #{stageLogPauseDuration,jdbcType=BIGINT},
+      </if>
+      <if test="detailNodeStatus != null">
+        DETAIL_NODE_STATUS = #{detailNodeStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="detailLength != null">
+        DETAIL_LENGTH = #{detailLength,jdbcType=BIGINT},
+      </if>
+      <if test="detailHasmore != null">
+        DETAIL_HASMORE = #{detailHasmore,jdbcType=TINYINT},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="detailText != null">
+        DETAIL_TEXT = #{detailText,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRunStageLog">
+    update tbl_system_jenkins_job_run_stage_log
+    set SYSTEM_JENKINS_JOB_RUN_STAGE_ID = #{systemJenkinsJobRunStageId,jdbcType=BIGINT},
+      STAGE_ID = #{stageId,jdbcType=INTEGER},
+      STAGE_LOG_ID = #{stageLogId,jdbcType=INTEGER},
+      STAGE_LOG_NAME = #{stageLogName,jdbcType=VARCHAR},
+      STAGE_LOG_ORDER = #{stageLogOrder,jdbcType=INTEGER},
+      STAGE_LOG_EXEC_NODE = #{stageLogExecNode,jdbcType=VARCHAR},
+      STAGE_LOG_STATUS = #{stageLogStatus,jdbcType=VARCHAR},
+      STAGE_LOG_START_TIME = #{stageLogStartTime,jdbcType=TIMESTAMP},
+      STAGE_LOG_DURATION = #{stageLogDuration,jdbcType=BIGINT},
+      STAGE_LOG_PAUSE_DURATION = #{stageLogPauseDuration,jdbcType=BIGINT},
+      DETAIL_NODE_STATUS = #{detailNodeStatus,jdbcType=VARCHAR},
+      DETAIL_LENGTH = #{detailLength,jdbcType=BIGINT},
+      DETAIL_HASMORE = #{detailHasmore,jdbcType=TINYINT},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      DETAIL_TEXT = #{detailText,jdbcType=LONGVARBINARY}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRunStageLog">
+    update tbl_system_jenkins_job_run_stage_log
+    set SYSTEM_JENKINS_JOB_RUN_STAGE_ID = #{systemJenkinsJobRunStageId,jdbcType=BIGINT},
+      STAGE_ID = #{stageId,jdbcType=INTEGER},
+      STAGE_LOG_ID = #{stageLogId,jdbcType=INTEGER},
+      STAGE_LOG_NAME = #{stageLogName,jdbcType=VARCHAR},
+      STAGE_LOG_ORDER = #{stageLogOrder,jdbcType=INTEGER},
+      STAGE_LOG_EXEC_NODE = #{stageLogExecNode,jdbcType=VARCHAR},
+      STAGE_LOG_STATUS = #{stageLogStatus,jdbcType=VARCHAR},
+      STAGE_LOG_START_TIME = #{stageLogStartTime,jdbcType=TIMESTAMP},
+      STAGE_LOG_DURATION = #{stageLogDuration,jdbcType=BIGINT},
+      STAGE_LOG_PAUSE_DURATION = #{stageLogPauseDuration,jdbcType=BIGINT},
+      DETAIL_NODE_STATUS = #{detailNodeStatus,jdbcType=VARCHAR},
+      DETAIL_LENGTH = #{detailLength,jdbcType=BIGINT},
+      DETAIL_HASMORE = #{detailHasmore,jdbcType=TINYINT},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

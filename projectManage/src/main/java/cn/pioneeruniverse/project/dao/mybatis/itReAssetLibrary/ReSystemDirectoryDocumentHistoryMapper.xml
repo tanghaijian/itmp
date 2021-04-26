@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.itReAssetLibrary.ReSystemDirectoryDocumentHistoryDao">
+
+<!-- 获取某个文档的历史信息 -->
+    <select id="getSystemDirectoryHistoryByDocumentId" resultMap="systemDirectoryDocumentHistoryDTOMap"
+            resultType="java.util.List">
+       SELECT
+        tsddh.ID,
+        tsddh.SYSTEM_DIRECTORY_DOCUMENT_ID,
+       tsddh.DOCUMENT_NAME,
+       tsddh.DOCUMENT_VERSION,
+       tsddh.DOCUMENT_S3_BUCKET,
+       tsddh.DOCUMENT_S3_KEY,
+       tsddh.DOCUMENT_MONGO_KEY,
+       CASE WHEN tsddh.CHECKOUT_USER_ID IS NOT NULL THEN (SELECT TUI.USER_NAME FROM tbl_user_info TUI WHERE TUI.ID = tsddh.CHECKOUT_USER_ID LIMIT 1) ELSE NULL END AS "UPDATE_USER_NAME",
+       tsddh.LAST_UPDATE_DATE
+       FROM tbl_system_directory_document_history tsddh
+       WHERE
+       tsddh.STATUS = 1
+       AND tsddh.SYSTEM_DIRECTORY_DOCUMENT_ID = #{documentId}
+       ORDER BY tsddh.LAST_UPDATE_DATE DESC
+    </select>
+    
+    <!-- 获取某个文档的所有历史信息，包括无效的 -->
+    <select id="getReHistoryByDocumentId" resultMap="systemDirectoryDocumentHistoryDTOMap"
+            resultType="java.util.List">
+        SELECT   
+			document.ID,
+			document.SYSTEM_DIRECTORY_DOCUMENT_ID,
+			document.DOCUMENT_NAME,
+			document.DOCUMENT_VERSION,
+			document.DOCUMENT_S3_BUCKET,
+			document.DOCUMENT_S3_KEY,
+ 			document.DOCUMENT_MONGO_KEY,
+ 			document.SAVE_TYPE,
+			CASE WHEN document.CREATE_BY IS NOT NULL THEN (SELECT TUI.USER_NAME FROM tbl_user_info TUI WHERE TUI.ID = document.CREATE_BY LIMIT 1) ELSE NULL END AS "UPDATE_USER_NAME",
+			document.CREATE_DATE LAST_UPDATE_DATE 
+		FROM tbl_system_directory_document_history document
+		WHERE
+ 			document.SYSTEM_DIRECTORY_DOCUMENT_ID    = #{documentId}
+      		 ORDER BY document.ID DESC 
+    </select>
+	
+	<!-- 获取某个文档关联的开发任务信息 -->
+	<select id="getFeHistoryByDocumentId" resultMap="systemDirectoryDocumentHistoryDTOMap"
+            resultType="java.util.List">
+        SELECT doFeature.ID,
+			doFeature.SYSTEM_DIRECTORY_DOCUMENT_ID,
+			document.DOCUMENT_NAME,
+			doFeature.DOCUMENT_VERSION,
+			document.DOCUMENT_S3_BUCKET,
+			document.DOCUMENT_S3_KEY,
+ 			document.DOCUMENT_MONGO_KEY,
+ 			document.SAVE_TYPE,
+			CASE WHEN doFeature.UPDATE_USER_ID IS NOT NULL THEN (SELECT TUI.USER_NAME FROM tbl_user_info TUI WHERE TUI.ID = doFeature.UPDATE_USER_ID LIMIT 1) ELSE NULL END AS "UPDATE_USER_NAME",
+			doFeature.UPDATE_TIME LAST_UPDATE_DATE 
+		FROM tbl_system_directory_document_requirement_feature doFeature
+		LEFT JOIN tbl_system_directory_document document
+		ON doFeature.SYSTEM_DIRECTORY_DOCUMENT_ID=document.ID
+  		WHERE
+ 			doFeature.SYSTEM_DIRECTORY_DOCUMENT_ID   = #{documentId}
+      		 ORDER BY doFeature.UPDATE_TIME DESC
+ 			
+    </select>
+    
+    <!-- 保存文档历史 -->
+    <insert id="insertDirectoryDocumentHistory"
+            parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocument" useGeneratedKeys="true"
+            keyProperty="id">
+       INSERT INTO tbl_system_directory_document_history(
+         SYSTEM_DIRECTORY_DOCUMENT_ID,
+         DOCUMENT_NAME,
+         DOCUMENT_VERSION,
+         DOCUMENT_TYPE,
+         SAVE_TYPE,
+         CHECKOUT_USER_ID,
+         DOCUMENT_S3_BUCKET,
+         DOCUMENT_S3_KEY,
+         DOCUMENT_MONGO_KEY,
+         STATUS,
+         CREATE_BY,
+         CREATE_DATE,
+         LAST_UPDATE_BY,
+         LAST_UPDATE_DATE
+       ) VALUES (
+         #{id},
+         #{documentName},
+         #{documentVersion},
+         #{documentType},
+         #{saveType},
+         #{checkoutUserId},
+         #{documentS3Bucket},
+         #{documentS3Key},
+         #{documentMongoKey},
+         #{status},
+         #{createBy},
+         #{createDate},
+         #{lastUpdateBy},
+         #{lastUpdateDate}
+       )
+    </insert>
+
+    <resultMap id="systemDirectoryDocumentHistoryMap"
+               type="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentHistory">
+        <id column="ID" property="id"/>
+        <result column="SYSTEM_DIRECTORY_DOCUMENT_ID" property="systemDirectoryDocumentId"/>
+        <result column="REQUIREMENT_ID" property="requirementId"/>
+        <result column="DOCUMENT_NAME" property="documentName"/>
+        <result column="DOCUMENT_VERSION" property="documentVersion"/>
+        <result column="DOCUMENT_TYPE" property="documentType"/>
+        <result column="SAVE_TYPE" property="saveType"/>
+        <result column="CHECKOUT_USER_ID" property="checkOutUserId"/>
+        <result column="DOCUMENT_S3_BUCKET" property="documentS3Bucket"/>
+        <result column="DOCUMENT_S3_KEY" property="documentS3Key"/>
+        <result column="DOCUMENT_MONGO_KEY" property="documentMongoKey"/>
+        <result column="STATUS" property="status"/>
+        <result column="CREATE_BY" property="createBy"/>
+        <result column="CREATE_DATE" property="createDate"/>
+        <result column="LAST_UPDATE_BY" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate"/>
+    </resultMap>
+
+    <resultMap id="systemDirectoryDocumentHistoryDTOMap"
+               type="cn.pioneeruniverse.project.entity.TblSystemDirectoryDocumentHistory"
+               extends="systemDirectoryDocumentHistoryMap">
+        <result property="updateUserName" column="UPDATE_USER_NAME"/>
+        <association property="relatedRequirement" javaType="cn.pioneeruniverse.project.entity.TblRequirementInfo"
+                     column="{systemDirectoryDocumentId=SYSTEM_DIRECTORY_DOCUMENT_ID,documentVersion=DOCUMENT_VERSION}"
+                     select="cn.pioneeruniverse.project.dao.mybatis.assetLibrary.TblSystemDirectoryDocumentRequirementMapper.getSystemRequirementBySystemDirDocIdAndVersion">
+
+        </association>
+    </resultMap>
+</mapper>

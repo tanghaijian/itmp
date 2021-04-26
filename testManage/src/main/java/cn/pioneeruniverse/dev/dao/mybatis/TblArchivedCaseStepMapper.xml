@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblArchivedCaseStepMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblArchivedCaseStep">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <id column="CASE_ID" jdbcType="BIGINT" property="caseId" />
+    <id column="STEP_ORDER" jdbcType="INTEGER" property="stepOrder" />
+    <id column="STEP_DESCRIPTION" jdbcType="VARCHAR" property="stepDescription" />
+    <id column="STEP_EXPECTED_RESULT" jdbcType="VARCHAR" property="stepExpectedResult" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, CASE_ID, STEP_ORDER, STEP_DESCRIPTION, STEP_EXPECTED_RESULT, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+
+    <!-- 新增归档案例步骤 -->
+  <insert id="archivingCaseStep" parameterType="cn.pioneeruniverse.dev.entity.TblCaseStep">
+  	insert into tbl_archived_case_step (CASE_ID, STEP_ORDER, STEP_DESCRIPTION, STEP_EXPECTED_RESULT, 
+  		STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE)
+  		values (#{caseId,jdbcType=BIGINT}, #{stepOrder,jdbcType=INTEGER}, #{stepDescription,jdbcType=VARCHAR},
+  		#{stepExpectedResult,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT},
+  		#{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+
+    <!-- 根据案例id修改归档案例 -->
+  <update id="updateArchivedCaseStepByCseId" parameterType="map">
+  	update tbl_archived_case_step set STATUS = 2, LAST_UPDATE_BY = #{userId}, LAST_UPDATE_DATE = #{time}  where CASE_ID = #{id}
+  </update>
+
+    <!-- 新增归档案例步骤 -->
+   <insert id="insertArchivedCaseStep" parameterType="cn.pioneeruniverse.dev.entity.TblCaseStep">
+  	insert into tbl_archived_case_step (CASE_ID, STEP_ORDER, STEP_DESCRIPTION, STEP_EXPECTED_RESULT, 
+  		STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE)
+  		values (#{caseId,jdbcType=BIGINT}, #{stepOrder,jdbcType=INTEGER}, #{stepDescription,jdbcType=VARCHAR},
+  		#{stepExpectedResult,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT},
+  		#{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+
+    <!--查询归档案例步骤-->
+  <select id="findCaseStepByCaseId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" /> from tbl_archived_case_step where CASE_ID = #{id,jdbcType=BIGINT} and STATUS = 1
+  </select>
+
+    <!-- 删除案例步骤 -->
+  <delete id="deleteArchivedCaseStep" parameterType="java.util.List">
+  	delete from tbl_archived_case_step where STATUS = 1 and CASE_ID in
+  				<foreach collection="list" index="index" item="id" separator="," open="(" close=")">
+  	 				#{id,jdbcType=BIGINT}
+  	 			</foreach>
+  </delete>
+
+    <!--查询归档案例步骤id-->
+  <select id="getStepIdsByCaseId" parameterType="java.lang.Long" resultType="long">
+  	select ID from tbl_archived_case_step where CASE_ID = #{id} and STATUS = 1
+  </select>
+
+    <!--修改操作-->
+  <update id="updateStep" parameterType="cn.pioneeruniverse.dev.entity.TblCaseStep">
+  	update tbl_archived_case_step set STEP_ORDER = #{stepOrder}, STEP_DESCRIPTION = #{stepDescription}, 
+  		STEP_EXPECTED_RESULT = #{stepExpectedResult}, LAST_UPDATE_BY=#{lastUpdateBy}, LAST_UPDATE_DATE = #{lastUpdateDate}
+  		 where ID=#{id} 
+  </update>
+
+    <!-- 批量修改操作 STATUS = 2 -->
+   <update id="deleteCaseSteps" parameterType="map">
+  	update tbl_archived_case_step set STATUS = 2, LAST_UPDATE_BY = #{userId}, LAST_UPDATE_DATE = #{time}
+  		where ID in 
+  			<foreach collection="resultList" index="index" item="id" separator="," open="(" close=")">
+  	 				#{id}
+  	 		</foreach>
+  </update>
+</mapper>

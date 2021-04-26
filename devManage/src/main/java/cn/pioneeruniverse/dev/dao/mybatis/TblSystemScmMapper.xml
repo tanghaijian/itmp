@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+        namespace="cn.pioneeruniverse.dev.dao.mybatis.TblSystemScmMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblSystemScm">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="SYSTEM_ID" jdbcType="BIGINT" property="systemId"/>
+        <result column="ENVIRONMENT_TYPE" jdbcType="TINYINT" property="environmentType"/>
+        <result column="SCM_REPOSITORY_NAME" jdbcType="VARCHAR" property="scmRepositoryName"/>
+        <result column="TOOL_ID" jdbcType="BIGINT" property="toolId"/>
+        <result column="SYSTEM_REPOSITORY_ID" jdbcType="BIGINT" property="systemRepositoryId"/>
+        <result column="BUILD_STATUS" jdbcType="TINYINT" property="buildStatus"/>
+        <result column="SCM_TYPE" jdbcType="TINYINT" property="scmType"/>
+        <result column="SCM_URL" jdbcType="VARCHAR" property="scmUrl"/>
+        <result column="SCM_BRANCH" jdbcType="VARCHAR" property="scmBranch"/>
+        <result column="SUBMIT_STATUS" jdbcType="TINYINT" property="submitStatus"/>
+        <result column="SUBMIT_SUPER_USER_NAMES" jdbcType="VARCHAR" property="submitSuperUserNames"/>
+        <result column="SUBMIT_USER_NAMES" jdbcType="VARCHAR" property="submitUserNames"/>
+        <result column="SYSTEM_VERSION_ID" jdbcType="BIGINT" property="systemVersionId"/>
+        <result column="COMMISSIONING_WINDOW_ID" jdbcType="BIGINT" property="commissioningWindowId"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+        <result column="build_status" jdbcType="TINYINT" property="buildStatus"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+        <result column="DEPLOY_STATUS" jdbcType="TINYINT" property="deployStatus"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		ID, SYSTEM_ID, ENVIRONMENT_TYPE,BUILD_STATUS, SCM_TYPE, SCM_URL,SCM_BRANCH,SUBMIT_STATUS,TOOL_ID,
+		SUBMIT_SUPER_USER_NAMES,SUBMIT_USER_NAMES,SYSTEM_VERSION_ID,COMMISSIONING_WINDOW_ID,
+		SYSTEM_REPOSITORY_ID,SCM_REPOSITORY_NAME,STATUS,CREATE_BY,CREATE_DATE, LAST_UPDATE_BY,
+		LAST_UPDATE_DATE,DEPLOY_STATUS
+	</sql>
+    <!-- 根据系统id 查询该系统下的system_scm 的环境类型 -->
+    <select id="getEnvTypes" parameterType="Long" resultType="String">
+		SELECT tss.ENVIRONMENT_TYPE envType
+		FROM  tbl_system_scm tss 
+		WHERE tss.SYSTEM_ID = #{systemId}
+	</select>
+    <!-- 根据systemid 查询systemVersionId 和 systemBranch -->
+    <select id="getSystemVersionBranch" parameterType="Long" resultType="map">
+		select DISTINCT SYSTEM_VERSION_ID systemVersionId, SCM_BRANCH scmBranch
+		from tbl_system_scm
+		where SYSTEM_ID = #{systemId} and STATUS = 1
+	</select>
+
+
+    <select id="selectBreakName" parameterType="Long"  resultMap="BaseResultMap">
+
+
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_system_scm
+        where system_ID = #{systemId} and STATUS=1
+       and (DEPLOY_STATUS=2 or DEPLOY_STATUS=3)
+            </select>
+
+
+
+            <!-- 根据系统id获取正在部署的环境 -->
+    <select id="selectBuildingBySystemidDeploy" parameterType="Long"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+
+
+        from tbl_system_scm
+        where system_ID = #{id} and STATUS = 1 and (DEPLOY_STATUS=2 or DEPLOY_STATUS=3)
+
+    </select>
+    <!-- 根据systemId批量逻辑删除 -->
+    <update id="deleteBySystemIds" parameterType="list">
+        update tbl_system_scm
+        set STATUS = 2
+        where ID in
+        <foreach collection="list" item="id" index="index" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+
+    </update>
+
+    <!-- 查询出 当前系统下system_scm status = 2的系统配置 -->
+    <select id="findStatus2" parameterType="Long"
+            resultType="cn.pioneeruniverse.dev.entity.TblSystemScm">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_system_scm
+        where STATUS = 2 and SYSTEM_ID = #{systemId}
+    </select>
+    <!-- 根据id删除 -->
+    <delete id="delete" parameterType="Long">
+		delete from tbl_system_scm where system_ID=#{id}
+	</delete>
+
+    <!-- 插入 -->
+    <insert id="insertSystemScm"
+            parameterType="cn.pioneeruniverse.dev.entity.TblSystemScm"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		INSERT INTO tbl_system_scm(SYSTEM_ID, ENVIRONMENT_TYPE, SCM_TYPE, SCM_URL,
+		SCM_BRANCH,SUBMIT_STATUS,SYSTEM_VERSION_ID,COMMISSIONING_WINDOW_ID,
+		CREATE_BY,SUBMIT_SUPER_USER_NAMES,SUBMIT_USER_NAMES,
+		CREATE_DATE, LAST_UPDATE_BY,
+		LAST_UPDATE_DATE,SCM_REPOSITORY_NAME,build_status,tool_Id) VALUES(
+		#{systemId},#{environmentType},#{scmType},#{scmUrl},#{scmBranch},#{submitStatus},#{systemVersionId},#{commissioningWindowId},
+		#{createBy},#{submitSuperUserNames},#{submitUserNames},#{createDate},#{lastUpdateBy},#{lastUpdateDate},#{scmRepositoryName},#{buildStatus},#{toolId})
+	</insert>
+    <!-- 根据系统id逻辑删除源码配置信息 -->
+    <update id="deleteBySystemId" parameterType="Long">
+		update tbl_system_scm
+		set STATUS = 2
+		where system_ID = #{id}
+	</update>
+    <!-- 根据系统id获取系统源码配置信息 -->
+    <select id="getBySystemId" parameterType="Long"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_system_scm
+        where system_ID = #{id} and STATUS = 1
+
+    </select>
+
+
+    <!-- 根据系统id获取正在构建的环境 -->
+    <select id="selectBuildingBySystemid" parameterType="Long"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+
+
+        from tbl_system_scm
+        where system_ID = #{id} and STATUS = 1 and BUILD_STATUS=2
+
+    </select>
+
+
+    <select id="getScmByParam" parameterType="map"
+            resultMap="BaseResultMap">
+
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_system_scm
+        where system_ID = #{systemId} and environment_type=#{environmentType} and
+        STATUS=1
+    </select>
+
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_system_scm
+        where ID = #{id,jdbcType=BIGINT}
+    </select>
+
+
+    <!-- 判断构建状态 -->
+    <select id="judgeScmBuildStatus" parameterType="String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        <!-- 有一条数据就是构建中 -->
+        from tbl_system_scm
+        where system_ID in 
+        <foreach collection="systemIds.split(',')"  item="item" index="index"  open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+        and STATUS = 1 and BUILD_STATUS=2
+    </select>
+
+
+    <!-- 判断是否正在构建 -->
+    <select id="countScmBuildStatus" parameterType="map"
+            resultType="java.lang.Integer">
+		select
+		count(*)
+		from tbl_system_scm
+		where system_ID = #{id} and STATUS = 1 and BUILD_STATUS=2 and
+		ENVIRONMENT_TYPE=#{environmentType,jdbcType=TINYINT}
+
+	</select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from tbl_system_scm
+		where ID = #{id,jdbcType=BIGINT}
+	</delete>
+    <insert id="insert"
+            parameterType="cn.pioneeruniverse.dev.entity.TblSystemScm">
+		insert into tbl_system_scm (ID, system_ID, environment_type,
+		scm_type, scm_URL, scm_branch,
+		STATUS, CREATE_BY, CREATE_DATE,
+		LAST_UPDATE_BY, LAST_UPDATE_DATE)
+		values (#{id,jdbcType=BIGINT}, #{systemId,jdbcType=BIGINT},
+		#{environmentType,jdbcType=TINYINT},
+		#{scmType,jdbcType=TINYINT}, #{scmUrl,jdbcType=VARCHAR}, #{scmBranch,jdbcType=VARCHAR},
+		#{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT},
+		#{createDate,jdbcType=TIMESTAMP},
+		#{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP})
+	</insert>
+    <insert id="insertSelective"
+            parameterType="cn.pioneeruniverse.dev.entity.TblSystemScm">
+        insert into tbl_system_scm
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="systemId != null">
+                system_ID,
+            </if>
+            <if test="environmentType != null">
+                environment_type,
+            </if>
+            <if test="scmType != null">
+                scm_type,
+            </if>
+            <if test="scmUrl != null">
+                scm_URL,
+            </if>
+            <if test="scmBranch != null">
+                scm_branch,
+            </if>
+            <if test="status != null">
+                STATUS,
+            </if>
+            <if test="createBy != null">
+                CREATE_BY,
+            </if>
+            <if test="createDate != null">
+                CREATE_DATE,
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY,
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="systemId != null">
+                #{systemId,jdbcType=BIGINT},
+            </if>
+            <if test="environmentType != null">
+                #{environmentType,jdbcType=TINYINT},
+            </if>
+            <if test="scmType != null">
+                #{scmType,jdbcType=TINYINT},
+            </if>
+            <if test="scmUrl != null">
+                #{scmUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="scmBranch != null">
+                #{scmBranch,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdateBy != null">
+                #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective"
+            parameterType="cn.pioneeruniverse.dev.entity.TblSystemScm">
+        update tbl_system_scm
+        <set>
+            <if test="systemId != null">
+                system_ID = #{systemId,jdbcType=BIGINT},
+            </if>
+            <if test="environmentType != null">
+                environment_type = #{environmentType,jdbcType=TINYINT},
+            </if>
+            <if test="scmType != null">
+                scm_type = #{scmType,jdbcType=TINYINT},
+            </if>
+            <if test="scmUrl != null">
+                scm_URL = #{scmUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="scmBranch != null">
+                scm_branch = #{scmBranch,jdbcType=VARCHAR},
+            </if>
+            <if test="submitStatus != null">
+                SUBMIT_STATUS = #{submitStatus,jdbcType=TINYINT},
+            </if>
+            SYSTEM_VERSION_ID = #{systemVersionId,jdbcType=BIGINT},
+            COMMISSIONING_WINDOW_ID = #{commissioningWindowId,jdbcType=BIGINT},
+            <!-- <if test="systemVersionId != null">
+                SYSTEM_VERSION_ID = #{systemVersionId,jdbcType=BIGINT},
+            </if>
+            <if test="commissioningWindowId != null">
+                COMMISSIONING_WINDOW_ID = #{commissioningWindowId,jdbcType=BIGINT},
+            </if> -->
+            <if test="status != null">
+                STATUS = #{status},
+            </if>
+            <if test="createBy != null">
+                CREATE_BY = #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdateBy != null">
+                LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+
+            <if test="buildStatus != null">
+                build_status = #{buildStatus,jdbcType=TINYINT},
+            </if>
+            
+             <if test="scmRepositoryName != null">            
+                SCM_REPOSITORY_NAME = #{scmRepositoryName},               
+            </if>
+            
+            <if test="toolId != null">
+                tool_id = #{toolId,jdbcType=TINYINT},
+            </if>
+             SUBMIT_SUPER_USER_NAMES =#{submitSuperUserNames},
+             SUBMIT_USER_NAMES = #{submitUserNames},
+         
+            <if test="deployStatus!=null">
+                deploy_status = #{deployStatus},
+            </if>
+
+
+            <if test="submitSuperUserNames != null">
+                SUBMIT_SUPER_USER_NAMES = #{submitSuperUserNames},
+            </if>
+
+
+        </set>
+        where ID = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblSystemScm">
+    UPDATE tbl_system_scm systemScm
+    SET systemScm.SYSTEM_ID = #{systemId},
+      systemScm.ENVIRONMENT_TYPE = #{environmentType},
+      systemScm.SCM_TYPE = #{scmType},
+      systemScm.SCM_URL = #{scmUrl},
+      systemScm.SCM_BRANCH  = #{scmBranch},
+      STATUS = 1,
+      LAST_UPDATE_BY = #{lastUpdateBy},
+      tool_id=#{toolId},
+      LAST_UPDATE_DATE = #{lastUpdateDate}
+    WHERE ID = #{id}
+      </update>
+
+    <select id="getEnvTypesBySyetemId" parameterType="java.lang.Long" resultType="Long">
+    	select ENVIRONMENT_TYPE from tbl_system_scm where SYSTEM_ID = #{id} and ENVIRONMENT_TYPE != ""
+    </select>
+    
+    <update id="updateSystemScm" parameterType="map">
+    	update tbl_system_scm set ENVIRONMENT_TYPE = null, LAST_UPDATE_BY = #{currentUser}, LAST_UPDATE_DATE = #{currentTime}
+    		where SYSTEM_ID = #{id} and ENVIRONMENT_TYPE in
+    			 <foreach collection="envTypes" item="type" index="index" open="(" separator="," close=")">
+		            #{type}
+		         </foreach>
+    			
+    </update>
+
+
+
+  <select id="getScmBySystemId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM tbl_system_scm
+    WHERE system_ID = #{systemId,jdbcType=BIGINT} and STATUS = 1
+  </select>
+<!-- 逻辑删除代码库 -->
+  <update id="deleteScmById" parameterType="cn.pioneeruniverse.dev.entity.TblSystemScm">
+  	update tbl_system_scm
+	SET
+	STATUS = 2,
+	LAST_UPDATE_BY = #{lastUpdateBy,jdbcType = BIGINT},
+	LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType = TIMESTAMP}
+	WHERE ID = #{id,jdbcType = BIGINT}
+  </update>
+
+<!-- 判断某个系统在某个环境下是否存在代码库 -->
+  <select id="findScmDoesItExist" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM tbl_system_scm
+    WHERE system_ID = #{systemId,jdbcType=BIGINT} and STATUS = 1
+    and ENVIRONMENT_TYPE = #{envType,jdbcType=TINYINT}
+  </select>
+
+<!-- 新增 -->
+  <insert id="insertScm" parameterType="cn.pioneeruniverse.dev.entity.TblSystemScm"
+          useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    INSERT INTO tbl_system_scm
+    (SYSTEM_ID, ENVIRONMENT_TYPE,SCM_TYPE,TOOL_ID,SYSTEM_REPOSITORY_ID,
+    SCM_URL,SCM_REPOSITORY_NAME,SCM_BRANCH,build_status,DEPLOY_STATUS,
+    CREATE_BY,CREATE_DATE, LAST_UPDATE_BY,LAST_UPDATE_DATE)
+    VALUES
+    (#{systemId},#{environmentType},#{scmType},#{toolId},#{systemRepositoryId},
+    #{scmUrl},#{scmRepositoryName},#{scmBranch},#{buildStatus},#{deployStatus},
+    #{createBy},#{createDate},#{lastUpdateBy},#{lastUpdateDate})
+  </insert>
+<!-- 更新 -->
+  <update id="updateScm" parameterType="cn.pioneeruniverse.dev.entity.TblSystemScm">
+    UPDATE tbl_system_scm
+    SET
+    SCM_TYPE = #{scmType},TOOL_ID = #{toolId},SYSTEM_REPOSITORY_ID = #{systemRepositoryId},
+    SCM_URL = #{scmUrl},SCM_REPOSITORY_NAME = #{scmRepositoryName},SCM_BRANCH  = #{scmBranch},
+    LAST_UPDATE_BY = #{lastUpdateBy},LAST_UPDATE_DATE = #{lastUpdateDate}
+    WHERE ID = #{id}
+  </update>
+</mapper>

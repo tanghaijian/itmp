@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>流程处理</title>
+    <link rel="stylesheet" type="text/css" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css">
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <style>
+        body {
+            padding: 15px;
+            font-size: 12px;
+        }
+
+        .bottonGroup .btn {
+            margin: 18px 0;
+            margin-right: 30px;
+            font-size: 13px !important;
+            padding: 15px 45px;
+            height: auto;
+            background-color: #169BD5 !important;
+        }
+
+        .titleOne {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .titleTwo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .titleThree {
+            font-size: 24px;
+        }
+
+        .fontOne {
+            font-size: 13px;
+        }
+
+        [class*="def_col_"] {
+            padding-left: 0;
+        }
+    </style>
+</head>
+<body>
+<p class="titleOne">非功能测试流程</p>
+<br>
+<p class="titleTwo">3.测试调研、测试准备</p>
+<br>
+    #if($testType == 'standard')
+    <p class="titleThree">标准测试</p>
+    #end
+    #if($testType == 'agile')
+    <p class="titleThree">敏捷测试</p>
+    #end
+<div class="bottonGroup">
+    <botton class="btn btn-primary" type="button"
+            onclick="window.location.href='/systemui/testProcess/processHandle/execute?testType=$testType'">开始测试执行
+    </botton>
+</div>
+</body>
+</html>

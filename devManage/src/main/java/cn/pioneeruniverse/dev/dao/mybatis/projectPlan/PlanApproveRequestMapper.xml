@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.projectPlan.PlanApproveRequestMapper">
+	<resultMap id="BaseResultMap"
+			   type="cn.pioneeruniverse.dev.entity.projectPlan.PlanApproveRequest">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="PROJECT_ID" jdbcType="BIGINT" property="projectId" />
+		<result column="REQUEST_USER_ID" jdbcType="BIGINT" property="requestUserId" />
+		<result column="REQUEST_REASON" jdbcType="VARCHAR" property="requestReason" />
+		<result column="APPROVE_STATUS" jdbcType="TINYINT" property="approveStatus" />
+		<result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+		<result column="PROJECT_NAME" jdbcType="VARCHAR" property="projectName" />
+	</resultMap>
+
+	<select id="getApproveByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select t1.ID,t1.PROJECT_ID,tpi.PROJECT_NAME,t1.REQUEST_USER_ID,tui.USER_NAME
+		from tbl_project_plan_approve_user t
+		LEFT JOIN tbl_project_plan_approve_request t1 ON t.PROJECT_PLAN_APPROVE_REQUEST_ID = t1.ID
+		LEFT JOIN tbl_project_info tpi ON t1.PROJECT_ID = tpi.ID
+		LEFT JOIN tbl_user_info tui ON t1.REQUEST_USER_ID = tui.ID
+		WHERE t.USER_ID = #{userId} AND t.APPROVE_STATUS = 1
+		AND t.APPROVE_ON_OFF = 1 AND t1.APPROVE_STATUS = 1 AND tpi.`STATUS` = 1
+	</select>
+	<select id="getRequestUserIdByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select t1.ID,t1.PROJECT_ID,tpi.PROJECT_NAME,t1.REQUEST_USER_ID,tui.USER_NAME
+		from tbl_project_plan_approve_request t1
+		LEFT JOIN tbl_project_info tpi ON t1.PROJECT_ID = tpi.ID
+		LEFT JOIN tbl_user_info tui ON t1.REQUEST_USER_ID = tui.ID
+		WHERE t1.REQUEST_USER_ID = #{userId} AND (t1.APPROVE_STATUS = 1 or t1.APPROVE_STATUS = 3)
+		AND tpi.`STATUS` = 1
+	</select>
+
+</mapper>

@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.RequirementFeatureMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblRequirementFeature">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="FEATURE_NAME" jdbcType="VARCHAR" property="featureName" />
+    <result column="FEATURE_CODE" jdbcType="VARCHAR" property="featureCode" />
+    <result column="FEATURE_OVERVIEW" jdbcType="VARCHAR" property="featureOverview" />
+    <result column="SYSTEM_ID" jdbcType="BIGINT" property="systemId" />   
+    <result column="ASSET_SYSTEM_TREE_ID" jdbcType="BIGINT" property="assetSystemTreeId" />   
+    <result column="CREATE_TYPE" jdbcType="TINYINT" property="createType" />
+    <result column="REQUIREMENT_FEATURE_SOURCE" jdbcType="TINYINT" property="requirementFeatureSource" />   
+    <result column="TASK_ID" jdbcType="BIGINT" property="taskId" />
+    <result column="REQUIREMENT_ID" jdbcType="BIGINT" property="requirementId" />  
+    <result column="QUESTION_NUMBER" jdbcType="VARCHAR" property="questionNumber" />  
+    <result column="REQUIREMENT_FEATURE_STATUS" jdbcType="VARCHAR" property="requirementFeatureStatus" />
+    <result column="MANAGE_USER_ID" jdbcType="BIGINT" property="manageUserId" />
+    <result column="EXECUTE_USER_ID" jdbcType="BIGINT" property="executeUserId" />
+    <result column="TEMPORARY_STATUS" jdbcType="TINYINT" property="temporaryStatus" />
+    <result column="DEPT_ID" jdbcType="BIGINT" property="deptId" />
+    <result column="HANDLE_SUGGESTION" jdbcType="VARCHAR" property="handleSuggestion" />   
+    <result column="PLAN_START_DATE" jdbcType="DATE" property="planStartDate" />
+    <result column="PLAN_END_DATE" jdbcType="DATE" property="planEndDate" />
+    <result column="ESTIMATE_WORKLOAD" jdbcType="DOUBLE" property="estimateWorkload" />   
+    <result column="ESTIMATE_REMAIN_WORKLOAD" jdbcType="DOUBLE" property="estimateRemainWorkload" />   
+    <result column="ACTUAL_START_DATE" jdbcType="DATE" property="actualStartDate" />
+    <result column="ACTUAL_END_DATE" jdbcType="DATE" property="actualEndDate" />
+    <result column="ACTUAL_WORKLOAD" jdbcType="DOUBLE" property="actualWorkload" />   
+    <result column="COMMISSIONING_WINDOW_ID" jdbcType="BIGINT" property="commissioningWindowId" />
+    <result column="SPRINT_ID" jdbcType="BIGINT" property="sprintId" />
+    <result column="PROJECT_PLAN_ID" jdbcType="BIGINT" property="projectPlanId" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  
+  <resultMap id="taskResultMap" type="cn.pioneeruniverse.project.entity.TblRequirementFeature" extends="BaseResultMap">
+    <result column="REQUIREMENT_CODE" jdbcType="VARCHAR" property="requirementCode" />
+    <result column="REQUIREMENT_NAME" jdbcType="VARCHAR" property="requirementName" />
+    <result column="SYSTEM_NAME" jdbcType="VARCHAR" property="systemName" />
+    <result column="WINDOW_DATE" jdbcType="TIMESTAMP" property="windowDate" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+	ID,FEATURE_NAME,FEATURE_code,FEATURE_OVERVIEW,SYSTEM_ID,CREATE_TYPE,REQUIREMENT_FEATURE_SOURCE,REQUIREMENT_ID,QUESTION_NUMBER,
+	REQUIREMENT_FEATURE_STATUS,MANAGE_USER_ID,EXECUTE_USER_ID,TEMPORARY_STATUS,DEPT_ID,HANDLE_SUGGESTION,PLAN_START_DATE,PLAN_END_DATE,
+	ESTIMATE_WORKLOAD,ACTUAL_START_DATE,ACTUAL_END_DATE,ACTUAL_WORKLOAD,COMMISSIONING_WINDOW_ID,STATUS,CREATE_BY,CREATE_DATE,
+	LAST_UPDATE_BY,LAST_UPDATE_DATE
+  </sql>
+	<!--根据id获取开发任务-->
+  <select id="getReqFeatureById" parameterType="Long" resultType="cn.pioneeruniverse.project.entity.TblRequirementFeature">
+  	select trf.ID id,trf.REQUIREMENT_ID requirementId,trf.FEATURE_NAME featureName,trf.FEATURE_CODE featureCode,trf.MANAGE_USER_ID manageUserId,trf.SYSTEM_ID systemId,
+  	 tri.REQUIREMENT_NAME requirementName ,tri.REQUIREMENT_CODE requirementCode
+  	from tbl_requirement_feature trf
+  	LEFT JOIN tbl_requirement_info tri ON tri.ID = trf.REQUIREMENT_ID AND tri.status = 1
+  	where trf.ID = #{id}
+  </select>
+	<!--根据需求id获取开发任务-->
+  <select id="findFeatureByRequirementId" parameterType="Long" resultMap="BaseResultMap" > 
+  	SELECT trf.ID,trf.FEATURE_code,trf.FEATURE_NAME,trf.REQUIREMENT_FEATURE_STATUS,
+  	tsi.SYSTEM_NAME systemName,tui.USER_NAME userName,tcw.WINDOW_NAME windowName 
+	FROM tbl_requirement_feature trf
+	LEFT JOIN tbl_system_info tsi ON tsi.ID = trf.SYSTEM_ID AND tsi.STATUS=1
+	LEFT JOIN tbl_user_info tui ON tui.ID = trf.MANAGE_USER_ID AND tui.STATUS=1
+	LEFT JOIN tbl_commissioning_window tcw ON tcw.ID = trf.COMMISSIONING_WINDOW_ID AND tcw.STATUS=1
+	WHERE trf.STATUS=1 AND trf.REQUIREMENT_ID=#{Id}
+  	 <!-- SELECT trf.ID,trf.FEATURE_code,trf.FEATURE_NAME,
+  	 (select tsi.SYSTEM_NAME from tbl_system_info tsi where tsi.ID = SYSTEM_ID AND tsi.STATUS=1) systemName,
+  	 (select tui.USER_NAME from tbl_user_info tui where tui.ID = MANAGE_USER_ID AND tui.STATUS=1) userName,
+  	 (select tdd.VALUE_NAME from tbl_data_dic tdd where tdd.VALUE_CODE = REQUIREMENT_FEATURE_STATUS
+  	 	AND tdd.TERM_CODE='TBL_REQUIREMENT_FEATURE_REQUIREMENT_FEATURE_STATUS' AND tdd.STATUS=1) valueName,
+  	 (select tcw.WINDOW_NAME from tbl_commissioning_window tcw where tcw.ID = COMMISSIONING_WINDOW_ID AND tcw.STATUS=1) windowName 	 
+  	 FROM tbl_requirement_feature trf  
+	 INNER JOIN tbl_requirement_info tri ON trf.REQUIREMENT_ID=tri.ID AND tri.STATUS=1	 
+	 WHERE trf.STATUS=1 AND tri.ID=#{Id} -->
+  </select>
+
+	<!--根据开发任务编号获取开发任务-->
+  <select id="getFeatureByCode"  resultType="cn.pioneeruniverse.project.entity.TblRequirementFeature" parameterType="String">		
+	SELECT t.* FROM tbl_requirement_feature t
+	WHERE t.FEATURE_CODE = #{featureCode} AND t.STATUS=1
+  </select>
+
+
+	<select id="selectReqFeatureById"  resultType="cn.pioneeruniverse.project.entity.TblRequirementFeature" parameterType="Long">
+	SELECT t.* FROM tbl_requirement_feature t
+	WHERE t.REQUIREMENT_ID = #{requireId} AND t.STATUS=1
+  </select>
+
+	<!--根据开发任务名称模糊查询开发任务-->
+  <select id="getAllFeature" parameterType="String" resultMap="BaseResultMap" >
+  	 SELECT <include refid="Base_Column_List"/> from tbl_requirement_feature 
+  	 where FEATURE_NAME like CONCAT('%',#{featureName},'%') AND STATUS=1
+  </select> 
+  
+  
+  <insert id="insertFeature" parameterType="cn.pioneeruniverse.project.entity.TblRequirementFeature" useGeneratedKeys="true" keyProperty="id">
+	insert into tbl_requirement_feature (
+		FEATURE_NAME,
+		FEATURE_code,
+		FEATURE_OVERVIEW,
+		SYSTEM_ID,
+		CREATE_TYPE,
+    	REQUIREMENT_FEATURE_SOURCE,
+    	TASK_ID,
+    	REQUIREMENT_ID,
+    	QUESTION_NUMBER,
+    	REQUIREMENT_FEATURE_STATUS,
+    	MANAGE_USER_ID,
+    	EXECUTE_USER_ID,
+    	TEMPORARY_STATUS,
+	  	DEVELOPMENT_DEPT_ID,
+    	DEPT_ID,
+    	HANDLE_SUGGESTION,
+    	PLAN_START_DATE,
+    	PLAN_END_DATE,
+    	ESTIMATE_WORKLOAD,
+    	ACTUAL_START_DATE,
+    	ACTUAL_END_DATE,
+    	<if test="actualWorkload!=0.00 ">
+    		ACTUAL_WORKLOAD,
+    	</if>
+    	STATUS,
+    	CREATE_BY,
+    	CREATE_DATE,
+    	LAST_UPDATE_BY,
+    	LAST_UPDATE_DATE
+    )values( 
+    	#{featureName},
+    	#{featureCode},
+    	#{featureOverview},
+    	#{systemId},
+    	#{createType},
+    	#{requirementFeatureSource},
+    	#{taskId},
+    	#{requirementId},
+    	#{questionNumber},
+    	#{requirementFeatureStatus},
+    	#{manageUserId},
+    	#{executeUserId},
+    	#{temporaryStatus},
+	  	#{developmentDeptId},
+    	#{deptId},
+    	#{handleSuggestion},
+    	#{planStartDate},
+    	#{planEndDate},
+    	#{estimateWorkload},
+    	#{actualStartDate},
+    	#{actualEndDate},
+    	<if test="actualWorkload!='0.00' ">    		
+    		#{actualWorkload}, 
+    	</if>
+    	1,
+    	#{createBy}, 
+    	#{createDate}, 
+    	#{lastUpdateBy}, 
+      	#{lastUpdateDate}
+      	)
+  </insert>
+
+<insert id="insertFeature1" parameterType="cn.pioneeruniverse.project.entity.TblRequirementFeature" useGeneratedKeys="true" keyProperty="id">
+	insert into tbl_requirement_feature (
+		FEATURE_code,
+		FEATURE_NAME,
+		FEATURE_OVERVIEW,
+		SYSTEM_ID,
+		REQUIREMENT_ID,
+		REQUIREMENT_FEATURE_STATUS,
+		REQUIREMENT_FEATURE_SOURCE,
+		CREATE_TYPE,
+		MANAGE_USER_ID,
+		DEVELOPMENT_DEPT_ID,
+		<if test="requirementChangeNumber !=null">
+			REQUIREMENT_CHANGE_NUMBER,
+		</if>
+		STATUS,
+		CREATE_BY,
+		CREATE_DATE,
+		LAST_UPDATE_BY,
+		LAST_UPDATE_DATE
+	)values(
+		#{featureCode},
+		#{featureName},
+		#{featureOverview},
+		#{systemId},
+		#{requirementId},
+		#{requirementFeatureStatus},
+		#{requirementFeatureSource},
+		#{createType},
+		#{manageUserId},
+		#{developmentDeptId},
+		<if test="requirementChangeNumber !=null">
+			#{requirementChangeNumber},
+		</if>
+		1,
+		#{createBy},
+		#{createDate},
+		#{lastUpdateBy},
+		#{lastUpdateDate}
+	)
+</insert>
+
+  <update id="updateFeatureById" parameterType="cn.pioneeruniverse.project.entity.TblRequirementFeature">
+		update tbl_requirement_feature
+		<set>
+			<if test="featureName != null and featureName !=''">
+				FEATURE_NAME = #{featureName ,jdbcType= VARCHAR},
+			</if>
+			<if test="featureCode != null and featureCode !='' ">
+				FEATURE_CODE = #{featureCode ,jdbcType= VARCHAR},
+			</if>
+			<if test="featureOverview != null and featureOverview !='' ">
+				FEATURE_OVERVIEW = #{featureOverview ,jdbcType= VARCHAR},
+			</if>
+			<if test="systemId != null and systemId !='' ">
+				SYSTEM_ID = #{systemId ,jdbcType= BIGINT},
+			</if>
+			<if test="createType != null and createType !='' ">
+				CREATE_TYPE = #{createType ,jdbcType= TINYINT},
+			</if>
+			<if test="requirementId != null and requirementId !='' ">
+				REQUIREMENT_ID = #{requirementId ,jdbcType= BIGINT},
+			</if>
+			<if test="questionNumber != null and questionNumber !='' ">
+				QUESTION_NUMBER = #{questionNumber ,jdbcType= VARCHAR},
+			</if>
+			<if test="requirementFeatureStatus != null and requirementFeatureStatus !='' ">
+				REQUIREMENT_FEATURE_STATUS = #{requirementFeatureStatus ,jdbcType= VARCHAR},
+			</if>
+			<if test="manageUserId != null and manageUserId !='' ">
+				MANAGE_USER_ID = #{manageUserId ,jdbcType= BIGINT},
+			</if>
+			<!--<if test="executeUserId != null and executeUserId !='' ">
+				EXECUTE_USER_ID = #{executeUserId ,jdbcType= BIGINT},
+			</if>-->
+			<if test="temporaryStatus != null and temporaryStatus !='' ">
+				TEMPORARY_STATUS = #{temporaryStatus ,jdbcType= TINYINT},
+			</if>
+			<if test="deptId != null and deptId !='' ">
+				DEPT_ID = #{deptId ,jdbcType= BIGINT},
+			</if>
+			<if test="handleSuggestion != null and handleSuggestion !='' ">
+				HANDLE_SUGGESTION = #{handleSuggestion ,jdbcType= VARCHAR},
+			</if>
+			<if test="planStartDate != null ">
+				PLAN_START_DATE = #{planStartDate ,jdbcType= DATE},
+			</if>
+			<if test="planEndDate != null ">
+				PLAN_END_DATE = #{planEndDate ,jdbcType= DATE},
+			</if>
+			<if test="estimateWorkload != null">
+				ESTIMATE_WORKLOAD = #{estimateWorkload ,jdbcType= DOUBLE},
+			</if>
+			<if test="actualStartDate != null ">
+				ACTUAL_START_DATE = #{actualStartDate ,jdbcType= DATE},
+			</if>
+			<if test="actualEndDate != null ">
+				ACTUAL_END_DATE = #{actualEndDate ,jdbcType= DATE},
+			</if>
+			<if test="actualWorkload!='0.00' ">
+				ACTUAL_WORKLOAD = #{actualWorkload ,jdbcType= DOUBLE},
+			</if>
+			<if test="status != null and status !='' ">
+				STATUS = #{status ,jdbcType= TINYINT},
+			</if>
+			<if test="createBy != null and createBy !='' ">
+				CREATE_BY = #{createBy ,jdbcType= BIGINT},
+			</if>
+			<if test="createDate != null">
+				CREATE_DATE = #{createDate ,jdbcType= TIMESTAMP},
+			</if>
+			<if test="lastUpdateBy != null and lastUpdateBy !='' ">
+				LAST_UPDATE_BY = #{lastUpdateBy ,jdbcType= BIGINT},
+			</if>
+			<if test="lastUpdateDate != null">
+				LAST_UPDATE_DATE = #{lastUpdateDate ,jdbcType= TIMESTAMP }
+			</if>
+		</set>
+		WHERE ID = #{id ,jdbcType= BIGINT}
+  </update>
+	<!--同步修改开发任务信息-->
+  <update id="updateStatusById" parameterType="cn.pioneeruniverse.project.entity.TblRequirementFeature">
+		update tbl_requirement_feature
+		<set>
+			 REQUIREMENT_FEATURE_STATUS = #{requirementFeatureStatus ,jdbcType= TINYINT},
+			 STATUS = #{status ,jdbcType= TINYINT},
+			 LAST_UPDATE_BY = #{lastUpdateBy ,jdbcType= BIGINT},
+			 LAST_UPDATE_DATE = #{lastUpdateDate ,jdbcType= TIMESTAMP }
+		</set>
+	  	WHERE ID = #{id,jdbcType= BIGINT}
+  </update>
+
+
+	<!--同步修改开发任务信息-->
+  <select id="selectFeatures" parameterType="map" resultMap="taskResultMap">
+  	select trf.*,tri.REQUIREMENT_CODE,tri.REQUIREMENT_NAME,tsi.SYSTEM_NAME,tcw.WINDOW_DATE
+  	from tbl_requirement_feature trf
+	left join tbl_requirement_info tri on tri.ID=trf.REQUIREMENT_ID
+	left join tbl_system_info tsi on tsi.ID=trf.SYSTEM_ID
+	left join tbl_commissioning_window tcw on tcw.ID=trf.COMMISSIONING_WINDOW_ID
+  	<where>
+  		 trf.STATUS=1  and trf.REQUIREMENT_FEATURE_STATUS != 00
+  		<if test="tblRequirementFeature.requirementCode != null and tblRequirementFeature.requirementCode != ''">
+  			and tri.REQUIREMENT_CODE like concat("%",#{tblRequirementFeature.requirementCode,jdbcType=VARCHAR},"%")
+  		</if>
+  		<if test="tblRequirementFeature.requirementName != null and tblRequirementFeature.requirementName != ''">
+  			and tri.REQUIREMENT_NAME like concat("%",#{tblRequirementFeature.requirementName,jdbcType=VARCHAR},"%")
+  		</if>
+  		<if test="tblRequirementFeature.featureName != null and tblRequirementFeature.featureName != ''">
+  			and FEATURE_NAME like concat("%",#{tblRequirementFeature.featureName,jdbcType=VARCHAR},"%")
+  		</if>
+  		<if test="tblRequirementFeature.requirementFeatureStatus != null and tblRequirementFeature.requirementFeatureStatus != ''">
+  			and REQUIREMENT_FEATURE_STATUS = #{tblRequirementFeature.requirementFeatureStatus,jdbcType=VARCHAR}
+  		</if>
+  		<if test="tblRequirementFeature.requirementIds != null and tblRequirementFeature.requirementIds.size() != 0">
+  		and REQUIREMENT_ID in
+  			<foreach collection="tblRequirementFeature.requirementIds" item="requirementId" separator="," open="(" close=")">
+					#{requirementId,jdbcType=BIGINT}
+			</foreach>
+  		</if>
+  	</where>
+  	limit #{start},#{pageSize}
+  </select>
+  
+  <update id="relationRequirement" parameterType="map">
+  	update tbl_requirement_feature set COMMISSIONING_WINDOW_ID = #{windowId,jdbcType=BIGINT}, LAST_UPDATE_BY = #{currentUserId,jdbcType=BIGINT}, 
+  		LAST_UPDATE_DATE = #{time,jdbcType=TIMESTAMP}
+		where ID in   		
+  			<foreach collection="ids" item="id" separator="," open="(" close=")">
+  				#{id,jdbcType=BIGINT}
+  			</foreach>
+  </update>
+	<select id="getReqidByreqTaskId" parameterType="map" resultType="java.util.HashMap">
+		select distinct   REQUIREMENT_ID  from tbl_requirement_feature where status=1 and id in
+		<foreach item="item" index="index" collection="reqTaskIds" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+	<select id="getDevTaskByreqTaskId" parameterType="long" resultType="java.util.HashMap">
+		select tdt.id,tdt.DEV_TASK_NAME,tdt.DEV_TASK_CODE from tbl_dev_task tdt where tdt.status=1 and tdt.REQUIREMENT_FEATURE_ID=#{requirementFeatureId}
+	</select>
+
+
+	<select id="getFeatureByReId" parameterType="long" resultType="java.util.HashMap">
+		SELECT t.* FROM tbl_requirement_feature t
+	WHERE t.REQUIREMENT_ID = #{requireId} AND t.STATUS=1
+	</select>
+
+	<select id="getFeatureToHistoryList" parameterType="map" resultMap="BaseResultMap">
+		select trf.ID, trf.ASSET_SYSTEM_TREE_ID, trf.ESTIMATE_REMAIN_WORKLOAD, trf.COMMISSIONING_WINDOW_ID,
+		trf.SPRINT_ID, trf.PROJECT_PLAN_ID, trf.REQUIREMENT_FEATURE_STATUS
+		from tbl_requirement_feature trf
+		left join tbl_sprint_info tsi on tsi.ID=trf.SPRINT_ID
+		<where>
+			trf.STATUS=1 and (
+				(REQUIREMENT_FEATURE_STATUS <![CDATA[<>]]> '00' and REQUIREMENT_FEATURE_STATUS <![CDATA[<>]]> '03' ) or 
+				(tsi.STATUS=1 and tsi.SPRINT_START_DATE <![CDATA[<=]]> #{currentDate,jdbcType=VARCHAR} and tsi.SPRINT_END_DATE <![CDATA[>=]]> #{currentDate,jdbcType=VARCHAR})
+			)
+		</where>
+	</select>
+
+
+	<select id="getFeatureIdsBysprintId" parameterType="map" resultType="String">
+
+
+		select GROUP_CONCAT(trf.id) from tbl_requirement_feature trf where trf.SPRINT_ID in (
+		select tsi.id from tbl_sprint_info tsi
+		where tsi.STATUS=1 and tsi.SPRINT_START_DATE <![CDATA[<=]]> #{currentDate,jdbcType=VARCHAR}
+		and tsi.SPRINT_END_DATE <![CDATA[>=]]> #{currentDate,jdbcType=VARCHAR})
+
+
+	</select>
+
+	<select id="getSprintIdsByDate" parameterType="map" resultType="String">
+
+
+		select GROUP_CONCAT(tsi.id) from tbl_sprint_info tsi
+		where tsi.STATUS=1 and tsi.SPRINT_START_DATE <![CDATA[<=]]> #{currentDate,jdbcType=VARCHAR}
+		and tsi.SPRINT_END_DATE <![CDATA[>=]]> #{currentDate,jdbcType=VARCHAR}
+
+
+	</select>
+
+	<select id="getFeaBySprintId" parameterType="String" resultType="String">
+
+
+		select GROUP_CONCAT(trf.id) from tbl_requirement_feature trf
+		where trf.STATUS=1 and trf.SPRINT_ID= #{sId}
+
+
+
+	</select>
+
+	
+	<select id="getRequirementId" parameterType="map" resultMap="BaseResultMap">
+		select reqfea.*, user.USER_NAME manageUserName, user1.USER_NAME executeUserName from tbl_requirement_feature reqfea 
+			left join tbl_user_info user on user.ID = reqfea.MANAGE_USER_ID
+			left join tbl_user_info user1 on user1.ID = reqfea.EXECUTE_USER_ID
+			where reqfea.COMMISSIONING_WINDOW_ID = #{windowId}
+			and reqfea.SYSTEM_ID in
+			<foreach item="item" index="index" collection="systemIds.split(',')" open="(" separator="," close=")">
+                   #{item}
+          	</foreach>
+          and reqfea.STATUS = 1
+	</select>
+	
+	<select id="getRequirementFeatures" parameterType="map" resultMap="BaseResultMap">
+		select reqfea.*, user.USER_NAME manageUserName, user1.USER_NAME executeUserName from tbl_requirement_feature reqfea
+			left join tbl_user_info user on user.ID = reqfea.MANAGE_USER_ID
+			left join tbl_user_info user1 on user1.ID = reqfea.EXECUTE_USER_ID
+			 where reqfea.REQUIREMENT_ID = #{requirementId} and reqfea.COMMISSIONING_WINDOW_ID = #{windowId}
+			and reqfea.SYSTEM_ID in 
+			<foreach item="item" index="index" collection="systemIds.split(',')" open="(" separator="," close=")">
+                   #{item}
+          	</foreach>
+          	and reqfea.STATUS = 1
+	</select>
+
+	<select id="selectFeatureBySystemIdAndRequirementId" parameterType="Long" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/> from tbl_requirement_feature trf
+		WHERE trf.status = 1 AND trf.SYSTEM_ID = #{systemId} AND trf.REQUIREMENT_ID = #{requirementId}
+		and trf.REQUIREMENT_FEATURE_STATUS != '00';
+	</select>
+	<update id="updateTaskId" parameterType="cn.pioneeruniverse.project.entity.TblRequirementFeature">
+		update tbl_requirement_feature
+		set TASK_ID = #{taskId},FEATURE_CODE = #{featureCode},CREATE_TYPE = 2
+		where ID = #{id}
+  </update>
+  <update id="updateTmpTaskId" parameterType="cn.pioneeruniverse.project.entity.TblRequirementFeature">
+		update tbl_requirement_feature
+		set TASK_ID = #{taskId},FEATURE_CODE = #{featureCode},CREATE_TYPE = 2,
+		REQUIREMENT_FEATURE_SOURCE = #{requirementFeatureSource}
+		where ID = #{id}
+  </update>
+
+	<select id="getWorkload" parameterType="java.lang.Long" resultType="double">
+   		SELECT round(sum(ACTUAL_WORKLOAD),2) FROM tbl_test_task WHERE TEST_STAGE = 1 AND STATUS = 1 AND REQUIREMENT_FEATURE_ID = #{id}
+    </select>
+
+	<select id="getWorkload2" parameterType="java.lang.Long" resultType="double">
+   		SELECT round(sum(ACTUAL_WORKLOAD),2) FROM tbl_test_task WHERE TEST_STAGE = 2 AND STATUS = 1 AND REQUIREMENT_FEATURE_ID = #{id}
+    </select>
+</mapper>

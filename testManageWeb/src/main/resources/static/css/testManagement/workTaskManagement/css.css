@@ -1,0 +1,148 @@
+body{
+	height: auto !important;
+} 
+.navLocation{
+    margin-left: 5px;
+    margin-top: 10px;
+}
+.showSearch{
+    position: absolute;
+    right: 20px;
+    top: 8px;
+}
+.red{
+   color:red;
+}
+#HdevID{display:none;}
+#DHdevID{display:none;}
+#oldName{display:none;}
+#testTaskID{display:none;}
+#OleDveName{display:none;}
+/* #Attribute{display:none} */
+#taskID{display:none;}
+#assigDevID{display:none;} 
+#CodeY{
+	background:#009966;
+}
+#CodeN{
+	background:#FF6666;
+} 
+.active a{
+    background-color: rgb(225,234,247) !important;
+}
+
+.doing1{border-radius: 30px ; background: #FF6699;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing2{border-radius: 30px ; background: #108EE9;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing3{border-radius: 30px ; background: #33CC99;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing4{border-radius: 30px ; background: #FD5723;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing5{border-radius: 30px ; background: #91bdfd;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing6{border-radius: 30px ; background: #6c83b0;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing7{border-radius: 30px ; background: #ffb61e;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing8{border-radius: 30px ; background: #ffb3b3;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing9{border-radius: 30px ; background: #950cff;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing10{border-radius: 30px ; background:#e4b4ff;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing11{border-radius: 30px ; background:#59ff53;display: inline-block;padding:2px 12px;color:#ffffff;}
+.doing12{border-radius: 30px ; background:#25639e;display: inline-block;padding:2px 12px;color:#ffffff;}
+
+ li{list-style-type:none} 
+ /* li{list-style:disc inside;color:red;width:32px;} */
+  
+.def_changeTit{
+	font-weight: 500;
+	color: #999999;
+	cursor:pointer ;
+}
+.def_changeTitIcon{
+	font-weight: 500;
+	color: #666666;
+} 
+.def_content .form-group {
+	text-align: left;
+}
+.def_content .control-label {
+	display: inline-block;
+	line-height: 28px; 
+}  
+
+ .def_content {
+	padding: 0 30px 10px 30px;
+}
+.new_workRemarks{
+	padding-right: 0px;
+	padding-bottom: 15px; 
+	text-align: center;
+} 
+ 
+.fileTb{
+	width: auto;	
+}
+.fileTb img{
+	padding-bottom: 3px;
+	width: 20px;
+	height: 20px;
+}
+.file-url{
+	display:none;
+}
+.file-bucket{
+	display:none;
+}
+.file-s3Key{
+	display:none;
+}
+.form-group{
+	padding-right: 10px; 
+}
+
+.dealLog{
+	display: none;
+}
+
+#dHandle .def_title{
+	padding: 10px 20px 10px 30px;
+} 
+.nobg{
+	background-color: inherit;
+	width: 100%;
+}
+.headReturn {
+    width: 55px;
+    height: 36px;
+    background: url(../../../images/defect/return.png) no-repeat 8px 0;
+    border-right: 2px solid #E8E8E8;
+	cursor: pointer;
+	display: inline-block;
+}
+.checkContentModal .allInfo{
+	background-color: #FFF;
+} 
+#testWorkModal .modal-body,#reqModal .modal-body{
+	padding: 30px 50px 30px 70px;
+}
+#checkAttTable {
+	width: 100%;
+}
+#checkAttTable>tbody>tr>td:first-child{
+	width: 85%;
+}
+#checkAttTable .fileTb{
+	width: auto;
+}
+
+
+#testnewPerson .chanceMyself .btn_clear,
+#editTest .chanceMyself .btn_clear,
+#Transfer .chanceMyself .btn_clear{
+	right: 184px;
+}
+.file-upload-tb>tbody>tr>td:first-child{
+	width:auto;
+}
+/* 
+#newform .chanceMyself .btn_clear,
+#editForm .chanceMyself .btn_clear{
+	right: 172px;
+} */
+
+
+

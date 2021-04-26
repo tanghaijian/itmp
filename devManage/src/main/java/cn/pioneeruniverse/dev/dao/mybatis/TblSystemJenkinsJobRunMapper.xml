@@ -1,0 +1,1125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="cn.pioneeruniverse.dev.dao.mybatis.TblSystemJenkinsJobRunMapper">
+	<resultMap id="BaseResultMap"
+		type="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRun">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="system_jenkins_ID" jdbcType="BIGINT"
+			property="systemJenkinsId" />
+		<result column="environment_type" jdbcType="TINYINT"
+			property="environmentType" />
+		<result column="system_ID" jdbcType="BIGINT"
+			property="systemId" />
+		<result column="job_Name" jdbcType="VARCHAR" property="jobName" />
+		<result column="root_pom" jdbcType="VARCHAR" property="rootPom" />
+		<result column="Goals_options" jdbcType="VARCHAR"
+			property="goalsOptions" />
+		<result column="build_STATUS" jdbcType="TINYINT"
+			property="buildStatus" />
+		<result column="JOB_TYPE" jdbcType="TINYINT" property="jobType" />
+		<result column="create_type" jdbcType="TINYINT"
+			property="createType" />
+		<result column="build_logs" jdbcType="VARCHAR"
+			property="buildLogs" />
+		<result column="STATUS" jdbcType="TINYINT" property="status" />
+		<result column="CREATE_BY" jdbcType="BIGINT"
+			property="createBy" />
+		<result column="CREATE_DATE" jdbcType="TIMESTAMP"
+			property="createDate" />
+		<result column="START_DATE" jdbcType="TIMESTAMP"
+			property="startDate" />
+		<result column="END_DATE" jdbcType="TIMESTAMP"
+			property="endDate" />
+		<result column="LAST_UPDATE_BY" jdbcType="BIGINT"
+			property="lastUpdateBy" />
+		<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP"
+			property="lastUpdateDate" />
+		<result column="JOB_CONFIGURATION" jdbcType="VARCHAR"
+			property="jobConfiguration" />
+		<result column="JOB_RUN_NUMBER" jdbcType="TINYINT"
+				property="jobRunNumber" />
+		<result column="BUILD_PARAMETER" jdbcType="VARCHAR"
+				property="buildParameter" />
+	</resultMap>
+
+	<!--  插入新纪录   -->
+	<insert id="insertNew"  keyProperty="id" useGeneratedKeys="true"
+		parameterType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRun">
+		insert into tbl_system_jenkins_job_run (
+		system_jenkins_ID,system_ID,
+		job_Name, root_pom,
+		build_STATUS, build_logs, STATUS,
+		CREATE_BY, CREATE_DATE,
+		LAST_UPDATE_BY, START_DATE,environment_type,
+		LAST_UPDATE_DATE,create_type,job_type,END_DATE,JOB_CONFIGURATION,Goals_options,JOB_RUN_NUMBER,BUILD_PARAMETER)
+		values (
+		#{systemJenkinsId,jdbcType=BIGINT},
+		#{systemId,jdbcType=BIGINT},
+		#{jobName,jdbcType=VARCHAR}, #{rootPom,jdbcType=VARCHAR},
+		#{buildStatus,jdbcType=VARCHAR},
+		#{buildLogs,jdbcType=TINYINT},
+		#{status,jdbcType=TINYINT},
+		#{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP},
+		#{lastUpdateBy,jdbcType=BIGINT},
+		#{startDate,jdbcType=TIMESTAMP},#{environmentType,jdbcType=TINYINT},
+		#{lastUpdateDate,jdbcType=TIMESTAMP}, #{createType,jdbcType=TINYINT},
+		#{jobType,jdbcType=TINYINT},#{endDate,jdbcType=TIMESTAMP},#{jobConfiguration,jdbcType=VARCHAR},#{goalsOptions,jdbcType=VARCHAR},#{jobRunNumber,jdbcType=TINYINT},
+		#{buildParameter,jdbcType=VARCHAR})
+	</insert>
+
+
+
+	<sql id="Base_Column_List">
+		ID, system_jenkins_ID, system_ID, job_Name, root_pom,
+		Goals_options,
+		build_STATUS, environment_type,
+		build_logs, STATUS,
+		CREATE_BY, CREATE_DATE, LAST_UPDATE_BY,
+		START_DATE,END_DATE,LAST_UPDATE_DATE,create_type,JOB_TYPE,job_Name,JOB_CONFIGURATION,JOB_RUN_NUMBER,BUILD_PARAMETER
+	</sql>
+
+	<sql id="Base_Column_List_new">
+		ID, system_jenkins_ID, system_ID, job_Name, root_pom,
+		Goals_options,
+		build_STATUS, environment_type,
+		STATUS, CREATE_BY,
+		CREATE_DATE, LAST_UPDATE_BY,
+		START_DATE,END_DATE,LAST_UPDATE_DATE,create_type,JOB_TYPE,job_Name,JOB_CONFIGURATION,JOB_RUN_NUMBER
+	</sql>
+
+
+	<!-- 根据id修改 -->
+	<update id="updateJobRun"
+		parameterType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRun">
+		UPDATE tbl_system_jenkins_job_run systejobrun SET
+		<if test="startDate != null">
+			systejobrun.START_DATE = #{startDate},
+		</if>
+		<if test="createDate != null">
+			systejobrun.CREATE_DATE = #{createDate},
+		</if>
+
+       	systejobrun.build_STATUS =
+		#{buildStatus} ,systejobrun.LAST_UPDATE_DATE
+		=
+		#{lastUpdateDate},systejobrun.build_logs =
+		#{buildLogs},systejobrun.END_DATE = #{endDate}
+		where
+		systejobrun.ID=#{id}
+	</update>
+
+	<!--  查询根据可选参数   -->
+
+	<select id="selectByParam" parameterType="map"
+		resultType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRun">
+		select
+		<include refid="Base_Column_List" />
+		from tbl_system_jenkins_job_run
+		<!-- where SYSTEM_ID = #{id,jdbcType=BIGINT} and system_scm_id=#{systemScmId,jdbcType=BIGINT} -->
+
+		<where>
+			and status=1
+			<if test="systemId!=null and systemId!=''">
+				and SYSTEM_ID = #{systemId,jdbcType=BIGINT}
+
+			</if>
+			<if test="systemJenkinsId!=null and systemJenkinsId!=''">
+				and SYSTEM_JENKINS_ID=#{systemJenkinsId,jdbcType=BIGINT}
+			</if>
+
+
+		</where>
+		order by START_DATE DESC limit 1
+	</select>
+
+
+	<!--  获取错误的构建或部署   -->
+	<select id="getErrorStructure" parameterType="map"
+		resultType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRun">
+		select
+		<include refid="Base_Column_List_new" />
+		from tbl_system_jenkins_job_run
+		where SYSTEM_ID =
+		#{systemId,jdbcType=BIGINT} and
+		SYSTEM_JENKINS_ID=#{systemJenkinsId,jdbcType=BIGINT}
+		and status=1
+		and create_type=#{createType,jdbcType=TINYINT}
+		and JOB_TYPE=#{jobType,jdbcType=TINYINT} 
+		and END_DATE is
+		null
+		and date_sub(now(), interval +1 hour)>START_DATE
+	</select>
+	<!--     -->
+	<select id="getErrorBreakeStructure" parameterType="map"
+		resultType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRun">
+		select
+		<include refid="Base_Column_List_new" />
+		from tbl_system_jenkins_job_run
+		where SYSTEM_ID =
+		#{systemId,jdbcType=BIGINT} and
+		SYSTEM_JENKINS_ID=#{systemJenkinsId,jdbcType=BIGINT}
+		and status=1
+		and create_type=#{createType,jdbcType=TINYINT}
+		 and JOB_TYPE=#{jobType,jdbcType=TINYINT}
+		and JOB_RUN_NUMBER=#{jobRunNumber,jdbcType=TINYINT}
+		and END_DATE is
+		null
+		
+	</select>
+	<!--   获取已经无法自动结束的任务  -->
+      <select id="getAutoErrorStructure" parameterType="map"
+		resultType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRun">
+		select
+		<include refid="Base_Column_List_new" />
+		from tbl_system_jenkins_job_run
+		where SYSTEM_ID =
+		#{systemId,jdbcType=BIGINT} and
+		environment_type=#{environmentType,jdbcType=TINYINT}
+	    and status=1
+		and create_type=#{createType,jdbcType=TINYINT}
+		and JOB_TYPE=#{jobType,jdbcType=TINYINT}
+		and SYSTEM_JENKINS_ID=#{systemJenkinsId,jdbcType=BIGINT}
+		and END_DATE is
+		null
+		and date_sub(now(), interval +1 hour)>START_DATE
+	</select>
+
+
+	<!--     -->
+    <select id="getAutoBreakeErrorStructure" parameterType="map"
+		resultType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRun">
+		select
+		<include refid="Base_Column_List_new" />
+		from tbl_system_jenkins_job_run
+		where SYSTEM_ID =
+		#{systemId,jdbcType=BIGINT} and
+		environment_type=#{environmentType,jdbcType=TINYINT}
+	    and status=1
+		and create_type=#{createType,jdbcType=TINYINT}
+		and JOB_TYPE=#{jobType,jdbcType=TINYINT}
+		and SYSTEM_JENKINS_ID=#{systemJenkinsId,jdbcType=BIGINT}
+		and END_DATE is
+		null
+		
+	</select>
+	<!--  获取最新此系统下的job记录   -->
+	<select id="selectLastTimeBySystemId"
+		parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+	    <include refid="Base_Column_List_new" />
+		from tbl_system_jenkins_job_run
+		where SYSTEM_ID = #{id,jdbcType=BIGINT}
+		and build_status!=1 and
+		create_type=1 and job_type=1  	and status=1 order by END_DATE
+		DESC limit 0,1
+	</select>
+	<!-- 获取自动部署最新记录    -->
+	  <select id="selectAutoDeployLastTimeBySystemId"
+		parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List_new" />
+		from tbl_system_jenkins_job_run
+
+		where SYSTEM_ID = #{id,jdbcType=BIGINT}
+		and build_status!=1 and
+		create_type=1 and job_type=2  	and status=1 order by END_DATE
+		DESC limit 0,1
+	</select>
+	<!-- 获取手动最新job记录     -->
+	<select id="selectLastTimeBySystemIdManual"
+		parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+
+
+		<include refid="Base_Column_List_new" />
+		from tbl_system_jenkins_job_run
+
+		where SYSTEM_ID = #{id,jdbcType=BIGINT}
+		and build_status!=1 and
+		create_type=2 and job_type=1  	and status=1 order by END_DATE
+		DESC limit 0,1
+	</select>
+
+	<!-- 后去最新手动部署信息    -->
+	<select id="selectLastTimeBySystemIdManualDeploy"
+		parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+
+
+		<include refid="Base_Column_List_new" />
+		from tbl_system_jenkins_job_run
+
+		where SYSTEM_ID = #{id,jdbcType=BIGINT}
+		and build_status!=1 and
+		create_type=2 and job_type=2 	and status=1  order by END_DATE
+		DESC limit 0,1
+	</select>
+
+
+	<!--    获取此系统下最新一条记录 -->
+	<select id="selectNowTimeBySystemId"
+		parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<!-- <include refid="Base_Column_List" /> -->
+		<include refid="Base_Column_List_new" />
+		from tbl_system_jenkins_job_run
+		<!-- where SYSTEM_ID = #{id,jdbcType=BIGINT} order by END_DATE DESC -->
+		where SYSTEM_ID = #{id,jdbcType=BIGINT}  	and status=1 order by ID DESC
+	</select>
+
+	<!--   获取成功或失败的jobrun信息  -->
+	<select id="selectMessageBySystemId" parameterType="map"
+		resultType="map">
+		SELECT
+		tjrs.build_STATUS buildStatus,
+		<!-- tjrs.build_logs buildLogs, -->
+		tjrs.END_DATE endDate,
+		tjrs.START_DATE startDate,
+		tjrs.ID id,
+		tjrs.job_name jobName,
+		tjrs.CREATE_TYPE createType,
+		tjrs.environment_type envType
+		FROM
+		tbl_system_jenkins_job_run tjrs
+		where
+		tjrs.SYSTEM_ID = #{systemId,jdbcType=BIGINT} and
+		tjrs.CREATE_TYPE=#{createType,jdbcType=TINYINT} and tjrs.job_type=1 and tjrs.status=1
+		and ( tjrs.build_STATUS=2 or tjrs.build_STATUS=3 ) 	and tjrs.status=1 order by
+		tjrs.END_DATE DESC
+
+	</select>
+	<!--    获取环境名称 -->
+	<select id="getEnvName" parameterType="map"
+			resultType="map">
+
+		select VALUE_CODE,TERM_NAME,VALUE_NAME from tbl_data_dic where TERM_CODE = #{termCode}
+		and VALUE_CODE= #{envType}
+
+
+
+	</select>
+	<!-- 获取已经删除的环境信息    -->
+	<select id="getDeleteEnvName" parameterType="map"
+			resultType="map">
+
+		select VALUE_CODE,TERM_NAME,VALUE_NAME from tbl_data_dic where TERM_CODE = #{termCode}
+		 and status=2
+
+
+
+	</select>
+
+
+
+
+
+	<!-- 制品库部署 -->
+      <select id="selectAutoDeployLastTimeBySystemIdArtifact"
+		parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+
+
+		<include refid="Base_Column_List_new" />
+		from tbl_system_jenkins_job_run
+
+		where SYSTEM_ID = #{id,jdbcType=BIGINT}
+		and build_status!=1 and
+		create_type=1 and job_type=2 and status=1 order by END_DATE
+		DESC limit 0,1
+	</select>
+	<!-- 分页获取信息    -->
+	<select id="selectMessageBySystemIdAndPage" parameterType="map"
+		resultType="map">
+		SELECT
+		tjrs.build_STATUS buildStatus,
+		<!-- tjrs.build_logs buildLogs, -->
+		tjrs.END_DATE endDate,
+		tjrs.START_DATE startDate,
+		tjrs.ID id,
+		tjrs.job_name jobName,
+		tjrs.CREATE_TYPE createType,
+		tj.status,
+		<!--tss.environment_type envType   用历史记录表数据-->
+		tjrs.ENVIRONMENT_TYPE envType,
+		tui.`USER_NAME` userName,
+		tjrs.BUILD_PARAMETER buildParameter
+		FROM
+       tbl_system_jenkins_job_run tjrs
+
+	   LEFT JOIN tbl_system_jenkins tj ON tjrs.system_jenkins_ID = tj.ID
+       LEFT JOIN
+       tbl_system_scm tss ON tss.ID = tj.SYSTEM_SCM_ID
+	   LEFT JOIN tbl_user_info tui on tui.ID=tjrs.CREATE_BY
+
+
+        where
+       tjrs.SYSTEM_ID =
+       #{systemId,jdbcType=BIGINT} and
+       tjrs.CREATE_TYPE=#{createType,jdbcType=TINYINT} and tjrs.job_type=1 and tjrs.status=1
+       <!-- and( tjrs.build_STATUS=3 or tjrs.build_STATUS=2) and tj.status=1 order by -->
+		 and( tjrs.build_STATUS=3 or tjrs.build_STATUS=2) 	and tjrs.status=1
+		<if test="systemJenkinsId != null">
+			and  tjrs.system_jenkins_ID= #{systemJenkinsId,jdbcType=BIGINT}
+		</if>
+		<if test="envType != null">
+			and  tjrs.ENVIRONMENT_TYPE= #{envType,jdbcType=TINYINT}
+		</if>
+
+
+		order by
+		tjrs.END_DATE DESC limit #{start},#{pageSize}
+	</select>
+	<!--  通过jobname获取已经结束的jobrun记录   -->
+	<select id="selectLastTimeByJobname"
+		parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tbl_system_jenkins_job_run
+		where job_Name =
+		#{jobName,jdbcType=VARCHAR}  	and status=1  order by END_DATE DESC
+	</select>
+
+	<!--   查询jobrun  -->
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List_new" />
+		from tbl_system_jenkins_job_run
+		where ID = #{id,jdbcType=BIGINT}
+	</select>
+	<!--     -->
+
+	<select id="selectModuleBuildMessage" parameterType="map"
+		resultType="map">
+		SELECT
+		tjr.build_STATUS buildStatus,
+		tjr.END_DATE endDate,
+		tjr.environment_type environmentType
+		FROM
+		tbl_system_module_jenkins_job_run tmjr
+		LEFT JOIN
+		tbl_system_jenkins_job_run tjr ON tmjr.SYSTEM_JENKINS_JOB_RUN =
+		tjr.id
+		where tmjr.SYSTEM_MODULE_ID=#{moduleId,jdbcType=BIGINT}
+		and
+		tmjr.system_id =#{systemId,jdbcType=BIGINT} and tmjr.JOB_TYPE=1 and
+		tmjr.CREATE_TYPE=1 	and tmjr.status=1
+		ORDER BY
+		tmjr.LAST_UPDATE_DATE DESC LIMIT 0,20 
+
+	</select>
+	<!--获取已经结束的此系统下自动构建最新20条数据-->
+	<select id="selectModuleRunInfo" parameterType="map"
+			resultType="map">
+		SELECT
+		tmjr.BUILD_STATUS buildStatus,
+		tmjr.LAST_UPDATE_DATE endDate,
+		tjr.environment_type environmentType
+		FROM
+		tbl_system_module_jenkins_job_run tmjr
+		LEFT JOIN
+		tbl_system_jenkins_job_run tjr ON tmjr.SYSTEM_JENKINS_JOB_RUN =
+		tjr.id
+		where tmjr.SYSTEM_MODULE_ID=#{moduleId,jdbcType=BIGINT}
+		and
+		tmjr.system_id =#{systemId,jdbcType=BIGINT} and tmjr.JOB_TYPE=1 and
+		tmjr.CREATE_TYPE=1 	and tmjr.status=1  and tmjr.BUILD_STATUS in (2,3,5)
+		ORDER BY
+		tmjr.LAST_UPDATE_DATE DESC LIMIT 0,20
+
+	</select>
+	<!--  获取已经结束的此系统下自动构建最新50条数据   -->
+	<select id="selectModuleRunInfos" parameterType="map"
+			resultType="map">
+		SELECT
+		tmjr.BUILD_STATUS buildStatus,
+		tmjr.LAST_UPDATE_DATE endDate,
+		tmjr.SYSTEM_MODULE_ID systemModuleId,
+		tjr.environment_type environmentType
+		FROM
+		tbl_system_module_jenkins_job_run tmjr
+		LEFT JOIN
+		tbl_system_jenkins_job_run tjr ON tmjr.SYSTEM_JENKINS_JOB_RUN =
+		tjr.id
+		where
+		tmjr.system_id =#{systemId,jdbcType=BIGINT} and tmjr.JOB_TYPE=1 and
+		tmjr.CREATE_TYPE=1 	and tmjr.status=1  and tmjr.BUILD_STATUS in (2,3,5)
+		ORDER BY
+		tmjr.LAST_UPDATE_DATE DESC LIMIT 0,50
+
+	</select>
+	<!--     -->
+	<select id="selectModuleRunInfosByModuleId" parameterType="map"
+			resultType="map">
+		SELECT
+		tmjr.BUILD_STATUS buildStatus,
+		tmjr.LAST_UPDATE_DATE endDate,
+		tmjr.SYSTEM_MODULE_ID systemModuleId,
+		tjr.environment_type environmentType
+		FROM
+		tbl_system_module_jenkins_job_run tmjr
+		LEFT JOIN
+		tbl_system_jenkins_job_run tjr ON tmjr.SYSTEM_JENKINS_JOB_RUN =
+		tjr.id
+		where
+		tmjr.system_id =#{systemId,jdbcType=BIGINT} and tmjr.JOB_TYPE=1 and
+		tmjr.CREATE_TYPE=1 	and tmjr.status=1  and tmjr.BUILD_STATUS in (2,3,5) and  tmjr.SYSTEM_MODULE_ID=#{systemModuleId,jdbcType=BIGINT}
+		ORDER BY
+		tmjr.LAST_UPDATE_DATE DESC LIMIT 0,20
+
+	</select>
+
+
+	<!-- 	<select id="selectModuleBuildMessageAutoDeploy" parameterType="map"
+            resultType="map">
+            SELECT
+            tjr.build_STATUS buildStatus,
+            tjr.END_DATE endDate,
+            tjr.environment_type environmentType
+            FROM
+            tbl_system_module_jenkins_job_run tmjr
+            LEFT JOIN
+            tbl_system_jenkins_job_run tjr ON tmjr.SYSTEM_JENKINS_JOB_RUN =
+            tjr.id
+            where tmjr.SYSTEM_MODULE_ID=#{moduleId,jdbcType=BIGINT}
+            and
+            tmjr.system_id =#{systemId,jdbcType=BIGINT} and (tmjr.JOB_TYPE=2 or tmjr.JOB_TYPE=3) and
+            tmjr.CREATE_TYPE=1
+            ORDER BY
+            tmjr.id DESC
+
+        </select> -->
+
+
+	<!--   获取jobrun信息   -->
+	<select id="selectModuleBuildMessageAutoDeploy" parameterType="map"
+		resultType="map">
+		SELECT
+		tjr.build_STATUS buildStatus,
+		tjr.END_DATE endDate,
+		tjr.environment_type environmentType
+		FROM
+		tbl_system_module_jenkins_job_run tmjr
+		LEFT JOIN
+		tbl_system_jenkins_job_run tjr ON tmjr.SYSTEM_JENKINS_JOB_RUN =
+		tjr.id
+		where tmjr.SYSTEM_MODULE_ID=#{moduleId,jdbcType=BIGINT}
+		and
+		tmjr.system_id =#{systemId,jdbcType=BIGINT} and tmjr.JOB_TYPE=#{jobType,jdbcType=TINYINT}  and
+		tmjr.CREATE_TYPE=1 	and tmjr.status=1
+		ORDER BY
+		tmjr.LAST_UPDATE_DATE DESC LIMIT 0,20   <!-- 为了避免module上次事件与系统结束事件不一样将tmjr的id排序改为LAST_UPDATE_DATE -->
+
+	</select>
+	<!--  获取20条jobrun信息   -->
+	<select id="selectModuleBuildMessageAutoDeployNew" parameterType="map"
+			resultType="map">
+		SELECT
+		tmjr.BUILD_STATUS buildStatus,
+		tmjr.LAST_UPDATE_DATE endDate,
+		tjr.environment_type environmentType
+		FROM
+		tbl_system_module_jenkins_job_run tmjr
+		LEFT JOIN
+		tbl_system_jenkins_job_run tjr ON tmjr.SYSTEM_JENKINS_JOB_RUN =
+		tjr.id
+		where tmjr.SYSTEM_MODULE_ID=#{moduleId,jdbcType=BIGINT}
+		and
+		tmjr.system_id =#{systemId,jdbcType=BIGINT} and tmjr.JOB_TYPE=#{jobType,jdbcType=TINYINT}  and
+		tmjr.CREATE_TYPE=1 	and tmjr.status=1 and tmjr.BUILD_STATUS in (2,3,5)
+		ORDER BY
+		tmjr.LAST_UPDATE_DATE DESC LIMIT 0,20   <!-- 为了避免module上次事件与系统结束事件不一样将tmjr的id排序改为LAST_UPDATE_DATE -->
+
+	</select>
+	<!--  获取50条数据信息   -->
+	<select id="selectModuleBuildMessageAutoDeployNews" parameterType="map"
+			resultType="map">
+		SELECT
+		tmjr.BUILD_STATUS buildStatus,
+		tmjr.LAST_UPDATE_DATE endDate,
+		tjr.environment_type environmentType,
+		tmjr.SYSTEM_MODULE_ID systemModuleId
+		FROM
+		tbl_system_module_jenkins_job_run tmjr
+		LEFT JOIN
+		tbl_system_jenkins_job_run tjr ON tmjr.SYSTEM_JENKINS_JOB_RUN =
+		tjr.id
+		where
+		tmjr.system_id =#{systemId,jdbcType=BIGINT} and tmjr.JOB_TYPE=#{jobType,jdbcType=TINYINT}  and
+		tmjr.CREATE_TYPE=1 	and tmjr.status=1 and tmjr.BUILD_STATUS in (2,3,5)
+		ORDER BY
+		tmjr.LAST_UPDATE_DATE DESC LIMIT 0,50   <!-- 为了避免module上次事件与系统结束事件不一样将tmjr的id排序改为LAST_UPDATE_DATE -->
+
+	</select>
+
+	<!--  根据模块id获取已经结束的20条最新job历史信息   -->
+	<select id="selectModuleBuildMessageAutoDeployNewsByModuleId" parameterType="map"
+			resultType="map">
+		SELECT
+		tmjr.BUILD_STATUS buildStatus,
+		tmjr.LAST_UPDATE_DATE endDate,
+		tjr.environment_type environmentType,
+		tmjr.SYSTEM_MODULE_ID systemModuleId
+		FROM
+		tbl_system_module_jenkins_job_run tmjr
+		LEFT JOIN
+		tbl_system_jenkins_job_run tjr ON tmjr.SYSTEM_JENKINS_JOB_RUN =
+		tjr.id
+		where
+		tmjr.system_id =#{systemId,jdbcType=BIGINT} and tmjr.JOB_TYPE=#{jobType,jdbcType=TINYINT}  and
+		tmjr.CREATE_TYPE=1 	and tmjr.status=1 and tmjr.BUILD_STATUS in (2,3,5) and tmjr.SYSTEM_MODULE_ID=#{systemModuleId,jdbcType=BIGINT}
+		ORDER BY
+		tmjr.LAST_UPDATE_DATE DESC LIMIT 0,20   <!-- 为了避免module上次事件与系统结束事件不一样将tmjr的id排序改为LAST_UPDATE_DATE -->
+
+	</select>
+
+	<!--     -->
+
+	<select id="selectModuleBuildMessageNow" parameterType="map"
+		resultType="map">
+		SELECT
+		tjr.build_STATUS buildStatus,
+		tjr.END_DATE endDate,
+		tjr.environment_type environmentType
+		FROM
+		tbl_system_module_jenkins_job_run tmjr
+		LEFT JOIN
+		tbl_system_jenkins_job_run tjr ON tmjr.SYSTEM_JENKINS_JOB_RUN =
+		tjr.id
+		where tmjr.SYSTEM_MODULE_ID=#{moduleId,jdbcType=BIGINT}
+		and
+		tmjr.system_id is null 	and tmjr.status=1
+		ORDER BY
+		tmjr.id DESC
+		LIMIT 1
+	</select>
+
+
+	<!--     -->
+<select id="selectMessageBySystemIdAndPageAutoDeploy" parameterType="map"
+		resultType="map">
+		SELECT
+		tjrs.build_STATUS buildStatus,
+		<!-- tjrs.build_logs buildLogs, -->
+		tjrs.END_DATE endDate,
+		tjrs.START_DATE startDate,
+		tjrs.ID id,
+		tjrs.job_name jobName,
+		tjrs.CREATE_TYPE createType,
+		tj.status,
+	<!--tss.environment_type envType,-->
+    tjrs.ENVIRONMENT_TYPE envType,
+    tui.USER_NAME userName,
+    tjrs.BUILD_PARAMETER buildParameter
+    FROM
+    tbl_system_jenkins_job_run tjrs
+    LEFT
+    JOIN tbl_system_jenkins tj ON tjrs.system_jenkins_ID = tj.ID
+    LEFT JOIN
+    tbl_system_scm tss ON tss.ID = tj.SYSTEM_SCM_ID
+    LEFT JOIN tbl_user_info tui on tui.id=tjrs.CREATE_BY
+     where
+    tjrs.SYSTEM_ID =
+    #{systemId,jdbcType=BIGINT} and
+    tjrs.CREATE_TYPE=#{createType,jdbcType=TINYINT} and tjrs.job_type=#{jobType,jdbcType=TINYINT}
+    <!-- and( tjrs.build_STATUS=3 or tjrs.build_STATUS=2) and tj.status=1 order by -->
+		and( tjrs.build_STATUS=3 or tjrs.build_STATUS=2 or  tjrs.build_STATUS=5) 	and tjrs.status=1
+	 <if test="systemJenkinsId != null">
+		and  tjrs.system_jenkins_ID= #{systemJenkinsId,jdbcType=BIGINT}
+	 </if>
+	<if test="envType != null">
+		and  tjrs.ENVIRONMENT_TYPE= #{envType,jdbcType=TINYINT}
+	</if>
+
+
+		order by
+		tjrs.END_DATE DESC limit #{start},#{pageSize}
+	</select>
+	<!--     -->
+	<select id="selectModuleBuildMessagesNow" parameterType="map"
+		resultType="map">
+		SELECT
+		tjr.build_STATUS buildStatus,
+		tjr.END_DATE endDate,
+		tjr.environment_type environmentType
+		FROM
+		tbl_system_module_jenkins_job_run tmjr
+		LEFT JOIN
+		tbl_system_jenkins_job_run tjr ON tmjr.SYSTEM_JENKINS_JOB_RUN =
+		tjr.id
+		where tmjr.SYSTEM_MODULE_ID=#{moduleId,jdbcType=BIGINT} 
+		<!-- 防止定时任务显示正在构建 -->
+		and tmjr.job_name not like '%scheduled'
+		and
+		tmjr.system_id=#{systemId,jdbcType=BIGINT} and tmjr.JOB_TYPE=1 and
+		tmjr.CREATE_TYPE=1 	and tmjr.status=1
+		ORDER BY
+		tmjr.id DESC
+		LIMIT 0,20
+	</select>
+	<!--  获取正在构建或部署的job信息   -->
+	<select id="getModuleInfoIng" parameterType="map"
+			resultType="map">
+		SELECT
+		tmjr.build_STATUS buildStatus,
+		tmjr.LAST_UPDATE_DATE endDate,
+		tjr.environment_type environmentType
+		FROM
+		tbl_system_module_jenkins_job_run tmjr
+		LEFT JOIN
+		tbl_system_jenkins_job_run tjr ON tmjr.SYSTEM_JENKINS_JOB_RUN =
+		tjr.id
+		where tmjr.SYSTEM_MODULE_ID=#{moduleId,jdbcType=BIGINT}
+		<!-- 防止定时任务显示正在构建 -->
+		and tmjr.job_name not like '%scheduled'
+		and
+		tmjr.system_id=#{systemId,jdbcType=BIGINT} and tmjr.JOB_TYPE=1 and
+		tmjr.CREATE_TYPE=1 	and tmjr.status=1 and tmjr.BUILD_STATUS=1
+		ORDER BY
+		tmjr.id DESC
+		LIMIT 0,20
+	</select>
+	<!--  获取正在构建或部署的job信息   -->
+	<select id="getModuleInfoIngs" parameterType="map"
+			resultType="map">
+		SELECT
+		tmjr.build_STATUS buildStatus,
+		tmjr.LAST_UPDATE_DATE endDate,
+		tjr.environment_type environmentType,
+		tmjr.SYSTEM_MODULE_ID systemModuleId
+		FROM
+		tbl_system_module_jenkins_job_run tmjr
+		LEFT JOIN
+		tbl_system_jenkins_job_run tjr ON tmjr.SYSTEM_JENKINS_JOB_RUN =
+		tjr.id
+		where
+		<!-- 防止定时任务显示正在构建 -->
+		 tmjr.job_name not like '%scheduled'
+		and
+		tmjr.system_id=#{systemId,jdbcType=BIGINT} and tmjr.JOB_TYPE=1 and
+		tmjr.CREATE_TYPE=1 	and tmjr.status=1 and tmjr.BUILD_STATUS=1
+		ORDER BY
+		tmjr.id DESC
+		LIMIT 0,200
+	</select>
+
+
+	
+	
+	
+	
+	<!-- <select id="selectModuleBuildMessagesNowAutoDeploy" parameterType="map"
+		resultType="map">
+		SELECT
+		tjr.build_STATUS buildStatus,
+		tjr.END_DATE endDate,
+		tjr.environment_type environmentType
+		FROM
+		tbl_system_module_jenkins_job_run tmjr
+		LEFT JOIN
+		tbl_system_jenkins_job_run tjr ON tmjr.SYSTEM_JENKINS_JOB_RUN =
+		tjr.id
+		where tmjr.SYSTEM_MODULE_ID=#{moduleId,jdbcType=BIGINT}
+		and tmjr.job_name not like '%scheduled'
+		and
+		tmjr.system_id=#{systemId,jdbcType=BIGINT} and tmjr.JOB_TYPE=3 and
+		tmjr.CREATE_TYPE=1
+		ORDER BY
+		tmjr.id DESC
+		LIMIT 0,4
+	</select> -->
+	<!--    获取此系统下构建或部署的最新20条数据 -->
+	<select id="selectModuleBuildMessagesNowAutoDeploy" parameterType="map"
+		resultType="map">
+		SELECT
+		tjr.build_STATUS buildStatus,
+		tjr.END_DATE endDate,
+		tjr.environment_type environmentType
+		FROM
+		tbl_system_module_jenkins_job_run tmjr
+		LEFT JOIN
+		tbl_system_jenkins_job_run tjr ON tmjr.SYSTEM_JENKINS_JOB_RUN =
+		tjr.id
+		where tmjr.SYSTEM_MODULE_ID=#{moduleId,jdbcType=BIGINT}
+		and tmjr.job_name not like '%scheduled'
+		and
+		tmjr.system_id=#{systemId,jdbcType=BIGINT} and tmjr.JOB_TYPE=#{jobType,jdbcType=TINYINT} and
+		tmjr.CREATE_TYPE=1 	and tmjr.status=1
+		ORDER BY
+		tmjr.id DESC
+		LIMIT 0,20
+	</select>
+
+	<!--  获取此系统下正在构建或部署的信息   -->
+	<select id="selectModuleBuildMessagesNowAutoDeployNew" parameterType="map"
+			resultType="map">
+		SELECT
+		tmjr.build_STATUS buildStatus,
+		tmjr.LAST_UPDATE_DATE endDate,
+		tjr.environment_type environmentType
+		FROM
+		tbl_system_module_jenkins_job_run tmjr
+		LEFT JOIN
+		tbl_system_jenkins_job_run tjr ON tmjr.SYSTEM_JENKINS_JOB_RUN =
+		tjr.id
+		where tmjr.SYSTEM_MODULE_ID=#{moduleId,jdbcType=BIGINT}
+		and tmjr.job_name not like '%scheduled'
+		and
+		tmjr.system_id=#{systemId,jdbcType=BIGINT} and tmjr.JOB_TYPE=#{jobType,jdbcType=TINYINT} and
+		tmjr.CREATE_TYPE=1 	and tmjr.status=1 and tmjr.BUILD_STATUS in (1,4)
+		ORDER BY
+		tmjr.id DESC
+		LIMIT 0,20
+	</select>
+	<!--  获取此系统下正在构建或部署的信息   -->
+	<select id="selectModuleBuildMessagesNowAutoDeployNews" parameterType="map"
+			resultType="map">
+		SELECT
+		tmjr.build_STATUS buildStatus,
+		tmjr.LAST_UPDATE_DATE endDate,
+		tjr.environment_type environmentType,
+		tmjr.SYSTEM_MODULE_ID systemModuleId,
+		tmjr.JOB_NAME jobName
+		FROM
+		tbl_system_module_jenkins_job_run tmjr
+		LEFT JOIN
+		tbl_system_jenkins_job_run tjr ON tmjr.SYSTEM_JENKINS_JOB_RUN =
+		tjr.id
+		where
+		tmjr.job_name not like '%scheduled'
+		and
+		tmjr.system_id=#{systemId,jdbcType=BIGINT} and tmjr.JOB_TYPE=#{jobType,jdbcType=TINYINT} and
+		tmjr.CREATE_TYPE=1 	and tmjr.status=1 and tmjr.BUILD_STATUS in (1,4)
+		ORDER BY
+		tmjr.id DESC
+		LIMIT 0,20
+	</select>
+
+	<!--   删除jobrun根据id  -->
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from
+		tbl_system_jenkins_job_run
+		where ID = #{id,jdbcType=BIGINT}
+	</delete>
+	<!--     -->
+	<insert id="insertSelective"
+		parameterType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRun">
+		insert into tbl_system_jenkins_job_run
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="systemJenkinsId != null">
+				system_jenkins_ID,
+			</if>
+			<if test="systemId != null">
+				system_ID,
+			</if>
+			<if test="jobName != null">
+				job_Name,
+			</if>
+			<if test="rootPom != null">
+				root_pom,
+			</if>
+			<if test="goalsOptions != null">
+				Goals_options,
+			</if>
+			<if test="buildStatus != null">
+				build_STATUS,
+			</if>
+			<if test="buildLogs != null">
+				build_logs,
+			</if>
+			<if test="status != null">
+				STATUS,
+			</if>
+			<if test="createBy != null">
+				CREATE_BY,
+			</if>
+			<if test="createDate != null">
+				CREATE_DATE,
+			</if>
+			<if test="lastUpdateBy != null">
+				LAST_UPDATE_BY,
+			</if>
+			<if test="lastUpdateDate != null">
+				LAST_UPDATE_DATE,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="systemJenkinsId != null">
+				#{systemJenkinsId,jdbcType=BIGINT},
+			</if>
+			<if test="systemId != null">
+				#{systemId,jdbcType=BIGINT},
+			</if>
+			<if test="jobName != null">
+				#{jobName,jdbcType=VARCHAR},
+			</if>
+			<if test="rootPom != null">
+				#{rootPom,jdbcType=VARCHAR},
+			</if>
+			<if test="goalsOptions != null">
+				#{goalsOptions,jdbcType=VARCHAR},
+			</if>
+			<if test="buildStatus != null">
+				#{buildStatus,jdbcType=TINYINT},
+			</if>
+			<if test="buildLogs != null">
+				#{buildLogs,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=TINYINT},
+			</if>
+			<if test="createBy != null">
+				#{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdateBy != null">
+				#{lastUpdateBy,jdbcType=BIGINT},
+			</if>
+			<if test="lastUpdateDate != null">
+				#{lastUpdateDate,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<!--   更新jobrun信息  -->
+	<update id="updateByPrimaryKeySelective"
+		parameterType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRun">
+		update tbl_system_jenkins_job_run
+		<set>
+			<if test="systemJenkinsId != null">
+				system_jenkins_ID = #{systemJenkinsId,jdbcType=BIGINT},
+			</if>
+			<if test="systemId != null">
+				system_ID = #{systemId,jdbcType=BIGINT},
+			</if>
+			<if test="jobName != null">
+				job_Name = #{jobName,jdbcType=VARCHAR},
+			</if>
+			<if test="rootPom != null">
+				root_pom = #{rootPom,jdbcType=VARCHAR},
+			</if>
+			<if test="goalsOptions != null">
+				Goals_options = #{goalsOptions,jdbcType=VARCHAR},
+			</if>
+			<if test="buildStatus != null">
+				build_STATUS = #{buildStatus,jdbcType=TINYINT},
+			</if>
+			<if test="buildLogs != null">
+				build_logs = #{buildLogs,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				STATUS = #{status,jdbcType=TINYINT},
+			</if>
+			<if test="createBy != null">
+				CREATE_BY = #{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="createDate != null">
+				CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdateBy != null">
+				LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+			</if>
+			<if test="lastUpdateDate != null">
+				LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=BIGINT}
+	</update>
+	<!--更新jobrun信息-->
+	<update id="updateByPrimaryKey"
+		parameterType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRun">
+		update tbl_system_jenkins_job_run
+		set system_jenkins_ID =
+		#{systemJenkinsId,jdbcType=BIGINT},
+		system_ID =
+		#{systemId,jdbcType=BIGINT},
+		job_Name = #{jobName,jdbcType=VARCHAR},
+		root_pom = #{rootPom,jdbcType=VARCHAR},
+		Goals_options =
+		#{goalsOptions,jdbcType=VARCHAR},
+		build_STATUS =
+		#{buildStatus,jdbcType=TINYINT},
+		build_logs =
+		#{buildLogs,jdbcType=VARCHAR},
+		STATUS = #{status,jdbcType=TINYINT},
+		CREATE_BY = #{createBy,jdbcType=BIGINT},
+		CREATE_DATE =
+		#{createDate,jdbcType=TIMESTAMP},
+		LAST_UPDATE_BY =
+		#{lastUpdateBy,jdbcType=BIGINT},
+		LAST_UPDATE_DATE =
+		#{lastUpdateDate,jdbcType=TIMESTAMP}
+		where ID = #{id,jdbcType=BIGINT}
+	</update>
+	<!-- 根据参数 获取历史信息   -->
+	<select id="selectByMapLimit" parameterType="map"
+		resultType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRun">
+		select
+		<include refid="Base_Column_List_new" />
+		from tbl_system_jenkins_job_run
+		<where>
+
+			and status=1
+			<if test="systemId!=null and systemId!=''">
+				and SYSTEM_ID = #{systemId,jdbcType=BIGINT}
+
+			</if>
+			<if test="systemJenkinsId!=null and systemJenkinsId!=''">
+				and SYSTEM_JENKINS_ID=#{systemJenkinsId,jdbcType=BIGINT}
+			</if>
+			<if test="jobName!=null and jobName!=''">
+				and job_name=#{jobName,jdbcType=VARCHAR}
+			</if>
+
+		</where>		
+	</select>
+	
+	<!-- 查询用户所在项目组所关联的构建信息 -->
+	<select id="findJenkinsJobRunByUser" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		SELECT tpi.ID,tsi.SYSTEM_NAME systemName,tsjr.SYSTEM_ID,tsjr.ID,tsjr.ENVIRONMENT_TYPE,tsjr.BUILD_STATUS,
+		tsjr.START_DATE,tsjr.END_DATE,tsjr.CREATE_TYPE,tsjr.JOB_NAME
+		from tbl_system_jenkins_job_run tsjr
+		LEFT JOIN tbl_system_info tsi ON tsjr.SYSTEM_ID=tsi.ID  AND tsi.STATUS=1
+		LEFT JOIN tbl_project_info tpi ON tsi.PROJECT_ID=tpi.ID AND tpi.STATUS=1
+		LEFT JOIN tbl_project_group tpg ON tpg.PROJECT_ID=tpi.ID AND tpg.STATUS=1  		
+		LEFT JOIN tbl_project_group_user tpgu ON tpgu.PROJECT_GROUP_ID=tpg.ID AND tpgu.STATUS=1  		 
+		WHERE tsjr.STATUS=1 AND tsjr.JOB_TYPE=1 AND tpgu.USER_ID=#{userId}
+		GROUP BY tsjr.SYSTEM_ID,tsjr.ID
+		ORDER BY tsjr.ID DESC
+		limit 0,10
+	</select>
+	
+	<!-- 查询系统最近14天构建次数 -->
+	<select id="find14DayJenkinsCountBySystemId" parameterType="java.lang.Long"
+			resultType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRun">
+		SELECT a.click_date createDate,ifnull(b.inCount,0) inCount,
+		ifnull(b.successCount,0) successCount,ifnull(b.failCount,0) failCount from (
+			SELECT curdate() as click_date union all
+	    	SELECT date_sub(curdate(), interval 1 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 2 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 3 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 4 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 5 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 6 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 7 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 8 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 9 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 10 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 11 day) as click_date union all
+			SELECT date_sub(curdate(), interval 12 day) as click_date union all
+    		SELECT date_sub(curdate(), interval 13 day) as click_date
+		) a 
+		LEFT JOIN  (
+  			SELECT
+				count(case when BUILD_STATUS=1 THEN 1 else null END) inCount,
+				count(case when BUILD_STATUS=2 THEN 1 else null END) successCount,
+				count(case when BUILD_STATUS=3 THEN 1 else null END) failCount,
+				DATE_FORMAT(tsjr.START_DATE,'%Y-%m-%d') startTime
+  			from tbl_system_jenkins_job_run tsjr
+			LEFT JOIN tbl_system_info tsi ON tsjr.SYSTEM_ID=tsi.ID AND tsi.STATUS=1
+			WHERE tsjr.STATUS=1 AND tsi.ID=#{systemId} AND tsjr.JOB_TYPE=1
+  			group by startTime
+		) b 
+		on a.click_date = b.startTime
+		ORDER BY createDate
+	</select>
+	
+	
+	<!-- 查询系统最近14天构建耗时 -->
+	<select id="find14DayJenkinsMinuteBySystemId" parameterType="java.lang.Long"
+			resultType="cn.pioneeruniverse.dev.entity.TblSystemJenkinsJobRun">
+		SELECT a.click_date createDate,ifnull(b.minuteCount,0) minuteCount from (
+	    	SELECT curdate() as click_date union all
+	    	SELECT date_sub(curdate(), interval 1 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 2 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 3 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 4 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 5 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 6 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 7 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 8 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 9 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 10 day) as click_date union all
+	    	SELECT date_sub(curdate(), interval 11 day) as click_date union all
+			SELECT date_sub(curdate(), interval 12 day) as click_date union all
+    		SELECT date_sub(curdate(), interval 13 day) as click_date
+		) a 
+		LEFT JOIN (
+  			SELECT
+				SUM(CASE WHEN END_DATE is not null THEN
+				TIMESTAMPDIFF(second,START_DATE,END_DATE) ELSE null END) minuteCount,
+			DATE_FORMAT(tsjr.START_DATE,'%Y-%m-%d') startTime
+  			from tbl_system_jenkins_job_run tsjr
+			LEFT JOIN tbl_system_info tsi ON tsjr.SYSTEM_ID=tsi.ID AND tsi.STATUS=1
+			WHERE tsjr.STATUS=1 AND tsi.ID=#{systemId} AND tsjr.JOB_TYPE=1
+  			group by startTime
+		) b 
+		on a.click_date = b.startTime
+		ORDER BY createDate
+	</select>
+	
+	<!-- 查询系统最新5条构建记录 -->
+	<select id="findTop5JenkinsBySystemId" parameterType="java.lang.Long" resultType="map">
+		SELECT tsjr.ID,tsi.SYSTEM_NAME systemName,tsjr.job_Name jobName,tsjr.create_type createType,tsjr.ENVIRONMENT_TYPE environmentType,
+		tsjr.START_DATE startDate,tsjr.BUILD_STATUS buildStatus from tbl_system_jenkins_job_run tsjr
+		LEFT JOIN tbl_system_info tsi ON tsjr.SYSTEM_ID=tsi.ID AND tsi.STATUS=1
+		WHERE tsjr.STATUS=1 AND tsi.ID=#{systemId} AND tsjr.BUILD_STATUS&gt;1 AND tsjr.JOB_TYPE=1
+		ORDER BY tsjr.START_DATE DESC
+		LIMIT 0,5
+	</select>
+	
+	<!-- 查询系统最近N天的构建次数-->
+	<select id="findJenkinsCountBySystemId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  		SELECT COUNT(tsjr.ID) inCount 
+  		from tbl_system_jenkins_job_run tsjr
+		LEFT JOIN tbl_system_info tsi ON tsjr.SYSTEM_ID=tsi.ID AND tsi.STATUS=1
+		WHERE tsjr.STATUS=1  AND tsi.ID=#{systemId} AND datediff(now(),tsjr.START_DATE)&lt;=#{day}
+		AND tsjr.JOB_TYPE=1 AND tsjr.BUILD_STATUS <![CDATA[ <> ]]> 1
+  	</select>
+  	
+  	<!-- 查询系统最近7天的构建情况 -->
+	<select id="find7DayJenkinsBySysyemId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  		SELECT BUILD_STATUS,COUNT(BUILD_STATUS) inCount
+		from tbl_system_jenkins_job_run tsjr
+		LEFT JOIN tbl_system_info tsi ON tsjr.SYSTEM_ID=tsi.ID AND tsi.STATUS=1
+		WHERE tsjr.STATUS=1 AND tsi.ID=#{systemId}
+		AND datediff(now(),tsjr.START_DATE)&lt;=6 AND tsjr.JOB_TYPE=1
+		GROUP BY BUILD_STATUS
+		union all
+		select 0,count(*)
+		from tbl_system_jenkins_job_run tsjr
+		LEFT JOIN tbl_system_info tsi ON tsjr.SYSTEM_ID=tsi.ID AND tsi.STATUS=1
+		WHERE tsjr.STATUS=1 AND tsi.ID=#{systemId} AND datediff(now(),tsjr.START_DATE)&lt;=6
+		AND tsjr.JOB_TYPE=1 AND tsjr.BUILD_STATUS <![CDATA[ <> ]]> 1
+  	</select>
+	
+	<!-- 查询该条构建是否是该系统下的最新一条自动构建记录 -->
+	<select id="findTop1AutomaticJenkinsBySystemId" parameterType="map" resultType="java.lang.Long">
+  		SELECT COUNT(*) FROM(
+  			SELECT tsjr.SYSTEM_ID,tsjr.ID,tsjr.ENVIRONMENT_TYPE,tsjr.BUILD_STATUS,
+				tsjr.START_DATE,tsjr.END_DATE from tbl_system_jenkins_job_run tsjr 
+			WHERE SYSTEM_ID=#{systemId} AND tsjr.JOB_TYPE=1
+			ORDER BY END_DATE DESC
+			limit 0,1
+		) a WHERE a.ID=#{ID}
+  	</select>
+	
+	<!-- 查询该条构建是否是该系统下的最新一条手动构建记录 -->
+	<select id="findTop1CustomJenkinsBySystemId" parameterType="map" resultType="java.lang.Long">
+  		SELECT COUNT(*) FROM(
+  			SELECT tsjr.SYSTEM_ID,tsjr.ID,tsjr.ENVIRONMENT_TYPE,tsjr.BUILD_STATUS,
+				tsjr.START_DATE,tsjr.END_DATE from tbl_system_jenkins_job_run tsjr 
+			WHERE job_Name=#{jobName} AND tsjr.JOB_TYPE=1
+			ORDER BY END_DATE DESC
+			limit 0,1
+		) a WHERE a.ID=#{ID}
+  	</select>
+</mapper>

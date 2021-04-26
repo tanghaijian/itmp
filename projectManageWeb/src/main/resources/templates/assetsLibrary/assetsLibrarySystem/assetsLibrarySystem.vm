@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head> 
+	<title>系统层级维护</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <META HTTP-EQUIV="pragma" CONTENT="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="no-cache,IE=edge,Chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jquery-ztree/3.5.36/css/metroStyle/metroStyle.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/editormd.preview.min.css" />    
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+
+    <link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/assetsLibrary/assetsLibrary.css" />
+    <link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/assetsLibrary/assetsLibraryNeeds.css" />
+	</head>
+	<body>
+    	<div class="search">
+	        <div class="rowdiv">
+	            <div class="form-group def_col_9">
+	                <label class="def_col_10 control-label font_right">选择子系统：</label>
+	                <div class="def_col_26 control-label">
+	                    <input type="text" class="form-control pointStyle clear readonly" readonly placeholder="请选择" id="system">
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	    <div class="content">
+	        <div class="left">
+	            <div class="menu">
+	                <div id="menuTree" class="ztree"></div>
+	            </div>
+	        </div>
+	        <div class="right">
+	            <div class="notRequirement">
+	                <div class="title" id="title">
+	                </div>
+	                <div class="tableArea">
+	                    <div class="noData">
+	                        请点击左侧目录，来显示文档列表…
+	                    </div>
+	                    <div class="myTableDiv">
+	                    	<table id="documentList"></table>
+	                    </div> 
+	                </div>
+	            </div>
+	            <div class="requirement">
+	                <div class="reqInfo">
+	                    <span class="version">当前版本：v3.0</span>
+	                    <span class="history" id="history"><span class="icon_history"></span> 历史版本</span>
+	                    <span class="build">创建人：张三丰 2019-6-18 10:32:44</span>
+	                    <span class="last">最后更新：王小军 2019-10-11 10:32:44</span>
+	                </div>
+	                <div class="reqBlock">
+	                    <div class="def_col_26">
+	                        <div class="documentArea">
+	                            <div id="test-editormd-view2">
+	                                <textarea id="append-test">
+	
+###科学公式 TeX(KaTeX)
+
+$$E=mc^2$$
+
+行内的公式$$E=mc^2$$行内的公式，行内的$$E=mc^2$$公式。
+
+$$\(\sqrt{3x-1}+(1+x)^2\)$$
+
+$$\sin(\alpha)^{\theta}=\sum_{i=0}^{n}(x^i + \cos(f))$$
+
+$$X^2 > Y$$
+
+#####上标和下标
+
+上标：X&lt;sup&gt;2&lt;/sup&gt;
+
+下标：O&lt;sub&gt;2&lt;/sub&gt;
+
+##### 代码块里包含的过滤标签及属性不会被过滤
+
+```html
+&lt;style type="text/style"&gt;
+body{background:red;}
+&lt;/style&gt;
+
+&lt;script type="text/javscript"&gt;
+alert("script");
+&lt;/script&gt;
+
+&lt;iframe height=498 width=510 src="http://player.youku.com/embed/XMzA0MzIwMDgw" frameborder=0 allowfullscreen&gt;&lt;/iframe&gt;
+```
+
+#####Style
+
+&lt;style&gt;
+body{background:red;}
+&lt;/style&gt;
+
+&lt;style type="text/style"&gt;
+body{background:red;}
+&lt;/style&gt;
+
+#####Script
+
+&lt;script&gt;
+alert("script");
+&lt;/script&gt;
+
+&lt;script type="text/javscript"&gt;
+alert("script");
+&lt;/script&gt;
+	                                </textarea>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div class="def_col_10 ">
+	                        <div class="rightArea">
+	                            <div class="file">
+	                                <div class="titleDiv">
+	                                    <span class="font"> 附件 (10086) </span>
+	                                    <span class="more" id="appendixMore"> more </span>
+	                                </div>
+	                                <div class="fileLists">
+	                                    <div class="flieDiv">
+	                                        <span>
+	                                            附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+	                                        </span>
+	                                    </div>
+	                                    <div class="flieDiv">
+	                                        <span>
+	                                            附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+	                                        </span>
+	                                    </div>
+	                                    <div class="flieDiv">
+	                                        <span>
+	                                            附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+	                                        </span>
+	                                    </div>
+	                                    <div class="flieDiv">
+	                                        <span>
+	                                            附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+	                                        </span>
+	                                    </div>
+	                                    <div class="flieDiv">
+	                                        <span>
+	                                            附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+	                                        </span>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            <div class="relevanceInfo">
+	                                <div class="titleDiv">
+	                                    <span class="font"> 关联信息 </span>
+	                                    <span class="more" id="relevanceInfoMore"> more </span>
+	                                </div>
+	                                <div class="fileLists">
+	                                    <div class="flieDiv">
+	                                        <span>
+	                                            附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+	                                        </span>
+	                                    </div>
+	                                    <div class="flieDiv">
+	                                        <span>
+	                                            附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+	                                        </span>
+	                                    </div>
+	                                    <div class="flieDiv">
+	                                        <span>
+	                                            附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+	                                        </span>
+	                                    </div>
+	                                    <div class="flieDiv">
+	                                        <span>
+	                                            附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+	                                        </span>
+	                                    </div>
+	                                    <div class="flieDiv">
+	                                        <span>
+	                                            附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+	                                        </span>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script> 
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+	    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>  
+	    
+	    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>   
+	    
+	    <script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.core.js"></script>
+	    <script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.excheck.min.js"></script>
+	    <script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.exhide.js"></script>
+	    <script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/fuzzysearch.js"></script>
+	
+	    <script src="#springUrl('')/systemui/static/js/frame/editor/marked.min.js"></script>
+	    <script src="#springUrl('')/systemui/static/js/frame/editor/prettify.min.js"></script>
+	    <script src="#springUrl('')/systemui/static/js/frame/editor/raphael.min.js"></script>
+	    <script src="#springUrl('')/systemui/static/js/frame/editor/underscore.min.js"></script>
+	    <script src="#springUrl('')/systemui/static/js/frame/editor/sequence-diagram.min.js"></script>
+	    <script src="#springUrl('')/systemui/static/js/frame/editor/flowchart.min.js"></script>
+	    <script src="#springUrl('')/systemui/static/js/frame/editor/jquery.flowchart.min.js"></script>
+	    <script src="#springUrl('')/systemui/static/js/frame/editormd.min.js"></script>
+	    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+	    <script src="#springUrl('')/projectManageui/static/js/assetsLibrary/assetsLibrarySystem.js"></script>
+    </body> 
+</html>

@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<META HTTP-EQUIV="pragma" CONTENT="no-cache">
+<meta http-equiv="X-UA-Compatible" content="no-cache,IE=edge,Chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>测试集管理</title>
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-table-reorder-rows.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+<link rel="stylesheet" type="text/css" media="screen"
+	href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static//jqgrid/jqgrid/css/jqGridDefined.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/frame/component.css" />
+<link rel="stylesheet"
+	href="#springUrl('')/systemui/static/css/common/common.css" />
+
+<link rel="stylesheet"
+	href="#springUrl('')/testManageui/static/css/testset/testSet.css" />
+
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/jquery.tablednd.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/component.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-table-reorder-rows.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/common/common.js"></script>
+<script type="text/ecmascript"
+	src="#springUrl('')/systemui/static/js/common.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/testManageui/static/js/testSet/testSet.js"></script>
+<script type="text/javascript"
+	src="#springUrl('')/testManageui/static/js/testSet/testSetPupop.js"></script>
+<script>
+	$.jgrid.defaults.responsive = true;
+	$.jgrid.defaults.styleUI = 'Bootstrap4';
+	$.jgrid.defaults.iconSet = "fontAwesome";
+	var testTaskId = '$testTaskId';
+	var workTaskId = '$workTaskId';
+	
+</script>
+</head>
+<body>
+	<div class="left">
+		<div class="left_top">
+			<div class="left_top_title">
+				<span class="titleFont">测试集管理</span>
+				#if($auth.hasPermission("$token","testManage:testSet:add"))
+				<button type="button" class="btn btn-primary"
+					onclick="addTestSet( this,'false' )">新建测试集</button>
+				#end
+			</div>
+			<div class="left_top_search">
+				<div class="rowdiv input_search">
+					<input type="text" id="nameOrNumber" class="form-control"
+						placeholder="查询测试集编号或测试集名称" /> <a class="fa fa-search"
+						onclick="getAllTestTaskByTestSet()"></a>
+				</div>
+				<div class="rowdiv">
+					<div class="def_col_16">
+						<input type="hidden" id="userId"> <input type="text"
+							id="createBy" name="user"
+							class="form-control pointStyle readonly" data-user="search"
+							readonly placeholder="请选择创建人">
+					</div>
+					<div class="def_col_2 border_right"></div>
+					<div class="def_col_2"></div>
+					<div class="def_col_16">
+						<input type="hidden" id="workTaskId"> <input type="text"
+							id="workTaskName" class="form-control pointStyle readonly"
+							data-task="search" name="checkTestTask" readonly
+							placeholder="请选择关联工作任务">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="left_bottom" id="allTestTask"></div>
+	</div>
+	<div class="right_blank">
+		<div class="right_div">
+			<div class="haveNoFontRight">
+				<span>请点击左侧列表中的一个测试集</span>
+			</div>
+		</div>
+	</div>
+	<div class="right">
+		<input type="hidden" id="taskTestId" val='' />
+		<div class="right_div">
+			<div class="right_div_tit">
+				<div class="right_div_titFont">新建/编辑测试集</div>
+				<div class="right_div_titRight">
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary dropdown-toggle"
+							data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							操作<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							#if($auth.hasPermission("$token","testManage:testSet:allocate"))
+							<li><a href="#" onclick="assignPerson()">分派</a></li>
+							#end
+							#if($auth.hasPermission("$token","testManage:testSet:discard"))
+							<li><a href="#" onclick="discard()">废弃</a></li>
+							#end
+						</ul>
+					</div>
+					<div class="right_div_titDiv">
+						<div class="right_div_titFont2">总用例数：</div>
+						<div class="right_div_titFont3" id="showCaseNum">0</div>
+					</div>
+					<div class="right_div_titDiv">
+						<div class="right_div_titFont2">执行轮次：</div>
+						<div class="right_div_titFont3" id="showExcuteRound">0</div>
+					</div>
+				</div>
+			</div>
+			<div class="searchDiv">
+				<form id="testSetForm">
+					<div class="rowdiv">
+						<div class="form-group">
+							<div class="def_col_6">
+								<label class="control-label font_right">测试集名称：</label>
+							</div>
+							<div class="def_col_30">
+								<input type="text" id="checkTestSetName" name="checkTestSetName"
+									class="form-control" placeholder="请输入" />
+							</div>
+						</div>
+					</div>
+					<div class="rowdiv">
+						<div class="form-group def_col_18">
+							<div class="def_col_12">
+								<label class="control-label font_right">执行轮次：</label>
+							</div>
+							<div class="def_col_24">
+								<input type="text" id="checkExcuteRound" name="checkExcuteRound"
+									class="form-control" placeholder="请输入" />
+							</div>
+						</div>
+						<div class="form-group def_col_18">
+							<div class="def_col_12">
+								<label class="control-label font_right">关联工作任务：</label>
+							</div>
+							<div class="def_col_24">
+								<input type="text" id="checkTestTask"
+									class="form-control pointStyle readonly" readonly
+									name="checkTestTask" data-task="update" idValue="" placeholder="请输入" />
+							</div>
+						</div>
+					</div>
+				</form>
+				<div class="right_btnGroup">
+					<button type="button" class="btn btn-primary"
+						onclick="commitAddTestSet()">保&nbsp;&nbsp;&nbsp;存</button>
+					<button type="button" class="btn btn-default" onclick="cancelTestSet()">取&nbsp;&nbsp;&nbsp;消</button>
+				</div>
+			</div>
+			<div class="caseTableDiv">
+				<div class="caseTitle">已纳入的用例：</div>
+				<div class="caseBtnGroup">
+					#if($auth.hasPermission("$token","testManage:testSet:addCase"))
+					<button type="button" class="btn btn-primary"
+						onclick="addCaseShow()">新建案例</button>
+					#end
+					#if($auth.hasPermission("$token","testManage:testSet:importCase"))
+					<button type="button" class="btn btn-primary"
+						onclick="importExcel()">导入案例</button>
+					#end
+					#if($auth.hasPermission("$token","testManage:testSet:relateCase"))
+					<button type="button" class="btn btn-primary" id="relateCase">关联案例</button>
+					#end
+					#if($auth.hasPermission("$token","testManage:testSet:removeCase"))
+					<button type="button" class="btn btn-default"
+						onclick="removeManyCase()">移除关联</button>
+					#end
+				</div>
+				<div class="caseTableArea">
+					<div class="wode">
+						<table id="caseTable"></table>
+						<div id="pager2"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade bs-example-modal-lg" id="assignPersonModal"
+		tabindex="-1" role="dialog" aria-labelledby="assignPersonModal">
+		<div class="modal-dialog modal-lg modal-user" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<span class="modal-title" id="myModalLabel">分派执行人</span>
+				</div>
+				<div class="modal-body">
+					<div class="assignModalTit">TS-20180001 测试集名称测试集名称测试集名称测试集名称
+					</div>
+					<div class="caseTitle">分派执行人员：</div>
+					<div class="assignTableGroup">
+						<div class="oneAssign">
+							<div class="assignNo">第一轮</div>
+							<div class="assignBtnGroup">
+								<button type="button" class="btn btn-primary" onclick="">增加执行人</button>
+								<button type="button" class="btn btn-default"
+									data-dismiss="modal">移除执行人</button>
+							</div>
+							<div class="assignTableDiv">
+								<table id="assignTable"></table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	##选择案例弹框
+	<div id="testCaseModal" class="modal fade bs-example-modal-lg"
+		tabindex="-1" role="dialog" aria-labelledby="newPerson">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content modalStyle">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<span class="modal-title">请选择测试案例</span>
+				</div>
+
+				<div class="modal-body">
+					<div class="color1">
+						<div class="container-fluid" id="">
+							<div class="row control-row">
+								<div class="col-md-5">
+									<div class="search_font">
+										<label class="control-label">案例编号：</label>
+									</div>
+									<div class="search_input">
+										<input type="text" class="form-control" placeholder="请输入"
+											id="caseCode" />
+									</div>
+								</div>
+								<div class="col-md-5">
+									<div class="search_font">
+										<label class="control-label">案例名称：</label>
+									</div>
+									<div class="search_input">
+										<input type="text" class="form-control" placeholder="请输入"
+											id="caseName" />
+									</div>
+								</div>
+							</div>
+							<div class="row control-row search_btn">
+								<button type="button" class="btn btn-primary"
+									onclick="caseTableShow()">搜&nbsp;&nbsp;&nbsp;索</button>
+								<button type="button" class="btn btn-default"
+									onclick="clearSearchCase()">重&nbsp;&nbsp;&nbsp;置</button>
+							</div>
+						</div>
+						<div id="downBtn">
+							<span class="fa fa-caret-up"></span>
+						</div>
+					</div>
+					<br />
+					<div class="content-table">
+						<div class="wode">
+							<table id="listCase"></table>
+							<div id="pagerTask"></div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="bottom-container">
+						<button type="button" id="taskbutton" class="btn btn-primary"
+							data-task="default" onclick="commitCase()">确定</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	##选择任务弹框
+	<div id="testTaskModal" class="modal fade bs-example-modal-lg"
+		tabindex="-1" role="dialog" aria-labelledby="newPerson">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content modalStyle">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<span class="modal-title">请选择工作任务</span>
+				</div>
+
+				<div class="modal-body">
+					<div class="color1">
+						<div class="container-fluid" id="">
+							<div class="row control-row">
+								<div class="col-md-4">
+									<div class="search_font">
+										<label class="control-label">任务编号：</label>
+									</div>
+									<div class="search_input">
+										<input type="text" class="form-control" placeholder="请输入"
+											id="taskCode" />
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="search_font">
+										<label class="control-label">任务名称：</label>
+									</div>
+									<div class="search_input">
+										<input type="text" class="form-control" placeholder="请输入"
+											id="taskName" />
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="search_font">
+										<label class="control-label">任务状态：</label>
+									</div>
+									<div class="search_input">
+										<select class="selectpicker" id="taskState" name="taskState">
+											<option value="">请选择</option> #foreach($dictMap in
+											${dict.getDictMap(
+											"TBL_TEST_TASK_TEST_TASK_STATUS").entrySet()})
+											<option value="${dictMap.key}">${dictMap.value}</option> #end
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="row control-row search_btn">
+								<button type="button" class="btn btn-primary"
+									onclick="taskTableShow()">搜&nbsp;&nbsp;&nbsp;索</button>
+								<button type="button" class="btn btn-default"
+									onclick="clearSearchTask()">重&nbsp;&nbsp;&nbsp;置</button>
+							</div>
+						</div>
+						<div id="downBtn">
+							<span class="fa fa-caret-up"></span>
+						</div>
+					</div>
+					<br />
+					<div class="content-table">
+						<div class="wode">
+							<table id="listTask"></table>
+							<div id="pagerTask"></div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="bottom-container">
+						<button type="button" id="taskbutton" class="btn btn-primary"
+							data-task="default" onclick="commitTask()">确定</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	#*人员弹框*#
+	<div class="modal fade bs-example-modal-lg" id="userModal"
+		tabindex="-1" role="dialog" aria-labelledby="newPerson">
+		<div class="modal-dialog modal-lg modal-user" role="document">
+			<div class="modal-content modalStyle">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<span>选择人员</span>
+				</div>
+				<div class="modal-body">
+					<input type="hidden" id="searchFlag">
+					<div class="color1">
+						<div class="container-fluid">
+							<div class="row control-row">
+								<div class="col-md-4">
+									<div class="search_font">
+										<label class="control-label">姓名：</label>
+									</div>
+									<div class="search_input">
+										<input type="text" class="form-control " placeholder="请输入"
+											id="userName" name="userName" value="" />
+									</div>
+								</div>
+
+								<div class="col-md-4">
+									<div class="search_font">
+										<label class="control-label">部门：</label>
+									</div>
+									<div class="search_input">
+										<input type="text" class="form-control " placeholder="请输入"
+											id="deptName" name="deptName" value="" />
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="search_font">
+										<label class="control-label">公司：</label>
+									</div>
+									<div class="search_input">
+										<input type="text" class="form-control " placeholder="请输入"
+											id="companyName" name="companyName" value="" />
+									</div>
+								</div>
+							</div>
+							<div class="row control-row search_btn">
+								<button type="button" class="btn btn-primary"
+									onclick="searchUser()">搜&nbsp;&nbsp;&nbsp;索</button>
+								<button type="button" onclick="clearSearchUser()"
+									class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+							</div>
+
+						</div>
+						<div id="downBtn">
+							<span class="fa fa-caret-up"></span>
+						</div>
+					</div>
+					<br>
+					<div class="content-table">
+						<div class="wode">
+							<table id="userTable"></table>
+							<div id="userPage"></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<div class="bottom-container">
+						<button type="button" id="userbutton" class="btn btn-primary"
+							data-user="default" onclick="commitUser()">确定</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	#*新建案例弹框*#
+	<div class="modal fade bs-example-modal-lg" id="newTestCaseModal"
+		tabindex="-1" role="dialog" aria-labelledby="newPerson">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">新建案例</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" id="newTestCaseForm"
+						accept-charset="utf-8" enctype="multipart/form-data">
+
+						<div class="allInfo" id="newTestCaseInfo">
+							<div class="def_title">
+								<span>基本信息</span> <span class="fa fa-angle-double-up"
+									onclick="down(this)"></span>
+							</div>
+							<div class="def_content down_content">
+                                <div class="rowdiv">
+                                    <div class="form-group def_col_34">
+                                        <div class="def_col_4  caseLable">
+                                            <span class="redStar" style="color: red;">*</span>案例名称:
+                                        </div>
+                                        <div class="def_col_32">
+                                            <input class="form-control" type="text" placeholder="请输入"
+                                                   id="new_caseName" name="new_caseName" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rowdiv">
+                                    <div class="form-group def_col_34">
+                                        <div class="def_col_4 caseLable">
+                                            	前置条件:
+                                        </div>
+                                        <div class="def_col_32">
+											<textarea style="resize:none;" class="form-control" placeholder="请输入"
+                                                      id="new_precodition" name="new_precodition"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+								<div class="rowdiv">
+									<div class="def_col_34">
+										<div class="form-group def_col_18">
+											<div class="def_col_8  caseLable">
+												<span class="redStar" style="color: red;">*</span>涉及子系统:
+											</div>
+											<div class="def_col_28">
+												<input id="systemId" type="hidden"> <input
+													class="form-control readonly pointStyle" readonly
+													type="text" placeholder="请选择子系统" id="systemName"
+													name="systemName" />
+											</div>
+										</div>
+										<div class="form-group def_col_18">
+											<div class="def_col_8  caseLable">
+												<span class="redStar" style="color: red;">*</span>案例类型:
+											</div>
+											<div class="def_col_28">
+												<select class="selectpicker" id="caseType" name="caseType">
+													#foreach($dictMap in ${dict.getDictMap(
+													"TBL_TEST_SET_CASE_TYPE").entrySet()})
+													<option value="${dictMap.key}">${dictMap.value}</option>
+													#end
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+
+                                <div class="rowdiv">
+                                    <div class="form-group def_col_34">
+                                        <div class="form-group def_col_18">
+											<div class="def_col_8 caseLable">输入数据:</div>
+											<div class="def_col_28">
+												<input  class="form-control" type="text" placeholder="请输入" id="new_inputData" name="new_inputData"></input>
+											</div>
+										</div>
+                                        <div class="form-group def_col_18">
+                                            <div class="def_col_8 caseLable">测试项:</div>
+                                            <div class="def_col_28">
+                                                <input  class="form-control" type="text" placeholder="请输入" id="new_testPoint" name="new_testPoint"></input>
+                                            </div>
+										</div>
+                                    </div>
+                                </div>
+
+                                <div class="rowdiv">
+                                    <div class="form-group def_col_34">
+                                        <div class="form-group def_col_18">
+											<div class="def_col_8 caseLable">模块:</div>
+											<div class="def_col_28">
+												<input  class="form-control" type="text" placeholder="请输入" id="new_moduleName" name="new_moduleName"></input>
+											</div>
+										</div>
+										<div class="form-group def_col_18">
+											<div class="def_col_8 caseLable">业务类型:</div>
+											<div class="def_col_28">
+												<input  class="form-control" type="text" placeholder="请输入" id="new_businessType" name="new_businessType"></input>
+											</div>
+										</div>
+                                    </div>
+                                </div>
+                                <div class="rowdiv">
+                                    <div class="form-group def_col_34">
+                                        <div class="form-group def_col_18">
+											<div class="def_col_8 caseLable">预期结果:</div>
+                                            <div class="def_col_28">
+                                                <input  class="form-control"  type="text" placeholder="请输入" id="new_expectResult" name="new_expectResult"></input>
+                                            </div>
+										</div>
+                                    </div>
+                                </div>
+							</div>
+						</div>
+						<div class="rightModal">
+							<div class="fontWeihgt caseTitleFont">案例步骤：</div>
+							<button type="button" onclick="addStep_btn()"
+								class="btn btn-primary">增加步骤</button>
+						</div>
+						<div class="tagBody">
+							<table id="editCaseSteps">
+
+							</table>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary"
+						onclick="submitTestCase()">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	#*展示案例弹框*#
+	<div class="modal fade bs-example-modal-lg" id="showTestCaseModal"
+		tabindex="-1" role="dialog" aria-labelledby="newPerson">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="ModalLabel">案例详情</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" id="TestCaseForm"
+						accept-charset="utf-8" enctype="multipart/form-data">
+
+						<div class="allInfo" id="newTestCaseInfo">
+							<div class="def_title">
+								<span>基本信息</span> <span class="fa fa-angle-double-up"
+									onclick="down(this)"></span>
+							</div>
+							<div class="def_content down_content">
+                                <div class="rowdiv">
+                                    <div class="form-group def_col_34">
+                                        <div class="def_col_4  caseLable">
+                                            <span class="redStar" style="font-weight:bold;">案例名称:</span>
+                                        </div>
+                                        <div class="def_col_32 showCaseLable">
+                                            <span id="showCaseName"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rowdiv">
+                                    <div class="form-group def_col_34">
+                                        <div class="def_col_4 caseLable">
+                                            <span class="redStar" style="font-weight:bold;">前置条件:</span>
+                                        </div>
+                                        <div class="def_col_32 showCaseLable">
+                                            <span id="showCasePrecondition"></span>
+                                        </div>
+                                    </div>
+                                </div>
+								<div class="rowdiv">
+									<div class="def_col_34">
+										<div class="form-group def_col_18">
+											<div class="def_col_8  caseLable">
+												<span class="redStar" style="font-weight:bold;">涉及子系统:</span>
+											</div>
+											<div class="def_col_28 showCaseLable">
+												<span id="showSystemName"></span>
+											</div>
+										</div>
+										<div class="form-group def_col_18">
+											<div class="def_col_8  caseLable">
+												<span class="redStar" style="font-weight:bold;">案例类型:</span>
+											</div>
+											<div class="def_col_28 showCaseLable">
+												<span id="showCaseType"></span>
+											</div>
+										</div>
+									</div>
+								</div>
+
+                                <div class="rowdiv">
+                                    <div class="def_col_34">
+                                        <div class="form-group def_col_18">
+											<div class="def_col_8 caseLable">
+												<span class="redStar" style="font-weight:bold;">输入数据:</span>
+											</div>
+											<div class="def_col_28 showCaseLable">
+												<span id="inputData"></span>
+											</div>
+										</div>
+										<div class="form-group def_col_18">
+											<div class="def_col_8 caseLable">
+												<span class="redStar" style="font-weight:bold;">测试项:</span>
+											</div>
+											<div class="def_col_28 showCaseLable">
+												<span id="testPoint"></span>
+											</div>
+										</div>
+                                    </div>
+                                </div>
+                                <div class="rowdiv">
+                                    <div class="def_col_34">
+										<div class="form-group def_col_18">
+											<div class="def_col_8 caseLable">
+												<span class="redStar" style="font-weight:bold;">模块:</span>
+											</div>
+											<div class="def_col_28 showCaseLable">
+												<span id="moduleName"></span>
+											</div>
+										</div>
+										<div class="form-group def_col_18">
+											<div class="def_col_8 caseLable">
+												<span class="redStar" style="font-weight:bold;">业务类型:</span>
+											</div>
+											<div class="def_col_28 showCaseLable">
+												<span id="businessType"></span>
+											</div>
+										</div>
+									</div>
+                                </div>
+                                <div class="rowdiv">
+                                    <div class="def_col_34">
+										<div class="form-group def_col_18">
+											<div class="def_col_8 caseLable">
+												<span class="redStar" style="font-weight:bold;">预期结果:</span>
+											</div>
+											<div class="def_col_28 showCaseLable">
+												<span id="expectResult"></span>
+											</div>
+										</div>
+									</div>
+                                </div>
+							</div>
+						</div>
+						<div class="rightModal">
+							<div class="fontWeihgt caseTitleFont">案例步骤：</div>
+						</div>
+						<div class="tagBody">
+							<table id="showCaseSteps">
+
+							</table>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	##涉及子系统弹框
+	<div class="modal fade bs-example-modal-lg" id="systemModal"
+		tabindex="-1" role="dialog" aria-labelledby="newPerson">
+		<div class="modal-dialog modal-lg modal-user" role="document">
+			<div class="modal-content modalStyle">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<span class="modal-title" id="">选择子系统</span>
+				</div>
+				<div class="modal-body">
+
+					<div class="color1">
+						<div class="container-fluid" id="">
+							<div class="rowdiv control-row">
+								<div class="col-md-2"></div>
+								<div class="col-md-4">
+									<div class="search_font">
+										<label class="control-label">子系统名称：</label>
+									</div>
+									<div class="search_input">
+										<input type="text" class="form-control" placeholder="输入"
+											id="SCsystemName" name="systemName" value="" />
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="search_font">
+										<label class="control-label">子系统编码：</label>
+									</div>
+									<div class="search_input">
+										<input type="text" class="form-control" placeholder="请输入"
+											id="SCsystemCode" name="systemCode" value="" />
+									</div>
+								</div>
+								<div class="col-md-2"></div>
+							</div>
+							<div class="rowdiv control-row search_btn">
+								<button type="button" class="btn btn-primary"
+									onclick="systemTableShow()">搜&nbsp;&nbsp;&nbsp;索</button>
+								<button type="button" onclick="clearSystem()"
+									class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+							</div>
+
+						</div>
+						<div id="downBtn2">
+							<span class="fa fa-caret-up"></span>
+						</div>
+					</div>
+					<br>
+					<div class="content-table">
+						<div class="wode">
+							<table id="systemTable"></table>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" id="sysbutton" class="btn btn-primary"
+						data-sys="default" onclick="commitSys()">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 导入 -->
+	<div class="modal fade" id="importModal" tabindex="-1" role="dialog"
+		aria-labelledby="">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<form method="POST" enctype="multipart/form-data" id="form1"
+					action="">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title" id="myModalLabel">选择导入文件</h4>
+					</div>
+					<div class="modal-body">
+						<div class="">
+							<a id='leadingOut' href="#" onclick="exportExcel()">下载模板</a>&nbsp;提示:导出模板
+							<input id="upfile" type="file" name="upfile" /> <input
+								id="pidValue" type="hidden" name="pId" value=" " />
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+						<button type="button" class="btn btn-primary" onclick="upload()"
+							id="btn">确定</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div id="loading">
+		<img class="loadingImg"
+			src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+	</div>
+</body>
+</html>

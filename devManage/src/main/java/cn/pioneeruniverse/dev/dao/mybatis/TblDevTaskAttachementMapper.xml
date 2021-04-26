@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblDevTaskAttachementMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblDevTaskAttachement">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="DEV_TASK_ID" jdbcType="BIGINT" property="DevTaskId" />
+    <result column="FILE_NAME_NEW" jdbcType="VARCHAR" property="fileNameNew" />
+    <result column="FILE_NAME_OLD" jdbcType="VARCHAR" property="fileNameOld" />
+    <result column="FILE_TYPE" jdbcType="VARCHAR" property="fileType" />
+    <result column="FILE_PATH" jdbcType="VARCHAR" property="filePath" />
+    <result column="FILE_S3_BUCKET" jdbcType="VARCHAR" property="fileS3Bucket" />
+    <result column="FILE_S3_KEY" jdbcType="VARCHAR" property="fileS3Key" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, DEV_TASK_ID, FILE_NAME_NEW, FILE_NAME_OLD, FILE_TYPE, FILE_PATH,FILE_S3_BUCKET,FILE_S3_KEY ,STATUS, CREATE_BY, 
+    CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_dev_task_attachement
+    where DEV_TASK_ID = #{testId}
+    and STATUS=1
+  </select>
+  <!-- 逻辑删除开发工作任务附件 -->
+  <update id="updateNo" parameterType="map">
+		update tbl_dev_task_attachement
+		set STATUS = 2,
+		LAST_UPDATE_BY = #{lastUpdateBy},
+        LAST_UPDATE_DATE =CURRENT_TIMESTAMP
+		where id in
+		 <foreach collection="list" item="item" open="(" separator="," close=")">
+  		#{item.id}
+  		</foreach>
+	</update>
+  
+  <!-- 添加开发工作任务附件 -->
+  <insert id="addAttachement">
+  	insert into tbl_dev_task_attachement (DEV_TASK_ID,FILE_NAME_NEW,FILE_NAME_OLD,FILE_TYPE,FILE_PATH,FILE_S3_BUCKET,FILE_S3_KEY,CREATE_BY,CREATE_DATE)
+  	values
+  	  <foreach collection ="list" item="item" index= "index" separator =",">
+  	   (
+                  #{item.DevTaskId},
+                  #{item.fileNameNew},
+                  #{item.fileNameOld},
+                  #{item.fileType},
+                  #{item.filePath},
+                  #{item.fileS3Bucket},
+                   #{item.fileS3Key},
+                  #{item.createBy},
+                  CURRENT_TIMESTAMP
+                )
+  	  </foreach>
+  </insert>
+ 
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblDevTaskAttachement">
+    update tbl_dev_task_attachement
+    set DEV_TASK_ID = #{DevTaskId,jdbcType=BIGINT},
+      FILE_NAME_NEW = #{fileNameNew,jdbcType=VARCHAR},
+      FILE_NAME_OLD = #{fileNameOld,jdbcType=VARCHAR},
+      FILE_TYPE = #{fileType,jdbcType=VARCHAR},
+      FILE_PATH = #{filePath,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+    <!--shan -单个添加附件 -->
+    <insert id="addworkTaskAttachement" parameterType="cn.pioneeruniverse.common.dto.TblAttachementInfoDTO">
+      INSERT INTO tbl_dev_task_attachement (
+        DEV_TASK_ID,
+        FILE_NAME_OLD,
+        FILE_TYPE,
+        FILE_S3_BUCKET,
+        FILE_S3_KEY,
+        CREATE_BY,
+        CREATE_DATE
+       )
+      VALUES(
+        #{associatedId},
+        #{fileNameOld},
+        #{fileType},
+        #{fileS3Bucket},
+        #{fileS3Key},
+        #{createBy},
+        #{createDate}
+      )
+    </insert>
+
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.dev.entity.TblDevTaskAttachement">
+    INSERT INTO tbl_dev_task_attachement (
+      DEV_TASK_ID,
+      FILE_NAME_OLD,
+      FILE_TYPE,
+      FILE_S3_BUCKET,
+      FILE_S3_KEY,
+      CREATE_BY,
+      CREATE_DATE
+    )
+    VALUES(
+      #{DevTaskId},
+      #{fileNameOld},
+      #{fileType},
+      #{fileS3Bucket},
+      #{fileS3Key},
+      #{createBy},
+      #{createDate}
+    )
+  </insert>
+
+  <!--shan:根据工作任务id和文件名查询附件-->
+    <select id="getAttachementByfileNameOld"  resultMap="BaseResultMap">
+      select
+      <include refid="Base_Column_List" />
+      from tbl_dev_task_attachement
+      where DEV_TASK_ID = #{devTaskId,jdbcType=BIGINT}
+      and FILE_NAME_OLD = #{fileNameOld}
+    </select>
+</mapper>

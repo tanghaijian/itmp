@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径
+    <property name="LOG_HOME" value="C:/logs/itmp/weblogs" />  -->
+    <springProperty scope="context" name="LOG_LEVEL" source="logging.level"/>
+    <springProperty scope="context" name="LOG_HOME" source="logging.path"/>
+    <springProperty scope="context" name="LOG_HISTORY_HOME" source="logging.history.path"/>
+    <springProperty scope="context" name="LOG_MYBATIS_LEVEL" source="logging.mybatis.level"/>
+    <springProperty scope="context" name="SYSTEM_NAME" source="spring.application.name"/>
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+       <!-- 日志输出编码 -->
+        <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+        <encoder>
+        	<pattern>%d{HH:mm:ss.SSS} %thread %-5level %X{invokeNo} %logger  %msg%n</pattern>
+   		</encoder>
+    </appender>
+
+    <!-- 按照每天生成日志文件  (debug) -->
+    <appender name="debugAppender"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+	    <file>${LOG_HOME}/debug.log</file>
+	    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+	        <fileNamePattern>${LOG_HISTORY_HOME}/${SYSTEM_NAME}-debug-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+	        <maxHistory>7</maxHistory>
+	        <!-- 按时间回滚的同时，按文件大小来回滚   -->
+            <timeBasedFileNamingAndTriggeringPolicy
+                 class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                 <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+	    </rollingPolicy>
+	    <encoder><!-- 必须指定，否则不会往文件输出内容 -->
+	        <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+	    </encoder>
+	    <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->
+	        <level>DEBUG</level>
+	        <onMatch>ACCEPT</onMatch>
+	        <onMismatch>DENY</onMismatch>
+   		</filter>
+    </appender>
+    <!-- 按照每天生成日志文件  (error) -->
+    <appender name="errorAppender"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--日志文件输出的文件名-->
+            <FileNamePattern>${LOG_HISTORY_HOME}/${SYSTEM_NAME}-error-%d{yyyy-MM-dd}-%i.log</FileNamePattern>
+            <maxHistory>7</maxHistory>
+            <!-- 按时间回滚的同时，按文件大小来回滚   -->
+            <timeBasedFileNamingAndTriggeringPolicy
+                 class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                 <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+         <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+        <encoder>
+        	<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+   		</encoder>
+       <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->
+	        <level>ERROR</level>
+	        <onMatch>ACCEPT</onMatch>
+	        <onMismatch>DENY</onMismatch>
+   		</filter>
+    </appender>
+    <!-- 按照每天生成日志文件  (info) -->
+    <appender name="infoAppender"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/info.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+	        <fileNamePattern>${LOG_HISTORY_HOME}/${SYSTEM_NAME}-info-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+	        <maxHistory>7</maxHistory>
+	        <!-- 按时间回滚的同时，按文件大小来回滚   -->
+            <timeBasedFileNamingAndTriggeringPolicy
+                 class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                 <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+	    </rollingPolicy>
+	    <encoder><!-- 必须指定，否则不会往文件输出内容 -->
+	        <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+	    </encoder>
+	    <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->
+	        <level>INFO</level>
+	        <onMatch>ACCEPT</onMatch>
+	        <onMismatch>DENY</onMismatch>
+   		</filter>
+    </appender>
+    <!-- 按照每天生成日志文件  (WARN) -->
+    <appender name="warnAppender"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/warn.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+	        <fileNamePattern>${LOG_HISTORY_HOME}/${SYSTEM_NAME}-warn-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+	        <maxHistory>7</maxHistory>
+	        <!-- 按时间回滚的同时，按文件大小来回滚   -->
+            <timeBasedFileNamingAndTriggeringPolicy
+                 class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                 <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+	    </rollingPolicy>
+	    <encoder><!-- 必须指定，否则不会往文件输出内容 -->
+	        <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+	    </encoder>
+	    <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->
+	        <level>WARN</level>
+	        <onMatch>ACCEPT</onMatch>
+	        <onMismatch>DENY</onMismatch>
+   		</filter>
+    </appender>
+
+    <logger name="cn.pioneeruniverse.system.dao.mybatis" level="${LOG_MYBATIS_LEVEL}" />
+
+    <!-- 日志输出级别 -->
+    <root level="${LOG_LEVEL}">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="errorAppender" />
+        <appender-ref ref="infoAppender" />
+        <appender-ref ref="warnAppender" />
+        <appender-ref ref="debugAppender" />
+    </root>
+
+     <!--日志异步到数据库 -->
+     <!--
+    <appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
+        日志异步到数据库
+        <connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
+           	连接池
+           <dataSource class="com.mchange.v2.c3p0.ComboPooledDataSource">
+              <driverClass>com.mysql.jdbc.Driver</driverClass>
+              <url>jdbc:mysql://127.0.0.1:3306/databaseName</url>
+              <user>root</user>
+              <password>root</password>
+            </dataSource>
+        </connectionSource>
+  </appender>   -->
+</configuration>

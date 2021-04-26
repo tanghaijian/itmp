@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+		<title>资产库(需求视角)</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+		<meta http-equiv="pragma" content="no-cache">
+		<meta http-equiv="X-UA-Compatible" content="no-cache,IE=edge,Chrome=1"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css"/>
+		<link
+				rel="stylesheet"
+				href="#springUrl('')/systemui/static/jquery-ztree/3.5.36/css/metroStyle/metroStyle.css"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/editormd.preview.min.css"/>
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css"/>
+
+		<link
+				rel="stylesheet"
+				href="#springUrl('')/projectManageui/static/css/assetsLibrary/assetsLibrary.css"/>
+		<link
+				rel="stylesheet"
+				href="#springUrl('')/projectManageui/static/css/assetsLibrary/assetsLibraryNeeds.css"/>
+</head>
+<body>
+		<div class="headr dept_v" id="headr">资产库（部门视图）</div>
+		<div class="search">
+				<div class="rowdiv">
+						<div class="form-group def_col_9">
+								<label class="def_col_10 control-label font_right">关联需求：</label>
+								<div class="def_col_26 control-label">
+										<input
+												type="text"
+												class="form-control pointStyle clear readonly"
+												readonly="readonly"
+												placeholder="请选择"
+												id="relInfo">
+								</div>
+						</div>
+						<div class="form-group def_col_9">
+								<label class="def_col_10 control-label font_right">涉及子系统：</label>
+								<div class="def_col_26 control-label">
+										<input
+												type="text"
+												class="form-control pointStyle clear readonly"
+												readonly="readonly"
+												placeholder="请选择"
+												id="system">
+								</div>
+						</div>
+						<div class="form-group def_col_9">
+								<label class="def_col_10 control-label font_right">开发任务：</label>
+								<div class="def_col_26 control-label">
+										<input
+												type="text"
+												class="form-control pointStyle clear readonly"
+												readonly="readonly"
+												placeholder="请选择"
+												id="devTask">
+								</div>
+						</div>
+						<div class="form-group def_col_9">
+								<button class="btn btn-primary" id="searchBtn">
+										搜 索
+								</button>
+								<button class="btn btn btn-default" id="clearBtn">
+										清 空
+								</button>
+						</div>
+				</div>
+		</div>
+		<div class="content">
+				<div class="left">
+						<div class="menu">
+								<div class="treeSearch rowdiv">
+										<div class="def_col_21">
+												<input class="treeSearchInput" id="treeSearchInput" type="text" placeholder="查询目录名称"/>
+												<span class="fa fa-search" id="faSearch"></span>
+										</div>
+										<div class="def_col_15 changeView">
+												<div>
+														<button class="btn btn-primary def_col_14" id="changeViewBtn">切换系统视角</button>
+												</div>
+										</div>
+								</div>
+								<div id="menuTree" class="ztree"></div>
+						</div>
+				</div>
+				<div class="right">
+						<div class="notRequirement">
+								<div class="title" id="title"></div>
+								<div class="tableArea">
+										<div class="noData">
+												请点击左侧目录，来显示文档列表…
+										</div>
+										<div class="myTableDiv">
+												<table id="documentList"></table>
+										</div>
+								</div>
+						</div>
+						<div class="requirement">
+								<div class="reqInfo">
+										<span class="version">当前版本：v3.0</span>
+										<span class="history" id="history">
+												<span class="icon_history"></span>
+												历史版本</span>
+										<span class="build">创建人：张三丰 2019-6-18 10:32:44</span>
+										<span class="last">最后更新：王小军 2019-10-11 10:32:44</span>
+								</div>
+								<div class="reqBlock">
+										<div class="def_col_26">
+												<div class="documentArea">
+														<div id="test-editormd-view2">
+																<textarea id="append-test"></textarea>
+														</div>
+												</div>
+										</div>
+										<div class="def_col_10">
+												<div class="rightArea">
+														<div class="file">
+																<div class="titleDiv">
+																		<span class="font">
+																				附件 (10086)
+																		</span>
+																		<span class="more" id="appendixMore">
+																				more
+																		</span>
+																</div>
+																<div class="fileLists">
+																		<div class="flieDiv">
+																				<span>
+																						附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+																				</span>
+																		</div>
+																		<div class="flieDiv">
+																				<span>
+																						附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+																				</span>
+																		</div>
+																		<div class="flieDiv">
+																				<span>
+																						附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+																				</span>
+																		</div>
+																		<div class="flieDiv">
+																				<span>
+																						附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+																				</span>
+																		</div>
+																		<div class="flieDiv">
+																				<span>
+																						附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+																				</span>
+																		</div>
+																</div>
+														</div>
+														<div class="relevanceInfo">
+																<div class="titleDiv">
+																		<span class="font">
+																				关联信息
+																		</span>
+																		<span class="more" id="relevanceInfoMore">
+																				more
+																		</span>
+																</div>
+																<div class="fileLists">
+																		<div class="flieDiv">
+																				<span>
+																						附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+																				</span>
+																		</div>
+																		<div class="flieDiv">
+																				<span>
+																						附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+																				</span>
+																		</div>
+																		<div class="flieDiv">
+																				<span>
+																						附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+																				</span>
+																		</div>
+																		<div class="flieDiv">
+																				<span>
+																						附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+																				</span>
+																		</div>
+																		<div class="flieDiv">
+																				<span>
+																						附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称附件名称1
+																				</span>
+																		</div>
+																</div>
+														</div>
+												</div>
+										</div>
+								</div>
+						</div>
+				</div>
+		</div>
+
+		<!-- 版本对比数量 -->
+		<div
+				class="modal fade"
+				id="versions_comparison_Modal"
+				tabindex="-1"
+				role="dialog"
+				aria-labelledby=""
+				type="hidden">
+				<div class="modal-dialog modal-lg" role="document">
+						<div class="modal-content">
+								<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true" style="font-size: 30px;">&times;</span>
+										</button>
+										<span class="modal-title" id="versions_comparison_tit"></span>
+								</div>
+								<div class="modal-body">
+										<div class="" style="width:600px;margin: 0 auto;">
+												<h4 style="text-align: center;background: #dedede;margin-bottom: 0;">基准版本到当前版本条目变化情况</h4>
+												<table class="table table-bordered">
+														<thead>
+																<tr>
+																		<th>变化类型</th>
+																		<th>变化数量</th>
+																		<th>变化比例</th>
+																</tr>
+														</thead>
+														<tbody id="versions_comparison_tbody"></tbody>
+												</table>
+										</div>
+								</div>
+								<div class="modal-footer"></div>
+						</div>
+				</div>
+		</div>
+
+		<!-- 版本对比详情 -->
+		<div
+				class="modal fade"
+				id="versions_detail_Modal"
+				tabindex="-1"
+				role="dialog"
+				aria-labelledby=""
+				type="hidden">
+				<div class="modal-dialog modal-lg" role="document" style="width: 100%;padding: 0;">
+						<div class="modal-content" style="top: 0;bottom: 0;">
+								<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true" style="font-size: 30px;">&times;</span>
+										</button>
+										<span class="modal-title" id="document_tit"></span>
+								</div>
+								<div class="modal-body">
+										<div class="" style="margin: 0 auto;">
+												<h4 style="text-align: center;background: #dedede;margin-bottom: 0;">需求条目变化信息</h4>
+												<table class="table table-bordered">
+														<thead>
+																<tr>
+																		<th>需求文档</th>
+																		<td id="document_tit2"></td>
+																		<th>选择章节</th>
+																		<td><select id="chapters_select" style="width: 100%;border-radius: 4px;height: 30px;"></select></td>
+																</tr>
+																<tr>
+																		<th>操作人</th>
+																		<td id="createUserName"></td>
+																		<th>操作时间</th>
+																		<td id="createDate"></td>
+																</tr>
+																<tr>
+																		<th colspan="2" width="50%">变化前</th>
+																		<th colspan="2" width="50%">变化后</th>
+																</tr>
+														</thead>
+														<tbody>
+																<tr>
+																		<td colspan="2">
+																				<div id="test-editormd-view55" class="markdown-body editormd-html-preview">
+																						<textarea id="append-test55"></textarea>
+																				</div>
+																		</td>
+																		<td colspan="2">
+																				<div id="test-editormd-view66" class="markdown-body editormd-html-preview">
+																						<textarea id="append-test66"></textarea>
+																				</div>
+																		</td>
+																</tr>
+														</tbody>
+												</table>
+										</div>
+								</div>
+								<div class="modal-footer"></div>
+						</div>
+				</div>
+		</div>
+</body>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+		<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+		<script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.core.js"></script>
+		<script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.excheck.min.js"></script>
+		<script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.exhide.js"></script>
+		<script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/fuzzysearch.js"></script>
+		<script src="#springUrl('')/systemui/static/js/frame/editor/marked.min.js"></script>
+		<script src="#springUrl('')/systemui/static/js/frame/editor/prettify.min.js"></script>
+		<script src="#springUrl('')/systemui/static/js/frame/editor/raphael.min.js"></script>
+		<script src="#springUrl('')/systemui/static/js/frame/editor/underscore.min.js"></script>
+		<script src="#springUrl('')/systemui/static/js/frame/editor/sequence-diagram.min.js"></script>
+		<script src="#springUrl('')/systemui/static/js/frame/editor/flowchart.min.js"></script>
+		<script src="#springUrl('')/systemui/static/js/frame/editor/jquery.flowchart.min.js"></script>
+		<script src="#springUrl('')/systemui/static/js/frame/editormd.min.js"></script>
+		<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+
+		<script src="#springUrl('')/projectManageui/static/js/assetsLibrary/assetsLibraryNeeds.js"></script>
+</html>

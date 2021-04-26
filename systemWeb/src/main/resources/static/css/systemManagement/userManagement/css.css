@@ -1,0 +1,274 @@
+body{
+	height: auto !important;
+}
+.navLocation{
+    margin-left: 5px;
+    margin-top: 10px;
+}
+.showSearch{
+    position: absolute;
+    right: 20px;
+    top: 8px;
+}
+.active a{
+    background-color: rgb(225,234,247) !important;
+}
+ 
+.control-row{ 
+    text-align: center;
+}
+
+.control-label{
+    font-size: 12px;
+    line-height: 34px;
+    display: block;
+    text-align: right;
+    font-weight: 500;
+    margin-bottom: 0;
+}
+.search_font{
+    width: 30%;
+    float: left;
+}
+.search_input{
+    width: 70%;
+    position: relative;
+    float: right;
+}
+/*.col-md-3{
+    padding-right: 0 !important;
+}*/
+.color1{
+    padding: 0px 0 1px;
+    background-color: #E9E9F5;
+    position: relative;
+}
+.search_btn{
+	padding-top: 6px !important;
+    margin-bottom: 10px;
+    position: relative;
+}
+.search_btn .btn{
+    width: 90px;
+    margin: 0 10px 0;
+}
+.main-content{
+    width: 100%;
+}
+.collection{
+    font-size: 12px;
+    position: absolute;
+    line-height: 34px;
+    height: 34px;
+    top: 12px;
+    right: 40px;
+    cursor:pointer;
+}
+.fa-heart-o,.fa-heart{
+    font-size: 16px;
+    color: #FD70A0;
+}
+
+.content-btn{
+    padding: 10px 20px 10px 20px;
+}
+.content-btn_right{
+    float: right;
+    margin-left: 10px;
+}
+.content-table{
+    margin: 0 20px;
+    padding-bottom: 10px;
+}
+#tb{
+    width: 100%;
+    font-size: 12px;
+}
+#tb thead{
+    font-weight: bold;
+    background-color: #F4F4F4;
+}
+#tb tbody tr td{
+    background: none;
+}
+.control-label{
+    padding-top: 0 !important;
+}
+/*弹出框浏览器兼容*/
+@media (min-width: 992px) {
+    .modal-lg {
+        width: 900px;
+    }
+    .modal-body{
+        max-height: 350px;
+        overflow-y: auto;
+    }
+}
+/*@media screen and (max-width: 2059px) {
+    .modal-lg {
+        max-width: 1750px
+    }
+    .modal-body{
+        max-height: 350px;
+        overflow-y: auto;
+    }
+}
+
+@media screen and (max-width: 1809px) {
+    ol.dribbbles {
+        max-width: 1500px
+    }
+}
+
+@media screen and (max-width: 1559px) {
+    ol.dribbbles {
+        max-width: 1250px
+    }
+}
+
+@media screen and (max-width: 1309px) {
+    ol.dribbbles {
+        max-width: 1000px
+    }
+}
+
+@media screen and (max-width: 1059px) {
+    ol.dribbbles {
+        max-width: 750px
+    }
+}
+
+@media screen and (max-width: 809px) {
+    ol.dribbbles {
+        max-width: 500px
+    }
+}
+
+@media only screen and (max-width: 870px) {
+
+}
+@media screen and (max-width: 520px){
+
+}*/
+
+
+
+
+
+
+
+
+.glyphicon-remove:before {
+    content: none !important;
+}
+.glyphicon-remove{
+    background: url("../../../images/clear.png") no-repeat;
+}
+.input-group-addon{
+    padding: 6px 8px !important;
+}
+#tb .form-control{
+    height: 31px;
+    padding: 5px 25px 5px 8px;
+}
+.btn_clear{
+    display: none;
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    right: 3px;
+    top: 5px;
+    z-index: 5;
+    background: url("../../../images/btn_clear.png") no-repeat;
+}
+#downBtn{
+    background-color: rgb(225,234,247);
+    position: absolute;
+    width: 38px;
+    height: 12px;
+    bottom: -10px;
+    left: 50%;
+    margin-left: -19px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+#downBtn .fa{
+    left: 50%;
+    position: absolute;
+    top: -4px;
+    margin-left: -4px;
+}
+.btn{
+    padding: 6px 11px;
+    font-size: 12px !important;
+}
+.btn-primary{
+    background-image: none;
+}
+.btn-default{
+    background-image: none;
+}
+.form-control{
+    font-size: 12px;
+    height: 31px;
+}
+#search_div .row{
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+.modal-header{
+    padding: 13px 20px 10px 20px;
+}
+#myModalLabel{
+    font-size: 13px;
+    font-weight: bold;
+}
+.form_datetime{
+    background-color: #FFF !important;
+}
+.modal-body .col-sm-8{
+    padding-left: 0;
+    padding-right: 0;
+}
+.modal-body .form-group{
+    margin-bottom: 5px;
+}
+.modal {
+    overflow-y: hidden;
+}
+
+body.modal-open, .modal-open .navbar-fixed-top, .modal-open .navbar-fixed-bottom{
+    margin-right: 0;
+}
+.modal-footer{
+    padding: 9px 20px 10px !important;
+    margin-top: 0 !important;
+    text-align: center;
+}
+.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control{
+    cursor: pointer;
+}
+ 
+.a_style{
+    text-decoration: none;
+    color: #0e90d2;
+}
+.a_style:hover{
+    color: #0e90d2;
+    text-decoration: none;
+    background-color: inherit;
+}
+.ui-sortable th{
+    padding: 8px !important; 
+}
+.ui-jqgrid tr.ui-search-toolbar th {
+    padding: 5px !important;
+}
+.micSup {
+    background-color: #CC66FF;
+    line-height: 12px;
+    padding: 2px 6px;
+    color: white;
+    border-radius: 10px;
+}
+ 

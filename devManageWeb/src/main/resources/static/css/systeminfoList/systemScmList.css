@@ -1,0 +1,24 @@
+body{
+	padding: 8px 20px;
+}
+.codeTitle{
+	font-size: 13px;
+	font-weight: bold;
+	border-bottom: 1px solid #EBEBEB;
+	padding: 5px 0 8px;
+}
+.btnArea{
+	margin-bottom: 8px;
+}
+#codeConfigTable td{
+	position : relative;
+}
+.def_tableInput{
+	display: block !important;
+}
+.opt_a{
+	font-size: 12px;
+}
+.fixed-table-body{
+	overflow: visible;
+}

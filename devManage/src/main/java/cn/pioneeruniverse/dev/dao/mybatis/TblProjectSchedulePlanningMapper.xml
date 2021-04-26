@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblProjectSchedulePlanningMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblProjectSchedulePlanning">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="PROJECT_ID" jdbcType="BIGINT" property="projectId" />
+    <result column="REQUIREMENT_FEATURE_ID" jdbcType="BIGINT" property="requirementFeatureId" />
+    <result column="PLAN_START_DATE" jdbcType="DATE" property="planStartDate" />
+    <result column="PLAN_END_DATE" jdbcType="DATE" property="planEndDate" />
+    <result column="PLAN_DURATION" jdbcType="DOUBLE" property="planDuration" />
+    <result column="PLAN_WORKLOAD" jdbcType="DOUBLE" property="planWorkload" />
+    <result column="ACTUAL_START_DATE" jdbcType="DATE" property="actualStartDate" />
+    <result column="ACTUAL_END_DATE" jdbcType="DATE" property="actualEndDate" />
+    <result column="PARENT_ID" jdbcType="BIGINT" property="parentId" />
+    <result column="PARENT_IDS" jdbcType="VARCHAR" property="parentIds" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, PROJECT_ID, REQUIREMENT_FEATURE_ID, PLAN_START_DATE, PLAN_END_DATE, PLAN_DURATION, 
+    PLAN_WORKLOAD, ACTUAL_START_DATE, ACTUAL_END_DATE, PARENT_ID, PARENT_IDS, 
+    STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_project_schedule_planning
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_project_schedule_planning
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.pioneeruniverse.dev.entity.TblProjectSchedulePlanning">
+    insert into tbl_project_schedule_planning (ID, PROJECT_ID, REQUIREMENT_FEATURE_ID, 
+      PLAN_START_DATE, PLAN_END_DATE, PLAN_DURATION, 
+      PLAN_WORKLOAD, ACTUAL_START_DATE, ACTUAL_END_DATE, 
+      PARENT_ID, PARENT_IDS, 
+      STATUS, CREATE_BY, CREATE_DATE, 
+      LAST_UPDATE_BY, LAST_UPDATE_DATE)
+    values (#{id,jdbcType=BIGINT}, #{projectId,jdbcType=BIGINT}, #{requirementFeatureId,jdbcType=BIGINT}, 
+      #{planStartDate,jdbcType=DATE}, #{planEndDate,jdbcType=DATE}, #{planDuration,jdbcType=DOUBLE}, 
+      #{planWorkload,jdbcType=DOUBLE}, #{actualStartDate,jdbcType=DATE}, #{actualEndDate,jdbcType=DATE}, 
+      #{parentId,jdbcType=BIGINT}, #{parentIds,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.dev.entity.TblProjectSchedulePlanning">
+    insert into tbl_project_schedule_planning
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="projectId != null">
+        PROJECT_ID,
+      </if>
+      <if test="requirementFeatureId != null">
+        REQUIREMENT_FEATURE_ID,
+      </if>
+      <if test="planStartDate != null">
+        PLAN_START_DATE,
+      </if>
+      <if test="planEndDate != null">
+        PLAN_END_DATE,
+      </if>
+      <if test="planDuration != null">
+        PLAN_DURATION,
+      </if>
+      <if test="planWorkload != null">
+        PLAN_WORKLOAD,
+      </if>
+      <if test="actualStartDate != null">
+        ACTUAL_START_DATE,
+      </if>
+      <if test="actualEndDate != null">
+        ACTUAL_END_DATE,
+      </if>
+      <if test="parentId != null">
+        PARENT_ID,
+      </if>
+      <if test="parentIds != null">
+        PARENT_IDS,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="projectId != null">
+        #{projectId,jdbcType=BIGINT},
+      </if>
+      <if test="requirementFeatureId != null">
+        #{requirementFeatureId,jdbcType=BIGINT},
+      </if>
+      <if test="planStartDate != null">
+        #{planStartDate,jdbcType=DATE},
+      </if>
+      <if test="planEndDate != null">
+        #{planEndDate,jdbcType=DATE},
+      </if>
+      <if test="planDuration != null">
+        #{planDuration,jdbcType=DOUBLE},
+      </if>
+      <if test="planWorkload != null">
+        #{planWorkload,jdbcType=DOUBLE},
+      </if>
+      <if test="actualStartDate != null">
+        #{actualStartDate,jdbcType=DATE},
+      </if>
+      <if test="actualEndDate != null">
+        #{actualEndDate,jdbcType=DATE},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="parentIds != null">
+        #{parentIds,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.dev.entity.TblProjectSchedulePlanning">
+    update tbl_project_schedule_planning
+    <set>
+      <if test="projectId != null">
+        PROJECT_ID = #{projectId,jdbcType=BIGINT},
+      </if>
+      <if test="requirementFeatureId != null">
+        REQUIREMENT_FEATURE_ID = #{requirementFeatureId,jdbcType=BIGINT},
+      </if>
+      <if test="planStartDate != null">
+        PLAN_START_DATE = #{planStartDate,jdbcType=DATE},
+      </if>
+      <if test="planEndDate != null">
+        PLAN_END_DATE = #{planEndDate,jdbcType=DATE},
+      </if>
+      <if test="planDuration != null">
+        PLAN_DURATION = #{planDuration,jdbcType=DOUBLE},
+      </if>
+      <if test="planWorkload != null">
+        PLAN_WORKLOAD = #{planWorkload,jdbcType=DOUBLE},
+      </if>
+      <if test="actualStartDate != null">
+        ACTUAL_START_DATE = #{actualStartDate,jdbcType=DATE},
+      </if>
+      <if test="actualEndDate != null">
+        ACTUAL_END_DATE = #{actualEndDate,jdbcType=DATE},
+      </if>
+      <if test="parentId != null">
+        PARENT_ID = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="parentIds != null">
+        PARENT_IDS = #{parentIds,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <!--根据id修改-->
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.dev.entity.TblProjectSchedulePlanning">
+    update tbl_project_schedule_planning
+    set PROJECT_ID = #{projectId,jdbcType=BIGINT},
+      REQUIREMENT_FEATURE_ID = #{requirementFeatureId,jdbcType=BIGINT},
+      PLAN_START_DATE = #{planStartDate,jdbcType=DATE},
+      PLAN_END_DATE = #{planEndDate,jdbcType=DATE},
+      PLAN_DURATION = #{planDuration,jdbcType=DOUBLE},
+      PLAN_WORKLOAD = #{planWorkload,jdbcType=DOUBLE},
+      ACTUAL_START_DATE = #{actualStartDate,jdbcType=DATE},
+      ACTUAL_END_DATE = #{actualEndDate,jdbcType=DATE},
+      PARENT_ID = #{parentId,jdbcType=BIGINT},
+      PARENT_IDS = #{parentIds,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

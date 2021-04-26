@@ -1,0 +1,442 @@
+.col-xs-1, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6,
+	.col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .col-xs-11, .col-xs-12,
+	.col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6,
+	.col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12,
+	.col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6,
+	.col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12,
+	.col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6,
+	.col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12 {
+	padding: 0 10px;
+}
+
+li {
+	list-style: none;
+}
+.font_right { 
+    line-height:32px;
+}
+
+.fileTb{
+    width: 400px;  
+}
+
+.file-upload-list .bootstrap-table *{
+	border: none;
+}
+.allInfo {
+	width: auto;
+	border: 1px solid #D9D9D9;
+	border-radius: 4px;
+	margin: 10px 0 15px;
+	background-color: #F4F4FB;
+}
+
+.def_title {
+	padding: 10px 20px 10px;
+	position: relative;
+	font-size: 13px;
+	font-weight: bold;
+	line-height: 16px;
+}
+
+.def_title .fa {
+	font-size: 18px;
+	position: absolute;
+	right: 20px;
+	top: 8px;
+}
+
+.rowdiv {
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	display: block
+}
+
+.rowdiv:before, .rowdiv:after {
+	display: table;
+	content: " ";
+}
+
+.rowdiv:after {
+	clear: both;
+}
+
+.rowdiv .form-group {
+	margin-bottom: 10px;
+}
+
+.font_left {
+	text-align: left;
+}
+
+.fontWeihgt {
+	position: relative;
+	font-weight: bold;
+}
+
+.fontWeihgt .checkbox {
+	display: inline-block !important;
+	margin-top: 0px;
+}
+
+.def_btnGroup {
+	padding: 0 20px 10px 48px;
+}
+
+.singleData {
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	padding: 0 20px 10px 30px;
+}
+
+.singleDataDiv {
+	width: 150px;
+	font-size: 12px;
+	display: flex;
+	flex-direction: row;
+}
+
+.singleDataDiv2 {
+	width: 180px;
+	font-size: 12px;
+	display: flex;
+	flex-direction: row;
+}
+
+.singleDataFont {
+	width: 50%;
+	height: 32px;
+	line-height: 32px;
+	text-align: right;
+}
+
+.singleDataFont2 {
+	width: 40%;
+	height: 32px;
+	line-height: 32px;
+	text-align: right;
+}
+
+.def_content {
+	padding-bottom: 8px;
+}
+
+.entrySelect {
+	width: 50%;
+	display: inline-block;
+}
+
+.entrySelect2 {
+	width: 60%;
+	display: inline-block;
+}
+
+.delSingData {
+	position: absolute;
+	right: 20px;
+	margin-left: 10px;
+	width: 40px;
+	height: 30px;
+	line-height: 30px;
+	font-size: 18px;
+	background-color: #FF6699;
+	color: white;
+	text-align: center;
+	border-radius: 5px;
+}
+
+.textBox {
+	text-align: left;
+	background: none;
+	padding-top: 8px;
+	border: 0;
+}
+
+.textBox2 {
+	text-align: left;
+	background: none;
+	padding: 8px 40px 0;
+	border: 0;
+}
+
+.infoBtm {
+	background: none;
+	border: 2px solid #42429B;
+	padding: 4px 15px;
+	color: #42429B;
+	font-weight: bold;
+	margin: 8px;
+} 
+
+.colFont {
+	color: #F04134;
+	font-size: 12px;
+}
+
+.alertStyle {
+	width: 24px;
+	height: 24px;
+	position: absolute;
+	left: 55px;
+	top: 45px;
+	color: white;
+	background-color: #FFBF00;
+	border-radius: 50%;
+	text-align: center;
+	line-height: 24px;
+	font-size: 20px;
+}
+
+.modal-footer2 {
+	text-align: center;
+	padding: 9px 10px 20px;
+	border-top: none;
+	margin-top: 0;
+}
+
+.modal-footer2 button {
+	padding: 4px 12px;
+}
+
+.modal-body2 {
+	padding: 40px 60px 10px 90px;
+}
+
+.buildHistoryInfo .form-group, .buildHistoryInfo .control-label {
+	padding: 0;
+} 
+
+#menu {
+	min-width: 80px;
+} 
+.nameNeed {
+	margin: -7px auto; 
+	color: white;
+	width: 30px;
+	height: 25px;
+	line-height: 26px; 
+	border-radius:12px;
+	text-align: center;
+	display: inline-block; 
+	overflow: hidden;
+} 
+
+.def_content {
+	padding: 0 20px 10px 50px;
+}
+
+.def_content .form-group {
+	text-align: left;
+}
+
+.def_content .control-label {
+	display: inline-block;
+	line-height: 28px;
+}
+
+.selectBox {
+	position: absolute;
+	left: 0;
+	top: 33px;
+	z-index: 10;
+	width: 100%; 
+	border: 1px solid #ccc;
+	overflow: auto;
+	display: none;
+	background: #fff;
+	border-radius: 4px;
+}
+
+.selectBox .selectUl {
+	width: 100%;
+	margin-bottom: 0;
+}
+
+.selectBox .selectUl .selectItem {
+	 
+	height: 26px;
+	width: 100%;
+	line-height: 26px;
+	overflow: hidden;
+	padding: 0 5px;
+	cursor: pointer;
+	text-align: left;
+}
+
+.selectBox .selectUl .selectItem:hover {
+	background: #eee;
+}
+.redStar{
+	color:red;
+}
+#connectDiv label{
+	word-wrap: break-word;
+}
+#checkFileTable *{
+	border: none !important;
+}
+
+.newSelectBox {
+	position: absolute;
+	left: 0;
+	top: 33px;
+	z-index: 10;
+	width: 100%; 
+	border: 1px solid #ccc;
+	overflow: auto;
+	display: none;
+	background: #fff;
+	border-radius: 4px;
+}
+.newSelectBox .newSelectUl {
+	width: 100%;
+	margin-bottom: 0;
+}
+.newSelectBox .newSelectUl .selectItem {	 
+	height: 26px;
+	width: 100%;
+	line-height: 26px;
+	overflow: hidden;
+	padding: 0 5px;
+	cursor: pointer;
+	text-align: left;
+}
+.newSelectBox .newSelectUl .selectItem:hover {
+	background: #eee;
+}
+
+.newSelectBox1 {
+	position: absolute;
+	left: 0;
+	top: 33px;
+	z-index: 10;
+	width: 100%; 
+	border: 1px solid #ccc;
+	overflow: auto;
+	display: none;
+	background: #fff;
+	border-radius: 4px;
+}
+.newSelectBox1 .newSelectUl1 {
+	width: 100%;
+	margin-bottom: 0;
+}
+.newSelectBox1 .newSelectUl1 .selectItem {	 
+	height: 26px;
+	width: 100%;
+	line-height: 26px;
+	overflow: hidden;
+	padding: 0 5px;
+	cursor: pointer;
+	text-align: left;
+}
+.newSelectBox1 .newSelectUl1 .selectItem:hover {
+	background: #eee;
+}
+
+.editSelectBox {
+	position: absolute;
+	left: 0;
+	top: 33px;
+	z-index: 10;
+	width: 100%; 
+	border: 1px solid #ccc;
+	overflow: auto;
+	display: none;
+	background: #fff;
+	border-radius: 4px;
+}
+.editSelectBox .editSelectUl {
+	width: 100%;
+	margin-bottom: 0;
+}
+.editSelectBox .editSelectUl .selectItem {	 
+	height: 26px;
+	width: 100%;
+	line-height: 26px;
+	overflow: hidden;
+	padding: 0 5px;
+	cursor: pointer;
+	text-align: left;
+}
+.editSelectBox .editSelectUl .selectItem:hover {
+	background: #eee;
+}
+
+.editSelectBox1 {
+	position: absolute;
+	left: 0;
+	top: 33px;
+	z-index: 10;
+	width: 100%; 
+	border: 1px solid #ccc;
+	overflow: auto;
+	display: none;
+	background: #fff;
+	border-radius: 4px;
+}
+.editSelectBox1 .editSelectUl1 {
+	width: 100%;
+	margin-bottom: 0;
+}
+.editSelectBox1 .editSelectUl1 .selectItem {	 
+	height: 26px;
+	width: 100%;
+	line-height: 26px;
+	overflow: hidden;
+	padding: 0 5px;
+	cursor: pointer;
+	text-align: left;
+}
+.editSelectBox1 .editSelectUl1 .selectItem:hover {
+	background: #eee;
+}
+#newReq [class*="def_col_"]{
+	padding-left: 0;
+}
+.btnArea{
+	 text-align: left !important;
+}
+.btnArea .btn{
+	padding: 8px 40px;
+    height: 32px;
+}
+.del{
+	text-align: right !important;
+	padding-right: 10px;
+}
+.del a{
+	line-height: 28px;
+    color: #FF3300;
+    cursor: pointer;
+} 
+.menuContent {
+    position: absolute;
+    z-index: 100000;
+    display: none;
+    float: left;
+    width: 182px;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    list-style: none;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    max-height: 400px;
+    overflow: auto;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+    background-clip: padding-box;
+}
+.menuContent .ztree {
+    display: block;
+    border: none;
+}
+textarea {
+	resize: none;
+}

@@ -1,0 +1,731 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.TblAssetBusinessTreeMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblAssetBusinessTree">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="ASSET_TREE_TIER_ID" jdbcType="BIGINT" property="assetTreeTierId" />
+    <result column="BUSINESS_TREE_NAME" jdbcType="VARCHAR" property="businessTreeName" />
+    <result column="BUSINESS_TREE_SHORT_NAME" jdbcType="VARCHAR" property="businessTreeShortName" />
+    <result column="BUSINESS_TREE_CODE" jdbcType="VARCHAR" property="businessTreeCode" />
+    <result column="BUSINESS_TREE_STATUS" jdbcType="TINYINT" property="businessTreeStatus" />
+    <result column="PARENT_ID" jdbcType="BIGINT" property="parentId" />
+    <result column="PARENT_IDS" jdbcType="VARCHAR" property="parentIds" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, ASSET_TREE_TIER_ID, BUSINESS_TREE_NAME, BUSINESS_TREE_SHORT_NAME, BUSINESS_TREE_CODE, 
+    BUSINESS_TREE_STATUS, PARENT_ID, PARENT_IDS, REMARK, STATUS, CREATE_BY, CREATE_DATE, 
+    LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_asset_business_tree
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_asset_business_tree
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.pioneeruniverse.project.entity.TblAssetBusinessTree">
+    insert into tbl_asset_business_tree (ID, ASSET_TREE_TIER_ID, BUSINESS_TREE_NAME, 
+      BUSINESS_TREE_SHORT_NAME, BUSINESS_TREE_CODE, 
+      BUSINESS_TREE_STATUS, PARENT_ID, PARENT_IDS, 
+      REMARK, STATUS, CREATE_BY, 
+      CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+      )
+    values (#{id,jdbcType=BIGINT}, #{assetTreeTierId,jdbcType=BIGINT}, #{businessTreeName,jdbcType=VARCHAR}, 
+      #{businessTreeShortName,jdbcType=VARCHAR}, #{businessTreeCode,jdbcType=VARCHAR}, 
+      #{businessTreeStatus,jdbcType=TINYINT}, #{parentId,jdbcType=BIGINT}, #{parentIds,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{createBy,jdbcType=BIGINT}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.project.entity.TblAssetBusinessTree">
+    insert into tbl_asset_business_tree
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="assetTreeTierId != null">
+        ASSET_TREE_TIER_ID,
+      </if>
+      <if test="businessTreeName != null">
+        BUSINESS_TREE_NAME,
+      </if>
+      <if test="businessTreeShortName != null">
+        BUSINESS_TREE_SHORT_NAME,
+      </if>
+      <if test="businessTreeCode != null">
+        BUSINESS_TREE_CODE,
+      </if>
+      <if test="businessTreeStatus != null">
+        BUSINESS_TREE_STATUS,
+      </if>
+      <if test="parentId != null">
+        PARENT_ID,
+      </if>
+      <if test="parentIds != null">
+        PARENT_IDS,
+      </if>
+      <if test="remark != null">
+        REMARK,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="assetTreeTierId != null">
+        #{assetTreeTierId,jdbcType=BIGINT},
+      </if>
+      <if test="businessTreeName != null">
+        #{businessTreeName,jdbcType=VARCHAR},
+      </if>
+      <if test="businessTreeShortName != null">
+        #{businessTreeShortName,jdbcType=VARCHAR},
+      </if>
+      <if test="businessTreeCode != null">
+        #{businessTreeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="businessTreeStatus != null">
+        #{businessTreeStatus,jdbcType=TINYINT},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="parentIds != null">
+        #{parentIds,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.project.entity.TblAssetBusinessTree">
+    update tbl_asset_business_tree
+    <set>
+      <if test="assetTreeTierId != null">
+        ASSET_TREE_TIER_ID = #{assetTreeTierId,jdbcType=BIGINT},
+      </if>
+      <if test="businessTreeName != null">
+        BUSINESS_TREE_NAME = #{businessTreeName,jdbcType=VARCHAR},
+      </if>
+      <if test="businessTreeShortName != null">
+        BUSINESS_TREE_SHORT_NAME = #{businessTreeShortName,jdbcType=VARCHAR},
+      </if>
+      <if test="businessTreeCode != null">
+        BUSINESS_TREE_CODE = #{businessTreeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="businessTreeStatus != null">
+        BUSINESS_TREE_STATUS = #{businessTreeStatus,jdbcType=TINYINT},
+      </if>
+      <if test="parentId != null">
+        PARENT_ID = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="parentIds != null">
+        PARENT_IDS = #{parentIds,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.project.entity.TblAssetBusinessTree">
+    update tbl_asset_business_tree
+    set ASSET_TREE_TIER_ID = #{assetTreeTierId,jdbcType=BIGINT},
+      BUSINESS_TREE_NAME = #{businessTreeName,jdbcType=VARCHAR},
+      BUSINESS_TREE_SHORT_NAME = #{businessTreeShortName,jdbcType=VARCHAR},
+      BUSINESS_TREE_CODE = #{businessTreeCode,jdbcType=VARCHAR},
+      BUSINESS_TREE_STATUS = #{businessTreeStatus,jdbcType=TINYINT},
+      PARENT_ID = #{parentId,jdbcType=BIGINT},
+      PARENT_IDS = #{parentIds,jdbcType=VARCHAR},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+  <sql id="select_Column_List">
+    abt.ID AS id,
+    abt.ASSET_TREE_TIER_ID AS assetTreeTierId,
+    abt.BUSINESS_TREE_NAME AS businessSystemTreeName,
+    abt.BUSINESS_TREE_SHORT_NAME AS businessSystemTreeShortName,
+    abt.BUSINESS_TREE_CODE AS businessSystemTreeCode,
+    abt.BUSINESS_TREE_STATUS AS businessSystemTreeStatus,
+    abt.PARENT_ID AS parentId,
+    abt.PARENT_ID AS parentFrontId,
+    abt.PARENT_IDS AS parentIds,
+    abt.REMARK AS remark,
+    abt.LAST_UPDATE_BY AS lastUpdateBy,
+    abt.LAST_UPDATE_DATE AS lastUpdateDate
+  </sql>
+
+  <!-- 添加业务树 -->
+  <insert id="insertBusinessSystemTreeVo" parameterType="cn.pioneeruniverse.project.vo.BusinessSystemTreeVo" useGeneratedKeys="true" keyProperty="id">
+    insert into tbl_asset_business_tree
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="assetTreeTierId != null">
+        ASSET_TREE_TIER_ID,
+      </if>
+      <if test="businessSystemTreeName != null">
+        BUSINESS_TREE_NAME,
+      </if>
+      <if test="businessSystemTreeShortName != null">
+        BUSINESS_TREE_SHORT_NAME,
+      </if>
+      <if test="businessSystemTreeCode != null">
+        BUSINESS_TREE_CODE,
+      </if>
+      <if test="businessSystemTreeStatus != null">
+        BUSINESS_TREE_STATUS,
+      </if>
+      <if test="parentId != null">
+        PARENT_ID,
+      </if>
+      <if test="parentIds != null">
+        PARENT_IDS,
+      </if>
+      <if test="remark != null">
+        REMARK,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="assetTreeTierId != null">
+        #{assetTreeTierId,jdbcType=BIGINT},
+      </if>
+      <if test="businessSystemTreeName != null">
+        #{businessSystemTreeName,jdbcType=VARCHAR},
+      </if>
+      <if test="businessSystemTreeShortName != null">
+        #{businessSystemTreeShortName,jdbcType=VARCHAR},
+      </if>
+      <if test="businessSystemTreeCode != null">
+        #{businessSystemTreeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="businessSystemTreeStatus != null">
+        #{businessSystemTreeStatus,jdbcType=TINYINT},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="parentIds != null">
+        #{parentIds,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <!-- 修改业务树 -->
+  <update id="updateBusinessSystemTreeVo" parameterType="cn.pioneeruniverse.project.vo.BusinessSystemTreeVo">
+    update tbl_asset_business_tree
+    <set>
+      <if test="assetTreeTierId != null">
+        ASSET_TREE_TIER_ID = #{assetTreeTierId,jdbcType=BIGINT},
+      </if>
+      <if test="businessSystemTreeName != null">
+        BUSINESS_TREE_NAME = #{businessSystemTreeName,jdbcType=VARCHAR},
+      </if>
+      <if test="businessSystemTreeShortName != null">
+        BUSINESS_TREE_SHORT_NAME = #{businessSystemTreeShortName,jdbcType=VARCHAR},
+      </if>
+      <if test="businessSystemTreeCode != null">
+        BUSINESS_TREE_CODE = #{businessSystemTreeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="businessSystemTreeStatus != null">
+        BUSINESS_TREE_STATUS = #{businessSystemTreeStatus,jdbcType=TINYINT},
+      </if>
+      <!--<if test="parentId != null">
+        PARENT_ID = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="parentIds != null">
+        PARENT_IDS = #{parentIds,jdbcType=VARCHAR},
+      </if>-->
+      <if test="remark != null">
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!-- 根据层级查询业务树 -->
+  <select id="getBusinessTreeListByTierNumber" parameterType="cn.pioneeruniverse.project.vo.BusinessSystemTreeVo" resultMap="selectParentTreeNamesMap">
+    SELECT
+      <include refid="select_Column_List"/>
+      ,
+      tui.USER_NAME AS lastUpdateName,
+      abt.PARENT_IDS AS parentFrontIds
+    FROM
+      tbl_asset_business_tree abt
+    LEFT JOIN tbl_asset_tree_tier attr ON abt.ASSET_TREE_TIER_ID = attr.ID
+    LEFT JOIN tbl_user_info tui ON tui.ID = abt.LAST_UPDATE_BY AND tui.`STATUS` = 1
+    <where>
+      abt.`STATUS` = 1
+      AND attr.`STATUS` = 1
+      AND attr.ID = #{assetTreeTierId}
+      <if test="businessSystemTreeName != null and businessSystemTreeName != ''">
+        AND abt.BUSINESS_TREE_NAME LIKE CONCAT(CONCAT('%',LOWER(#{businessSystemTreeName}),'%'))
+      </if>
+      <if test="businessSystemTreeCode != null and businessSystemTreeCode != ''">
+        AND abt.BUSINESS_TREE_CODE LIKE CONCAT(CONCAT('%',LOWER(#{businessSystemTreeCode}),'%'))
+      </if>
+      <if test="remark != null and remark != ''">
+        AND abt.REMARK LIKE CONCAT(CONCAT('%',LOWER(#{remark}),'%'))
+      </if>
+      <if test="businessSystemTreeStatus != null ">
+        AND abt.BUSINESS_TREE_STATUS  = #{businessSystemTreeStatus}
+      </if>
+    </where>
+    ORDER BY abt.ID desc
+  </select>
+
+  <!-- 条件查询业务树和关联系统树  -->
+  <select id="getBusinessTreeListWithSystem" parameterType="cn.pioneeruniverse.project.vo.BusinessSystemTreeVo" resultMap="selectSystemTree">
+    SELECT
+      <include refid="select_Column_List"/>
+      ,
+      tui.USER_NAME AS lastUpdateName,
+      abt.ID AS businessSystemTreeId,
+      attr.TIER_NUMBER AS level
+    FROM
+    tbl_asset_business_tree abt
+    LEFT JOIN tbl_asset_tree_tier attr ON abt.ASSET_TREE_TIER_ID = attr.ID
+    LEFT JOIN tbl_user_info tui ON tui.ID = abt.LAST_UPDATE_BY AND tui.`STATUS` = 1
+    <where>
+      abt.`STATUS` = 1
+      AND attr.`STATUS` = 1
+      <if test="businessSystemTreeName != null and businessSystemTreeName != ''">
+        AND abt.BUSINESS_TREE_NAME LIKE CONCAT(CONCAT('%',LOWER(#{businessSystemTreeName}),'%'))
+      </if>
+      <if test="businessSystemTreeCode != null and businessSystemTreeCode != ''">
+        AND abt.BUSINESS_TREE_CODE LIKE CONCAT(CONCAT('%',LOWER(#{businessSystemTreeCode}),'%'))
+      </if>
+      <if test="remark != null and remark != ''">
+        AND abt.REMARK LIKE CONCAT(CONCAT('%',LOWER(#{remark}),'%'))
+      </if>
+      <if test="businessSystemTreeStatus != null ">
+        AND abt.BUSINESS_TREE_STATUS  = #{businessSystemTreeStatus}
+      </if>
+      <if test="assetTreeTierNumber != null and assetTreeTierNumber != ''">
+        AND attr.TIER_NUMBER = #{assetTreeTierNumber}
+      </if>
+      <if test="parentIds != null and parentIds != ''">
+        AND abt.PARENT_IDS = #{parentIds}
+      </if>
+      <if test="id != null and id != ''">
+        AND abt.ID = #{id}
+      </if>
+    </where>
+    ORDER BY abt.ID desc
+  </select>
+
+  <!--查询业务树实体类-->
+  <select id="getEntityInfo"  parameterType="java.lang.Long" resultMap="selectParentTreeNameMap">
+    SELECT
+      <include refid="select_Column_List"/>
+    FROM
+    tbl_asset_business_tree abt
+    where
+      abt.`STATUS` = 1
+    AND abt.ID = #{id}
+  </select>
+
+  <!-- 查询节点子节点 -->
+  <select id="selectChildTier" parameterType="java.lang.String" resultType="cn.pioneeruniverse.project.vo.BusinessSystemTreeVo">
+    SELECT
+      <include refid="select_Column_List"/>
+    from tbl_asset_business_tree abt
+    where
+    abt.`STATUS` = 1
+    AND PARENT_IDS like CONCAT(CONCAT(CONCAT(#{parentIds},","),'%'))
+    OR PARENT_IDS = #{parentIds}
+  </select>
+
+  <!--  根据PARENT_IDS 查询业务树 -->
+  <select id="getTiersByParentIds"  parameterType="java.lang.String" resultType="cn.pioneeruniverse.project.vo.BusinessSystemTreeVo">
+    SELECT
+      <include refid="select_Column_List"/>
+    from tbl_asset_business_tree abt
+    where
+      abt.`STATUS` = 1
+    AND PARENT_IDS = #{parentIds}
+  </select>
+
+  <select id="selectParentTreeName" parameterType="java.lang.Long" resultType="java.lang.String">
+    SELECT
+      BUSINESS_TREE_NAME as parentTreeName
+    FROM
+      tbl_asset_business_tree
+    WHERE
+      ID = #{parentFrontId}
+    AND `STATUS` = 1
+  </select>
+
+  <select id="getAllTierNameWithTree" parameterType="java.lang.String" resultType="map">
+    SELECT
+      GROUP_CONCAT(BUSINESS_TREE_NAME ORDER BY FIELD(ID,
+        <foreach collection="parentIds.split(',')" index="index" item="item"  separator="," >
+          #{item}
+        </foreach>
+      )  SEPARATOR ',') AS parentTreeName,
+      GROUP_CONCAT(ID  ORDER BY FIELD(ID,
+        <foreach collection="parentIds.split(',')" index="index" item="item"  separator="," >
+          #{item}
+        </foreach>
+      )  SEPARATOR ',') AS parentIds
+    FROM
+      tbl_asset_business_tree
+    WHERE
+     `STATUS` = 1
+    AND ID IN
+    <foreach item="item" index="index" collection="parentIds.split(',')" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
+
+  <!-- 查询所有PARENT_IDS -->
+  <select id="selectAllParentIds" resultType="java.lang.String">
+    SELECT
+      concat(PARENT_IDS, ',', id) AS parentIds
+    FROM
+      tbl_asset_business_tree
+    WHERE
+      `STATUS` = 1
+    UNION
+    SELECT
+      PARENT_IDS AS parentIds
+    FROM
+      tbl_asset_business_tree
+    WHERE
+      `STATUS` = 1
+  </select>
+
+  <!-- 根据层级id查询业务树名称 -->
+  <select id="getTierByTierId"  parameterType="java.lang.Long" resultType="java.lang.Object">
+    SELECT
+      BUSINESS_TREE_NAME AS parentTreeName
+    FROM
+      tbl_asset_business_tree
+    WHERE
+      ASSET_TREE_TIER_ID = #{assetTreeTierId}
+    AND `STATUS` = 1
+  </select>
+
+  <!-- 根据层级查询所有的父ids -->
+  <select id="selectAllParentIdsByAssetTreeId" parameterType="java.lang.Long" resultType="java.lang.String">
+    SELECT DISTINCT
+    concat(abt.PARENT_IDS, ',', abt.id) AS parentIds
+    FROM
+    tbl_asset_business_tree abt
+    LEFT JOIN tbl_asset_tree_tier att ON abt.ASSET_TREE_TIER_ID = att.ID
+    WHERE
+    abt.PARENT_IDS IS NOT NULL
+    AND abt.`STATUS` = 1
+    AND att.`STATUS` = 1
+    AND att.ID = #{assetTreeId}
+  </select>
+
+  <!-- 合并父级名称 -->
+  <select id="selectParentTreeNames"  parameterType="java.lang.String" resultType="java.lang.String">
+      SELECT
+      GROUP_CONCAT(BUSINESS_TREE_NAME
+        <if test="_parameter != null and _parameter !=''">
+          ORDER BY FIELD(ID,
+          <foreach collection="_parameter.split(',')" index="index" item="item"  separator="," >
+            #{item}
+          </foreach>
+          )
+        </if>
+        SEPARATOR '/' ) as parentTreeNames
+      FROM
+      tbl_asset_business_tree
+      WHERE
+      `STATUS` = 1
+      AND ID IN
+      <choose>
+        <when  test="_parameter != null and _parameter !='' ">
+          <foreach collection="_parameter.split(',')" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+          </foreach>
+        </when>
+        <otherwise>
+          ('')
+        </otherwise>
+      </choose>
+  </select>
+
+  <!-- 查询层级为1 的业务树和关联的系统树信息 -->
+  <select id="getBusinessTreeFirstListWithSystem" resultMap="selectSystemTree">
+    SELECT
+      <include refid="select_Column_List"/>
+      ,
+      tui.USER_NAME AS lastUpdateName,
+      abt.ID AS businessSystemTreeId
+    FROM
+      tbl_asset_business_tree abt
+    LEFT JOIN tbl_asset_tree_tier att ON abt.ASSET_TREE_TIER_ID = att.ID
+    LEFT JOIN tbl_user_info tui ON tui.ID = abt.LAST_UPDATE_BY AND tui.`STATUS` = 1
+    where att.TIER_NUMBER = 1
+    AND abt.`STATUS` = 1
+    AND att.`STATUS` = 1
+  </select>
+
+  <!-- 固定获取业务树第一二层 -->
+  <select id="getFirstSecondTree" resultMap="selectParentTree">
+    SELECT
+      ID AS id,
+      ID AS parentFrontId,
+      ASSET_TREE_TIER_ID AS assetTreeTierId,
+      BUSINESS_TREE_NAME AS businessSystemTreeName,
+      BUSINESS_TREE_STATUS AS businessSystemTreeStatus,
+      "0" AS parentId,
+      PARENT_IDS AS parentIds,
+      "true"  AS `open`
+    FROM
+    tbl_asset_business_tree
+    WHERE
+    PARENT_ID IS NULL
+    AND `STATUS` = 1
+    AND BUSINESS_TREE_STATUS = 1
+    ORDER BY ID desc
+  </select>
+
+  <!-- 查询第一层数据 -->
+    <select id="getFirstTree" resultType="cn.pioneeruniverse.project.vo.BusinessSystemTreeVo">
+        SELECT
+        ID AS id,
+        ID AS parentFrontId,
+        ASSET_TREE_TIER_ID AS assetTreeTierId,
+        BUSINESS_TREE_NAME AS businessSystemTreeName,
+        BUSINESS_TREE_STATUS AS businessSystemTreeStatus,
+        "0" AS parentId,
+        PARENT_IDS AS parentIds
+        FROM
+        tbl_asset_business_tree
+        WHERE
+        PARENT_ID IS NULL
+        AND `STATUS` = 1
+        AND BUSINESS_TREE_STATUS = 1
+        ORDER BY ID desc
+    </select>
+
+  <!-- 获取parentId等于id的数据-->
+  <select id="getTreeByParentId" parameterType="java.lang.Long" resultType="cn.pioneeruniverse.project.vo.BusinessSystemTreeVo">
+    SELECT
+    ID AS id,
+    ID AS parentFrontId,
+    ASSET_TREE_TIER_ID AS assetTreeTierId,
+    BUSINESS_TREE_NAME AS businessSystemTreeName,
+    BUSINESS_TREE_STATUS AS businessSystemTreeStatus,
+    PARENT_ID AS parentId,
+    PARENT_IDS AS parentIds,
+    "false"  AS  `open`
+    FROM
+    tbl_asset_business_tree
+    WHERE
+      PARENT_ID = #{parentFrontId}
+    AND `STATUS` = 1
+    AND BUSINESS_TREE_STATUS = 1
+    ORDER BY ID desc
+  </select>
+
+  <!-- 根据父id和名称查询业务树  -->
+  <select id="getBusinessByParentIdAndName" resultType="cn.pioneeruniverse.project.vo.BusinessSystemTreeVo">
+    SELECT
+      ID AS id,
+      ASSET_TREE_TIER_ID AS assetTreeTierId,
+      BUSINESS_TREE_NAME AS businessSystemTreeName,
+      PARENT_ID AS parentId,
+      PARENT_IDS AS parentIds
+    FROM
+      tbl_asset_business_tree
+    WHERE
+    PARENT_ID = #{parentId}
+    AND BUSINESS_TREE_NAME = #{name}
+    AND `STATUS` = 1
+  </select>
+
+  <!-- 根据PARENT_ID 和条件查询列表 -->
+    <select id="getListByParentId" parameterType="cn.pioneeruniverse.project.vo.BusinessSystemTreeVo" resultType="cn.pioneeruniverse.project.vo.BusinessSystemTreeVo">
+        SELECT
+        <include refid="select_Column_List"/>
+        ,
+        tui.USER_NAME AS lastUpdateName,
+        abt.PARENT_IDS AS parentFrontIds
+        FROM
+        tbl_asset_business_tree abt
+        LEFT JOIN tbl_user_info tui ON tui.ID = abt.LAST_UPDATE_BY AND tui.`STATUS` = 1
+        <where>
+            abt.`STATUS` = 1
+            <choose>
+                <when test="id != null and id != ''">
+                    AND PARENT_ID = #{id}
+                </when>
+                <otherwise>
+                    AND PARENT_ID IS NULL
+                </otherwise>
+            </choose>
+            <if test="businessSystemTreeName != null and businessSystemTreeName != ''">
+                AND abt.BUSINESS_TREE_NAME LIKE CONCAT(CONCAT('%',LOWER(#{businessSystemTreeName}),'%'))
+            </if>
+            <if test="businessSystemTreeCode != null and businessSystemTreeCode != ''">
+                AND abt.BUSINESS_TREE_CODE LIKE CONCAT(CONCAT('%',LOWER(#{businessSystemTreeCode}),'%'))
+            </if>
+            <if test="remark != null and remark != ''">
+                AND abt.REMARK LIKE CONCAT(CONCAT('%',LOWER(#{remark}),'%'))
+            </if>
+            <if test="businessSystemTreeStatus != null ">
+                AND abt.BUSINESS_TREE_STATUS  = #{businessSystemTreeStatus}
+            </if>
+        </where>
+        ORDER BY abt.ID desc
+    </select>
+
+  <!-- 根据PARENT_ID 和条件 查询列表带业务名称 -->
+  <select id="getListByParentIdWithName" parameterType="cn.pioneeruniverse.project.vo.BusinessSystemTreeVo" resultMap="selectParentTreeNamesMap">
+    SELECT
+    <include refid="select_Column_List"/>
+    ,
+    tui.USER_NAME AS lastUpdateName,
+    abt.PARENT_IDS AS parentFrontIds
+    FROM
+    tbl_asset_business_tree abt
+    LEFT JOIN tbl_user_info tui ON tui.ID = abt.LAST_UPDATE_BY AND tui.`STATUS` = 1
+    <where>
+      abt.`STATUS` = 1
+      <choose>
+        <when test="id != null and id != ''">
+          AND PARENT_ID = #{id}
+        </when>
+        <otherwise>
+          AND PARENT_ID IS NULL
+        </otherwise>
+      </choose>
+      <if test="businessSystemTreeName != null and businessSystemTreeName != ''">
+        AND abt.BUSINESS_TREE_NAME LIKE CONCAT(CONCAT('%',LOWER(#{businessSystemTreeName}),'%'))
+      </if>
+      <if test="businessSystemTreeCode != null and businessSystemTreeCode != ''">
+        AND abt.BUSINESS_TREE_CODE LIKE CONCAT(CONCAT('%',LOWER(#{businessSystemTreeCode}),'%'))
+      </if>
+      <if test="remark != null and remark != ''">
+        AND abt.REMARK LIKE CONCAT(CONCAT('%',LOWER(#{remark}),'%'))
+      </if>
+      <if test="businessSystemTreeStatus != null ">
+        AND abt.BUSINESS_TREE_STATUS  = #{businessSystemTreeStatus}
+      </if>
+    </where>
+    ORDER BY abt.ID desc
+  </select>
+  
+  <!-- 获取parentId等于id的数据-->
+  <resultMap type="cn.pioneeruniverse.project.vo.BusinessSystemTreeVo" id="selectParentTree">
+    <collection property="businessSystemTrees" ofType= "cn.pioneeruniverse.project.vo.BusinessSystemTreeVo" column="parentFrontId" select="cn.pioneeruniverse.project.dao.mybatis.TblAssetBusinessTreeMapper.getTreeByParentId"></collection>
+  </resultMap>
+
+  <resultMap type="cn.pioneeruniverse.project.vo.BusinessSystemTreeVo" id="selectSystemTree">
+    <collection property="systemTrees" ofType= "cn.pioneeruniverse.project.entity.TblAssetSystemTree" column="businessSystemTreeId" select="cn.pioneeruniverse.project.dao.mybatis.TblAssetSystemTreeMapper.selectListByBusId"></collection>
+  </resultMap>
+
+  <resultMap type="cn.pioneeruniverse.project.vo.BusinessSystemTreeVo" id="selectParentTreeNameMap">
+    <collection property="parentTreeName" ofType= "java.lang.String" column="parentFrontId" select="cn.pioneeruniverse.project.dao.mybatis.TblAssetBusinessTreeMapper.selectParentTreeName"></collection>
+  </resultMap>
+
+  <resultMap type="cn.pioneeruniverse.project.vo.BusinessSystemTreeVo" id="selectParentTreeNamesMap" >
+    <collection property="parentTreeNames" ofType= "java.lang.String" column="parentFrontIds" select="cn.pioneeruniverse.project.dao.mybatis.TblAssetBusinessTreeMapper.selectParentTreeNames"></collection>
+  </resultMap>
+</mapper>

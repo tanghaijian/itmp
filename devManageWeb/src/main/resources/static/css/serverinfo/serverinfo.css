@@ -1,0 +1,109 @@
+.allInfo {
+	width: auto;
+	border: 1px solid #D9D9D9;
+	border-radius: 4px;
+	margin: 10px 0 15px;
+	padding-right: 15px;
+	background-color: #F4F4FB;
+}
+
+.def_title {
+	padding: 10px 20px 10px;
+	position: relative;
+	font-size: 13px;
+	font-weight: bold;
+	line-height: 16px;
+}
+
+.rowdiv {
+	margin: 8px 0;
+	padding: 0;
+}
+
+.rowdiv:before, .rowdiv:after {
+	display: table;
+	content: " ";
+}
+
+.rowdiv:after {
+	clear: both;
+}
+
+.rowdiv .form-group {
+	margin-bottom: 0;
+}
+
+.textAreaStyle {
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	width: 100%;
+}
+
+.pjNameType1, .pjNameType2 {
+	line-height: 32px;
+	padding: 2px 8px;
+}
+
+.pjNameType1 {
+	background-color: #108EE9;
+}
+
+.pjNameType2 {
+	background-color: CC66FF;
+}
+
+#select_Correlation .modal-body {
+	padding: 0;
+}
+
+#select_Correlation .rowdiv {
+	margin: 0;
+}
+
+#select_Correlation .search_btn {
+	margin-bottom: 10px;
+}
+
+.form-horizontal .control-label {
+	padding: 0;
+}
+
+#add_preject .modal-header {
+	padding: 10px 15px;
+}
+
+#relevanceSys input[type*="text"] {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+}
+
+.addSysNames {
+	position: relative;
+	display: inline-block;
+	margin: 6px 0px 6px 10px;
+	border-radius: 4px;
+	padding: 0 7px;
+	line-height: 20px;
+	background-color: #D8D8EF;
+	z-index: 10;
+}
+
+.close_x {
+	margin-left: 3px;
+	cursor: pointer;
+}
+
+.a_style {
+	text-decoration: none;
+	color: #0e90d2;
+	cursor: pointer;
+}
+
+.help-block{
+	display: block;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display:none;
+}

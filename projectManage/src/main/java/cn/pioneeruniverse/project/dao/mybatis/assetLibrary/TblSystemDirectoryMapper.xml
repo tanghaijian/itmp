@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.assetLibrary.TblSystemDirectoryMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblSystemDirectory">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="PROJECT_ID" jdbcType="BIGINT" property="projectId" />
+    <result column="PROJECT_TYPE" jdbcType="TINYINT" property="projectType" />
+    <result column="DOCUMENT_TYPES" jdbcType="VARCHAR" property="documentTypes" />
+    <result column="SYSTEM_DIRECTORY_TEMPLATE_ID" jdbcType="BIGINT" property="systemDirectoryTemplateId" />
+    <result column="DIR_NAME" jdbcType="VARCHAR" property="dirName" />
+    <result column="ORDER_NUMBER" jdbcType="TINYINT" property="orderNumber" />
+    <result column="TIER_NUMBER" jdbcType="TINYINT" property="tierNumber" />
+    <result column="PARENT_ID" jdbcType="BIGINT" property="parentId" />
+    <result column="PARENT_IDS" jdbcType="VARCHAR" property="parentIds" />
+    <result column="CREATE_TYPE" jdbcType="TINYINT" property="createType" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, PROJECT_ID,PROJECT_TYPE, DOCUMENT_TYPES, SYSTEM_DIRECTORY_TEMPLATE_ID , DIR_NAME, ORDER_NUMBER, TIER_NUMBER, PARENT_ID, PARENT_IDS, CREATE_TYPE, 
+    STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_system_directory
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_system_directory
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectory">
+    insert into tbl_system_directory (ID, SYSTEM_ID, DIR_NAME, 
+      ORDER_NUMBER, TIER_NUMBER, PARENT_ID, 
+      PARENT_IDS, CREATE_TYPE, STATUS, 
+      CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, 
+      LAST_UPDATE_DATE)
+    values (#{id,jdbcType=BIGINT}, #{systemId,jdbcType=BIGINT}, #{dirName,jdbcType=VARCHAR}, 
+      #{orderNumber,jdbcType=TINYINT}, #{tierNumber,jdbcType=TINYINT}, #{parentId,jdbcType=BIGINT}, 
+      #{parentIds,jdbcType=VARCHAR}, #{createType,jdbcType=TINYINT}, #{status,jdbcType=TINYINT}, 
+      #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, 
+      #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectory">
+    insert into tbl_system_directory
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="systemId != null">
+        SYSTEM_ID,
+      </if>
+      <if test="dirName != null">
+        DIR_NAME,
+      </if>
+      <if test="orderNumber != null">
+        ORDER_NUMBER,
+      </if>
+      <if test="tierNumber != null">
+        TIER_NUMBER,
+      </if>
+      <if test="parentId != null">
+        PARENT_ID,
+      </if>
+      <if test="parentIds != null">
+        PARENT_IDS,
+      </if>
+      <if test="createType != null">
+        CREATE_TYPE,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createBy != null">
+        CREATE_BY,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY,
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="systemId != null">
+        #{systemId,jdbcType=BIGINT},
+      </if>
+      <if test="dirName != null">
+        #{dirName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNumber != null">
+        #{orderNumber,jdbcType=TINYINT},
+      </if>
+      <if test="tierNumber != null">
+        #{tierNumber,jdbcType=TINYINT},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="parentIds != null">
+        #{parentIds,jdbcType=VARCHAR},
+      </if>
+      <if test="createType != null">
+        #{createType,jdbcType=TINYINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectory">
+    update tbl_system_directory
+    <set>
+      <if test="systemId != null">
+        SYSTEM_ID = #{systemId,jdbcType=BIGINT},
+      </if>
+      <if test="dirName != null">
+        DIR_NAME = #{dirName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNumber != null">
+        ORDER_NUMBER = #{orderNumber,jdbcType=TINYINT},
+      </if>
+      <if test="tierNumber != null">
+        TIER_NUMBER = #{tierNumber,jdbcType=TINYINT},
+      </if>
+      <if test="parentId != null">
+        PARENT_ID = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="parentIds != null">
+        PARENT_IDS = #{parentIds,jdbcType=VARCHAR},
+      </if>
+      <if test="createType != null">
+        CREATE_TYPE = #{createType,jdbcType=TINYINT},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null">
+        CREATE_BY = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null">
+        LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdateDate != null">
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectory">
+    update tbl_system_directory
+    set SYSTEM_ID = #{systemId,jdbcType=BIGINT},
+      DIR_NAME = #{dirName,jdbcType=VARCHAR},
+      ORDER_NUMBER = #{orderNumber,jdbcType=TINYINT},
+      TIER_NUMBER = #{tierNumber,jdbcType=TINYINT},
+      PARENT_ID = #{parentId,jdbcType=BIGINT},
+      PARENT_IDS = #{parentIds,jdbcType=VARCHAR},
+      CREATE_TYPE = #{createType,jdbcType=TINYINT},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_BY = #{lastUpdateBy,jdbcType=BIGINT},
+      LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 获取某个系统下的系统目录 -->
+  <select id="getSystemDirectoryBySystemId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" />
+  		from tbl_system_directory where STATUS = 1 and PROJECT_ID = #{projectId}
+  </select>
+  
+  <!-- 保存系统目录 -->
+  <insert id="insertSystemDir" parameterType="cn.pioneeruniverse.project.entity.TblSystemDirectory">
+  	insert into tbl_system_directory (PROJECT_ID, PROJECT_TYPE, DOCUMENT_TYPES, SYSTEM_DIRECTORY_TEMPLATE_ID, DIR_NAME, 
+      ORDER_NUMBER, TIER_NUMBER, PARENT_ID, 
+      PARENT_IDS, CREATE_TYPE, STATUS, 
+      CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, 
+      LAST_UPDATE_DATE)
+    values (#{projectId,jdbcType=BIGINT}, #{projectType}, #{documentTypes}, #{systemDirectoryTemplateId}, #{dirName,jdbcType=VARCHAR}, 
+      #{orderNumber,jdbcType=TINYINT}, #{tierNumber,jdbcType=TINYINT}, #{parentId,jdbcType=BIGINT}, 
+      #{parentIds,jdbcType=VARCHAR}, #{createType,jdbcType=TINYINT}, #{status,jdbcType=TINYINT}, 
+      #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{lastUpdateBy,jdbcType=BIGINT}, 
+      #{lastUpdateDate,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!-- 更新系统目录 -->
+  <update id="updateSystemDIr" parameterType="map">
+  	update tbl_system_directory set PARENT_ID = #{parentId} where PROJECT_ID = #{projectId} and SYSTEM_DIRECTORY_TEMPLATE_ID = #{templateId}
+  </update>
+  
+  <!-- 获取某个项目下某个文档模板的系统目录ID，在新建类项目中获取左边目录树 -->
+  <select id="getId" parameterType="map" resultType="long">
+  	select ID from tbl_system_directory where PROJECT_ID = #{projectId} and SYSTEM_DIRECTORY_TEMPLATE_ID = #{templateId}
+  </select>
+  
+  <update id="updateSystemDIr2" parameterType="map">
+  	update tbl_system_directory set PARENT_IDS = #{parentIds} where PROJECT_ID = #{projectId} and SYSTEM_DIRECTORY_TEMPLATE_ID = #{templateId}
+  </update>
+</mapper>

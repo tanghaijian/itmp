@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblTestSetCaseExecuteMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblTestSetCaseExecute">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="TEST_SET_ID" jdbcType="BIGINT" property="testSetId"/>
+        <result column="SYSTEM_ID" jdbcType="BIGINT" property="systemId"/>
+
+        <result column="EXCUTE_ROUND" jdbcType="INTEGER" property="excuteRound"/>
+        <result column="CASE_NAME" jdbcType="VARCHAR" property="caseName"/>
+        <result column="CASE_NUMBER" jdbcType="VARCHAR" property="caseNumber"/>
+        <result column="CASE_PRECONDITION" jdbcType="VARCHAR" property="casePrecondition"/>
+        <result column="CASE_TYPE" jdbcType="TINYINT" property="caseType"/>
+        <result column="CASE_EXECUTE_RESULT" jdbcType="TINYINT" property="caseExecuteResult"/>
+        <result column="EXECUTE_USER_ID" jdbcType="BIGINT" property="executeUserId"/>
+        <result column="EXCUTE_REMARK" jdbcType="VARCHAR" property="excuteRemark"/>
+        <result column="ResultName" jdbcType="VARCHAR" property="ResultName"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+
+        <result column="EXPECT_RESULT" jdbcType="VARCHAR" property="expectResult"/>
+        <result column="INPUT_DATA" jdbcType="VARCHAR" property="inputData"/>
+        <result column="TEST_POINT" jdbcType="VARCHAR" property="testPoint"/>
+        <result column="MODULE_NAME" jdbcType="VARCHAR" property="moduleName"/>
+        <result column="BUSINESS_TYPE" jdbcType="VARCHAR" property="businessType"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ID, TEST_SET_ID, EXCUTE_ROUND, CASE_NAME,
+        CASE_NUMBER,CASE_PRECONDITION,CASE_TYPE,CASE_EXECUTE_RESULT,EXCUTE_REMARK,EXECUTE_USER_ID,STATUS, CREATE_BY,
+        CREATE_DATE,
+        LAST_UPDATE_BY, LAST_UPDATE_DATE,EXPECT_RESULT,INPUT_DATA,TEST_POINT,MODULE_NAME,BUSINESS_TYPE
+    </sql>
+    <!-- 执行查看 -->
+    <select id="findeSetCase" parameterType="cn.pioneeruniverse.dev.entity.TblTestSetCaseExecute"
+            resultMap="BaseResultMap">
+        SELECT DISTINCT
+        setCase.ID,
+        setCase.TEST_SET_ID,
+        setCase.EXCUTE_ROUND,
+        CASE_NAME,
+        CASE_NUMBER,
+        CASE_PRECONDITION,
+        CASE_TYPE,
+        CASE_EXECUTE_RESULT,
+        setCase.CREATE_BY,
+        setCase.CREATE_DATE,
+        setCase.LAST_UPDATE_BY,
+        setCase.LAST_UPDATE_DATE,
+        userI.USER_NAME AS ResultName,
+        setCase.EXPECT_RESULT,
+        setCase.INPUT_DATA,
+        setCase.TEST_POINT,
+        setCase.MODULE_NAME,
+        setCase.BUSINESS_TYPE
+        FROM
+        tbl_test_set_case_execute setCase
+        LEFT JOIN tbl_user_info userI ON setCase.EXECUTE_USER_ID = userI.ID
+        WHERE
+        setCase.TEST_SET_ID = #{testSetId}
+        AND setCase.CASE_NUMBER = #{caseNumber}
+        AND setCase.`STATUS` = 1
+        ORDER BY
+        id DESC
+        <if test="start != null and pageSize != null">
+            limit #{start},#{pageSize}
+        </if>
+    </select>
+
+    <select id="countfindeSetCase" resultType="java.lang.Integer">
+        SELECT COUNT(DISTINCT setCase.ID)
+        FROM
+        tbl_test_set_case_execute setCase
+        LEFT JOIN tbl_user_info userI ON setCase.EXECUTE_USER_ID = userI.ID
+        WHERE
+        setCase.TEST_SET_ID = #{testSetId}
+        AND setCase.CASE_NUMBER = #{caseNumber}
+        AND setCase.`STATUS` = 1
+    </select>
+
+    <!-- 根据id查询 -->
+    <select id="selectByID" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_test_set_case_execute
+        where id = #{id,jdbcType=BIGINT} and STATUS=1
+    </select>
+
+    <select id="selectNameById" parameterType="java.lang.Long" resultType="java.lang.String">
+        select
+        CASE_NAME
+        from tbl_test_set_case_execute
+        where ID = #{id}
+    </select>
+
+    <insert id="insertSelective" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_test_set_case_execute (
+        TEST_SET_ID,
+        SYSTEM_ID,
+        EXCUTE_ROUND,
+        CASE_NAME,
+        CASE_NUMBER,
+        CASE_PRECONDITION,
+        CASE_TYPE,
+        CASE_EXECUTE_RESULT,
+        EXECUTE_USER_ID,
+        EXCUTE_REMARK,
+        CREATE_BY,
+        CREATE_DATE,
+        EXPECT_RESULT,
+        INPUT_DATA,
+        TEST_POINT,
+        MODULE_NAME,
+        BUSINESS_TYPE
+        ) values (
+        #{testSetId,jdbcType=BIGINT},
+        #{systemId,jdbcType=BIGINT},
+        #{excuteRound,jdbcType=INTEGER},
+        #{caseName,jdbcType=VARCHAR},
+        #{caseNumber,jdbcType=VARCHAR},
+        #{casePrecondition,jdbcType=VARCHAR},
+        #{caseType,jdbcType=TINYINT},
+        #{caseExecuteResult,jdbcType=TINYINT},
+        #{createBy,jdbcType=BIGINT},
+        #{excuteRemark,jdbcType=VARCHAR},
+        #{createBy,jdbcType=BIGINT},
+        CURRENT_TIMESTAMP,
+        #{expectResult,jdbcType=VARCHAR},
+        #{inputData,jdbcType=VARCHAR},
+        #{testPoint,jdbcType=VARCHAR},
+        #{moduleName,jdbcType=VARCHAR},
+        #{businessType,jdbcType=VARCHAR}
+        )
+    </insert>
+    <!-- 批量添加 -->
+    <insert id="insertCodeBatch" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_test_set_case_execute (TEST_SET_ID,SYSTEM_ID,EXCUTE_ROUND,CASE_NAME,CASE_NUMBER,
+        CASE_PRECONDITION,CASE_TYPE,CASE_EXECUTE_RESULT,EXECUTE_USER_ID,EXCUTE_REMARK,CREATE_BY,CREATE_DATE,
+        EXPECT_RESULT,INPUT_DATA,TEST_POINT,MODULE_NAME,BUSINESS_TYPE)
+        values
+        (
+        #{testSetId,jdbcType=BIGINT},
+        #{systemId,jdbcType=BIGINT},
+        #{excuteRound,jdbcType=INTEGER},
+        #{caseName,jdbcType=VARCHAR},
+        #{caseNumber,jdbcType=VARCHAR},
+        #{casePrecondition,jdbcType=VARCHAR},
+        #{caseType,jdbcType=TINYINT},
+        2,
+        #{createBy,jdbcType=BIGINT},
+        "批量执行",
+        #{createBy,jdbcType=BIGINT},
+        CURRENT_TIMESTAMP,
+        #{expectResult,jdbcType=VARCHAR},
+        #{inputData,jdbcType=VARCHAR},
+        #{testPoint,jdbcType=VARCHAR},
+        #{moduleName,jdbcType=VARCHAR},
+        #{businessType,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateSelective" parameterType="map">
+        update tbl_test_set_case_execute
+        <set>
+            CASE_EXECUTE_RESULT=#{caseExecuteResult},LAST_UPDATE_BY=#{createBy},LAST_UPDATE_DATE=CURRENT_TIMESTAMP
+        </set>
+        <where>
+            TEST_SET_ID=#{testSetId} and EXCUTE_ROUND=#{EXCUTE_ROUND}
+        </where>
+    </update>
+
+    <select id="selectByTestSet" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tbl_test_set_case_execute
+        where TEST_SET_ID = #{testSetId} and STATUS=1
+    </select>
+
+    <select id="getCaseExecute" parameterType="map" resultMap="BaseResultMap">
+        select setCase.ID , setCase.CASE_EXECUTE_RESULT , setCase.EXCUTE_REMARK , setCase.CREATE_DATE , user.USER_NAME
+        executeUserName from tbl_test_set_case_execute setCase
+        LEFT JOIN tbl_user_info user ON setCase.EXECUTE_USER_ID = user.ID
+        where setCase.TEST_SET_ID = #{testSetId} and setCase.CASE_NUMBER = #{caseNumber} and
+        (setCase.CASE_EXECUTE_RESULT = 4 OR setCase.CASE_EXECUTE_RESULT = 5) and setCase.STATUS = 1
+        order by ID desc
+    </select>
+
+    <select id="getCaseExecuteCount" parameterType="java.lang.Long" resultType="long">
+        SELECT COUNT(*) from tbl_test_set_case_execute where TEST_SET_ID in (
+        SELECT ID FROM tbl_test_set where TEST_TASK_ID = #{devID} AND STATUS = 1
+        )AND STATUS = 1 AND (CASE_EXECUTE_RESULT = 2 OR CASE_EXECUTE_RESULT = 3)
+    </select>
+
+    <select id="findExecuteUser" parameterType="java.lang.Long" resultType="string">
+        SELECT distinct userInfo.USER_NAME FROM tbl_user_info userInfo
+        LEFT JOIN tbl_test_set_execute_round_user round ON userInfo.ID = round.EXECUTE_USER_ID AND userInfo.`STATUS` = 1
+        LEFT JOIN tbl_test_set tset ON tset.ID = round.TEST_SET_ID AND round.`STATUS` = 1
+        where tset.TEST_TASK_ID = #{devID} AND tset.`STATUS` = 1
+    </select>
+
+    <!--liushan:根据测试集案例添加测试执行案例-->
+    <insert id="insertByTestSetCase" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `tbl_test_set_case_execute` (
+            `TEST_SET_ID`,
+            `SYSTEM_ID`,
+            `EXCUTE_ROUND`,
+            `CASE_NAME`,
+            `CASE_NUMBER`,
+            `CASE_PRECONDITION`,
+            `CASE_TYPE`,
+            `EXPECT_RESULT`,
+            `INPUT_DATA`,
+            `TEST_POINT`,
+            `MODULE_NAME`,
+            `BUSINESS_TYPE`,
+            `CASE_DESCRIPTION`,
+            `CASE_EXECUTE_RESULT`,
+            `EXECUTE_USER_ID`,
+            `EXCUTE_REMARK`,
+            `FIELD_TEMPLATE`,
+            `CREATE_BY`,
+            `CREATE_DATE`,
+            `LAST_UPDATE_BY`,
+            `LAST_UPDATE_DATE`
+        )  SELECT
+            `TEST_SET_ID`,
+            `SYSTEM_ID`,
+            #{testSetCase.excuteRound} AS `EXCUTE_ROUND`,
+            `CASE_NAME`,
+            `CASE_NUMBER`,
+            `CASE_PRECONDITION`,
+            `CASE_TYPE`,
+            `EXPECT_RESULT`,
+            `INPUT_DATA`,
+            `TEST_POINT`,
+            `MODULE_NAME`,
+            `BUSINESS_TYPE`,
+            `CASE_DESCRIPTION`,
+            `CASE_EXECUTE_RESULT`,
+            #{testSetCase.lastUpdateBy} AS `EXECUTE_USER_ID`,
+            #{excuteRemark} AS `EXCUTE_REMARK`,
+            `FIELD_TEMPLATE`,
+            #{testSetCase.lastUpdateBy} AS `CREATE_BY`,
+            CURRENT_TIMESTAMP AS `CREATE_DATE`,
+            #{testSetCase.lastUpdateBy} AS `LAST_UPDATE_BY`,
+            CURRENT_TIMESTAMP AS `LAST_UPDATE_DATE`
+        FROM
+            tbl_test_set_case
+        WHERE
+            id = #{testSetCase.id}
+    </insert>
+</mapper>

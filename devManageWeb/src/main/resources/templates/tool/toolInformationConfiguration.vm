@@ -1,0 +1,327 @@
+ <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>  
+	<link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css" />
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/tool/tool.css" />
+
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/component.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script src="#springUrl('')/systemui/static/js/common/common.js"></script>
+    <script src="#springUrl('')/devManageui/static/js/tool/tool.js"></script>
+</head>
+<script>
+    var toolSave = $auth.hasPermission("$token","devManage:tool:save");
+    var toolEdit = $auth.hasPermission("$token","devManage:tool:edit");
+    var toolDelete = $auth.hasPermission("$token","devManage:tool:delete");
+</script>
+<body> 
+	<div class="allTableDiv"></div>
+
+    #*添加弹框*#
+    <div class="modal fade bs-example-modal-lg" id="insertModal" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <span class="modalTitle">新建工具配置</span>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" id="toolForm">
+                        <input id="functionType"  type="hidden"/>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"><span>*</span>工具类型：</label>
+                            <div class="col-md-8">
+                                <div class="content">
+                                    <div id="sourceCodeList">
+                                        <select class="selectpicker" onchange="change()" name="toolTypeNameSourceCode" id="toolTypeNameSourceCode">
+                                            <option value=''>请选择</option>
+                                            <option value='1'>GIT</option>
+                                            <option value='2'>SVN</option>
+                                        </select>
+                                    </div>
+
+                                    <div id="codeScanning">
+                                        <select class="selectpicker"  name="toolTypeNameCodeScanning">
+                                            <option value=''>请选择</option>
+                                            <option value='3'>SONAR</option>
+                                        </select>
+                                    </div>
+
+                                    <div id="CI_CD">
+                                        <select class="selectpicker"  name="toolTypeNameCICD">
+                                            <option value=''>请选择</option>
+                                            <option value='4'>JENKINS</option>
+                                        </select>
+                                    </div>
+
+                                    <div id="productManagement">
+                                        <select class="selectpicker"  name="productManagement">
+                                            <option value=''>请选择</option>
+                                            <option value='5'>ARTIFACTORY</option>
+                                            <option value='6'>NEXUS</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"><span>*</span>工具名称：</label>
+                            <div class="col-md-8">
+                                <input id="toolName" name="toolName" class="form-control tableInput " placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"><span>*</span>安装路径：</label>
+                            <div class="col-md-8">
+                                <input id="homePath" name="homePath" class="form-control tableInput " placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                        <div class="form-group" id="accessProtocol_sel">
+                            <label class="col-md-3 control-label git">协议类型：</label>
+                            <div class="col-md-8 git">
+                               <select class="selectpicker"  id="accessProtocol" name="accessProtocol">
+                                   <option value="">请选择</option>
+                                   #foreach($dictMap in ${dict.getDictMap(
+                                        "TBL_TOOL_INFO_ACCESS_PROTOCOL").entrySet()})
+                                        <option value="${dictMap.key}">${dictMap.value}</option>
+                                    #end
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"><span></span>上下文根：</label>
+                            <div class="col-md-8">
+                                <input id="context" name="context" class="form-control tableInput " placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"><span>*</span>IP地址：</label>
+                            <div class="col-md-8">
+                                <input id="ip" name="ip" class="form-control tableInput " placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"><span>*</span>端口号：</label>
+                            <div class="col-md-8">
+                                <input id="port" name="port" class="form-control tableInput " placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">用户名：</label>
+                            <div class="col-md-8">
+                                <input id="userName" name="userName" class="form-control tableInput " placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">密码：</label>
+                            <div class="col-md-8">
+                                <input id="password" name="password" class="form-control tableInput " placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label  token">ApiToken：</label>
+                            <label class="col-md-3 control-label  jenkinsID">JENKINS_ID：</label>
+                            <label class="col-md-3 control-label  artifactId">制品仓库管理员ID：</label>
+                            <div class="col-md-8">
+                                <input id="sonarApiToken" name="sonarApiToken" class="form-control tableInput sonar" placeholder="请输入" type="text" />
+                                <input id="jenkinsCredentialsId" name="jenkinsCredentialsId" class="form-control tableInput git" placeholder="请输入" type="text" />
+                                <input id="artifactRepositoryId" name="artifactRepositoryId" class="form-control tableInput art" placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                        <div class="form-group api" style="display:none">
+                            <label class="col-md-3 control-label" ><span>*</span>API TOKEN：</label>
+                            <div class="col-md-8">
+                                <input id="apiToken" name="apiToken" class="form-control tableInput" placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                        <div class="form-group" id="new_environmentType">
+                            <label class="col-md-3 control-label">环境类型：</label>
+                            <div class="col-md-8">
+                                <select class="selectpicker" multiple  id="environmentType" name="environmentType" title="请选择">
+                                    #foreach($dictMap in ${dict.getDictMap(
+                                        "TBL_SYSTEM_SCM_ENVIRONMENT_TYPE").entrySet()})
+                                        <option value="${dictMap.key}">${dictMap.value}</option>
+                                    #end
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label  jenkinsPluginName">JENKINS插件名称：</label>
+                            <div class="col-md-8">
+                                <input id="jenkinsPluginName" name="jenkinsPluginName" class="form-control tableInput jenkinsPluginName" placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="insertTool()">确定</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    #*编辑弹框*#
+    <div class="modal fade bs-example-modal-lg" id="editModal" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <span class="modalTitle">编辑工具配置</span>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" id="editForm">
+                        <input id="id_edit" type="hidden"/>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">工具类型：</label>
+                            <div class="col-md-8">
+                                <div class="toolTypeName">
+                                    <img class="Loge" src=""/>&nbsp&nbsp
+                                    <span class="toolName_edit"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"><span>*</span>工具名称：</label>
+                            <div class="col-md-8">
+                                <input id="toolName_edit" name="toolName_edit" class="form-control tableInput " placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"><span>*</span>安装路径：</label>
+                            <div class="col-md-8">
+                                <input id="homePath_edit" name="homePath" class="form-control tableInput " placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                        <div class="form-group" id="accessProtocol_sel_edit">
+                            <label class="col-md-3 control-label git">协议类型：</label>
+                            <div class="col-md-8 git">
+                                <select class="selectpicker"  id="accessProtocol_edit" name="accessProtocol">
+                                    <option value="">请选择</option>
+                                    #foreach($dictMap in ${dict.getDictMap(
+                                        "TBL_TOOL_INFO_ACCESS_PROTOCOL").entrySet()})
+                                        <option value="${dictMap.key}">${dictMap.value}</option>
+                                    #end
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"><span></span>上下文根：</label>
+                            <div class="col-md-8">
+                                <input id="context_edit" name="context_edit" class="form-control tableInput " placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"><span>*</span>IP地址：</label>
+                            <div class="col-md-8">
+                                <input id="ip_edit" name="ip" class="form-control tableInput " placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"><span>*</span>端口号：</label>
+                            <div class="col-md-8">
+                                <input id="port_edit" name="port" class="form-control tableInput " placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">用户名：</label>
+                            <div class="col-md-8">
+                                <input id="userName_edit" name="userName" class="form-control tableInput " placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">密码：</label>
+                            <div class="col-md-8">
+                                <input id="password_edit" name="password" class="form-control tableInput " placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label  token">ApiToken：</label>
+                            <label class="col-md-3 control-label  jenkinsID">JENKINS_ID：</label>
+                            <label class="col-md-3 control-label  artifactId">制品仓库管理员ID：</label>
+                            <div class="col-md-8">
+                                <input id="sonarApiToken_edit" name="sonarApiToken" class="form-control tableInput sonar" placeholder="请输入" type="text" />
+                                <input id="jenkinsCredentialsId_edit" name="jenkinsCredentialsId" class="form-control tableInput git" placeholder="请输入" type="text" />
+                                <input id="edit_artifactRepositoryId" name="artifactRepositoryId" class="form-control tableInput art" placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                        <div class="form-group eapi" style="display:none">
+                            <label class="col-md-3 control-label" ><span>*</span>API TOKEN：</label>
+                            <div class="col-md-8">
+                                <input id="editApiToken" style="display:none" name="editApiToken" class="form-control tableInput" placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                        <div class="form-group" id="edit_environmentType">
+                            <label class="col-md-3 control-label">环境类型：</label>
+                            <div class="col-md-8">
+                                <select class="selectpicker" multiple id="edit_environmentType_select" name="environmentType" title="请选择">
+                                    #foreach($dictMap in ${dict.getDictMap(
+                                        "TBL_SYSTEM_SCM_ENVIRONMENT_TYPE").entrySet()})
+                                        <option value="${dictMap.key}">${dictMap.value}</option>
+                                    #end
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label  jenkinsPluginName">JENKINS插件名称：</label>
+                            <div class="col-md-8">
+                                <input id="jenkinsPluginName_edit" name="jenkinsPluginName" class="form-control tableInput jenkinsPluginName" placeholder="请输入" type="text" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="commitInfo()">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="promptBox" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <span class="alertStyle"> !</span>
+                    <p>修改本页配置信息会影响CI/CD过程</p>
+                    <p>确定修改内容吗?</p>
+                    <br />
+                    <p class="colFont">点击【确定】，保存修改内容</p>
+                    <p class="colFont">点击【取消】，取消操作</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="updateTool()">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading">
+        <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+    </div>
+
+</body>
+</html>
+ 

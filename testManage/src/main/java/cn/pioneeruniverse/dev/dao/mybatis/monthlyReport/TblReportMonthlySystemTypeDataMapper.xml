@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.monthlyReport.TblReportMonthlySystemTypeDataMapper">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlySystemTypeData">
+        <id column="ID" jdbcType="BIGINT"  property="id" />
+        <result column="YEAR_MONTH" jdbcType="VARCHAR" property="yearMonth"/>
+        <result column="SYSTEM_TYPE" jdbcType="TINYINT" property="systemType"/>
+        <result column="TOTAL_TASK_NUMBER" jdbcType="INTEGER" property="totalTaskNumber"/>
+        <result column="DESIGN_CASE_NUMBER" jdbcType="INTEGER" property="designCaseNumber"/>
+        <result column="DEFECT_NUMBER" jdbcType="INTEGER" property="defectNumber"/>
+        <result column="REPAIRED_DEFECT_NUMBER" jdbcType="INTEGER" property="repairedDefectNumber"/>
+        <result column="UNREPAIRED_DEFECT_NUMBER" jdbcType="INTEGER" property="unrepairedDefectNumber"/>
+        <result column="DEFECT_PERCENT" jdbcType="DOUBLE" property="defectPercent"/>
+        <result column="CREATE_BY" jdbcType="BIGINT" property="createBy"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+        <result column="STATUS" jdbcType="TINYINT" property="status"/>
+    </resultMap>
+
+	<select id="findSystemTypeData"
+            resultType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlySystemTypeData">
+        SELECT *,(defectNumber-repairedDefectNumber) unrepairedDefectNumber,
+		(CASE WHEN	designCaseNumber = 0 THEN 0 ELSE defectNumber/designCaseNumber*100 END)	defectPercent,
+		(CASE WHEN repairedDefectNumber = 0 THEN 0 ELSE	totalRepairRound/repairedDefectNumber	END) avgRepairRound
+		FROM (
+		SELECT  systemType,sum(taskCount) totalTaskNumber,sum(defectCount)	defectNumber,SUM(systemCount) systemNum,
+		sum(fixedDefectCount) repairedDefectNumber,sum(caseCount)	designCaseNumber,	sum(repairRound) totalRepairRound
+		FROM (
+
+		SELECT
+		(CASE WHEN system.development_mode = 1 THEN	1	WHEN system.SYSTEM_CLASS = 1 THEN 3	ELSE 2 END ) systemType,
+		COUNT(DISTINCT system.ID ) systemCount,
+		count(DISTINCT CASE WHEN reqFeature.`STATUS` = 1 AND
+		reqFeature.REQUIREMENT_FEATURE_SOURCE != 6		AND
+		reqFeature.REQUIREMENT_FEATURE_STATUS != '00' THEN reqFeature.ID END)	taskCount,
+		0 defectCount,	0 fixedDefectCount,	ifnull(sum(task.DESIGN_CASE_NUMBER),0) caseCount,0 repairRound
+		FROM tbl_commissioning_window window
+		LEFT JOIN	tbl_requirement_feature reqFeature		ON		reqFeature.COMMISSIONING_WINDOW_ID = window.ID
+		LEFT JOIN	tbl_system_info system		ON system.ID = reqFeature.SYSTEM_ID
+		LEFT JOIN	(select task1.REQUIREMENT_FEATURE_ID,task1.DESIGN_CASE_NUMBER
+		from
+		tbl_test_task task1
+		left join tbl_requirement_feature reqFeature1 on
+		task1.REQUIREMENT_FEATURE_ID = reqFeature1.ID
+		where
+		reqFeature1.REQUIREMENT_FEATURE_SOURCE != 6
+		AND reqFeature1.status = 1
+		AND reqFeature1.REQUIREMENT_FEATURE_STATUS != '00'
+		) task	ON	task.REQUIREMENT_FEATURE_ID = reqFeature.ID
+		WHERE window.`STATUS` = 1
+		AND system.status = 1
+		AND window.WINDOW_DATE between #{startTime} and	#{endTime}
+		AND ((system.development_mode =1 and system.SYSTEM_CLASS !=NULL) OR system.SYSTEM_CLASS= 1 OR system.SYSTEM_CLASS= 2)
+		GROUP BY systemType
+
+		UNION ALL
+		SELECT (CASE WHEN system2.development_mode = 1 THEN	1	WHEN system2.SYSTEM_CLASS = 1 THEN 3 ELSE 2 END ) systemType,0 systemCount,
+		0 taskCount,count(defect2.ID) defectCount,
+		count(CASE WHEN	defect2.`STATUS` = 1 AND defect2.DEFECT_STATUS = 7 THEN	defect2.ID END)	fixedDefectCount,0 caseCount,
+		(CASE WHEN sum(CASE WHEN defect2.DEFECT_STATUS = 7 THEN	defect2.REPAIR_ROUND END)
+		IS NULL THEN 0	ELSE sum(CASE WHEN defect2.DEFECT_STATUS = 7 THEN defect2.REPAIR_ROUND END) END) repairRound
+		FROM tbl_defect_info		defect2
+		LEFT JOIN tbl_system_info system2 ON defect2.SYSTEM_ID =		system2.ID
+		LEFT JOIN tbl_commissioning_window window2 ON window2.ID =		defect2.COMMISSIONING_WINDOW_ID
+		WHERE window2.`STATUS` = 1
+		AND	defect2.STATUS = 1
+		AND system2.status = 1
+		AND defect2.DEFECT_STATUS != 6
+		AND defect2.SEVERITY_LEVEL not in(1,6)
+		AND (defect2.DEFECT_SOURCE = 1 OR	defect2.DEFECT_SOURCE = 2)
+		AND window2.WINDOW_DATE between #{startTime} and	#{endTime}
+		AND ((system2.development_mode =1 AND system2.SYSTEM_CLASS !=NULL)OR system2.SYSTEM_CLASS= 1 OR system2.SYSTEM_CLASS= 2)
+		GROUP BY systemType
+
+		UNION ALL
+		SELECT (CASE WHEN development_mode = 1 THEN	1	WHEN SYSTEM_CLASS = 1 THEN 3	ELSE 2 END ) systemType, 0 systemCount,
+		0 taskCount,0 defectCount,0 fixedDefectCount,0 caseCount,0	repairRound
+		FROM tbl_system_info system
+		WHERE
+		((system.development_mode =1 AND system.SYSTEM_CLASS !=NULL)OR system.SYSTEM_CLASS= 1 OR system.SYSTEM_CLASS= 2)
+		AND	system.`STATUS` = 1
+		) b
+		GROUP BY systemType
+		) a
+		ORDER BY systemType asc
+
+    </select>
+    <select id="findTaskTypeByYearMonthAndSystemType"
+            resultMap="BaseResultMap">
+		select * from  tbl_report_monthly_system_type_data systemTypeData where systemTypeData.YEAR_MONTH =#{date} and systemTypeData.SYSTEM_TYPE =#{systemType}
+	</select>
+    <update id="updateByYearMonthAndSystemType">
+		update tbl_report_monthly_system_type_data systemTypeData
+		set
+		systemTypeData.TOTAL_TASK_NUMBER = #{totalTaskNumber},
+		systemTypeData.DESIGN_CASE_NUMBER = #{designCaseNumber},
+		systemTypeData.DEFECT_NUMBER = #{defectNumber},
+		systemTypeData.REPAIRED_DEFECT_NUMBER = #{repairedDefectNumber},
+		systemTypeData.UNREPAIRED_DEFECT_NUMBER = #{unrepairedDefectNumber},
+		DEFECT_PERCENT = #{defectPercent},
+		systemTypeData.LAST_UPDATE_BY = #{lastUpdateBy} ,
+		systemTypeData.LAST_UPDATE_DATE = #{lastUpdateDate},
+		systemTypeData.STATUS = #{status}
+		where
+		systemTypeData.YEAR_MONTH =#{yearMonth} and
+		systemTypeData.SYSTEM_TYPE =#{systemType}
+	</update>
+
+	<select id="findByYearTime" resultMap="BaseResultMap">
+
+		select  * from tbl_report_monthly_system_type_data systemData where systemData.YEAR_MONTH = #{date} AND systemData.STATUS = 1
+
+	</select>
+	<select id="findByYearAndSystemType"
+			resultType="cn.pioneeruniverse.dev.entity.monthlyReport.TblReportMonthlySystemTypeData">
+		SELECT systemTypeData.`YEAR_MONTH` yearMonth,
+		 systemTypeData.TOTAL_TASK_NUMBER totalTaskNumber,
+		 systemTypeData.DESIGN_CASE_NUMBER designCaseNumber,
+		 systemTypeData.DEFECT_NUMBER defectNumber
+    	FROM tbl_report_monthly_system_type_data systemTypeData
+    	WHERE systemTypeData.SYSTEM_TYPE = #{type}
+    	AND STR_TO_DATE(CONCAT(SUBSTRING_INDEX(`YEAR_MONTH`,'-',1),SUBSTRING_INDEX(`YEAR_MONTH`,'-',-1)),'%Y%c%d')
+ 		BETWEEN #{startTime} AND #{endTime}
+		ORDER BY STR_TO_DATE(CONCAT(SUBSTRING_INDEX(`YEAR_MONTH`,'-',1),SUBSTRING_INDEX(`YEAR_MONTH`,'-',-1)),'%Y%c%d') asc
+
+	</select>
+
+</mapper>

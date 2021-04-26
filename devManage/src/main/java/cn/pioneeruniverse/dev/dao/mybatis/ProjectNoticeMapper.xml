@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.ProjectNoticeMapper">
+
+
+  <!-- 获取公告信息获取到公告的ID-->
+  <select id="selectNoticeInfoByID" parameterType="cn.pioneeruniverse.dev.entity.TblNoticeInfo" resultType="java.lang.Long">
+     select id from tbl_notice_info where  NOTICE_TYPE = #{noticeType} and  PROJECT_IDS = #{projectIds} and  NOTICE_CONTENT = #{noticeContent} and  START_TIME = #{startTime} and  END_TIME = #{endTime}
+  </select>
+
+
+<!-- 新增项目公告 -->
+  <insert id="insertProjectNotice" parameterType="cn.pioneeruniverse.dev.entity.TblNoticeInfo">
+    insert into tbl_project_notice(NOTICE_ID,PROJECT_ID,STATUS,CREATE_BY,CREATE_DATE,
+      LAST_UPDATE_BY, LAST_UPDATE_DATE) values(#{id,jdbcType=BIGINT}, #{projectIds,jdbcType=VARCHAR},
+      1, #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP},
+      #{lastUpdateBy,jdbcType=BIGINT}, #{lastUpdateDate,jdbcType=DATE})
+  </insert>
+
+
+
+
+
+</mapper>

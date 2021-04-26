@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.dev.dao.mybatis.TblUserInfoMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.dev.entity.TblUserInfo">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="USER_ACCOUNT" jdbcType="VARCHAR" property="userAccount" />
+    <result column="USER_PASSWORD" jdbcType="VARCHAR" property="userPassword" />
+    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+    <result column="EMPLOYEE_NUMBER" jdbcType="VARCHAR" property="employeeNumber" />
+    <result column="EMAIL" jdbcType="VARCHAR" property="email" />
+    <result column="GENDER" jdbcType="TINYINT" property="gender" />
+    <result column="BIRTHDAY" jdbcType="DATE" property="birthday" />
+    <result column="USER_TYPE" jdbcType="TINYINT" property="userType" />
+    <result column="COMPANY_ID" jdbcType="BIGINT" property="companyId" />
+    <result column="ENTRY_DATE" jdbcType="DATE" property="entryDate" />
+    <result column="LEAVE_DATE" jdbcType="DATE" property="leaveDate" />
+    <result column="DEPT_ID" jdbcType="INTEGER" property="deptId" />
+    <result column="USER_STATUS" jdbcType="TINYINT" property="userStatus" />
+    <result column="IS_ALLOWED" jdbcType="TINYINT" property="isAllowed" />
+    <result column="USER_SCM_PASSWORD" jdbcType="VARCHAR" property="userScmPassword" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <!--查询用户名称-->
+  <select id="getUserNameById" parameterType="java.lang.Long" resultType="string">
+  	select USER_NAME from tbl_user_info where ID = #{createById}
+  </select>
+	<!--查询全部用户-->
+  <select id="getAllTestUser" parameterType="map" resultType="map">
+SELECT   DISTINCT  userinfo.id as USER_ID,userinfo.USER_NAME,company.COMPANY_NAME,dept.DEPT_NAME FROM tbl_user_info userinfo
+	LEFT JOIN tbl_project_group_user groupuser ON
+	userinfo.ID = groupuser.USER_ID AND  groupuser.`STATUS`=1
+	LEFT JOIN tbl_project_group projectgroup ON
+	groupuser.PROJECT_GROUP_ID = projectgroup.ID AND projectgroup.`STATUS`=1
+	LEFT JOIN  tbl_project_info project ON
+	projectgroup.PROJECT_ID = project.ID AND project.`STATUS`=1
+	LEFT JOIN tbl_project_system prosys ON prosys.PROJECT_ID =project.ID AND prosys.STATUS=1 AND prosys.RELATION_TYPE = 1
+	LEFT JOIN tbl_system_info system ON
+	prosys.SYSTEM_ID = system.ID AND system.`STATUS`=1
+	LEFT JOIN tbl_requirement_feature requirement ON
+	system.ID = requirement.SYSTEM_ID
+	LEFT JOIN tbl_test_task dev ON
+	requirement.ID = dev.REQUIREMENT_FEATURE_ID
+    LEFT JOIN tbl_dept_info dept
+	on userinfo.DEPT_ID=dept.id
+	LEFT  JOIN tbl_company_info company
+	on userinfo.COMPANY_ID=company.id
+	<where>
+		userinfo.STATUS=1
+
+		<if test="devID !=null">
+ 		and	dev.ID =#{devID}
+ 		</if>
+ 		<if test="notWithUserID!=null">
+ 			AND userinfo.ID!=#{notWithUserID}
+ 		</if>
+ 	 	<if test="tblUserInfo.deptName != null and tblUserInfo.deptName != ''">
+            AND dept.DEPT_NAME LIKE CONCAT('%',#{tblUserInfo.deptName},'%')
+        </if>
+        <if test="tblUserInfo.companyName != null and tblUserInfo.companyName != ''">
+            AND company.COMPANY_NAME  LIKE CONCAT('%',#{tblUserInfo.companyName},'%') 
+        </if>
+        <if test="tblUserInfo.userName != null and tblUserInfo.userName != ''">
+            AND userinfo.USER_NAME LIKE CONCAT('%',#{tblUserInfo.userName},'%')
+        </if>
+	</where>
+	 ORDER BY userinfo.id asc
+		<if test="start != null and pageSize != null">
+			limit #{start},#{pageSize}
+		</if>
+  </select>
+	<!--查询用户ID-->
+  <select id="getUserIdByUserName" parameterType="java.lang.String" resultType="long">
+  	select ID from tbl_user_info where USER_NAME like concat("%",#{value,jdbcType=VARCHAR},"%")
+  </select>
+	<!--查询用户名称-->
+  <select id="getUserTable" resultType="map">
+  	SELECT `user`.ID id,`user`.USER_NAME userName,`user`.USER_ACCOUNT userAccount,company.COMPANY_NAME companyName,dept.DEPT_NAME deptName FROM tbl_user_info user
+	LEFT JOIN tbl_company_info company ON `user`.COMPANY_ID = company.ID
+	LEFT JOIN tbl_dept_info dept ON `user`.DEPT_ID = dept.ID
+	WHERE `user`.`STATUS` = 1
+	AND NOT EXISTS (SELECT 1 FROM tbl_test_set_execute_round_user executeuser WHERE executeuser.EXECUTE_USER_ID = `user`.ID 
+	AND executeuser.TEST_SET_ID = #{testSetId} AND executeuser.EXECUTE_ROUND = #{executeRound} AND executeuser.STATUS = 1)
+	<if test="userName!=null">
+		AND `user`.USER_NAME LIKE concat('%',#{userName},'%')
+	</if>
+	<if test="companyName!=null">
+		AND company.COMPANY_NAME LIKE concat('%',#{companyName},'%')
+	</if>
+	<if test="deptName!=null">
+		AND dept.DEPT_NAME LIKE concat('%',#{deptName},'%')
+	</if>
+  </select>
+  
+  <select id="getUserById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select * from tbl_user_info where ID = #{userId}
+  </select>
+
+	<!-- 同步时查询用户信息，无视状态 -->
+  <select id="findIdByUserAccount" parameterType="java.lang.String" resultType="long">
+  	select ID from TBL_USER_INFO WHERE USER_ACCOUNT = #{userAccount,jdbcType=VARCHAR} AND STATUS=1
+  </select>
+  
+  <select id="selectIdByUserNameSql" resultType="long">
+  	select ID from tbl_user_info
+  	where ${userNameSql}
+  </select>
+
+
+<select id="getUserByNameOrACC" resultType="Map">
+	SELECT DISTINCT
+	userinfo.ID id,
+	dept.DEPT_NAME deptName,
+	company.company_NAME companyName,
+	userinfo.USER_ACCOUNT userAccount,
+	userinfo.USER_NAME userName,
+	userinfo.EMPLOYEE_NUMBER employeeNumber,
+	userinfo.STATUS status,
+	userinfo.USER_STATUS userStatus
+	FROM TBL_USER_INFO userinfo
+	LEFT JOIN tbl_project_group_user pgUser ON pgUser.USER_ID = userinfo.ID and pgUser.status = 1
+	LEFT JOIN tbl_project_group pg ON pg.ID = pgUser.PROJECT_GROUP_ID and pg.status = 1
+	LEFT JOIN tbl_project_info project ON project.ID = pg.PROJECT_ID and project.status = 1
+	LEFT JOIN TBL_DEPT_INFO dept on dept.ID = userinfo.DEPT_ID AND dept.STATUS=1
+	LEFT JOIN tbl_company_info company on company.ID = userinfo.company_id AND company.STATUS=1
+	where
+		userinfo.status = 1 and project.ID IN
+		(SELECT DISTINCT project.ID id
+		FROM tbl_project_info project
+		LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = project.ID AND pgroup.STATUS =1
+		LEFT JOIN tbl_project_group_user pguser ON pguser.PROJECT_GROUP_ID = pgroup.ID  AND pguser.STATUS = 1
+		WHERE pguser.USER_ID = #{uid} and project.PROJECT_STATUS!=4 and project.STATUS = 1)
+		<if test="userName != null and userName != ''">
+			AND userinfo.USER_NAME LIKE CONCAT('%',#{userName},'%')
+		</if>
+	union
+	SELECT DISTINCT
+	userinfo.ID id,
+	dept.DEPT_NAME deptName,
+	company.company_NAME companyName,
+	userinfo.USER_ACCOUNT userAccount,
+	userinfo.USER_NAME userName,
+	userinfo.EMPLOYEE_NUMBER employeeNumber,
+	userinfo.STATUS status,
+	userinfo.USER_STATUS userStatus
+	FROM TBL_USER_INFO userinfo
+	LEFT JOIN tbl_project_group_user pgUser ON pgUser.USER_ID = userinfo.ID and pgUser.status = 1
+	LEFT JOIN tbl_project_group pg ON pg.ID = pgUser.PROJECT_GROUP_ID and pg.status = 1
+	LEFT JOIN tbl_project_info project ON project.ID = pg.PROJECT_ID and project.status = 1
+	LEFT JOIN TBL_DEPT_INFO dept on dept.ID = userinfo.DEPT_ID AND dept.STATUS=1
+	LEFT JOIN tbl_company_info company on company.ID = userinfo.company_id AND company.STATUS=1
+	where
+	userinfo.status = 1 and project.ID IN
+	(SELECT DISTINCT project.ID id
+	FROM tbl_project_info project
+	LEFT JOIN tbl_project_group pgroup ON pgroup.PROJECT_ID = project.ID AND pgroup.STATUS =1
+	LEFT JOIN tbl_project_group_user pguser ON pguser.PROJECT_GROUP_ID = pgroup.ID  AND pguser.STATUS = 1
+	WHERE pguser.USER_ID = #{uid} and project.PROJECT_STATUS!=4 and project.STATUS = 1)
+	<if test="userName != null and userName != ''">
+		AND userinfo.USER_ACCOUNT LIKE CONCAT('%',#{userName},'%')
+	</if>
+	ORDER BY id asc
+	LIMIT 0,20
+</select>
+
+</mapper>

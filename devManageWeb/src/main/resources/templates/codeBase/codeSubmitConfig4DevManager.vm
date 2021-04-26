@@ -1,0 +1,381 @@
+##代码提交配置-弹窗内容
+## 加载控件
+<div id="loading">
+    <img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif"/>
+</div>
+<style>
+    .singCheckBox {
+        width: 5%;
+        height: 100%;
+        line-height: 30px;
+    }
+
+    .singleData > div > div {
+        margin-top: 5px;
+    }
+
+    .table > thead > tr > th,
+    .table > tbody > tr > td {
+        text-align: center;
+        vertical-align: middle;
+        background-color: #f4f4fb;
+    }
+
+    .pagination > li > a,
+    .pagination > li {
+        cursor: pointer;
+    }
+
+    .option > button {
+        padding: 5px 10px;
+        height: auto;
+    }
+
+    .select_box {
+        padding: 2px;
+        width: 7rem;
+        margin-right: -24px;
+        margin-left: 2px
+    }
+
+    #btn:focus {
+        outline: none;
+    }
+
+    #groupBox {
+        width: 100%;
+        text-align: left;
+    }
+
+    #groupBox > span {
+        margin-top: 5px;
+    }
+
+    .dropdown-menu > li > .select_on {
+        background-color: #357ebd;
+        color: white;
+    }
+
+</style>
+
+
+<div id="svnPermissionsConfigDialog">
+    ## 标题按钮
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                style="color: red">&times;</span>
+        </button>
+        <span class="modal-title" id="microChildService">{{ systemName }} - 提交用户配置</span>
+    </div>
+
+    ## 内容
+    <div class="modal-body" v-show="!showLogFlag">
+        <div class="row">
+            <label class="def_col_3 control-label fontWeihgt">分组标签：</label>
+            <div class="def_col_6" style="margin-left: -3%;padding: 0">
+                <button class="btn btn-default" type="button" id="groupBox" data-toggle="dropdown">
+                    {{groupSelect ? groupSelect : '请选择'}}
+                    <span class="caret pull-right"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="groupBox" style="width: 100%">
+                    <li @click="groupSelect = ''"><a
+                            :class="groupSelect?'':'select_on'">请选择</a>
+                    </li>
+                    <li v-for="group in groupList" @click="groupSelect = group"><a
+                            :class="groupSelect === group?'select_on':''">{{group}}</a>
+                    </li>
+                </ul>
+            </div>
+            <button type="button" class="btn btn-primary glyphicon glyphicon-refresh" style="margin-left: 1rem;" @click="findScmConfig()"></button>
+            <button type="button" class="btn btn-default pull-right" @click="showLog()">
+                操作日志
+            </button>
+
+        </div>
+        <div class="allInfo">
+            <div class="def_title">
+                <span>配置项</span>
+                <span class="fa fa-angle-double-up" onclick="down(this)"></span>
+            </div>
+
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>编号</th>
+                    <th>分组</th>
+                    <th>关联仓库</th>
+                    <th>投产窗口</th>
+                    <th>子系统版本</th>
+                    <th>源代码地址</th>
+                    <th style="color: red; width: 9rem;">是否提交</th>
+                    <th>提交用户</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for=" (row, index) in configList"
+                    v-show="groupSelect ==''||groupSelect==row.groupFlag">
+                    <td>配置[{{index + 1}}]</td>
+                    <td>{{row.groupFlag}}</td>
+                    <td>{{row.scmRepositoryName}}</td>
+                    <td>{{row.commissioningWindowName}}</td>
+                    <td>{{row.systemVersionName}}</td>
+                    <td>{{row.scmUrl}}</td>
+                    <td>
+                        <span v-show="!row.edit">{{row.submitStatus === 1 ? "是" : row.submitStatus === 2 ? "否" : ""}}</span>
+                        <select v-show="row.edit" class="form-control select_box"
+                                style="padding-top: 2px;" v-model="row.editSubmitStatus">
+                            <option value="">请选择</option>
+                            <option value="1">是</option>
+                            <option value="2">否</option>
+                        </select>
+                    </td>
+                    <td>
+                        <span v-show="!row.edit">{{row.submitUserRealNames.toString()}}</span>
+                        <div v-show="row.edit" class="form-control _flex_c col-md-12">
+                            <span v-for="(user, i) in row.editUserName" @click="deleteUser(row, i)"
+                                  class="input_tit _margin_4">{{user}}</span>
+                            <input type="text" style="width: 100%;" class="bor_no" placeholder="请输入关键字搜索"
+                                   @input="searchUser(row, index)" @blur="closeSearchUser(row)"
+                                   v-model="row.searchUser"/>
+                            <ul class="search_list" style="display: block;"
+                                :style="row.editUserName.length>0?'top: 5em':'top: 32px'"
+                                v-show="row.searchBox">
+                                <li style="text-align: center">
+                                    <div class="fontWeihgt col-md-6">姓名</div>
+                                    <div class="fontWeihgt col-md-6">用户名</div>
+                                </li>
+                                <li class="search_list_item" style="text-align: center"
+                                    v-for="su in row.searchUsers" @click="addUser(row, su)"
+                                    v-show="row.editUserId.indexOf(su.id) === -1">
+                                    <div class="col-md-6">{{su.userName}}</div>
+                                    <div class="col-md-6">{{su.userAccount}}</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                    <td class="option">
+                        <button v-show="!row.edit" type="button" class="btn btn-default glyphicon glyphicon-cog"
+                                @click="editShow(row)"></button>
+                        <button v-show="row.edit && (row.editUserId.toString() !== row.submitUserNamesCollection.toString() || row.editSubmitStatus != row.submitStatus)"
+                                type="button" class="btn btn-primary glyphicon glyphicon-ok"
+                                @click="submit(row)"></button>
+                        <button v-show="row.edit" type="button" class="btn btn-danger glyphicon glyphicon-remove"
+                                @click="row.edit = false"></button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="def_btnGroup"></div>
+        </div>
+    </div>
+
+    ## 操作日志
+    <div class="modal-body" v-show="showLogFlag">
+        <div class="row" style="margin-bottom: 1rem">
+            <button type="button" class="btn btn-default pull-right" @click="showLogFlag = false">
+                关闭
+            </button>
+        </div>
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>配置编号</th>
+                <th>修改前</th>
+                <th>修改后</th>
+                <th>是否提交</th>
+                <th>操作人</th>
+                <th>操时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="log in logList">
+                <td>{{rowNames[log.scmSubmitId]}}</td>
+                <td>{{log.oldDataName}}</td>
+                <td>{{log.newDataName}}</td>
+                <td>{{log.submitStatus}}</td>
+                <td>{{log.operationName}}</td>
+                <td>{{log.createDate}}</td>
+            </tr>
+            </tbody>
+        </table>
+        <ul class="pagination pull-right" style="margin-top:0" v-show="logCount > 10">
+            <li @click="logPage-=logPage!==1?1:0"><a>«</a></li>
+            <li v-for="i in logPageCount" :class="logPage===i?'active':''" @click="logPage = i"><a>{{i}}</a></li>
+            <li @click="logPage+=logPage!==logPageCount?1:0"><a aria-label="Next"><span>»</span></a></li>
+        </ul>
+    </div>
+
+</div>
+
+
+<script type="test/javascript" src="#springUrl('')/systemui/static/js/template-debug.js"></script>
+<script type="text/javascript" src="#springUrl('')/devManageui/static/js/vue/vue.min.js"></script>
+<script>
+    const vm = new Vue({
+        el: '#svnPermissionsConfigDialog',
+        data: {
+            systemName: $("#systemName_$systemId").val(),
+            configList: [],
+            rowNames: {},
+            groupList: [],
+            groupSelect: "",
+            showLogFlag: false,
+            logList: [],
+            logPage: 1,
+            logCount: 0,
+            logPageCount: 0
+        },
+        mounted: function () {
+            this.findScmConfig();// 机构
+        },
+        methods: {
+            // 查询配置列表
+            findScmConfig: function () {
+                $("#loading").show();
+                $.ajax({
+                    url: '/devManage/version/findScmConfig?systemId=${systemId}&scmType=${scmType}',
+                    type: 'POST',
+                    success: function (data) {
+                        this.groupList = [];
+                        this.rowNames = {};
+                        for (let i = 0; i < data.length; i++) {
+                            // 编辑数据初始化
+                            data[i].editUserName = [];
+                            data[i].editUserId = []
+                            data[i].searchBox = false;
+                            data[i].searchUser = '';
+                            data[i].submitUserRealNames = data[i].submitUserRealNames? data[i].submitUserRealNames:[]
+                            data[i].submitUserNamesCollection = data[i].submitUserNamesCollection?data[i].submitUserNamesCollection:[]
+                            // 配置编号
+                            this.rowNames[data[i].id] = "配置 [" + (i + 1) + "]";
+                            // 获取分组数据
+                            if (this.groupList.indexOf(data[i].groupFlag) === -1) {
+                                this.groupList.push(data[i].groupFlag);
+                            }
+                        }
+                        this.configList = data;
+                        // 数据装载完成刷新控件
+                        this.$nextTick(() => {
+                            $('.select-picker').selectpicker('refresh');
+                            $("#loading").hide();
+                        });
+
+                    }.bind(this)
+                });
+            },
+            // 提交用户查询下拉框
+            searchUser(row, i) {
+                if (!this.mark && row.searchUser !== '') {
+                    this.mark = true;
+                    setTimeout(() => {
+                        this.mark = false;
+                        $.ajax({
+                            url: '/devManage/version/findProjectUser?systemId=${systemId}&userName=' + this.configList[i].searchUser,
+                            type: 'POST',
+                            success: function (data) {
+                                this.mark = false;
+                                row.searchBox = true;
+                                row.searchUsers = data;
+                            }.bind(this)
+                        });
+                    }, 200)
+                }
+            },
+            // 展示操作日志
+            showLog() {
+                $("#loading").show();
+                this.showLogFlag = true;
+                $.ajax({
+                    url: '/devManage/version/findOperationLog?systemId=${systemId}&&page=' + this.logPage,
+                    type: 'POST',
+                    success: function (data) {
+                        this.logList = data.result;
+                        this.logCount = data.totalCount > 0 ? data.totalCount : 0;
+                        this.logPageCount = data.totalPages > 0 ? data.totalPages : 0;
+                        $("#loading").hide();
+                    }.bind(this)
+                });
+            },
+            // 提交用户关闭下拉框
+            closeSearchUser(row) {
+                // 延迟关闭，防止失去焦点，点击失效
+                setTimeout(() => {
+                    row.searchBox = false;
+                }, 200);
+            },
+            // 提交用户下拉列表点击事件
+            addUser(row, user) {
+                row.searchUser = "";
+                row.editUserName.push(user.userName);
+                row.editUserId.push(user.id);
+            },
+            // 删除提交用户
+            deleteUser(row, i) {
+                row.editUserName.splice(i, 1);
+                row.editUserId.splice(i, 1);
+            },
+            editShow(row) {
+                this.$set(row, 'edit', true);
+                this.$set(row, 'editSubmitStatus', row.submitStatus.toString());
+                this.$set(row, 'editUserName', row.submitUserRealNames ? row.submitUserRealNames.split(",") : []);
+                this.$set(row, 'editUserId', JSON.parse(JSON.stringify(row.submitUserNamesCollection).replace('""', '').replace(',,', ',')));
+
+            },
+            // 提交前数据校验
+            validate(r) {
+                const param = [];
+                if (r.editSubmitStatus === '1' && (r.editUserId === null || r.editUserId.length === 0)) {
+                    layer.alert("保存代码提交配置失败！<br/>必须填写提交用户", {
+                        icon: 2,
+                        title: "提示信息"
+                    });
+                    return false;
+                } else if (r.editUserId.toString() !== r.submitUserNamesCollection.toString() || r.editSubmitStatus != r.submitStatus) {
+                    param.push({
+                        id: r.id,
+                        userIds: r.editUserId.toString(),
+                        submitStatus: r.editSubmitStatus,
+                        systemId: ${systemId}
+                    });
+                }
+                r.edit = false;
+                return param;
+            },
+            // 保存配置
+            submit(row) {
+                const param = this.validate(row);
+                if (!param || param.length === 0) return;
+                $("#loading").show();
+                $.ajax({
+                    url: '/devManage/version/updateSubmitUser',
+                    type: 'POST',
+                    dataType: "json",
+                    contentType: "application/json;charset=UTF-8",
+                    data: JSON.stringify(param),
+                    success: function (data) {
+                        row.submitStatus = parseInt(row.editSubmitStatus);
+                        row.submitUserRealNames = row.editUserName.toString();
+                        row.submitUserNamesCollection = JSON.parse(JSON.stringify(row.editUserId));
+                        $("#loading").hide();
+                        if (data < 0) {
+                            layer.alert("保存代码提交配置失败", {
+                                icon: 2,
+                                title: "提示信息"
+                            });
+                        } else {
+                            layer.alert("保存代码提交配置成功", {
+                                icon: 1,
+                                title: "提示信息"
+                            });
+                        }
+                    }.bind(this)
+                });
+            }
+        }
+    });
+    vm.$watch('logPage', function () {
+        vm.showLog();
+    });
+</script>
+

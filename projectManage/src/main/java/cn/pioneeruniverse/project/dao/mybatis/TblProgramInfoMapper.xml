@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="cn.pioneeruniverse.project.dao.mybatis.TblProgramInfoMapper">
+	<resultMap id="BaseResultMap"
+		type="cn.pioneeruniverse.project.entity.TblProgramInfo">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="PROGRAM_NAME" jdbcType="VARCHAR" property="programName" />
+		<result column="PROGRAM_NUMBER" jdbcType="VARCHAR" property="programNumber" />
+		<result column="MANAGE_USER_ID" jdbcType="BIGINT" property="manageUserId" />
+		<result column="PROGRAM_INTRO" jdbcType="VARCHAR" property="programIntro" />
+		<result column="PROGRAM_BACKGROUND" jdbcType="VARCHAR" property="programBackground" />
+		<result column="REMARK" jdbcType="VARCHAR" property="remark" />
+		<result column="STATUS" jdbcType="TINYINT" property="status" />
+		<result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+		<result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+		<result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+		<result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+
+	</resultMap>
+	
+	<!-- <sql id="Base_Column_List">
+		ID, PROGRAM_NAME, PROGRAM_NUMBER, MANAGE_USER_ID, PROGRAM_INTRO, PROGRAM_BACKGROUND, REMARK, STATUS,
+		CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE
+	</sql> -->
+	
+	<!-- 获取项目群总数 -->
+	<select id="getCountProgram" resultType="long">
+		select count(*) from tbl_program_info
+	</select>
+	
+	<!-- 新增项目群 -->
+	<insert id="insertProgram" useGeneratedKeys="true" keyProperty="id" parameterType="cn.pioneeruniverse.project.entity.TblProgramInfo">
+		insert into tbl_program_info (PROGRAM_NAME, PROGRAM_NUMBER, MANAGE_USER_ID, PROGRAM_INTRO, PROGRAM_BACKGROUND, REMARK,
+					STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE)	
+					values
+					(#{programName}, #{programNumber}, #{manageUserId}, #{programIntro}, #{programBackground}, #{remark}, #{status},
+					#{createBy}, #{createDate}, #{lastUpdateBy}, #{lastUpdateDate})
+	</insert>
+	
+	<!-- 新增项目群和项目关联关系 -->
+	<insert id="insertProgramProject" parameterType="cn.pioneeruniverse.project.entity.TblProgramProject">
+		insert into tbl_program_project (PROGRAM_ID, PROJECT_ID, STATUS, CREATE_BY, CREATE_DATE, LAST_UPDATE_BY, LAST_UPDATE_DATE)
+						values
+						(#{programId}, #{projectId}, #{status}, #{createBy}, #{createDate}, #{lastUpdateBy}, #{lastUpdateDate})
+	</insert>
+	
+	<!-- 系统管理员查询项目群 -->
+	<select id="getAllPrograms" parameterType="map" resultMap="BaseResultMap">
+		select program.ID, program.PROGRAM_NAME, program.PROGRAM_NUMBER, program.MANAGE_USER_ID, user.USER_NAME manageUser
+		 from tbl_program_info program 
+		 left join tbl_user_info user on user.ID = program.MANAGE_USER_ID
+		 <where>
+		 	<if test="programInfo.programNumber != null and programInfo.programNumber != ''">
+		 		and program.PROGRAM_NUMBER like concat("%",#{programInfo.programNumber,jdbcType=VARCHAR},"%")
+		 	</if>
+		 	<if test="programInfo.programName != null and programInfo.programName != ''">
+		 		and program.PROGRAM_NAME like concat("%",#{programInfo.programName,jdbcType=VARCHAR},"%")
+		 	</if>
+		 	<if test="programInfo.manageUserId != null and programInfo.manageUserId != ''">
+		 		and program.MANAGE_USER_ID = #{programInfo.manageUserId,jdbcType=BIGINT}
+		 	</if>
+		 	and program.STATUS = 1
+		 </where>
+			order by program.ID DESC
+			limit #{start},#{rows}
+		
+	</select>
+	
+	<!-- 普通人员查询，只能查询同项目组下的项目群信息  -->
+	<select id="getProgramsByUid" parameterType="map" resultMap="BaseResultMap">
+		select distinct program.ID, program.PROGRAM_NAME, program.PROGRAM_NUMBER, program.MANAGE_USER_ID, user.USER_NAME manageUser
+		 from tbl_program_info program 
+		 left join tbl_user_info user on user.ID = program.MANAGE_USER_ID
+		 left join tbl_program_project propro on propro.PROGRAM_ID = program.ID and propro.STATUS = 1
+		 left join tbl_project_info project on project.ID = propro.PROJECT_ID and project.STATUS = 1
+		 left join tbl_project_group tpg on tpg.PROJECT_ID = project.ID and tpg.STATUS = 1 
+		 left join tbl_project_group_user tpgu on tpgu.PROJECT_GROUP_ID = tpg.ID and tpgu.STATUS = 1
+		 <where>
+		 	<if test="uid!=null and uid!=''">
+				and (tpgu.USER_ID = #{uid} or program.CREATE_BY = #{uid} or program.MANAGE_USER_ID = #{uid})
+			</if>
+		 	<if test="programInfo.programNumber != null and programInfo.programNumber != ''">
+		 		and program.PROGRAM_NUMBER like concat("%",#{programInfo.programNumber,jdbcType=VARCHAR},"%")
+		 	</if>
+		 	<if test="programInfo.programName != null and programInfo.programName != ''">
+		 		and program.PROGRAM_NAME like concat("%",#{programInfo.programName,jdbcType=VARCHAR},"%")
+		 	</if>
+		 	<if test="programInfo.manageUserId != null and programInfo.manageUserId != ''">
+		 		and program.MANAGE_USER_ID = #{programInfo.manageUserId,jdbcType=BIGINT}
+		 	</if>
+		 	and program.STATUS = 1
+		 </where>
+			order by program.ID DESC
+			limit #{start},#{rows}
+	</select>
+	
+	<!-- 通过ID获取项目群 -->
+	<select id="getProgramById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select program.ID, program.PROGRAM_NAME, program.MANAGE_USER_ID, user.USER_NAME manageUser,
+				program.PROGRAM_INTRO, program.PROGRAM_BACKGROUND, program.REMARK
+				from tbl_program_info program 
+				left join tbl_user_info user on user.ID = program.MANAGE_USER_ID
+				where program.ID = #{id}
+	</select>
+	
+	<!-- 获取项目群中的项目 -->
+	<select id="getProjectsByProgramId" parameterType="java.lang.Long" resultType="cn.pioneeruniverse.project.entity.TblProjectInfo">
+		select pro.ID id, pro.PROJECT_NAME projectName, pro.PROJECT_CODE projectCode, pro.PLAN_START_DATE planStartDate,
+			   pro.PLAN_END_DATE planEndDate, pro.DEPT_ID deptId, pro.PROJECT_STATUS projectStatus, dept.DEPT_NAME deptName
+			from tbl_project_info pro
+			left join tbl_program_project propro on propro.PROJECT_ID = pro.ID 
+			left join tbl_dept_info dept on dept.ID = pro.DEPT_ID and dept.`STATUS` = 1
+			where propro.PROGRAM_ID = #{id} and propro.`STATUS` = 1
+	</select>
+	
+	<!-- 更新项目群 -->
+	<update id="updateProgram" parameterType="cn.pioneeruniverse.project.entity.TblProgramInfo">
+		update tbl_program_info set PROGRAM_NAME = #{programName}, MANAGE_USER_ID = #{manageUserId}, PROGRAM_INTRO = #{programIntro},
+			PROGRAM_BACKGROUND = #{programBackground}, REMARK = #{remark}, LAST_UPDATE_BY = #{lastUpdateBy}, LAST_UPDATE_DATE = #{lastUpdateDate}
+			where ID = #{id}
+	</update>
+	
+	<!-- 逻辑删除项目群和项目关联 -->
+	<update id="updateProgramProject" parameterType="java.lang.Long">
+		update tbl_program_project set STATUS = 2 where PROGRAM_ID = #{id}
+	</update>
+
+</mapper>	

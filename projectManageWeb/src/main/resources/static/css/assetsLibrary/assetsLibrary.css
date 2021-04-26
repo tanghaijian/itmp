@@ -1,0 +1,236 @@
+*{
+	font-size: 12px;
+}
+.notRequirement>.title{
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+}
+ 
+.ztree li span.button.root_open{background-position:-105px -63px}
+.ztree li span.button.root_close{background-position:-126px -63px}
+.ztree li span.button.roots_open{background-position: -105px 0;}
+.ztree li span.button.roots_close{background-position: -126px 0;}
+.ztree li span.button.center_open{background-position: -105px -21px;}
+.ztree li span.button.center_close{background-position: -126px -21px;}
+.ztree li span.button.bottom_open{background-position: -105px -42px;}
+.ztree li span.button.bottom_close{background-position: -126px -42px;}
+.ztree li span.button.noline_open{background-position: -105px -84px;}
+.ztree li span.button.noline_close{background-position: -126px -84px;} 
+.ztree li span.button.roots_docu{background-position: -84px 0;}
+.ztree li span.button.center_docu{background-position: -84px -21px;}
+.ztree li span.button.bottom_docu{background-position: -84px -42px;}
+ 
+
+html{
+    height: 100%;
+}
+body,.makeDownModal{
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+    background-color: #F2F2F2;
+}
+[class*="def_col_"]{
+    padding: 0;
+}
+.search{
+    padding: 13px 0;
+    border-bottom: 1px solid #E4E4E4;
+}
+body>.content,.makeDownModal>.content{
+    flex: 1;
+    display: flex ;
+    flex-direction: row;
+}
+body>.content>.left,.makeDownModal>.content>.left{
+    width: 23%;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+body>.content>.right,.makeDownModal>.content>.right{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    min-width: 0;
+}
+.menu{
+    flex: 1;
+    background-color: white;
+    border-radius: 4px;
+    margin: 10px;
+    margin-right: 0;
+    max-height: 600px !important;
+    overflow: auto;
+}
+.requirement,.notRequirement{
+    flex: 1;
+    min-width: 0;
+}
+.requirement{
+    display: none;
+    flex-direction: column;
+}
+.notRequirement{
+    display: flex;
+    flex-direction: column;
+}
+.notRequirement>.title{
+    padding: 15px 0;
+    font-weight: bold;
+    height: 50px;
+}
+.noData{
+    line-height: 90px;
+    text-align: center;
+}
+.ztree li span.button.ico_open,.ztree li span.button.ico_close,.ztree li span.button.ico_docu{
+    background-image: url("../../images/assetsLibrary/file.jpg");
+    background-repeat: no-repeat;
+    background-position: 0;
+}
+.ztree li{
+    line-height: 20px;
+}
+.reqInfo{
+    height: 50px;
+    line-height: 50px;
+    font-size: 12px;
+}
+.history{
+    display: inline-block;
+    color: #1890FF;
+    font-weight: bold;
+    float: right;
+    cursor: pointer;
+}
+.icon_history{
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background: url("../../images/assetsLibrary/history.png") no-repeat;
+    background-size: cover;
+    float: left;
+    margin-top: 16px;
+    margin-right: 4px;
+}
+.build,.last{
+    float: right;
+    margin-right: 20px;
+}
+.version {
+    font-size: 14px;
+    font-weight: bold;
+}
+.reqBlock{
+    flex: 1;
+    height: 100%;
+}
+.reqBlock>div{
+    height: 100%;
+}
+.documentArea{
+    border-radius: 4px;
+    background-color: #FFF;
+    height: 100%;
+}
+.rightArea{
+    margin-left: 10px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.file,.relevanceInfo{
+    border-radius: 4px;
+    background-color: #FFF;
+}
+.file{
+    min-height: 250px;
+    margin-bottom: 10px;
+}
+.relevanceInfo{
+    flex: 1;
+}
+.titleDiv{
+    height: 45px;
+    line-height: 45px;
+    padding: 0 15px;
+    border-bottom: 1px solid #E4E4E4;
+}
+.titleDiv>.font{
+    font-size: 13px;
+    font-weight: bold;
+}
+.titleDiv>.more{
+    float: right;
+    font-size: 12px;
+    color: #999999;
+    cursor: pointer;
+}
+.titleDiv>.more:hover{
+    color: #1890FF;
+}
+.fileLists{
+    padding-bottom: 8px;
+}
+.flieDiv{
+    padding: 8px 10px 0px 32px;
+    font-size: 12px;
+    cursor: pointer;
+}
+.flieDiv:hover{
+    text-decoration: underline;
+}
+.file .flieDiv{
+    background: url("../../images/assetsLibrary/link.png") no-repeat;
+    background-size: 20px 20px;
+    background-position: 8px center;
+}
+.relevanceInfo .flieDiv{
+    background: url("../../images/assetsLibrary/link2.png") no-repeat;
+    background-size: 15px 15px;
+    background-position: 10px center;
+}
+
+.editormd-html-preview, .editormd-preview-container{
+    border-radius: 4px !important;
+}
+.fileIcon{
+    background: url("../../images/assetsLibrary/fileBtn.png") no-repeat !important;
+    background-size: 18px 18px !important;
+    margin-left: 8px !important;
+}
+
+.downfilesIcon,.marksIcon{
+	width: 33px;
+	height: 17px;
+	display: inline-block; 
+	vertical-align: middle;
+	margin-left: 5px;
+}
+.downfilesIcon{
+	background: url("../../images/assetsLibrary/files.jpg") no-repeat !important;
+}
+.marksIcon{
+	background: url("../../images/assetsLibrary/marks.jpg") no-repeat !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

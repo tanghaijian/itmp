@@ -1,0 +1,16 @@
+body{
+	padding: 0 20px;
+}
+.def_content{
+	padding: 8px 15px;
+}
+.parentModal,.childModal{
+	display: none;
+}
+
+.redStar {
+    color: red;
+}
+#System_code_list{
+	    padding-left: 0;
+}

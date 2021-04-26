@@ -1,0 +1,407 @@
+﻿body{
+    width: 100%; 
+    flex-direction: column;
+    position: fixed;
+    min-height: 100%; 
+}
+.top{
+    background-color: #FFF; 
+    margin: 8px;
+    margin-bottom: 2px;
+    padding-right: 6px;
+}
+.selectDiv>.def_col_len>.font_right{
+	line-height: 30px;
+}
+.selectDiv [class*="def_col_"]{
+	 padding: 0;
+}
+.selectDiv{
+    margin: 5px 0 8px; 
+}
+.selectDiv>.def_col_len{
+    padding-left: 6px;
+    width: 16%;
+}
+.def_col_len .dropdown-toggle{
+    border-color: #9933CC;
+    background-color: #F7EEFB;
+}
+.def_col_len .dropdown-toggle:hover{
+    border-color: #9933CC;
+    background-color: #F7EEFB;
+} 
+#cheakProjectGroup{
+	border-color: #9933CC;
+    background-color: #F7EEFB !important;
+}
+.searchInput{
+    border-color: #9933CC;
+    background-color: #F7EEFB !important;
+}
+.cheakSprintBtn{
+	padding : 0px !important;
+}
+.cheakSprintBtn span{
+	color: #FFF;
+}
+.cheakSprintBtn .btn{
+	margin-left: 8px;
+}
+.borderLeft{
+	border-left :1px solid #FFF;
+	padding-left: 6px;
+}
+#cheakWorkTaskBtn{
+	padding-left: 28px;
+	background: url("../../images/displayBoard/duocengci.png") no-repeat  7px 7px / 16px 16px !important; 
+	background-color: #42429B !important; 
+}
+#refreshBtn { 
+	padding-left: 28px;
+	background: url("../../images/displayBoard/shuaxin.png") no-repeat  7px 7px / 16px 16px !important; 
+	background-color: #33CC99 !important;  
+	 
+}
+.cheakSystem,.cheakSprint,.cheakSprintBtn{
+	display: none;
+}
+.bottom{ 
+    border-top: 1px solid #EBEBEB;  
+    background-color: #FFF;   
+    position: absolute;
+    top: 43px;
+    bottom: 0px;
+    left: 8px;
+    right: 8px; 
+    overflow-x: auto;
+}
+.bottom>div{ 
+	position: absolute; 
+	top: 0px;
+    bottom: 8px;
+    left: 0;
+    right: 0;    
+}
+ 
+.bottom>div>div{
+    padding-left: 6px;  
+    float:left; 
+    min-height: 100%;
+    width: 280px;
+}
+.sortable{ 
+    transition: 0.2s; 
+    position: relative;
+}
+.shrink{
+   width: 44px !important;
+}  
+.shrink .overHeadFont{
+    width: 38px;
+}
+.shrink .head .headFont,.shrink .taskBody .taskCont {
+	display: none;
+}
+.shrink .rightBtn{
+	border-bottom: 1px solid #EBEBEB; 
+}
+.evenBg{
+    background-color: #F1F1F1;
+}
+.head{ 
+    background-color: #F7F7F7;
+    position: relative; 
+    padding:2px 13px 0px 13px;
+    width: 100%;
+    height: 36px;
+    border-radius: 3px 3px 0 0;
+}
+.headFont{ 
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.headFont{ 
+    line-height: 36px; 
+    font-size: 13px;
+   	font-weight: bold; 
+    height: 100%;
+}
+/* .headFont,.rightBtn{
+    text-align: center;
+    line-height: 36px;
+    color: #FFF;
+    height: 100%;
+} */
+.rightBtn{
+    width: 38px; 
+    position: absolute;
+    text-align: center;
+    line-height: 36px;
+    height: 100%;
+    right: 0;
+    top: 0;
+    font-size: 20px;
+    cursor:pointer;
+}
+.rightBtn span{
+    color: #717171;
+    text-align: center;
+    font-weight: 500;
+}
+.taskBody{   
+    position: absolute;
+    top: 36px;
+    bottom: 0;
+    width: 274px;
+    border-radius: 0 0 3px 3px ;
+}
+.taskBodyBg1{
+    background-color: #F7F7F7;
+}
+.taskBodyBg2{
+    background-color: #F7F7F7;
+}
+.taskCont{
+    width: 100%;
+    min-height: 100%;
+} 
+.overHeadFont{
+    position: absolute;
+    height: 100%;
+    width: 0;
+    top: 0;
+    left: 0;
+    transition: .2s;
+    overflow: hidden;
+}
+.overHeadFont>div{
+    position: absolute;
+    top: 140px;
+    margin-top: 56px;
+    line-height: 38px;
+    left: 4px;
+    width: 200px;
+    font-weight: bold;
+    height: 38px;
+    transform: rotate(  -90deg);
+    transform-origin:15px 50%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: right;
+}
+.taskDiv{
+    margin: 0px 3px 8px 3px;
+    border: 1px solid #EEEEEE;
+    border-radius: 3px;
+    background-color: #fff; 
+    overflow: hidden;
+}
+/*鐘舵��*/
+ 
+.status-Emergency,.status-cancel,.status-toBeImplemented,.status-inImplemented,.status-complete,.status-review,.status-notPass,.status-defind{
+    border-bottom: 1px solid #F2F2F2;
+}
+.status-Emergency{
+	border-left: 5px solid #F84941;
+} 
+.status-cancel{
+    border-left: 5px solid #FD5723; 
+}
+
+
+.status-toBeImplemented{
+    border-left: 5px solid #FF3333; 
+}
+.status-inImplemented{
+    border-left: 5px solid #F18100; 
+}
+.status-complete{
+    border-left: 5px solid #FFCC33; 
+}
+.status-review{
+    border-left: 5px solid #0066CC; 
+}
+.status-notPass{
+    border-left: 5px solid #FF0000; 
+}
+.status-defind{
+    border-left: 5px solid #dddddd; 
+}
+.taskTitDiv{
+    padding: 6px 0 0;
+    margin-bottom: 0;
+} 
+.taskTitDiv>[class*="def_col_"]{
+	padding-left: 0; 
+}
+.taskCode {
+	padding-left: 3px !important;
+}
+.taskPreson{
+	padding-left: 22px !important;
+	background: url("../../images/displayBoard/renyuan.png") no-repeat  4px 3px / 14px 14px; 
+}  
+.taskTime{
+	padding-left: 20px !important;
+	background: url("../../images/displayBoard/gongshi.png") no-repeat  4px 3px / 15px 15px; 
+} 
+.taskNum{
+    padding-left: 20px !important;
+	background: url("../../images/displayBoard/chaifen.png") no-repeat  4px 3px / 15px 15px;
+}
+ 
+.taskDescribe{
+    padding: 5px 3px !important; 
+    word-wrap: break-word;
+    word-break: normal;
+    word-break:break-all;	
+}
+.taskCode,.taskTime,.taskNum,.taskPreson{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.taskPreson,.taskNum,.taskTime{
+	line-height: 22px;
+}
+.taskCode>a{
+	color: rgb(102, 102, 102);
+	font-weight: bold;
+} 
+.taskContHead{
+    margin: 5px 0; 
+    background-color: #F1F1F1;
+    padding: 6px 8px;
+    font-weight: bold;
+    line-height: 20px;
+} 
+.taskContHead .rowdiv{
+    margin: 0;  
+} 
+.taskContHead [class*="def_col_"]{
+	padding: 0 3px;
+}
+.childTask{
+	padding: 0 8px;
+}
+.editTask_a,.checkTask_a{
+	display: block; 
+	height: 22px;
+}
+.editTask_a{
+	background: url("../../images/displayBoard/bianji.png") no-repeat  4px 3px / 15px 15px;
+}
+
+.StatusTask_a{
+	background: url("../../images/displayBoard/renwu.png") no-repeat  4px 3px / 15px 15px;
+}
+.checkTask_a{ 
+	background: url("../../images/displayBoard/ccgl-dingdanchaibing-4.png") no-repeat  4px 3px / 15px 15px;
+}
+.numColor{
+	color: #1A99DC;
+	font-weight: bold;
+}
+.childTask .taskTitDiv{
+	border-bottom: 1px solid #F2F2F2;
+}
+.fa-check-square{
+	font-size: 15px !important;
+}
+
+
+.devTaskPriority0{
+	color: #FF3333;
+}
+.devTaskPriority1{
+	color: #FF3333;
+}
+.devTaskPriority2{
+	color: #F18100;
+}
+.devTaskPriority3{
+	color: #FFCC33;
+}
+.devTaskPriority4{
+	color: #0066CC;
+}
+.devTaskPriorityUndef{
+	color: #dddddd;
+}
+
+
+.menuContent{
+    position: absolute;
+    z-index: 100000;
+    display: none;
+    float: left;
+    width: 215px;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    list-style: none;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    max-height: 400px;
+    overflow: auto;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+    background-clip: padding-box;
+}
+
+
+.menuContent .ztree{
+    display: block;
+    border: none;
+}
+.ztree li span.button.ico_docu,.ztree li span.button.ico_open,.ztree li span.button.ico_close{
+    background-position: 0 0;
+    background: url( "../../images/devtask/preGroup.png" ) no-repeat;
+}
+.ztree li a.curSelectedNode{
+    background-color: #E6E6E6;
+    height:100%;
+}
+#fixed_nav{
+    position: fixed;
+    top:44px;
+    left: 0;
+    border-radius: 5px;
+    padding:0 8px;
+    display: none;
+}
+#fixed_nav .nav_flex{
+    display: flex;
+}
+#fixed_nav .nav_flex .sortable {
+    padding-left: 6px;
+    height: 100%;
+    width: 280px;
+    white-space: nowrap;
+}
+.bg_247{
+    background: #F2F2F2 !important;
+    border: 1px solid #ECECEC !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

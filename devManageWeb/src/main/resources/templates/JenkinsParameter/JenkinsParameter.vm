@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>构建部署参数配置</title>
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-datetimepicker.min.css" />
+    <link rel="stylesheet"  type="text/css"  media="screen" href="#springUrl('')/devManageui//static/jqgrid/jqgrid/css/ui.jqgrid-bootstrap4.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jqgrid/jqgrid/css/jqGridDefined.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/component.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/jquery.editable-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+    ##<link rel="stylesheet" href="#springUrl('')/devManageui/static/css/devtask/devtask.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jquery-ztree/3.5.36/css/zTreeStyle/zTreeStyle.css" />
+    <link rel="stylesheet" href="#springUrl('')/devManageui/static/css/JenkinsParameter/JenkinsParameter.css" />
+    <style>
+    .ztree li span.button.ico_docu, .ztree li span.button.ico_open, .ztree li span.button.ico_close{
+    	background-image: url(#springUrl('')/systemui/static/jquery-ztree/3.5.36/css/zTreeStyle/img/zTreeStandard.png);
+    }
+    .red{
+    	color:red;
+    }
+    </style>
+</head>
+<body>
+    <div class="color1">
+        <div class="container-fluid" id="search_div">
+            <div class="row control-row">
+                <div class="col-md-6 col-md-offset-2">
+                    <div class="search_font">
+                        <label class="control-label">参数名称：</label>
+                    </div>
+                    <div class="search_input">
+                        <input type="text" class="form-control" placeholder="请输入" id="params_Name" />
+                    </div>
+                </div>
+            </div>
+            <div class="row control-row search_btn">
+
+                <button type="button" class="btn btn-primary" id="searchInfo_btn">搜&nbsp;&nbsp;&nbsp;索</button>
+                <button type="button" id="clearSearch_btn" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+            </div>
+        </div>
+        <div id="downBtn">
+            <span class="fa fa-caret-up"></span>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="content-btn">
+         #if($auth.hasPermission("$token","devManage:jenkinsParameter:add"))
+             <button type="button" onclick="_add('add')" class="btn btn-primary">新建构建参数</button>
+        #end
+        </div>
+        <div class="content-table">
+            <div class="wode">
+                <table id="parameterlist"></table>
+                <div id="parameterPager"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addModel" tabindex="-1" role="dialog" aria-labelledby="newPerson">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <span class="modal-title" id="microChildService">新建注册任务参数化配置</span>
+                    <input type="hidden" id="edit_id" />
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" id="_addFrom" accept-charset="utf-8" enctype="multipart/form-data">
+                        <div class="rowdiv">
+                            <div class="form-group def_col_18">
+                                <label class="def_col_8 control-label font_right fontWeihgt">
+                                    <span class="red">*</span>参数名称：</label>
+                                <div class="def_col_28 control-label">
+                                    <input type="text" class="form-control" placeholder="请输入" id="paramName" name="paramName">
+                                </div>
+                            </div>
+                            <div class="form-group def_col_18">
+                                <label class="def_col_8 control-label font_right fontWeihgt">
+                                    <span class="red">*</span>子系统：</label>
+                                <div class="def_col_28 control-label"  style="padding-left:0;">
+                                    <input type="hidden" id="systemId" name="systemId">
+                                    <input type="text" class="form-control"
+                                        autocomplete="off" placeholder="请输入关键字进行匹配" id="system_Name" name="systemName">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rowdiv">
+                            <div class="form-group def_col_18">
+                                <label class="def_col_8 control-label font_right fontWeihgt">
+                                    <span class="red">*</span>选择框类型：</label>
+                                <div class="def_col_28 control-label">
+                                    <select class="selectpicker form-control" id="environmentType" name="environmentType" title="请选择">
+                                        <option value="1">单选</option>
+                                        <option value="2">多选</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                        </div>
+                       
+                        
+                        <div class="content-table">
+          				  <div class="content-btn">
+              				  <button type="button" onclick="addPatameterDict()" class="btn btn-primary">新增项</button>
+           				 </div>
+       					</div>
+       					
+       					 <div class="wode">
+           					 <table class="table table-bordered table-hover" style="text-align: center;" id="modifyDataDictModalTable">
+               				 <thead>
+               					 <tr>
+                   					<th width="10%" class="text-center">枚举值</th>
+                    				<th width="5%" class="text-center">排序</th>
+                    				<th width="30%" class="text-center">jenkins任务</th>
+                    				<th width="5%" class="text-center">操作</th>
+               					 </tr>
+                			</thead>
+                			<tbody id="modifyDataDictModalTableBody">
+                			</tbody>
+                		</table>
+                	</div>
+                        
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="addOrEditSubmit()">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading">
+        <img class="loadingImg" src="#springUrl('')/devManageui/static/images/loadingPic.gif" />
+    </div>
+</body>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.ba-resize.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/jqgrid/jqgrid/js/i18n/grid.locale-cn.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/jqgrid/js/jquery.jqGrid.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>
+    <script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>
+    <script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>
+  	<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common.js"></script>
+  	<script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.core.js"></script>
+    <script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.excheck.min.js"></script>
+    <script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.exedit.js"></script>
+    <script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.exhide.js"></script>
+  	<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/fuzzy_serach.js"></script>
+
+    <script type="text/ecmascript" src="#springUrl('')/devManageui/static/js/JenkinsParameter/JenkinsParameter.js"></script>
+    <script>
+        $.jgrid.defaults.responsive = true;
+        $.jgrid.defaults.styleUI = 'Bootstrap4';
+        $.jgrid.defaults.iconSet = "fontAwesome";
+        
+         var jenkinsParameter_edit =$auth.hasPermission("$token","devManage:jenkinsParameter:edit"); // 编辑
+    </script>
+    
+   
+</html>
+ 

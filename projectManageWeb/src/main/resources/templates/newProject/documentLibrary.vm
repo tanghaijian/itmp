@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head> 
+	<title>新建类项目资产库</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <META HTTP-EQUIV="pragma" CONTENT="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="no-cache,IE=edge,Chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/font-awesome.min.css ">
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrapValidator.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/jquery-ztree/3.5.36/css/metroStyle/metroStyle.css" />
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/editormd.css" />  
+    <link rel="stylesheet" href="#springUrl('')/systemui/static/css/frame/editormd.preview.min.css" />    
+		<link rel="stylesheet" href="#springUrl('')/systemui/static/css/common/common.css" />
+
+    <link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/assetsLibrary/assetsLibrary.css" />
+    <link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/assetsLibrary/assetsLibraryNeeds.css" />
+    <link rel="stylesheet" href="#springUrl('')/projectManageui/static/css/newProject/doc.css" />
+	<style>
+		.redStar{
+			color:red;
+		}
+	</style>
+	</head>
+	
+	<body>
+		<div class="headr"> 
+			<span class="headTitle"></span> 
+			<span class="headTitle_assco" style="display:none;">权限配置</span> 
+			<div class="headRight">
+				##  <button class="btn btn-primary" id="prePower"> 权限设置（按人员）</button>
+				 &nbsp;
+				 <button class="btn btn-primary" id="listsPower"> 权限设置（按目录）</button> 
+				 &nbsp;
+				 
+				 <button class="btn btn-primary" id="return">&nbsp;&nbsp;&nbsp;保存 &nbsp;&nbsp;&nbsp;</button>
+				 &nbsp;
+				 <button class="btn btn-default" id="cancel_btn" style="display:none;">&nbsp;&nbsp;&nbsp;取消 &nbsp;&nbsp;&nbsp;</button>
+			</div>
+		</div>
+	    <div class="content">
+	        <div class="left">
+	            <div class="menu">
+	                <div class="treeSearch rowdiv">
+	                    <div class="def_col_36">
+	                        <input class="treeSearchInput" id="treeSearchInput" type="text" placeholder="查询目录名称" />
+	                        <span class="fa fa-search" id="faSearch"></span>
+	                    </div> 
+	                </div>
+	                <div id="menuTree" class="ztree"></div>
+	            </div>
+	        </div>
+	        <div class="right">
+						<div class="notRequirement"> 
+								<div class="title" id="title">
+								</div>
+								<div class="tableArea">
+										<div class="noData">
+												请点击左侧目录，来显示文档列表…
+										</div>
+										<div class="myTableDiv">
+											<div class="btnArea">
+												<button class="btn btn-primary writeAuth_btn" id="newMKDoc">新建MK文档</button>
+												&nbsp;
+												<button class="btn btn-primary writeAuth_btn" id="upDoc">上传文档 </button>
+											</div>
+											<table id="documentList"></table> 
+										</div> 
+								</div>
+						</div> 
+	        	<div class="powerDiv_List" >
+									<div class="title" id="powerTitle">
+										
+									</div>
+	                <div class="myTableDiv">
+	                	<div class="myTableTit">
+	                		按人员指定权限：
+	                	</div>
+                    	<div class="btnArea">
+                    		<button class="btn btn-primary" id="select_all_user">增加人员 </button>
+                    		&nbsp;
+                    		## <button class="btn btn-default" id="">移除人员</button>
+                    	</div>
+                    	<table id="user_Authoritie_list"></table>
+											<table id="user_Authoritie_Page"></table>
+                    </div>
+                    <div class="myTableDiv">
+	                	<div class="myTableTit">
+	                		按角色指定权限：
+	                	</div>
+                    	<div class="btnArea">
+												<button class="btn btn-primary" id="select_all_post">增加角色 </button>
+                    		&nbsp;
+                    		## <button class="btn btn-default" id="">移除角色</button>
+                    	</div>
+                    	<table id="post_Authoritie_list"></table>
+											<table id="post_Authoritie_Page"></table>
+                    </div>  
+	        	</div> 
+	        	
+	        </div>
+	    </div> 
+	    <!-- 上传文档弹窗 -->
+		<div class="modal fade" id="updateDoc" tabindex="-1" role="dialog" aria-labelledby="" type="hidden">
+		    <div class="modal-dialog" role="document">
+		        <div class="modal-content">
+		            <form method="POST"  enctype="multipart/form-data" id="updateForm" onsubmit="return false">
+		                <div class="modal-header">
+		                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		                    <span class="modal-title">上传文档</span>
+		                </div>
+		                <div class="modal-body">
+		                    <div class=""> 
+		                    	<div class="rowdiv">
+	                    			<div class="def_col_18 control-label form-group">
+					                    <label class="def_col_10 control-label font_right"><span class="redStar">*</span>文档类型：</label>
+						                <div class="def_col_26 control-label">
+						                    <select class="selectpicker" id="docTypes" name="docTypes">  
+											</select>
+						                </div>
+					                </div>
+					                <div class="def_col_18 control-label form-group">
+					                    <label class="def_col_10 control-label font_right">关联子系统：</label>
+						                <div class="def_col_26 control-label">
+						                    <select class="selectpicker" id="systemSys" >  
+											</select>
+						                </div>
+					                </div>
+					            </div>
+					            <br />
+					            <div class="rowdiv control-label">
+				                    <label class="def_col_5 control-label font_right"><span class="redStar">*</span>选择文件：</label>
+					                <div class="def_col_24 control-label"> 
+				                        <input id="upfile" type="file" name="upfile_up" multiple="multiple" />
+				                        <input id="pidValue" type="hidden" name="pId" value=" " />
+					                </div>
+					            </div>  
+		                    </div>
+		                </div>
+		
+		                <div class="modal-footer"> 
+		                    <button type="button" class="btn btn-primary" onclick="uploadDoc()" id="btn">确定</button>
+		                	 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+		                </div>
+		            </form>
+		        </div>
+		    </div>
+		</div>
+		<!-- 新建MK文档弹窗 -->
+		<div class="modal fade" id="newMKDocDiv" tabindex="-1" role="dialog" aria-labelledby="" type="hidden">
+		    <div class="modal-dialog" role="document">
+		        <div class="modal-content"> 
+	                <div class="modal-header">
+	                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	                    <span class="modal-title">新建MK文档</span>
+	                </div>
+	                <div class="modal-body">
+	                	<form method="POST"  onsubmit="return false" id="newMKDoc_form">  
+		                    <div class="rowdiv form-group">
+					                <label class="def_col_8 control-label font_right"><span class="redStar">*</span>文档类型：</label>
+					                <div class="def_col_28 control-label">
+					                    <select class="selectpicker form-control" id="mdTypes" name="mdTypes">  
+															</select>
+					                </div>
+												</div>
+												<div class="rowdiv form-group">
+					                <label class="def_col_8 control-label font_right">关联子系统：</label>
+													<div class="def_col_28 control-label">
+														<select class="selectpicker form-control" id="new_systemSys" name="new_systemSys"></select>
+													</div>
+					              </div>	 
+												<br />
+												<div class="rowdiv form-group">
+													<label class="def_col_8 control-label font_right"><span class="redStar">*</span>文档名称：</label>
+													<div class="def_col_28 control-label">
+															<input type="text" class="form-control" placeholder="请输入文档名称" id="mdName" name="mdName" />
+													</div>
+												</div>  
+		            	  </form>
+		            </div>
+		            <div class="modal-footer"> 
+	                    <button type="button" class="btn btn-primary" onclick="newMKDoc()">确定</button>
+	                	 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+	                </div>  
+		        </div>
+		    </div>
+		</div> 
+		<!-- 覆盖上传 - 弹窗 -->
+		<div class="modal fade" id="coverModal" tabindex="-1" role="dialog" aria-labelledby="" type="hidden">
+		    <div class="modal-dialog" role="document">
+		        <div class="modal-content"> 
+	                <div class="modal-header">
+	                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	                    <span class="modal-title">覆盖上传窗口</span>
+	                </div>
+	                <div class="modal-body">
+	                	<form method="POST"  id="coverForm" onsubmit="return false">  
+	                    	<div class="rowdiv">
+				                <label class="def_col_8 control-label font_right fontWeihgt"><span class="redStar">*</span>上传文档：</label>
+				                <div class="def_col_28 control-label">
+				                     <input id="coverUpFile" type="file" name="upfile" />
+				                </div> 
+				            </div>  
+	            	  </form>
+		            </div>
+		            <div class="modal-footer"> 
+	                    <button type="button" class="btn btn-primary" onclick="coverUpload()">确定</button>
+	                	 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+	                </div>  
+		        </div>
+		    </div>
+		</div> 
+
+		## 选择人员
+		<div class="modal fade bs-example-modal-lg in" id="userModal" tabindex="-1" role="dialog" aria-labelledby="">
+				<div class="modal-dialog modal-lg modal-user" role="document">
+						<div class="modal-content modalStyle">
+								<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+										<span>添加人员</span>
+								</div>
+								<div class="modal-body">
+										<div class="color1">
+												<div class="container-fluid">
+														<div class="row control-row">
+																<div class="col-md-4">
+																		<div class="search_font"><label class="control-label">姓名：</label></div>
+																		<div class="search_input" style="position: relative;">
+																				<input type="text" class="form-control " placeholder="请输入" id="userName" name="" value="">
+																		</div>
+																</div>
+																<div class="col-md-4">
+																		<div class="search_font"><label class="control-label">部门：</label></div>
+																		<div class="search_input" style="position: relative;">
+																				<input type="text" class="form-control " placeholder="请输入" id="deptName" name="" value="">
+																		</div>
+																</div>
+																<div class="col-md-4">
+																		<div class="search_font"><label class="control-label">公司：</label></div>
+																		<div class="search_input" style="position: relative;">
+																				<input type="text" class="form-control " placeholder="请输入" id="companyName" name="" value="">
+																		</div>
+																</div>
+														</div>
+														<div class="row control-row search_btn">
+																<button type="button" class="btn btn-primary" onclick="userTableShowAll()">搜&nbsp;&nbsp;&nbsp;索</button>
+																<button type="button" onclick="clearSearchUser()" class="btn btn-default">重&nbsp;&nbsp;&nbsp;置</button>
+														</div>
+												</div>
+												<div id="downBtn" class="downBtn">
+														<span class="fa fa-caret-up"></span>
+												</div>
+										</div>
+										<br>
+										<div class="content-table">
+											<table id="userTable"></table>
+											<table id="userPage"></table>
+										</div>
+								</div>
+								<div class="modal-footer">
+									<div class="bottom-container">
+										<button type="button" id="userbutton" class="btn btn-primary" onclick="commitUser()">确定</button>
+										<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+									</div>
+								</div>
+						</div>
+				</div>
+		</div>
+		
+		## 选择角色
+		<div class="modal fade bs-example-modal-lg in" id="user_post_Modal" tabindex="-1" role="dialog" aria-labelledby="">
+				<div class="modal-dialog modal-user" role="document">
+						<div class="modal-content modalStyle">
+								<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+										<span>添加角色</span>
+								</div>
+								<div class="modal-body">
+										<div class="content-table">
+											<table id="user_post_Table"></table>
+											<table id="user_post_Page"></table>
+										</div>
+								</div>
+								<div class="modal-footer">
+									<div class="bottom-container">
+										<button type="button" id="userbutton" class="btn btn-primary" onclick="commit_post_User()">确定</button>
+										<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+									</div>
+								</div>
+						</div>
+				</div>
+		</div>
+		<!-- 导出时，弹出导出类型 -->
+		<div class="modal fade" id="export_Modal" tabindex="-1" role="dialog" aria-labelledby="" type="hidden">
+		    <div class="modal-dialog" role="document">
+		        <div class="modal-content"> 
+	                <div class="modal-header">
+	                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	                    <span class="modal-title">选择导出类型</span>
+	                </div>
+	                <div class="modal-body">
+	                	<ul id="ulFileExport">
+	                		<li><input name="file" type="radio" value="word" checked />word</li>
+		                	<li><input name="file" type="radio" value="pdf" />pdf</li>
+	                	</ul>
+		            </div>
+		            <div class="modal-footer"> 
+	                    <button type="button" class="btn btn-primary" onclick="exportCommit()">提交</button>
+	                	 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+	                </div>  
+		        </div>
+		    </div>
+		</div> 
+		<div id="loading">
+			<img class="loadingImg" src="#springUrl('')/systemui/static/images/loadingPic.gif" />
+		</div>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/jquery.min.js"></script> 
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-table-zh-CN.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrap-select.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/defaults-zh_CN.min.js"></script>
+		<script type="text/javascript" src="#springUrl('')/systemui/static/js/frame/bootstrapValidator.js"></script>  
+		
+		<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/frame/layer.js"></script>   
+		
+		<script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.core.js"></script>
+		<script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.excheck.min.js"></script>
+		<script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.exedit.js"></script>
+		<script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/jquery.ztree.exhide.js"></script>
+		<script src="#springUrl('')/systemui/static/jquery-ztree/3.5.36/js/fuzzysearch.js"></script>
+	
+		<script type="text/ecmascript" src="#springUrl('')/systemui/static/js/common/common.js"></script>  
+		<script src="#springUrl('')/projectManageui/static/js/newProject/documentLibrary.js"></script> 
+		##<script src="#springUrl('')/projectManageui/static/js/newProject/docPermission.js"></script>
+    </body> 
+</html>

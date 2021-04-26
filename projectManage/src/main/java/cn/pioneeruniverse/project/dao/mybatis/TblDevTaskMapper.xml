@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.TblDevTaskMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblDevTask">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="DEV_TASK_NAME" jdbcType="VARCHAR" property="devTaskName" />
+    <result column="DEV_TASK_CODE" jdbcType="VARCHAR" property="devTaskCode" />
+    <result column="DEV_TASK_OVERVIEW" jdbcType="VARCHAR" property="devTaskOverview" />
+    <result column="REQUIREMENT_FEATURE_ID" jdbcType="BIGINT" property="requirementFeatureId" />
+    <result column="DEFECT_ID" jdbcType="BIGINT" property="defectID" />
+    <result column="DEV_TASK_PRIORITY" jdbcType="TINYINT" property="devTaskPriority" />
+    <result column="DEV_TASK_STATUS" jdbcType="TINYINT" property="devTaskStatus" />
+    <result column="CODE_REVIEW_STATUS" jdbcType="TINYINT" property="codeReviewStatus" />
+    <result column="DEV_USER_ID" jdbcType="BIGINT" property="devUserId" />
+    <result column="PLAN_START_DATE" jdbcType="DATE" property="planStartDate" />
+    <result column="PLAN_END_DATE" jdbcType="DATE" property="planEndDate" />
+    <result column="PLAN_WORKLOAD" jdbcType="DOUBLE" property="planWorkload" />
+    <result column="ESTIMATE_REMAIN_WORKLOAD" jdbcType="DOUBLE" property="estimateRemainWorkload" />
+    <result column="ACTUAL_START_DATE" jdbcType="DATE" property="actualStartDate" />
+    <result column="ACTUAL_END_DATE" jdbcType="DATE" property="actualEndDate" />
+    <result column="ACTUAL_WORKLOAD" jdbcType="DOUBLE" property="actualWorkload" />
+    <result column="COMMISSIONING_WINDOW_ID" jdbcType="BIGINT" property="commissioningWindowId" />
+    <result column="SPRINT_ID" jdbcType="BIGINT" property="sprintId" />
+    <result column="PARENT_ID" jdbcType="BIGINT" property="parentId" />
+    <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+
+  <!--根据开发任务查询开发工作任务-->
+  <select id="getDevTasks" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  		select task.*, user.USER_NAME devUserName from tbl_dev_task task
+  			left join tbl_user_info user on user.ID = task.DEV_USER_ID
+  			where task.REQUIREMENT_FEATURE_ID = #{id} and task.STATUS = 1
+  </select>
+
+  <!--根据系统查询系统库-->
+  <select id="getScmType" parameterType="java.lang.Long" resultType="integer">
+  	select DISTINCT SCM_TYPE from tbl_system_scm_repository where SYSTEM_ID = #{systemId} and STATUS = 1
+  </select>
+  
+ </mapper>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.project.dao.mybatis.SprintBurnoutMapper">
+  <resultMap id="BaseResultMap" type="cn.pioneeruniverse.project.entity.TblSprintBurnout">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="ESTIMATE_REMAIN_WORKLOAD" jdbcType="DOUBLE" property="estimateRemainWorkload" />
+    <result column="SPRINT_ID" jdbcType="BIGINT" property="sprintId" />
+    <result column="CREATE_DATE" jdbcType="DATE" property="createDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, ESTIMATE_REMAIN_WORKLOAD, SPRINT_ID, CREATE_DATE
+  </sql>
+<!--  查询-->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_sprint_burnout
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+<!--  删除-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tbl_sprint_burnout
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+<!--  新增-->
+  <insert id="insert" parameterType="cn.pioneeruniverse.project.entity.TblSprintBurnout">
+    insert into tbl_sprint_burnout (ESTIMATE_REMAIN_WORKLOAD, SPRINT_ID, 
+      CREATE_DATE,TEST_ESTIMATE_REMAIN_WORKLOAD,DEV_ESTIMATE_REMAIN_WORKLOAD)
+    values (#{estimateRemainWorkload,jdbcType=DOUBLE}, #{sprintId,jdbcType=BIGINT}, 
+      #{createDate,jdbcType=DATE},#{testEstimateRemainWorkload,jdbcType=DOUBLE},#{devEstimateRemainWorkload,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.pioneeruniverse.project.entity.TblSprintBurnout">
+    insert into tbl_sprint_burnout
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="estimateRemainWorkload != null">
+        ESTIMATE_REMAIN_WORKLOAD,
+      </if>
+      <if test="sprintId != null">
+        SPRINT_ID,
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="estimateRemainWorkload != null">
+        #{estimateRemainWorkload,jdbcType=DOUBLE},
+      </if>
+      <if test="sprintId != null">
+        #{sprintId,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+<!--  更新-->
+  <update id="updateByPrimaryKeySelective" parameterType="cn.pioneeruniverse.project.entity.TblSprintBurnout">
+    update tbl_sprint_burnout
+    <set>
+      <if test="estimateRemainWorkload != null">
+        ESTIMATE_REMAIN_WORKLOAD = #{estimateRemainWorkload,jdbcType=DOUBLE},
+      </if>
+      <if test="sprintId != null">
+        SPRINT_ID = #{sprintId,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        CREATE_DATE = #{createDate,jdbcType=DATE},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+<!--  更新-->
+  <update id="updateByPrimaryKey" parameterType="cn.pioneeruniverse.project.entity.TblSprintBurnout">
+    update tbl_sprint_burnout
+    set ESTIMATE_REMAIN_WORKLOAD = #{estimateRemainWorkload,jdbcType=DOUBLE},
+      SPRINT_ID = #{sprintId,jdbcType=BIGINT},
+      CREATE_DATE = #{createDate,jdbcType=DATE}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

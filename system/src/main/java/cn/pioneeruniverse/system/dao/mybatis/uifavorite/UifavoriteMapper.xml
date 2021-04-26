@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pioneeruniverse.system.dao.mybatis.uifavorite.UifavoriteDao">
+    <resultMap id="BaseResultMap" type="cn.pioneeruniverse.system.entity.UiFavorite">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="USER_ID" jdbcType="BIGINT" property="userId" />
+    <result column="MENU_URL" jdbcType="VARCHAR" property="menuUrl" />
+    <result column="FAVORITE_CONTENT" jdbcType="VARCHAR" property="favoriteContent" />
+	 <result column="STATUS" jdbcType="TINYINT" property="status" />
+    <result column="CREATE_BY" jdbcType="BIGINT" property="createBy" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="LAST_UPDATE_BY" jdbcType="BIGINT" property="lastUpdateBy" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  
+  <!-- 获取某个页面某个人的收藏方案，menuUrl:某个页面对应的url -->
+  <select id="findByMenuUrlAndUserId" parameterType="cn.pioneeruniverse.system.entity.UiFavorite" resultType="cn.pioneeruniverse.system.entity.UiFavorite">
+  	select * from tbl_ui_favorite where MENU_URL =#{menuUrl} and USER_ID = #{userId}
+  </select>
+  
+  <!-- 新增收藏方案 -->
+  <insert id="insert" parameterType="cn.pioneeruniverse.system.entity.UiFavorite">
+  	insert into tbl_ui_favorite(USER_ID,MENU_URL,FAVORITE_CONTENT,CREATE_BY,CREATE_DATE)
+  	values(#{userId},#{menuUrl},#{favoriteContent},#{createBy},#{createDate})
+  </insert>
+  
+  <!-- 更新收藏方案 -->
+  <update id="update" parameterType="cn.pioneeruniverse.system.entity.UiFavorite">
+  	update tbl_ui_favorite 
+  	<set>
+  		FAVORITE_CONTENT = #{favoriteContent},
+  		LAST_UPDATE_BY = #{lastUpdateBy},
+  		LAST_UPDATE_DATE = #{lastUpdateDate}
+  	</set>
+  	<where>
+  		MENU_URL = #{menuUrl} and
+  		USER_ID = #{userId}
+  	</where>
+  </update>
+  
+</mapper>
